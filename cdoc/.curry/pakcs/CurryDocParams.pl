@@ -26,6 +26,7 @@ functiontype('CurryDocParams.defaultCurryDocParams',defaultCurryDocParams,0,'Cur
 :-dynamic constructortype/6.
 constructortype('CurryDocParams.HtmlDoc','HtmlDoc',0,'HtmlDoc',0,'TCons'('CurryDocParams.DocType',[])).
 constructortype('CurryDocParams.TexDoc','TexDoc',0,'TexDoc',1,'TCons'('CurryDocParams.DocType',[])).
+constructortype('CurryDocParams.CDoc','CDoc',0,'CDoc',2,'TCons'('CurryDocParams.DocType',[])).
 constructortype('CurryDocParams.DocParams','DocParams',3,'DocParams',0,'FuncType'('TCons'('CurryDocParams.DocType',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('CurryDocParams.DocParams',[]))))).
 
 %%%%%%%%%%%% function definitions %%%%%%%%%%%%%%%%%%%

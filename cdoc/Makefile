@@ -3,13 +3,13 @@
 # Required:
 # - installed curry2prolog system
 
-LIB=../../lib
+LIB=../../../../../../Downloads/pakcs/lib
 META=${LIB}/meta
-ANADIR=../analysis
+ANADIR=../../../../../../Downloads/pakcs/tools/analysis
 
 # generate saved state for currydoc program:
 CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
-	        CurryDocTeX.curry CurryDocParams.curry \
+	        CurryDocTeX.curry CurryDocParams.curry CurryDocCDoc.curry \
 	        ${LIB}/Markdown.curry \
 	        ${META}/FlexRigid.curry \
 	        ${LIB}/CategorizedHtmlList.curry \
