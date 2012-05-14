@@ -3,9 +3,10 @@
 # Required:
 # - installed curry2prolog system
 
-LIB=../../../../../../Downloads/pakcs/lib
+PAKCS=../../../../../../Downloads/pakcs
+LIB=${PAKCS}/lib
 META=${LIB}/meta
-ANADIR=../../../../../../Downloads/pakcs/tools/analysis
+ANADIR=${PAKCS}/tools/analysis
 
 # generate saved state for currydoc program:
 CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
@@ -19,12 +20,12 @@ CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
 	        ${ANADIR}/AnaCompleteness.curry ${ANADIR}/AnaOpComplete.curry \
 	        ${ANADIR}/AnaDependency.curry 
 	(echo ":set path ${ANADIR}" ; echo ":l CurryDoc" ; echo ":set path" ; \
-	 echo ":save main" ) | ../../bin/pakcs
-	(cd ../../bin ; rm -f currydoc ; \
-	                ln -s ../tools/cdoc/CurryDoc.state currydoc)
+	 echo ":save main" ) | ~/Downloads/pakcs/bin/pakcs
+	(cd ~/Downloads/pakcs/bin ; rm -f currydoc ; \
+	                ln -s ~/Downloads/pakcs/tools/cdoc/CurryDoc.state currydoc)
 
 
 .PHONY: clean
 clean: 
-	../../bin/cleancurry
-	rm -f ../../bin/currydoc
+	~/Downloads/pakcs/bin/cleancurry
+	rm -f ~/Downloads/pakcs/bin/currydoc

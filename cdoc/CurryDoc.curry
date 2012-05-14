@@ -188,24 +188,19 @@ makeDoc docparams recursive docdir anainfo progname = do
 makeDocWithComments HtmlDoc docparams recursive docdir anainfo progname
                     modcmts progcmts = do
   time <- getLocalTime
-  -- imports not necessary
-  (imports,hexps) <- generateHtmlDocs currydocVersion time docparams anainfo
-                                      progname modcmts progcmts
-  writeOutfile docparams recursive docdir anainfo (showDocCSS ("Module "++getLastName progname) hexps) progname
+  writeOutfile docparams recursive docdir anainfo progname (generateHtmlDocs 
+               currydocVersion time docparams anainfo progname modcmts progcmts)
   translateSource2ColoredHtml docdir progname
   
 
 makeDocWithComments TexDoc docparams recursive docdir anainfo progname
                     modcmts progcmts = do
-  -- imports not necessary
-  (imports,textxt) <- generateTexDocs docparams anainfo progname modcmts progcmts
-  writeOutfile docparams recursive docdir anainfo textxt progname
+  writeOutfile docparams recursive docdir anainfo progname (generateTexDocs docparams anainfo progname modcmts progcmts)
 
 makeDocWithComments CDoc docparams recursive docdir anainfo progname 
 		    	 modcmts progcmts = do
-  -- imports not necessary
-  (imports, cdoc) <- generateCDoc progname modcmts progcmts anainfo
-  writeOutfile docparams recursive docdir anainfo (showTerm cdoc) progname
+  writeOutfile docparams recursive docdir anainfo progname (generateCDoc progname modcmts progcmts anainfo)
+
 
 --- Generates the documentation for a module if it is necessary.
 --- I.e., the documentation is generated if no previous documentation
@@ -308,45 +303,16 @@ fileExtension HtmlDoc = "html"
 fileExtension TexDoc  = "tex"
 fileExtension CDoc    = "cdoc"
 
-writeOutfile docparams recursive docdir anainfo doc progname = do 
+-- harmonized writeFile function for all docType
+writeOutfile :: DocParams -> Bool -> String -> AnaInfo -> String -> IO String -> IO ()
+writeOutfile docparams recursive docdir anainfo progname generate = do 
+               doc     <- generate
+	       imports <- getImports progname
                let outfile = docdir++"/"++getLastName progname++"."++fileExtension (docType docparams)
                putStrLn ("Writing documentation to \""++outfile++"\"...")
-               writeFile outfile doc
-               imports <- getImports progname
+               writeFile outfile doc 
                if recursive
                   then mapIO_ (makeDocIfNecessary docparams recursive docdir anainfo) imports
                   else done
 
--- 
--- writeOutfile docparams recursive docdir anainfo progname generate = do 
---                (imports, doc) <- generate
---                let outfile = docdir++"/"++getLastName progname++"."++fileExtension (docType docparams)
---                putStrLn ("Writing documentation to \""++outfile++"\"...")
---                writeFile outfile (generatedDoc (docType docparams) progname doc) 
---                if recursive
---                   then mapIO_ (makeDocIfNecessary docparams recursive docdir anainfo) imports
---                   else done
-
-
-
--- generatedDoc HtmlDoc progname = showDocCSS ("Module "++getLastName progname)
--- generatedDoc TexDoc  progname = id
--- generatedDoc CDoc    progname = showTerm
-  
 -- -----------------------------------------------------------------------
-
--- makeDocWithComments HtmlDoc docparams recursive docdir anainfo progname
---                     modcmts progcmts = do
---   time <- getLocalTime
---   writeOutfile docparams recursive docdir anainfo progname (generateHtmlDocs 
---                currydocVersion time docparams anainfo progname modcmts progcmts)
---   translateSource2ColoredHtml docdir progname
-  
-
--- makeDocWithComments TexDoc docparams recursive docdir anainfo progname
---                     modcmts progcmts = do
---   writeOutfile docparams recursive docdir anainfo progname (generateTexDocs docparams anainfo progname modcmts progcmts)
-
--- makeDocWithComments CDoc docparams recursive docdir anainfo progname 
--- 		    	 modcmts progcmts = do
---   writeOutfile docparams recursive docdir anainfo progname (generateCDoc progname modcmts progcmts anainfo)
