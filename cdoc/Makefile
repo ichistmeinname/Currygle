@@ -22,7 +22,7 @@ CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
 	(echo ":set path ${ANADIR}" ; echo ":l CurryDoc" ; echo ":set path" ; \
 	 echo ":save main" ) | ~/Downloads/pakcs/bin/pakcs
 	(cd ~/Downloads/pakcs/bin ; rm -f currydoc ; \
-	                ln -s ~/Downloads/pakcs/tools/cdoc/CurryDoc.state currydoc)
+	                ln -s ~/Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/cdoc/CurryDoc.state currydoc)
 
 
 .PHONY: clean

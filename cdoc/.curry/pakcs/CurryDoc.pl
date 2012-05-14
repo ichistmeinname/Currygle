@@ -52,41 +52,41 @@ functiontype('CurryDoc.copyIncludeIfPresent\'2E_\'23lambda10','CurryDoc.copyIncl
 functiontype('CurryDoc.genAnaInfo',genAnaInfo,1,'CurryDoc.genAnaInfo',nofix,'FuncType'('TCons'('FlatCurry.Prog',[]),'TCons'('CurryDocRead.AnaInfo',[]))).
 functiontype('CurryDoc.makeDoc',makeDoc,5,'CurryDoc.makeDoc',nofix,'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
 functiontype('CurryDoc.makeDoc\'2E_\'23lambda11','CurryDoc.makeDoc._#lambda11',6,'CurryDoc.makeDoc\'2E_\'23lambda11',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Prelude.(,)',['TCons'([],['TCons'('Prelude.Char',[])]),'TCons'([],['TCons'('Prelude.(,)',['TCons'('CurryDocRead.SourceLine',[]),'TCons'([],['TCons'('Prelude.Char',[])])])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
+functiontype('CurryDoc.makeDocWithComments',makeDocWithComments,8,'CurryDoc.makeDocWithComments',nofix,'FuncType'('TCons'('CurryDocParams.DocType',[]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.(,)',['TCons'('CurryDocRead.SourceLine',[]),'TCons'([],['TCons'('Prelude.Char',[])])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))))).
+functiontype('CurryDoc.makeDocWithComments\'2E_\'23lambda12','CurryDoc.makeDocWithComments._#lambda12',8,'CurryDoc.makeDocWithComments\'2E_\'23lambda12',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.(,)',['TCons'('CurryDocRead.SourceLine',[]),'TCons'([],['TCons'('Prelude.Char',[])])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Time.CalendarTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))))).
 functiontype('CurryDoc.makeDocIfNecessary',makeDocIfNecessary,5,'CurryDoc.makeDocIfNecessary',nofix,'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
-functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda12','CurryDoc.makeDocIfNecessary._#lambda12',5,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
-functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13','CurryDoc.makeDocIfNecessary._#lambda12._#lambda13',7,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
-functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14','CurryDoc.makeDocIfNecessary._#lambda12._#lambda13._#lambda14',7,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
-functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15','CurryDoc.makeDocIfNecessary._#lambda12._#lambda13._#lambda14._#lambda15',7,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'('Time.ClockTime',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
-functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16','CurryDoc.makeDocIfNecessary._#lambda12._#lambda13._#lambda14._#lambda15._#lambda16',5,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
+functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda13','CurryDoc.makeDocIfNecessary._#lambda13',5,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
+functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14','CurryDoc.makeDocIfNecessary._#lambda13._#lambda14',7,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
+functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15','CurryDoc.makeDocIfNecessary._#lambda13._#lambda14._#lambda15',7,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
+functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16','CurryDoc.makeDocIfNecessary._#lambda13._#lambda14._#lambda15._#lambda16',7,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'('Time.ClockTime',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
+functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16\'2E_\'23lambda17','CurryDoc.makeDocIfNecessary._#lambda13._#lambda14._#lambda15._#lambda16._#lambda17',5,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16\'2E_\'23lambda17',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
 functiontype('CurryDoc.getImports',getImports,1,'CurryDoc.getImports',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])])]))).
-functiontype('CurryDoc.getImports\'2E_\'23lambda17','CurryDoc.getImports._#lambda17',3,'CurryDoc.getImports\'2E_\'23lambda17',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])])]))))).
-functiontype('CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18','CurryDoc.getImports._#lambda17._#lambda18',1,'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18',nofix,'FuncType'('TCons'('FlatCurry.Prog',[]),'TCons'('Prelude.IO',['TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])])]))).
+functiontype('CurryDoc.getImports\'2E_\'23lambda18','CurryDoc.getImports._#lambda18',3,'CurryDoc.getImports\'2E_\'23lambda18',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])])]))))).
+functiontype('CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19','CurryDoc.getImports._#lambda18._#lambda19',1,'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19',nofix,'FuncType'('TCons'('FlatCurry.Prog',[]),'TCons'('Prelude.IO',['TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])])]))).
 functiontype('CurryDoc.copyOrMakeDoc',copyOrMakeDoc,5,'CurryDoc.copyOrMakeDoc',nofix,'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))).
-functiontype('CurryDoc.copyOrMakeDoc\'2E_\'23lambda19','CurryDoc.copyOrMakeDoc._#lambda19',6,'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
+functiontype('CurryDoc.copyOrMakeDoc\'2E_\'23lambda20','CurryDoc.copyOrMakeDoc._#lambda20',6,'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
 functiontype('CurryDoc.copyDocIfPossible',copyDocIfPossible,3,'CurryDoc.copyDocIfPossible',nofix,'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])]))))).
-functiontype('CurryDoc.copyDocIfPossible\'2E_\'23lambda20','CurryDoc.copyDocIfPossible._#lambda20',4,'CurryDoc.copyDocIfPossible\'2E_\'23lambda20',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])])))))).
-functiontype('CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21','CurryDoc.copyDocIfPossible._#lambda20._#lambda21',3,'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])]))))).
-functiontype('CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22','CurryDoc.copyDocIfPossible._#lambda20._#lambda21._#lambda22',4,'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22',nofix,'FuncType'('TCons'('Time.ClockTime',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])])))))).
+functiontype('CurryDoc.copyDocIfPossible\'2E_\'23lambda21','CurryDoc.copyDocIfPossible._#lambda21',4,'CurryDoc.copyDocIfPossible\'2E_\'23lambda21',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])])))))).
+functiontype('CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22','CurryDoc.copyDocIfPossible._#lambda21._#lambda22',3,'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])]))))).
+functiontype('CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23','CurryDoc.copyDocIfPossible._#lambda21._#lambda22._#lambda23',4,'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23',nofix,'FuncType'('TCons'('Time.ClockTime',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Time.ClockTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.Bool',[])])))))).
 functiontype('CurryDoc.getDirName',getDirName,1,'CurryDoc.getDirName',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'([],['TCons'('Prelude.Char',[])]))).
 functiontype('CurryDoc.readFlatCurryWithImports',readFlatCurryWithImports,1,'CurryDoc.readFlatCurryWithImports',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])]))).
-functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105','CurryDoc.readFlatCurryWithImports.collectMods.105',2,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))).
-functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23','CurryDoc.readFlatCurryWithImports.collectMods.105._#lambda23',4,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))))).
-functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24','CurryDoc.readFlatCurryWithImports.collectMods.105._#lambda23._#lambda24',4,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'('FlatCurry.Prog',[]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))))).
-functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25','CurryDoc.readFlatCurryWithImports.collectMods.105._#lambda23._#lambda24._#lambda25',4,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25',nofix,'FuncType'('TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'FuncType'('TCons'([],['TCons'('FlatCurry.OpDecl',[])]),'FuncType'('TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'FuncType'('TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))))).
+functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112','CurryDoc.readFlatCurryWithImports.collectMods.112',2,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))).
+functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24','CurryDoc.readFlatCurryWithImports.collectMods.112._#lambda24',4,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))))).
+functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25','CurryDoc.readFlatCurryWithImports.collectMods.112._#lambda24._#lambda25',4,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25',nofix,'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'FuncType'('TCons'('FlatCurry.Prog',[]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))))).
+functiontype('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26','CurryDoc.readFlatCurryWithImports.collectMods.112._#lambda24._#lambda25._#lambda26',4,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26',nofix,'FuncType'('TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'FuncType'('TCons'([],['TCons'('FlatCurry.OpDecl',[])]),'FuncType'('TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'FuncType'('TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.(,,)',['TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'TCons'([],['TCons'('FlatCurry.OpDecl',[])])])])))))).
 functiontype('CurryDoc.findSourceFileInLoadPath',findSourceFileInLoadPath,1,'CurryDoc.findSourceFileInLoadPath',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'([],['TCons'('Prelude.Char',[])])]))).
-functiontype('CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26','CurryDoc.findSourceFileInLoadPath._#lambda26',2,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'([],['TCons'('Prelude.Char',[])])])))).
-functiontype('CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26\'2E_\'23lambda27','CurryDoc.findSourceFileInLoadPath._#lambda26._#lambda27',2,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26\'2E_\'23lambda27',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Maybe',['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'([],['TCons'('Prelude.Char',[])])])))).
+functiontype('CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27','CurryDoc.findSourceFileInLoadPath._#lambda27',2,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'([],['TCons'('Prelude.Char',[])])])))).
+functiontype('CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27\'2E_\'23lambda28','CurryDoc.findSourceFileInLoadPath._#lambda27._#lambda28',2,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27\'2E_\'23lambda28',nofix,'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Maybe',['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'([],['TCons'('Prelude.Char',[])])])))).
 functiontype('CurryDoc.fileExtension',fileExtension,1,'CurryDoc.fileExtension',nofix,'FuncType'('TCons'('CurryDocParams.DocType',[]),'TCons'([],['TCons'('Prelude.Char',[])]))).
 functiontype('CurryDoc.writeOutfile',writeOutfile,6,'CurryDoc.writeOutfile',nofix,'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.IO',['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
-functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28','CurryDoc.writeOutfile._#lambda28',6,'CurryDoc.writeOutfile\'2E_\'23lambda28',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
-functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29','CurryDoc.writeOutfile._#lambda28._#lambda29',7,'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
-functiontype('CurryDoc.makeDocWithComments',makeDocWithComments,8,'CurryDoc.makeDocWithComments',nofix,'FuncType'('TCons'('CurryDocParams.DocType',[]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.(,)',['TCons'('CurryDocRead.SourceLine',[]),'TCons'([],['TCons'('Prelude.Char',[])])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))))).
-functiontype('CurryDoc.makeDocWithComments\'2E_\'23lambda30','CurryDoc.makeDocWithComments._#lambda30',8,'CurryDoc.makeDocWithComments\'2E_\'23lambda30',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.(,)',['TCons'('CurryDocRead.SourceLine',[]),'TCons'([],['TCons'('Prelude.Char',[])])])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('Time.CalendarTime',[]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))))).
+functiontype('CurryDoc.writeOutfile\'2E_\'23lambda29','CurryDoc.writeOutfile._#lambda29',6,'CurryDoc.writeOutfile\'2E_\'23lambda29',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
+functiontype('CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30','CurryDoc.writeOutfile._#lambda29._#lambda30',7,'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30',nofix,'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])]))))))))).
 functiontype('CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0','CurryDoc.makeCompleteDoc._#lambda5._#lambda6._#lambda7._#caseor0',6,'CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('FlatCurry.FuncDecl',[])]),'FuncType'('TCons'('Time.CalendarTime',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('FlatCurry.TypeDecl',[])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
-functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0','CurryDoc.makeDocIfNecessary._#lambda12._#caseor0',1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'TCons'([],['TCons'('Prelude.Char',[])]))).
-functiontype('CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0','CurryDoc.getImports._#lambda17._#caseor0',3,'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('FlatCurry.Prog',[])]))))).
+functiontype('CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0','CurryDoc.makeDocIfNecessary._#lambda13._#caseor0',1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'TCons'([],['TCons'('Prelude.Char',[])]))).
+functiontype('CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0','CurryDoc.getImports._#lambda18._#caseor0',3,'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'('Prelude.IO',['TCons'('FlatCurry.Prog',[])]))))).
 functiontype('CurryDoc.getDirName\'2E_\'23caseor0','CurryDoc.getDirName._#caseor0',2,'CurryDoc.getDirName\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'TCons'([],['TCons'('Prelude.Char',[])])))).
-functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0','CurryDoc.writeOutfile._#lambda28._#lambda29._#caseor0',6,'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
+functiontype('CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0','CurryDoc.writeOutfile._#lambda29._#lambda30._#caseor0',6,'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0',nofix,'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'('CurryDocParams.DocParams',[]),'FuncType'('TCons'('Prelude.Bool',[]),'FuncType'('TCons'([],['TCons'('Prelude.Char',[])]),'FuncType'('TCons'('CurryDocRead.AnaInfo',[]),'FuncType'('TCons'([],['TCons'([],['TCons'('Prelude.Char',[])])]),'TCons'('Prelude.IO',['TCons'('Prelude.()',[])])))))))).
 
 %%%%%%%%%%%% constructor types %%%%%%%%%%%%%%%%%%%
 :-multifile constructortype/6.
@@ -700,134 +700,146 @@ functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23ca
 'CurryDoc.makeDoc\'2E_\'23lambda11_6'('Prelude.(,)'(A,B),C,D,E,F,G,H,I,J):-!,makeShare(E,K),hnf('CurryDoc.makeDocWithComments'('CurryDocParams.docType'(K),K,G,D,C,F,A,B),H,I,J).
 'CurryDoc.makeDoc\'2E_\'23lambda11_6'('FAIL'(A),B,C,D,E,F,'FAIL'(A),G,G):-nonvar(A).
 
+:-block 'CurryDoc.makeDocWithComments'(?,?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocWithComments'(A,B,C,D,E,F,G,H,I,J,K):-hnf(A,L,J,M),'CurryDoc.makeDocWithComments_1'(L,B,C,D,E,F,G,H,I,M,K).
+
+:-block 'CurryDoc.makeDocWithComments_1'(?,?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocWithComments_1'('CurryDocParams.HtmlDoc',A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.>>='('Time.getLocalTime',partcall(1,'CurryDoc.makeDocWithComments\'2E_\'23lambda12',[B,E,G,F,A,C,D])),H,I,J).
+'CurryDoc.makeDocWithComments_1'('CurryDocParams.TexDoc',A,B,C,D,E,F,G,H,I,J):-makeShare(A,K),makeShare(D,L),makeShare(E,M),hnf('CurryDoc.writeOutfile'(K,B,C,L,M,'CurryDocTeX.generateTexDocs'(K,L,M,F,G)),H,I,J).
+'CurryDoc.makeDocWithComments_1'('CurryDocParams.CDoc',A,B,C,D,E,F,G,H,I,J):-!,makeShare(D,K),makeShare(E,L),hnf('CurryDoc.writeOutfile'(A,B,C,K,L,'CurryDocCDoc.generateCDoc'(L,F,G,K)),H,I,J).
+'CurryDoc.makeDocWithComments_1'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I):-nonvar(A).
+
+:-block 'CurryDoc.makeDocWithComments\'2E_\'23lambda12'(?,?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocWithComments\'2E_\'23lambda12'(A,B,C,D,E,F,G,H,I,J,K):-makeShare(C,L),makeShare(B,M),makeShare(A,N),makeShare(F,O),hnf('Prelude.>>'('CurryDoc.writeOutfile'(L,G,M,N,O,'CurryDocHtml.generateHtmlDocs'('CurryDoc.currydocVersion',H,L,N,O,D,E)),'CurryDocHtml.translateSource2ColoredHtml'(M,O)),I,J,K).
+
 :-block 'CurryDoc.makeDocIfNecessary'(?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary'(A,B,C,D,E,F,G,H):-hnf('Prelude.>>='('CurryDoc.findSourceFileInLoadPath'(E),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12',[B,A,C,D])),F,G,H).
+'CurryDoc.makeDocIfNecessary'(A,B,C,D,E,F,G,H):-hnf('Prelude.>>='('CurryDoc.findSourceFileInLoadPath'(E),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13',[B,A,C,D])),F,G,H).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12'(?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12'(A,B,C,D,E,F,G,H):-makeShare(I,J),makeShare(B,K),makeShare(E,L),makeShare(C,M),hnf('Prelude.cond'('Prelude.letrec'(J,'Prelude.++'(K,'Prelude.++'([^/],'Prelude.++'('Prelude.apply'('CurryDocRead.getLastName',L),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0'('Prelude.=='('CurryDocParams.docType'(M),'CurryDocParams.HtmlDoc')))))),'Prelude.>>='('Directory.doesFileExist'(J),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13',[D,L,M,J,K,A]))),F,G,H).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13'(?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13'(A,B,C,D,E,F,G,H):-makeShare(I,J),makeShare(B,K),makeShare(E,L),makeShare(C,M),hnf('Prelude.cond'('Prelude.letrec'(J,'Prelude.++'(K,'Prelude.++'([^/],'Prelude.++'('Prelude.apply'('CurryDocRead.getLastName',L),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0'('Prelude.=='('CurryDocParams.docType'(M),'CurryDocParams.HtmlDoc')))))),'Prelude.>>='('Directory.doesFileExist'(J),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14',[D,L,M,J,K,A]))),F,G,H).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13'(?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13'(A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.not'(G),K,I,L),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13_ComplexCase'(K,A,B,C,D,E,F,G,H,L,J).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14'(?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14'(A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.not'(G),K,I,L),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14_ComplexCase'(K,A,B,C,D,E,F,G,H,L,J).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13_ComplexCase'(-,?,?,?,?,?,?,?,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13_ComplexCase'(?,?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13_ComplexCase'('Prelude.True',A,B,C,D,E,F,G,H,I,J):-hnf('CurryDoc.copyOrMakeDoc'(D,F,B,A,E),H,I,J).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13_ComplexCase'('Prelude.False',A,B,C,D,E,F,G,H,I,J):-!,makeShare(E,K),hnf('Prelude.>>='('Directory.getModificationTime'('FlatCurry.flatCurryFileName'(K)),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14',[F,K,D,C,B,A])),H,I,J).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13_ComplexCase'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14_ComplexCase'(-,?,?,?,?,?,?,?,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14_ComplexCase'(?,?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14_ComplexCase'('Prelude.True',A,B,C,D,E,F,G,H,I,J):-hnf('CurryDoc.copyOrMakeDoc'(D,F,B,A,E),H,I,J).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14_ComplexCase'('Prelude.False',A,B,C,D,E,F,G,H,I,J):-!,makeShare(E,K),hnf('Prelude.>>='('Directory.getModificationTime'('FlatCurry.flatCurryFileName'(K)),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15',[F,K,D,C,B,A])),H,I,J).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14_ComplexCase'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14'(?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14'(A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.>>='('Directory.getModificationTime'(C),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15',[F,E,D,B,G,A])),H,I,J).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15'(?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15'(A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.>>='('Directory.getModificationTime'(C),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16',[F,E,D,B,G,A])),H,I,J).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15'(?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15'(A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.=='('Time.compareClockTime'(B,G),'Prelude.GT'),K,I,L),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase'(K,A,B,C,D,E,F,G,H,L,J).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16'(?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16'(A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.=='('Time.compareClockTime'(B,G),'Prelude.GT'),K,I,L),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase'(K,A,B,C,D,E,F,G,H,L,J).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase'(-,?,?,?,?,?,?,?,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase'(?,?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase'('Prelude.True',A,B,C,D,E,F,G,H,I,J):-hnf('CurryDoc.copyOrMakeDoc'(D,F,C,A,E),H,I,J).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase'('Prelude.False',A,B,C,D,E,F,G,H,I,J):-!,makeShare(F,K),hnf(K,L,I,M),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase_Prelude.False_6'(L,A,B,C,D,E,L,G,H,M,J).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase'(-,?,?,?,?,?,?,?,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase'(?,?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase'('Prelude.True',A,B,C,D,E,F,G,H,I,J):-hnf('CurryDoc.copyOrMakeDoc'(D,F,C,A,E),H,I,J).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase'('Prelude.False',A,B,C,D,E,F,G,H,I,J):-!,makeShare(F,K),hnf(K,L,I,M),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase_Prelude.False_6'(L,A,B,C,D,E,L,G,H,M,J).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase_Prelude.False_6'(-,?,?,?,?,?,?,?,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase_Prelude.False_6'(?,?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase_Prelude.False_6'('Prelude.True',A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.>>='('CurryDoc.getImports'(E),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16',[F,D,C,A])),H,I,J).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase_Prelude.False_6'('Prelude.False',A,B,C,D,E,F,G,H,I,J):-!,hnf('Prelude.done',H,I,J).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase_Prelude.False_6'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15_ComplexCase'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase_Prelude.False_6'(-,?,?,?,?,?,?,?,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase_Prelude.False_6'(?,?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase_Prelude.False_6'('Prelude.True',A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.>>='('CurryDoc.getImports'(E),partcall(1,'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16\'2E_\'23lambda17',[F,D,C,A])),H,I,J).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase_Prelude.False_6'('Prelude.False',A,B,C,D,E,F,G,H,I,J):-!,hnf('Prelude.done',H,I,J).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase_Prelude.False_6'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16_ComplexCase'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16'(?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16'(A,B,C,D,E,F,G,H):-hnf('Prelude.apply'('Prelude.mapIO_'(partcall(1,'CurryDoc.makeDocIfNecessary',[A,B,D,C])),E),F,G,H).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16\'2E_\'23lambda17'(?,?,?,?,?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23lambda14\'2E_\'23lambda15\'2E_\'23lambda16\'2E_\'23lambda17'(A,B,C,D,E,F,G,H):-hnf('Prelude.apply'('Prelude.mapIO_'(partcall(1,'CurryDoc.makeDocIfNecessary',[A,B,D,C])),E),F,G,H).
 
 :-block 'CurryDoc.getImports'(?,?,-,?).
-'CurryDoc.getImports'(A,B,C,D):-makeShare(E,F),makeShare(A,G),hnf('Prelude.cond'('Prelude.letrec'(F,'FlatCurry.flatCurryIntName'(G)),'Prelude.>>='('Directory.doesFileExist'(F),partcall(1,'CurryDoc.getImports\'2E_\'23lambda17',[G,F]))),B,C,D).
+'CurryDoc.getImports'(A,B,C,D):-makeShare(E,F),makeShare(A,G),hnf('Prelude.cond'('Prelude.letrec'(F,'FlatCurry.flatCurryIntName'(G)),'Prelude.>>='('Directory.doesFileExist'(F),partcall(1,'CurryDoc.getImports\'2E_\'23lambda18',[G,F]))),B,C,D).
 
-:-block 'CurryDoc.getImports\'2E_\'23lambda17'(?,?,?,?,-,?).
-'CurryDoc.getImports\'2E_\'23lambda17'(A,B,C,D,E,F):-hnf('Prelude.>>='('CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0'(C,A,B),partcall(1,'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18',[])),D,E,F).
+:-block 'CurryDoc.getImports\'2E_\'23lambda18'(?,?,?,?,-,?).
+'CurryDoc.getImports\'2E_\'23lambda18'(A,B,C,D,E,F):-hnf('Prelude.>>='('CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0'(C,A,B),partcall(1,'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19',[])),D,E,F).
 
-:-block 'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18'(?,?,-,?).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18'(A,B,C,D):-hnf(A,E,C,F),'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18_1'(E,B,F,D).
+:-block 'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19'(?,?,-,?).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19'(A,B,C,D):-hnf(A,E,C,F),'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19_1'(E,B,F,D).
 
-:-block 'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18_1'(?,?,-,?).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18_1'('FlatCurry.Prog'(A,B,C,D,E),F,G,H):-!,hnf('Prelude.return'(B),F,G,H).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23lambda18_1'('FAIL'(A),'FAIL'(A),B,B):-nonvar(A).
+:-block 'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19_1'(?,?,-,?).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19_1'('FlatCurry.Prog'(A,B,C,D,E),F,G,H):-!,hnf('Prelude.return'(B),F,G,H).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23lambda19_1'('FAIL'(A),'FAIL'(A),B,B):-nonvar(A).
 
 :-block 'CurryDoc.copyOrMakeDoc'(?,?,?,?,?,?,-,?).
-'CurryDoc.copyOrMakeDoc'(A,B,C,D,E,F,G,H):-makeShare(A,I),makeShare(C,J),makeShare(E,K),hnf('Prelude.>>='('CurryDoc.copyDocIfPossible'(I,J,K),partcall(1,'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19',[B,K,I,J,D])),F,G,H).
+'CurryDoc.copyOrMakeDoc'(A,B,C,D,E,F,G,H):-makeShare(A,I),makeShare(C,J),makeShare(E,K),hnf('Prelude.>>='('CurryDoc.copyDocIfPossible'(I,J,K),partcall(1,'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20',[B,K,I,J,D])),F,G,H).
 
-:-block 'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19'(?,?,?,?,?,?,?,-,?).
-'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19'(A,B,C,D,E,F,G,H,I):-hnf(F,J,H,K),'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19_6'(J,A,B,C,D,E,G,K,I).
+:-block 'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20'(?,?,?,?,?,?,?,-,?).
+'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20'(A,B,C,D,E,F,G,H,I):-hnf(F,J,H,K),'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20_6'(J,A,B,C,D,E,G,K,I).
 
-:-block 'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19_6'(-,?,?,?,?,?,?,?,?),'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19_6'(?,?,?,?,?,?,?,-,?).
-'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19_6'('Prelude.True',A,B,C,D,E,F,G,H):-hnf('Prelude.done',F,G,H).
-'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19_6'('Prelude.False',A,B,C,D,E,F,G,H):-!,hnf('CurryDoc.makeDoc'(C,E,B,A,D),F,G,H).
-'CurryDoc.copyOrMakeDoc\'2E_\'23lambda19_6'('FAIL'(A),B,C,D,E,F,'FAIL'(A),G,G).
+:-block 'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20_6'(-,?,?,?,?,?,?,?,?),'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20_6'(?,?,?,?,?,?,?,-,?).
+'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20_6'('Prelude.True',A,B,C,D,E,F,G,H):-hnf('Prelude.done',F,G,H).
+'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20_6'('Prelude.False',A,B,C,D,E,F,G,H):-!,hnf('CurryDoc.makeDoc'(C,E,B,A,D),F,G,H).
+'CurryDoc.copyOrMakeDoc\'2E_\'23lambda20_6'('FAIL'(A),B,C,D,E,F,'FAIL'(A),G,G).
 
 :-block 'CurryDoc.copyDocIfPossible'(?,?,?,?,-,?).
 'CurryDoc.copyDocIfPossible'(A,B,C,D,E,F):-hnf('Prelude.=='('CurryDocParams.docType'(A),'CurryDocParams.TexDoc'),G,E,H),'CurryDoc.copyDocIfPossible_ComplexCase'(G,A,B,C,D,H,F).
 
 :-block 'CurryDoc.copyDocIfPossible_ComplexCase'(-,?,?,?,?,?,?),'CurryDoc.copyDocIfPossible_ComplexCase'(?,?,?,?,?,-,?).
 'CurryDoc.copyDocIfPossible_ComplexCase'('Prelude.True',A,B,C,D,E,F):-hnf('Prelude.return'('Prelude.False'),D,E,F).
-'CurryDoc.copyDocIfPossible_ComplexCase'('Prelude.False',A,B,C,D,E,F):-!,makeShare(G,H),makeShare(C,I),hnf('Prelude.cond'('Prelude.letrec'(H,'Prelude.++'('CurryDoc.getDirName'(I),'Prelude.++'([^/,'^C','^D','^O','^C',^/],'Prelude.apply'('CurryDocRead.getLastName',I)))),'Prelude.>>='('Directory.doesFileExist'('Prelude.++'(H,[^.,'^h','^t','^m','^l'])),partcall(1,'CurryDoc.copyDocIfPossible\'2E_\'23lambda20',[I,H,B]))),D,E,F).
+'CurryDoc.copyDocIfPossible_ComplexCase'('Prelude.False',A,B,C,D,E,F):-!,makeShare(G,H),makeShare(C,I),hnf('Prelude.cond'('Prelude.letrec'(H,'Prelude.++'('CurryDoc.getDirName'(I),'Prelude.++'([^/,'^C','^D','^O','^C',^/],'Prelude.apply'('CurryDocRead.getLastName',I)))),'Prelude.>>='('Directory.doesFileExist'('Prelude.++'(H,[^.,'^h','^t','^m','^l'])),partcall(1,'CurryDoc.copyDocIfPossible\'2E_\'23lambda21',[I,H,B]))),D,E,F).
 'CurryDoc.copyDocIfPossible_ComplexCase'('FAIL'(A),B,C,D,'FAIL'(A),E,E).
 
-:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda20'(?,?,?,?,?,-,?).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20'(A,B,C,D,E,F,G):-hnf('Prelude.not'(D),H,F,I),'CurryDoc.copyDocIfPossible\'2E_\'23lambda20_ComplexCase'(H,A,B,C,D,E,I,G).
+:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda21'(?,?,?,?,?,-,?).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21'(A,B,C,D,E,F,G):-hnf('Prelude.not'(D),H,F,I),'CurryDoc.copyDocIfPossible\'2E_\'23lambda21_ComplexCase'(H,A,B,C,D,E,I,G).
 
-:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda20_ComplexCase'(-,?,?,?,?,?,?,?),'CurryDoc.copyDocIfPossible\'2E_\'23lambda20_ComplexCase'(?,?,?,?,?,?,-,?).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20_ComplexCase'('Prelude.True',A,B,C,D,E,F,G):-hnf('Prelude.return'('Prelude.False'),E,F,G).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20_ComplexCase'('Prelude.False',A,B,C,D,E,F,G):-!,hnf('Prelude.>>='('Directory.getModificationTime'('FlatCurry.flatCurryFileName'(C)),partcall(1,'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21',[B,A])),E,F,G).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20_ComplexCase'('FAIL'(A),B,C,D,E,'FAIL'(A),F,F).
+:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda21_ComplexCase'(-,?,?,?,?,?,?,?),'CurryDoc.copyDocIfPossible\'2E_\'23lambda21_ComplexCase'(?,?,?,?,?,?,-,?).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21_ComplexCase'('Prelude.True',A,B,C,D,E,F,G):-hnf('Prelude.return'('Prelude.False'),E,F,G).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21_ComplexCase'('Prelude.False',A,B,C,D,E,F,G):-!,hnf('Prelude.>>='('Directory.getModificationTime'('FlatCurry.flatCurryFileName'(C)),partcall(1,'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22',[B,A])),E,F,G).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21_ComplexCase'('FAIL'(A),B,C,D,E,'FAIL'(A),F,F).
 
-:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21'(?,?,?,?,-,?).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21'(A,B,C,D,E,F):-makeShare(B,G),hnf('Prelude.>>='('Directory.getModificationTime'('Prelude.++'(G,[^.,'^h','^t','^m','^l'])),partcall(1,'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22',[G,A,C])),D,E,F).
+:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22'(?,?,?,?,-,?).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22'(A,B,C,D,E,F):-makeShare(B,G),hnf('Prelude.>>='('Directory.getModificationTime'('Prelude.++'(G,[^.,'^h','^t','^m','^l'])),partcall(1,'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23',[G,A,C])),D,E,F).
 
-:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22'(?,?,?,?,?,-,?).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22'(A,B,C,D,E,F,G):-hnf('Prelude.=='('Time.compareClockTime'(A,D),'Prelude.GT'),H,F,I),'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22_ComplexCase'(H,A,B,C,D,E,I,G).
+:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23'(?,?,?,?,?,-,?).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23'(A,B,C,D,E,F,G):-hnf('Prelude.=='('Time.compareClockTime'(A,D),'Prelude.GT'),H,F,I),'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23_ComplexCase'(H,A,B,C,D,E,I,G).
 
-:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22_ComplexCase'(-,?,?,?,?,?,?,?),'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22_ComplexCase'(?,?,?,?,?,?,-,?).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22_ComplexCase'('Prelude.True',A,B,C,D,E,F,G):-hnf('Prelude.return'('Prelude.False'),E,F,G).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22_ComplexCase'('Prelude.False',A,B,C,D,E,F,G):-!,makeShare(C,H),makeShare(B,I),hnf('Prelude.>>'('Prelude.putStrLn'('Prelude.++'(['^C','^o','^p','^y','^i','^n','^g','^ ','^d','^o','^c','^ ','^f','^i','^l','^e','^ ','^f','^r','^o','^m','^ '],'Prelude.++'(H,[^.,'^h','^t','^m','^l']))),'Prelude.>>'('System.system'('Prelude.++'(['^c','^p','^ '],'Prelude.++'(H,'Prelude.++'([^.,'^h','^t','^m','^l','^ '],I)))),'Prelude.>>'('System.system'('Prelude.++'(['^c','^p','^ '],'Prelude.++'(H,'Prelude.++'(['^_','^c','^u','^r','^r','^y',^.,'^h','^t','^m','^l','^ '],I)))),'Prelude.return'('Prelude.True')))),E,F,G).
-'CurryDoc.copyDocIfPossible\'2E_\'23lambda20\'2E_\'23lambda21\'2E_\'23lambda22_ComplexCase'('FAIL'(A),B,C,D,E,'FAIL'(A),F,F).
+:-block 'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23_ComplexCase'(-,?,?,?,?,?,?,?),'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23_ComplexCase'(?,?,?,?,?,?,-,?).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23_ComplexCase'('Prelude.True',A,B,C,D,E,F,G):-hnf('Prelude.return'('Prelude.False'),E,F,G).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23_ComplexCase'('Prelude.False',A,B,C,D,E,F,G):-!,makeShare(C,H),makeShare(B,I),hnf('Prelude.>>'('Prelude.putStrLn'('Prelude.++'(['^C','^o','^p','^y','^i','^n','^g','^ ','^d','^o','^c','^ ','^f','^i','^l','^e','^ ','^f','^r','^o','^m','^ '],'Prelude.++'(H,[^.,'^h','^t','^m','^l']))),'Prelude.>>'('System.system'('Prelude.++'(['^c','^p','^ '],'Prelude.++'(H,'Prelude.++'([^.,'^h','^t','^m','^l','^ '],I)))),'Prelude.>>'('System.system'('Prelude.++'(['^c','^p','^ '],'Prelude.++'(H,'Prelude.++'(['^_','^c','^u','^r','^r','^y',^.,'^h','^t','^m','^l','^ '],I)))),'Prelude.return'('Prelude.True')))),E,F,G).
+'CurryDoc.copyDocIfPossible\'2E_\'23lambda21\'2E_\'23lambda22\'2E_\'23lambda23_ComplexCase'('FAIL'(A),B,C,D,E,'FAIL'(A),F,F).
 
 :-block 'CurryDoc.getDirName'(?,?,-,?).
 'CurryDoc.getDirName'(A,B,C,D):-makeShare(E,F),hnf('Prelude.cond'('Prelude.letrec'(F,'Prelude.dropWhile'(partcall(1,'Prelude.flip',[^/,partcall(2,'Prelude./=',[])]),'Prelude.apply'('Prelude.reverse',A))),'CurryDoc.getDirName\'2E_\'23caseor0'('Prelude.=='(F,[]),F)),B,C,D).
 
 :-block 'CurryDoc.readFlatCurryWithImports'(?,?,-,?).
-'CurryDoc.readFlatCurryWithImports'(A,B,C,D):-hnf('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105'(A,[]),B,C,D).
+'CurryDoc.readFlatCurryWithImports'(A,B,C,D):-hnf('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112'(A,[]),B,C,D).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105'(?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105'(A,B,C,D,E):-hnf(A,F,D,G),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1'(F,B,C,G,E).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112'(?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112'(A,B,C,D,E):-hnf(A,F,D,G),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1'(F,B,C,G,E).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1'(?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1'([],A,B,C,D):-hnf('Prelude.return'('Prelude.(,,)'([],[],[])),B,C,D).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1'([A|B],C,D,E,F):-!,makeShare(A,G),makeShare(C,H),hnf('Prelude.apply'('Prelude.elem'(G),H),I,E,J),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1_._ComplexCase'(I,G,B,H,D,J,F).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1'(?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1'([],A,B,C,D):-hnf('Prelude.return'('Prelude.(,,)'([],[],[])),B,C,D).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1'([A|B],C,D,E,F):-!,makeShare(A,G),makeShare(C,H),hnf('Prelude.apply'('Prelude.elem'(G),H),I,E,J),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1_._ComplexCase'(I,G,B,H,D,J,F).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1_._ComplexCase'(-,?,?,?,?,?,?),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1_._ComplexCase'(?,?,?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1_._ComplexCase'('Prelude.True',A,B,C,D,E,F):-hnf('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105'(B,C),D,E,F).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1_._ComplexCase'('Prelude.False',A,B,C,D,E,F):-!,makeShare(A,G),hnf('Prelude.>>='('Distribution.findFileInLoadPath'('Prelude.++'(G,[^.,'^f','^c','^y'])),partcall(1,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23',[B,G,C])),D,E,F).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1_._ComplexCase'('FAIL'(A),B,C,D,'FAIL'(A),E,E).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105_1'('FAIL'(A),B,'FAIL'(A),C,C):-nonvar(A).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1_._ComplexCase'(-,?,?,?,?,?,?),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1_._ComplexCase'(?,?,?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1_._ComplexCase'('Prelude.True',A,B,C,D,E,F):-hnf('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112'(B,C),D,E,F).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1_._ComplexCase'('Prelude.False',A,B,C,D,E,F):-!,makeShare(A,G),hnf('Prelude.>>='('Distribution.findFileInLoadPath'('Prelude.++'(G,[^.,'^f','^c','^y'])),partcall(1,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24',[B,G,C])),D,E,F).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1_._ComplexCase'('FAIL'(A),B,C,D,'FAIL'(A),E,E).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112_1'('FAIL'(A),B,'FAIL'(A),C,C):-nonvar(A).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23'(?,?,?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23'(A,B,C,D,E,F,G):-hnf('Prelude.>>='('FlatCurry.readFlatCurryFile'(D),partcall(1,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24',[C,B,A])),E,F,G).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24'(?,?,?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24'(A,B,C,D,E,F,G):-hnf('Prelude.>>='('FlatCurry.readFlatCurryFile'(D),partcall(1,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25',[C,B,A])),E,F,G).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24'(?,?,?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24'(A,B,C,D,E,F,G):-hnf(D,H,F,I),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24_4'(H,A,B,C,E,I,G).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25'(?,?,?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25'(A,B,C,D,E,F,G):-hnf(D,H,F,I),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25_4'(H,A,B,C,E,I,G).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24_4'(?,?,?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24_4'('FlatCurry.Prog'(A,B,C,D,E),F,G,H,I,J,K):-!,hnf('Prelude.>>='('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105'('Prelude.++'(H,B),[G|F]),partcall(1,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25',[C,E,D])),I,J,K).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24_4'('FAIL'(A),B,C,D,'FAIL'(A),E,E):-nonvar(A).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25_4'(?,?,?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25_4'('FlatCurry.Prog'(A,B,C,D,E),F,G,H,I,J,K):-!,hnf('Prelude.>>='('CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112'('Prelude.++'(H,B),[G|F]),partcall(1,'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26',[C,E,D])),I,J,K).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25_4'('FAIL'(A),B,C,D,'FAIL'(A),E,E):-nonvar(A).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25'(?,?,?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25'(A,B,C,D,E,F,G):-hnf(D,H,F,I),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25_4'(H,A,B,C,E,I,G).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26'(?,?,?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26'(A,B,C,D,E,F,G):-hnf(D,H,F,I),'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26_4'(H,A,B,C,E,I,G).
 
-:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25_4'(?,?,?,?,?,-,?).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25_4'('Prelude.(,,)'(A,B,C),D,E,F,G,H,I):-!,hnf('Prelude.return'('Prelude.(,,)'('Prelude.++'(F,A),'Prelude.++'(D,B),'Prelude.++'(E,C))),G,H,I).
-'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E105\'2E_\'23lambda23\'2E_\'23lambda24\'2E_\'23lambda25_4'('FAIL'(A),B,C,D,'FAIL'(A),E,E):-nonvar(A).
+:-block 'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26_4'(?,?,?,?,?,-,?).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26_4'('Prelude.(,,)'(A,B,C),D,E,F,G,H,I):-!,hnf('Prelude.return'('Prelude.(,,)'('Prelude.++'(F,A),'Prelude.++'(D,B),'Prelude.++'(E,C))),G,H,I).
+'CurryDoc.readFlatCurryWithImports\'2EcollectMods\'2E112\'2E_\'23lambda24\'2E_\'23lambda25\'2E_\'23lambda26_4'('FAIL'(A),B,C,D,'FAIL'(A),E,E):-nonvar(A).
 
 :-block 'CurryDoc.findSourceFileInLoadPath'(?,?,-,?).
-'CurryDoc.findSourceFileInLoadPath'(A,B,C,D):-makeShare(A,E),hnf('Prelude.>>='('Distribution.getLoadPathForFile'(E),partcall(1,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26',[E])),B,C,D).
+'CurryDoc.findSourceFileInLoadPath'(A,B,C,D):-makeShare(A,E),hnf('Prelude.>>='('Distribution.getLoadPathForFile'(E),partcall(1,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27',[E])),B,C,D).
 
-:-block 'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26'(?,?,?,-,?).
-'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26'(A,B,C,D,E):-makeShare(A,F),hnf('Prelude.>>='('FileGoodies.lookupFileInPath'('FileGoodies.baseName'(F),[[^.,'^l','^c','^u','^r','^r','^y'],[^.,'^c','^u','^r','^r','^y']],B),partcall(1,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26\'2E_\'23lambda27',[F])),C,D,E).
+:-block 'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27'(?,?,?,-,?).
+'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27'(A,B,C,D,E):-makeShare(A,F),hnf('Prelude.>>='('FileGoodies.lookupFileInPath'('FileGoodies.baseName'(F),[[^.,'^l','^c','^u','^r','^r','^y'],[^.,'^c','^u','^r','^r','^y']],B),partcall(1,'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27\'2E_\'23lambda28',[F])),C,D,E).
 
-:-block 'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26\'2E_\'23lambda27'(?,?,?,-,?).
-'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda26\'2E_\'23lambda27'(A,B,C,D,E):-hnf('Prelude.maybe'('Prelude.error'('Prelude.++'(['^C','^u','^r','^r','^y','^ ','^f','^i','^l','^e','^ ','^f','^o','^r','^ ','^m','^o','^d','^u','^l','^e','^ ','^"'],'Prelude.++'(A,['^"','^ ','^n','^o','^t','^ ','^f','^o','^u','^n','^d','^!']))),'Prelude..'(partcall(1,'Prelude.return',[]),'FileGoodies.stripSuffix'),B),C,D,E).
+:-block 'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27\'2E_\'23lambda28'(?,?,?,-,?).
+'CurryDoc.findSourceFileInLoadPath\'2E_\'23lambda27\'2E_\'23lambda28'(A,B,C,D,E):-hnf('Prelude.maybe'('Prelude.error'('Prelude.++'(['^C','^u','^r','^r','^y','^ ','^f','^i','^l','^e','^ ','^f','^o','^r','^ ','^m','^o','^d','^u','^l','^e','^ ','^"'],'Prelude.++'(A,['^"','^ ','^n','^o','^t','^ ','^f','^o','^u','^n','^d','^!']))),'Prelude..'(partcall(1,'Prelude.return',[]),'FileGoodies.stripSuffix'),B),C,D,E).
 
 :-block 'CurryDoc.fileExtension'(?,?,-,?).
 'CurryDoc.fileExtension'(A,B,C,D):-hnf(A,E,C,F),'CurryDoc.fileExtension_1'(E,B,F,D).
@@ -839,25 +851,13 @@ functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23ca
 'CurryDoc.fileExtension_1'('FAIL'(A),'FAIL'(A),B,B):-nonvar(A).
 
 :-block 'CurryDoc.writeOutfile'(?,?,?,?,?,?,?,-,?).
-'CurryDoc.writeOutfile'(A,B,C,D,E,F,G,H,I):-hnf('Prelude.>>='(F,partcall(1,'CurryDoc.writeOutfile\'2E_\'23lambda28',[B,E,A,C,D])),G,H,I).
+'CurryDoc.writeOutfile'(A,B,C,D,E,F,G,H,I):-hnf('Prelude.>>='(F,partcall(1,'CurryDoc.writeOutfile\'2E_\'23lambda29',[B,E,A,C,D])),G,H,I).
 
-:-block 'CurryDoc.writeOutfile\'2E_\'23lambda28'(?,?,?,?,?,?,?,-,?).
-'CurryDoc.writeOutfile\'2E_\'23lambda28'(A,B,C,D,E,F,G,H,I):-makeShare(D,J),hnf('Prelude.>>='('CurryDoc.getImports'(J),partcall(1,'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29',[E,J,C,B,F,A])),G,H,I).
+:-block 'CurryDoc.writeOutfile\'2E_\'23lambda29'(?,?,?,?,?,?,?,-,?).
+'CurryDoc.writeOutfile\'2E_\'23lambda29'(A,B,C,D,E,F,G,H,I):-makeShare(D,J),hnf('Prelude.>>='('CurryDoc.getImports'(J),partcall(1,'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30',[E,J,C,B,F,A])),G,H,I).
 
-:-block 'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29'(?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29'(A,B,C,D,E,F,G,H,I,J):-makeShare(K,L),makeShare(C,M),makeShare(D,N),makeShare(F,O),hnf('Prelude.cond'('Prelude.letrec'(L,'Prelude.++'(M,'Prelude.++'([^/],'Prelude.++'('Prelude.apply'('CurryDocRead.getLastName',E),'Prelude.++'([^.],'CurryDoc.fileExtension'('CurryDocParams.docType'(N))))))),'Prelude.>>'('Prelude.putStrLn'('Prelude.++'(['^W','^r','^i','^t','^i','^n','^g','^ ','^d','^o','^c','^u','^m','^e','^n','^t','^a','^t','^i','^o','^n','^ ','^t','^o','^ ','^"'],'Prelude.++'(L,['^"',^.,^.,^.]))),'Prelude.>>'('Prelude.writeFile'(L,B),'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0'(O,N,O,M,A,G)))),H,I,J).
-
-:-block 'CurryDoc.makeDocWithComments'(?,?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocWithComments'(A,B,C,D,E,F,G,H,I,J,K):-hnf(A,L,J,M),'CurryDoc.makeDocWithComments_1'(L,B,C,D,E,F,G,H,I,M,K).
-
-:-block 'CurryDoc.makeDocWithComments_1'(?,?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocWithComments_1'('CurryDocParams.HtmlDoc',A,B,C,D,E,F,G,H,I,J):-hnf('Prelude.>>='('Time.getLocalTime',partcall(1,'CurryDoc.makeDocWithComments\'2E_\'23lambda30',[B,E,G,F,A,C,D])),H,I,J).
-'CurryDoc.makeDocWithComments_1'('CurryDocParams.TexDoc',A,B,C,D,E,F,G,H,I,J):-makeShare(A,K),makeShare(D,L),makeShare(E,M),hnf('CurryDoc.writeOutfile'(K,B,C,L,M,'CurryDocTeX.generateTexDocs'(K,L,M,F,G)),H,I,J).
-'CurryDoc.makeDocWithComments_1'('CurryDocParams.CDoc',A,B,C,D,E,F,G,H,I,J):-!,makeShare(D,K),makeShare(E,L),hnf('CurryDoc.writeOutfile'(A,B,C,K,L,'CurryDocCDoc.generateCDoc'(L,F,G,K)),H,I,J).
-'CurryDoc.makeDocWithComments_1'('FAIL'(A),B,C,D,E,F,G,H,'FAIL'(A),I,I):-nonvar(A).
-
-:-block 'CurryDoc.makeDocWithComments\'2E_\'23lambda30'(?,?,?,?,?,?,?,?,?,-,?).
-'CurryDoc.makeDocWithComments\'2E_\'23lambda30'(A,B,C,D,E,F,G,H,I,J,K):-makeShare(C,L),makeShare(B,M),makeShare(A,N),makeShare(F,O),hnf('Prelude.>>'('CurryDoc.writeOutfile'(L,G,M,N,O,'CurryDocHtml.generateHtmlDocs'('CurryDoc.currydocVersion',H,L,N,O,D,E)),'CurryDocHtml.translateSource2ColoredHtml'(M,O)),I,J,K).
+:-block 'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30'(?,?,?,?,?,?,?,?,-,?).
+'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30'(A,B,C,D,E,F,G,H,I,J):-makeShare(K,L),makeShare(C,M),makeShare(D,N),makeShare(F,O),hnf('Prelude.cond'('Prelude.letrec'(L,'Prelude.++'(M,'Prelude.++'([^/],'Prelude.++'('Prelude.apply'('CurryDocRead.getLastName',E),'Prelude.++'([^.],'CurryDoc.fileExtension'('CurryDocParams.docType'(N))))))),'Prelude.>>'('Prelude.putStrLn'('Prelude.++'(['^W','^r','^i','^t','^i','^n','^g','^ ','^d','^o','^c','^u','^m','^e','^n','^t','^a','^t','^i','^o','^n','^ ','^t','^o','^ ','^"'],'Prelude.++'(L,['^"',^.,^.,^.]))),'Prelude.>>'('Prelude.writeFile'(L,B),'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0'(O,N,O,M,A,G)))),H,I,J).
 
 :-block 'CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0'(?,?,?,?,?,?,?,-,?).
 'CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0'(A,B,C,D,E,F,G,H,I):-hnf(A,J,H,K),'CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0_1'(J,B,C,D,E,F,G,K,I).
@@ -867,21 +867,21 @@ functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23ca
 'CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0_1'('Prelude.False',A,B,C,D,E,F,G,H):-!,hnf('Prelude.done',F,G,H).
 'CurryDoc.makeCompleteDoc\'2E_\'23lambda5\'2E_\'23lambda6\'2E_\'23lambda7\'2E_\'23caseor0_1'('FAIL'(A),B,C,D,E,F,'FAIL'(A),G,G).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0'(?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0'(A,B,C,D):-hnf(A,E,C,F),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0_1'(E,B,F,D).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0'(?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0'(A,B,C,D):-hnf(A,E,C,F),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0_1'(E,B,F,D).
 
-:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0_1'(-,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0_1'(?,?,-,?).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0_1'('Prelude.True',[^.,'^h','^t','^m','^l'],A,A).
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0_1'('Prelude.False',[^.,'^t','^e','^x'],A,A):-!.
-'CurryDoc.makeDocIfNecessary\'2E_\'23lambda12\'2E_\'23caseor0_1'('FAIL'(A),'FAIL'(A),B,B).
+:-block 'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0_1'(-,?,?,?),'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0_1'(?,?,-,?).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0_1'('Prelude.True',[^.,'^h','^t','^m','^l'],A,A).
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0_1'('Prelude.False',[^.,'^t','^e','^x'],A,A):-!.
+'CurryDoc.makeDocIfNecessary\'2E_\'23lambda13\'2E_\'23caseor0_1'('FAIL'(A),'FAIL'(A),B,B).
 
-:-block 'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0'(?,?,?,?,-,?).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0'(A,B,C,D,E,F):-hnf(A,G,E,H),'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0_1'(G,B,C,D,H,F).
+:-block 'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0'(?,?,?,?,-,?).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0'(A,B,C,D,E,F):-hnf(A,G,E,H),'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0_1'(G,B,C,D,H,F).
 
-:-block 'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0_1'(-,?,?,?,?,?),'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0_1'(?,?,?,?,-,?).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0_1'('Prelude.True',A,B,C,D,E):-hnf('FlatCurry.readFlatCurryFile'(A),C,D,E).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0_1'('Prelude.False',A,B,C,D,E):-!,hnf('FlatCurry.readFlatCurryFile'('FlatCurry.flatCurryFileName'(B)),C,D,E).
-'CurryDoc.getImports\'2E_\'23lambda17\'2E_\'23caseor0_1'('FAIL'(A),B,C,'FAIL'(A),D,D).
+:-block 'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0_1'(-,?,?,?,?,?),'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0_1'(?,?,?,?,-,?).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0_1'('Prelude.True',A,B,C,D,E):-hnf('FlatCurry.readFlatCurryFile'(A),C,D,E).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0_1'('Prelude.False',A,B,C,D,E):-!,hnf('FlatCurry.readFlatCurryFile'('FlatCurry.flatCurryFileName'(B)),C,D,E).
+'CurryDoc.getImports\'2E_\'23lambda18\'2E_\'23caseor0_1'('FAIL'(A),B,C,'FAIL'(A),D,D).
 
 :-block 'CurryDoc.getDirName\'2E_\'23caseor0'(?,?,?,-,?).
 'CurryDoc.getDirName\'2E_\'23caseor0'(A,B,C,D,E):-hnf(A,F,D,G),'CurryDoc.getDirName\'2E_\'23caseor0_1'(F,B,C,G,E).
@@ -891,13 +891,13 @@ functiontype('CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23ca
 'CurryDoc.getDirName\'2E_\'23caseor0_1'('Prelude.False',A,B,C,D):-!,hnf('Prelude.apply'('Prelude.reverse','Prelude.tail'(A)),B,C,D).
 'CurryDoc.getDirName\'2E_\'23caseor0_1'('FAIL'(A),B,'FAIL'(A),C,C).
 
-:-block 'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0'(?,?,?,?,?,?,?,-,?).
-'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0'(A,B,C,D,E,F,G,H,I):-hnf(A,J,H,K),'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0_1'(J,B,C,D,E,F,G,K,I).
+:-block 'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0'(?,?,?,?,?,?,?,-,?).
+'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0'(A,B,C,D,E,F,G,H,I):-hnf(A,J,H,K),'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0_1'(J,B,C,D,E,F,G,K,I).
 
-:-block 'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0_1'(-,?,?,?,?,?,?,?,?),'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0_1'(?,?,?,?,?,?,?,-,?).
-'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0_1'('Prelude.True',A,B,C,D,E,F,G,H):-hnf('Prelude.apply'('Prelude.mapIO_'(partcall(1,'CurryDoc.makeDocIfNecessary',[D,C,B,A])),E),F,G,H).
-'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0_1'('Prelude.False',A,B,C,D,E,F,G,H):-!,hnf('Prelude.done',F,G,H).
-'CurryDoc.writeOutfile\'2E_\'23lambda28\'2E_\'23lambda29\'2E_\'23caseor0_1'('FAIL'(A),B,C,D,E,F,'FAIL'(A),G,G).
+:-block 'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0_1'(-,?,?,?,?,?,?,?,?),'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0_1'(?,?,?,?,?,?,?,-,?).
+'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0_1'('Prelude.True',A,B,C,D,E,F,G,H):-hnf('Prelude.apply'('Prelude.mapIO_'(partcall(1,'CurryDoc.makeDocIfNecessary',[D,C,B,A])),E),F,G,H).
+'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0_1'('Prelude.False',A,B,C,D,E,F,G,H):-!,hnf('Prelude.done',F,G,H).
+'CurryDoc.writeOutfile\'2E_\'23lambda29\'2E_\'23lambda30\'2E_\'23caseor0_1'('FAIL'(A),B,C,D,E,F,'FAIL'(A),G,G).
 
 :-costCenters(['']).
 

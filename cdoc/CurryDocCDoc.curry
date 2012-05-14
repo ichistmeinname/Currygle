@@ -24,18 +24,22 @@ generateCDoc progname modcmts progcmts anainfo = do
   	     putStrLn $ "Reading FlatCurry program \""++fcyname++"\"..."
   	     (Prog modname imports types functions ops) <- readFlatCurryFile fcyname
 	     return $
-	     	    showTerm ((\ (modcmts,avcmts) -> ( modname 
-			       	  		    , getCommentType "version" avcmts
-						    , getCommentType "author" avcmts
+	     	    showTerm ((\ (mod,av) -> ( modname 
+			       	  		    , versionOrAuthor "version" av
+						    , versionOrAuthor "author" av
 						    , imports
-						    , modcmts
+						    , mod
 						    ))  $ splitComment modcmts
-		   	     , map (\ (x,y) -> (x, splitComment y)) progcmts
-		    	     , types
-		    	     , functions
-		    	     , ops
-		    	     -- , anainfo
+		   	     -- ,( map (\ (x,y) -> (x, splitComment y)) progcmts
+		    	     -- , types
+		    	     -- , functions
+		    	     -- , ops
+		    	     -- , anainfo)
 			     )
 		    	     
 		    
 
+-- auxilieres --------------------------------------------------------
+
+versionOrAuthor :: String -> [(String, String)] -> String
+versionOrAuthor string av = concat $ getCommentType string av
