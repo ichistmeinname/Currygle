@@ -3,14 +3,13 @@
 # Required:
 # - installed curry2prolog system
 
-PAKCS=../../../../../../Downloads/pakcs
-LIB=${PAKCS}/lib
+LIB=../../../../../../Downloads/pakcs/lib
 META=${LIB}/meta
-ANADIR=${PAKCS}/tools/analysis
+ANADIR=../../../../../../Downloads/pakcs/tools/analysis
 
 # generate saved state for currydoc program:
 CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
-	        CurryDocTeX.curry CurryDocParams.curry CurryDocCDoc.curry \
+	        CurryDocTeX.curry CurryDocParams.curry \
 	        ${LIB}/Markdown.curry \
 	        ${META}/FlexRigid.curry \
 	        ${LIB}/CategorizedHtmlList.curry \
@@ -20,12 +19,12 @@ CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
 	        ${ANADIR}/AnaCompleteness.curry ${ANADIR}/AnaOpComplete.curry \
 	        ${ANADIR}/AnaDependency.curry 
 	(echo ":set path ${ANADIR}" ; echo ":l CurryDoc" ; echo ":set path" ; \
-	 echo ":save main" ) | ~/Downloads/pakcs/bin/pakcs
-	(cd ~/Downloads/pakcs/bin ; rm -f currydoc ; \
-	                ln -s ~/Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/cdoc/CurryDoc.state currydoc)
+	 echo ":save main" ) | ../../../../../../Downloads/pakcs/bin/pakcs
+	(cd ../../../../../../Downloads/pakcs/bin ; rm -f currydoc ; \
+	                ln -s ../../../Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/cdoc/CurryDoc.state currydoc)
 
 
 .PHONY: clean
 clean: 
-	~/Downloads/pakcs/bin/cleancurry
-	rm -f ~/Downloads/pakcs/bin/currydoc
+	../../../../../../Downloads/pakcs/bin/cleancurry
+	rm -f ../../../../../../Downloads/pakcs/bin/currydoc
