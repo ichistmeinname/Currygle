@@ -4,53 +4,66 @@
 
 -- | Information about a curry module, function and type.
 
-data ModuleInfo     = ModuleInfo
-                      { mName         :: String           -- ^ the name
-                      , mVersion      :: String           -- ^ the latest version
-                      , mAuthor       :: String           -- ^ the author
-                      , mImports      :: [String]         -- ^ list of the imported modules
-                      , mDescription  :: String           -- ^ the description as Comment String
-                      } deriving (Show, Read)
+-- the name
+-- the latest version
+-- the author
+-- list of the imported modules
+-- the description
+data ModuleInfo = ModuleInfo String String String [String] String deriving (Show, Read)
 
-showM n v a i d = show ModuleInfo {mName = n, mVersion = v, mAuthor = a, mImports = i, mDescription = d} 
+-- the module
+-- the corresponding functions
+-- the corresponding data and type declaration
+data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo] deriving (Show, Read)
 
+-- the name
+-- the signature
+-- the corresponding module
+-- the description
+-- True if property ist defined non-deterministically
+-- the flex/rigid status
+data FunctionInfo = FunctionInfo String [String] String String Bool FlexRigidResult deriving (Show, Read)
 
--- data CurryInfo   = CurryInfo      
---                    { c_name         :: String           -- ^ the name
---                    , c_definition   :: SourceLine       -- ^ the signature as ModDef, FuncDef String or DataDef String
---                    , c_module       :: SourceLine       -- ^ the corresponding module as ModDef
---                    , c_description  :: SourceLine       -- ^ the description as Comment String
---                    }
+-- the name
+-- the signature
+-- the corresponding module
+-- the description
+data TypeInfo       = TypeInfo String [[String]] String String deriving (Show, Read)
 
-
-data FunctionInfo   = FunctionInfo      
-                      { f_name         :: String           -- ^ the name
-                      , f_signature    :: [String]         -- ^ the signature
-                      , f_module       :: String           -- ^ the corresponding module
-                      , f_description  :: String           -- ^ the description
-                      , f_nondet       :: Bool             -- ^ 'True' if property is definied non-deterministically
-                      , f_flexRigid    :: FlexRigidResult  -- ^ the flex/rigid status 
-                      }
-
-data TypeInfo       = TypeInfo
-                      { t_name         :: String           -- ^ the name
-                      , t_signature    :: SourceLine       -- ^ the signature as DataDef String
-                      , t_module       :: SourceLine       -- ^ the corresponding module as ModDef
-                      , t_description  :: SourceLine       -- ^ the description as Comment String
-                      }
-
-data SourceLine = Comment String  -- a comment for CurryDoc
-                | FuncDef String  -- a definition of a function
-                | DataDef String  -- a definition of a datatype
-                | ModDef          -- a line containing a module definition
-                | OtherLine       -- a line not relevant for CurryDoc
-                  deriving (Show, Read)
-
-data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid
+-- records don't work in curry
+-- data ModuleInfo   = ModuleInfo
+--                     { mName         :: String           -- ^ the name
+--                     , mVersion      :: String           -- ^ the latest version
+--                     , mAuthor       :: String           -- ^ the author
+--                     , mImports      :: [String]         -- ^ list of the imported modules
+--                     , mDescription  :: String           -- ^ the description as Comment String
+--                     } deriving (Show, Read)
 
 
--- type Test = [(SourceLine, (String, [(String, String)]))]
+-- data CurryInfo    = CurryInfo      
+--                     { cModule      :: ModuleInfo        -- ^ the curry module
+--                     , cFunctions   :: [FunctionInfo]    -- ^ the corresponding functions
+--                     , cTypes       :: [TypeInfo]        -- ^ the corresponding types     
+--                     } deriving (Show, Read)
 
+
+-- data FunctionInfo = FunctionInfo      
+--                     { fName         :: String           -- ^ the name
+--                     , fSignature    :: [String]         -- ^ the signature
+--                     , fModule       :: String           -- ^ the corresponding module
+--                     , fDescription  :: String           -- ^ the description
+--                     , fNondet       :: Bool             -- ^ 'True' if property is definied non-deterministically
+--                     , fFlexRigid    :: FlexRigidResult  -- ^ the flex/rigid status 
+--                     } deriving (Show, Read)
+
+-- data TypeInfo     = TypeInfo
+--                     { tName         :: String           -- ^ the name
+--                     , tSignature    :: [[String]]       -- ^ the signature
+--                     , tModule       :: String           -- ^ the corresponding module
+--                     , tDescription  :: String           -- ^ the description
+--                     } deriving (Show, Read)
+
+data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid deriving (Show, Read)
 
 -- | auxilieres 
 
@@ -58,11 +71,9 @@ data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid
 test :: FilePath -> IO String
 test a = do
        text <- readFile a
-       (n, v, ana, i, d) <- readIO text 
-       return $ showM n v ana i d
+       CurryInfo m f t <- readIO text 
+       return $ show (CurryInfo m f t)
 
 
 file = "../../../../../Desktop/DOC_firstprog/firstprog.cdoc"
-
-showSome = show ModuleInfo {mName = "RecordTest", mVersion = "0.1", mAuthor = "Sandra Dylus", mImports = [""], mDescription = "Ein Kommentar zum Test"}
        
