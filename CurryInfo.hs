@@ -23,21 +23,21 @@ showM n v a i d = show ModuleInfo {mName = n, mVersion = v, mAuthor = a, mImport
 --                    }
 
 
--- data FunctionInfo   = FunctionInfo      
---                       { f_name         :: String           -- ^ the name
---                       , f_signature    :: SourceLine       -- ^ the signature as FuncDef String
---                       , f_module       :: SourceLine       -- ^ the corresponding module as ModDef
---                       , f_description  :: SourceLine       -- ^ the description as Comment String
---                       , f_nondet       :: Bool             -- ^ 'True' if property is definied non-deterministically
---                       , f_flexRigid    :: FlexRigidResult  -- ^ the flex/rigid status 
---                       }
+data FunctionInfo   = FunctionInfo      
+                      { f_name         :: String           -- ^ the name
+                      , f_signature    :: [String]         -- ^ the signature
+                      , f_module       :: String           -- ^ the corresponding module
+                      , f_description  :: String           -- ^ the description
+                      , f_nondet       :: Bool             -- ^ 'True' if property is definied non-deterministically
+                      , f_flexRigid    :: FlexRigidResult  -- ^ the flex/rigid status 
+                      }
 
--- data TypeInfo       = TypeInfo
---                       { t_name         :: String           -- ^ the name
---                       , t_signature    :: SourceLine       -- ^ the signature as DataDef String
---                       , t_module       :: SourceLine       -- ^ the corresponding module as ModDef
---                       , t_description  :: SourceLine       -- ^ the description as Comment String
---                       }
+data TypeInfo       = TypeInfo
+                      { t_name         :: String           -- ^ the name
+                      , t_signature    :: SourceLine       -- ^ the signature as DataDef String
+                      , t_module       :: SourceLine       -- ^ the corresponding module as ModDef
+                      , t_description  :: SourceLine       -- ^ the description as Comment String
+                      }
 
 data SourceLine = Comment String  -- a comment for CurryDoc
                 | FuncDef String  -- a definition of a function
@@ -45,6 +45,9 @@ data SourceLine = Comment String  -- a comment for CurryDoc
                 | ModDef          -- a line containing a module definition
                 | OtherLine       -- a line not relevant for CurryDoc
                   deriving (Show, Read)
+
+data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid
+
 
 -- type Test = [(SourceLine, (String, [(String, String)]))]
 
@@ -55,8 +58,9 @@ data SourceLine = Comment String  -- a comment for CurryDoc
 test :: FilePath -> IO String
 test a = do
        text <- readFile a
-       (n, v, a, i, d) <- readIO text 
-       return $ showM n v a i d
+       (n, v, ana, i, d) <- readIO text 
+       return $ showM n v ana i d
+
 
 file = "../../../../../Desktop/DOC_firstprog/firstprog.cdoc"
 
