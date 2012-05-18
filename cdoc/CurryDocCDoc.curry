@@ -15,10 +15,6 @@ import FlexRigid
 import ReadShowTerm
 import List
 
-
-
--- generateCDoc :: String  -> String -> [(SourceLine,String)] -> AnaInfo -> [String] -> IO (String, (String, [(String,String)]), [(SourceLine, (String, [(String,String)]))], [TypeDecl], [FuncDecl], [OpDecl], AnaInfo, [String])
--- generateCDoc :: String  -> String -> [(SourceLine,String)] -> AnaInfo -> IO ([String], (String, (String, [(String,String)]), [(SourceLine, (String, [(String,String)]))], [TypeDecl], [FuncDecl], [OpDecl]))
 generateCDoc :: String  -> String -> [(SourceLine,String)] -> AnaInfo -> IO String
 generateCDoc progName modCmts progCmts anaInfo = do
     putStrLn $ "Reading FlatCurry program \""++fcyName++"\"..."
@@ -37,31 +33,43 @@ generateCDoc progName modCmts progCmts anaInfo = do
     				   , imports
     				   , mCmts)
 	modInfos = modInfo $ splitComment modCmts
-    return $ showTerm (modInfos, funcInfos)
+	typeInfos = map typeInfo types
+	typeInfo (Type (mName, tName) _ _ consDecl) = 
+		       	       	   (tName
+	       	       	      	   , map consSignature consDecl	
+				   , mName
+				   , getDataComment tName progCmts)
+        typeInfo (TypeSyn (mName, tName) _ _ tExpr) =
+		 	  	  (tName
+				  , [typeSignature tExpr]
+				  , mName
+				  , getDataComment tName progCmts)
+    return $ showTerm (modInfos, funcInfos, typeInfos)
   where fcyName  = flatCurryFileName progName
 
 -- auxilieres --------------------------------------------------------
 
+
+consSignature :: ConsDecl -> [String]
+consSignature (Cons (_, cName) _ _ tExprList) = cName : concatMap typeSignature tExprList
+
 versionOrAuthor :: String -> [(String, String)] -> String
 versionOrAuthor string av = concat $ getCommentType string av
 
-
 -- for special type constructors like [Int] or (String, String)
-prettyPrintSpecialType :: String -> [TypeExpr] -> String
-prettyPrintSpecialType cName tExprList  = 
-    if null tExprList then cName else typeConstructorApplication cName tExprList
+prettyPrintType :: [TypeExpr] -> String
+prettyPrintType [] = []	      -- shouldn't occur
+prettyPrintType [tExpr] = "[" ++ concat (typeSignature tExpr) ++ "]"
+prettyPrintType tExprList@(_:_:_) = "(" ++ intercalate "," (concatMap typeSignature tExprList) ++ ")"
 
--- generates type signature 
-typeSignature :: TypeExpr -> String
-typeSignature (TCons (_, cName) tExprList)   	  	    = prettyPrintSpecialType cName tExprList
-typeSignature (FuncType (TCons (_, cName) tExprList) tExpr) = prettyPrintSpecialType cName tExprList ++ ("->" ++ (typeSignature tExpr))
+-- generate type signature 
+typeSignature :: TypeExpr -> [String]
+typeSignature (TCons (_, cName) tExprList) = 
+   if null tExprList then cName : [] else [prettyPrintType tExprList]
+typeSignature (FuncType (TCons (_, cName) []) tExpr) =
+  cName : typeSignature tExpr
+typeSignature (FuncType (TCons (_, cName) tExprList@(_:_)) tExpr) =
+  prettyPrintType tExprList : typeSignature tExpr
 
-typeConstructorApplication :: String -> [TypeExpr] -> String
-typeConstructorApplication cName tExprList =
-    if isListConstructor cName then "[" ++ concatMap typeSignature tExprList ++ "]" 
-       			       else "(" ++ intercalate "," (map typeSignature tExprList) ++ ")" 
-
-isListConstructor :: String -> Bool
-isListConstructor = ("[]" ==)
-
+intercalate :: [a] -> [[a]] -> [a]
 intercalate sep = concat . intersperse sep 
