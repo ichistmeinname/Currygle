@@ -43,7 +43,6 @@ import AnaIndeterminism
 import AnaOpComplete
 import Distribution
 
-import ReadShowTerm
 import CurryDocCDoc
 --------------------------------------------------------------------------
 -- Global definitions:
@@ -126,11 +125,11 @@ makeCompleteDoc docparams recursive docdir modname = do
   -- change access rights to readable for everybody:
   system ("chmod -R go+rX "++docdir)
   done
-        where getProg HtmlDoc = readFlatCurryWithImports [modname]
-              getProg TexDoc  = readFlatCurryWithImports [modname]
-              getProg CDoc    = do
-                                Prog _ _ t f o <- readFlatCurry modname
-                                return (t, f, o)
+    where getProg HtmlDoc = readFlatCurryWithImports [modname]
+          getProg TexDoc  = readFlatCurryWithImports [modname]
+          getProg CDoc    = do
+              Prog _ _ t f o <- readFlatCurry modname
+              return (t, f, o)
 
 
 --- Generate only the index pages for a list of (already compiled!) modules:
