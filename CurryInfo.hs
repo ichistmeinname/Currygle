@@ -75,5 +75,6 @@ test a = do
        return $ show (CurryInfo m f t)
 
 
-file = "../../../../../Desktop/DOC_firstprog/firstprog.cdoc"
+file = "../../../../file = "../../../../../Desktop/DOC_firstprog/firstprog.cdoc"
+../Desktop/DOC_firstprog/firstprog.cdoc"
        
