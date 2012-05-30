@@ -1,15 +1,9 @@
+
 module Main (main) 
+
 where 
--- import Holumbus.Index.Common.LoadStore
--- import Holumbus.Index.Inverted.CompressedPrefixMem hiding (Inverted (..))
--- import qualified Holumbus.Index.Inverted.CompressedPrefixMem as PM
+
 import Holumbus.Index.Common
--- import Holumbus.Index.Common.DocId
--- import Holumbus.Index.Common.DocIdMap
--- import Holumbus.Index.Common.Occurenceshide Inverted (..))
--- import Holumbus.Index.Common.Document
--- import Holumbus.Index.CompactIndex
--- import qualified Holumbus.Index.CompactIndex as CI
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
 import qualified Holumbus.Index.CompactDocuments as CD
 import Data.Word (Word32)
@@ -33,8 +27,7 @@ main = do
 -- curryState index documents = IndexerState index documents
 
 doc :: CurryInfo ->  Documents CurryInfo
-doc curryI = CD.singleton (Document {title = mName (moduleInfo curryI) , uri = "file:///Users/ichistmeinname/Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/CurrySearch/index/DOC_firstprog/" ++ map toLower (mName (moduleInfo curryI)) ++ ".html", custom = Just curryI})
-
+doc curryI = CD.singleton (Document {title = mName (moduleInfo curryI) , uri = {-map toLower (mName $ moduleInfo curryI) ++ ".html"-} "http://www.heise.de", custom = Just curryI})
 
 idx :: CurryInfo -> Inverted
 idx curryI = fromList emptyInverted (contextList curryI)
@@ -44,17 +37,21 @@ contextList curryI = contextsMod (moduleInfo curryI) ++ concat (map contextsF (f
 
 contextsMod :: ModuleInfo -> [(String, String, Occurrences)]
 contextsMod moduleI = 
-    map (addOcc  (occ nullDocId 1)) [("Name", mName moduleI), ("Author", mAuthor moduleI), ("Description", mDescription moduleI)]    
+    map (addOcc  (occ nullDocId 1)) $ [("Name", mName moduleI)] 
+                                   ++ (author $ mAuthor moduleI) 
+                                   ++ (description $ mDescription moduleI)
 
 contextsF :: FunctionInfo -> [(String, String, Occurrences)]
 contextsF functionI =
-    map (addOcc  (occ nullDocId 1)) [("Name", fName functionI), ("Signature", intercalate "->" $ fSignature functionI),
-        ("Description", fDescription functionI)]        
+    map (addOcc  (occ nullDocId 1)) $ [("Name", fName functionI)
+                                    , ("Signature", listToSignature $ fSignature functionI)] 
+                                   ++ (description $ fDescription functionI)      
     
 contextsT :: TypeInfo -> [(String, String, Occurrences)]
 contextsT typeI = 
-    map (addOcc  (occ nullDocId 1)) [("Name", tName typeI), ("Signature", intercalate "->" $ concat $ tSignature typeI), 
-        ("Description", tDescription typeI)]        
+    map (addOcc  (occ nullDocId 1)) $ [("Name", tName typeI)
+                                    , ("Signature", listToSignature $ concat $ tSignature typeI)]
+                                   ++ (description $ tDescription typeI)       
 
 
 occ :: DocId -> Word32 -> Occurrences
@@ -63,23 +60,20 @@ occ dId i = singletonOccurrence (incrDocId dId) i
 addOcc :: Occurrences -> (a,b) -> (a,b,Occurrences)
 addOcc occurrence (a,b) = (a,b,occurrence)
 
-splitWhitespace :: String -> [T.Text]
-splitWhitespace text = (T.splitOn  (T.pack " ") (T.pack text))
+description :: String -> [(String,String)]
+description s = map (addContext "Description") $ filter (not . biasedWord) $ splitOnWhitespace s
 
--- docsInfo2 :: Documents CurryInfo
--- docsInfo2 = snd $ insertDoc docsInfo docInfo2
+addContext :: String -> String -> (String, String)
+addContext context s = (context, s)
 
--- docInfo2 :: Document CurryInfo
--- docInfo2 = Document {title = "AnotherTest", uri = "1338URI", custom = Just curryInfo}
+author :: String -> [(String, String)]
+author a = map (addContext "Author") $ splitOnWhitespace $ a
 
--- idx :: Inverted
--- idx = fromList emptyInverted [("headline", "1337", occ),("headline", "Test", occ1),("headline", "AbraKadabra", occ2)]
+splitOnWhitespace :: String -> [String]
+splitOnWhitespace text = map T.unpack (T.splitOn  (T.pack " ") (T.pack text))
 
--- occ, occ1:: Occurrences
--- occ = singletonOccurrence firstDocId 1
--- occ1 = singletonOccurrence (incrDocId firstDocId) 1
+listToSignature :: [String] -> String
+listToSignature xs = intercalate "->" xs
 
--- curryInfo2 :: CurryInfo
--- curryInfo2 = CurryInfo (ModuleInfo "FirstProg" "0.1" "S. Dylus" ["Prelude","Char","List"] "This is another test\n\n") [] []
--- curryInfo :: CurryInfo
--- curryInfo = CurryInfo (ModuleInfo "FirstProg" "0.1" "Sandra Dylus" ["Prelude","Char","List"] "This is a test\n\n") [(FunctionInfo "nine" ["Int"] "FirstProg" [] False UnknownFR),(FunctionInfo "square" ["Int","Int"] "FirstProg" [] False UnknownFR),(FunctionInfo "two" ["Int"] "FirstProg" [] False UnknownFR),(FunctionInfo "three" ["Int"] "FirstProg" [] False UnknownFR),(FunctionInfo "test" ["Int","[Char]","Float","[Char]"] "FirstProg" [] False UnknownFR),(FunctionInfo "listOfNumber" ["Int","[Int]"] "FirstProg" "comment for listOfNumbers" False UnknownFR),(FunctionInfo "aTupel" ["[Char]","[Char]","([Char],[Char],[Char])"] "FirstProg" [] False UnknownFR)] [(TypeInfo "AnotherInt" [["(Int,Int)"]] "FirstProg" []),(TypeInfo "Tree" [["EmptyTree"],["Node","Tree","[Int]","Tree"]] "FirstProg" [])]
+biasedWord :: String -> Bool
+biasedWord s = length s < 3
