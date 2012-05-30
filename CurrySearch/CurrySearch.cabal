@@ -21,7 +21,7 @@ executable curryIndexer
 
   hs-source-dirs: src
   
-  other-modules: IndexTypesC
+  other-modules: IndexTypes
                , CurryInfo
 
   build-depends: ghc                    >= 7

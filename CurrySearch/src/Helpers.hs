@@ -15,16 +15,42 @@
 module Helpers
 where
 
-import Data.List                as L
 import qualified Data.Text      as T
 
-import Text.JSON
 import qualified Text.XmlHtml   as X
 
 -- ----------------------------------------------------------------------------
 
-fhWedelPrefix :: String
-fhWedelPrefix = "http://www.fh-wedel.de/"
+-- all strings with length < 2 are boring
+-- and all strings not starting with a letter
+boringWord                      :: String -> Bool
+boringWord w                    = null w
+                                  ||
+                                  (null . tail $ w)
+
+boringURIpart                   :: String -> Bool
+boringURIpart                   = ( `elem`
+                                    [ ""
+                                    , "http", "www", "wwwab", "fh-wedel", "ptl", "de"
+                                    , "html", "htm", "pdf"
+                                    ]
+                                  )
+
+-- ------------------------------------------------------------
+--
+-- text preprocessing
+--
+-- ------------------------------------------------------------
+
+deleteNotAllowedChars           :: String -> String
+deleteNotAllowedChars           = map notAllowedToSpace
+    where
+    notAllowedToSpace c
+        | isAllowedWordChar c   = c
+        | otherwise             = ' '
+
+isAllowedWordChar   :: Char -> Bool
+isAllowedWordChar c = c `elem` "_-"
 
 -- ----------------------------------------------------------------------------
 -- | Make an one-item-List      
@@ -73,36 +99,6 @@ htmlListItem cssClass xNode =
         else [(T.pack $ "class", T.pack $ cssClass)]
     )
     [xNode]
-
-data DateContextType = DateInStdContent | DateInCalender
-
--- ------------------------------------------------------------------------------
--- | creates a HTML List-Item.
--- | Takes the left Date-Context, the Date itself and the right Date-Context
-
-htmlListItemDate :: DateContextType -> String -> String -> String -> String -> X.Node
-htmlListItemDate DateInCalender _ leftContext date rightContext =
-  htmlLink' "" (fhWedelPrefix ++ leftContext) $
-    X.Element (T.pack $ "li")
-      [(T.pack $ "class", T.pack $ "calenderDateTeaserText")]
-      [ X.Element (T.pack $ "div")
-        []
-        [htmlSpanTextNode "date" date
-        ,htmlSpanTextNode "dateContext" (": " ++ rightContext)
-        ]
-      ]
-
-htmlListItemDate DateInStdContent linkUrl leftContext date rightContext =
-  htmlLink' "" (linkUrl) $
-    X.Element (T.pack $ "li")
-      []
-      [ X.Element (T.pack $ "div")
-        []
-        [htmlSpanTextNode "dateContext" (leftContext ++ " ")
-        ,htmlSpanTextNode "date" date
-        ,htmlSpanTextNode "dateContext" (" " ++ rightContext)
-        ]
-      ]
 
  -- ------------------------------------------------------------------------------
 -- | creates a HTML Txt Node
@@ -165,44 +161,6 @@ htmlLink' cssClass href xNode =
       )
     )
     [xNode]
-
-
--- ------------------------------------------------------------------------------
--- | convert the contexts of a date to html-list-items
--- | i.e. given a JSON-String of Date Contexts (date1,date2,date3,date4,...)
--- | and a listOfMatchedPositions = [0,2]
--- | the result will be
--- | <li class="dates"><a href="linkUrl">...date1...</a></li>
--- | ...
--- | or, if it's a date-context:
--- | <li class="dates"><a href="link-to-calender-event">...date3...</a></li>
--- | ...
-
-mkDateContexts :: (Show i, Enum i) => String -> String -> [i] -> DateContextType -> String -> [X.Node]
-mkDateContexts _ _ [] _ _ = []
-mkDateContexts _ "" _ _ _ = []
-mkDateContexts linkUrl stringOfDateContexts listOfMatchedPositions dct _ =
-  (map str2htmlListItem listOfMatchedContexts)
-    where
-      str2htmlListItem (leftContext,theDate,rightContext) = htmlListItemDate dct linkUrl leftContext theDate rightContext
-      listOfMatchedContexts = map (getDateContextAt . fromEnum) listOfMatchedPositions
-      getDateContextAt position =
-        if (position') > ((L.length listOfDateContexts) - 1)
-          then ( "", "bad index: " ++ (show position') ++ " in: " ++ (show listOfDateContexts) ++ " where list is: <" ++ (L.unwords $ map show listOfMatchedPositions) ++ ">", "")
-          -- else ("contexts: ", (show stringOfDateContexts),
-          --      " where list is: <" ++ (L.unwords $ map show listOfMatchedPositions) ++ ">"
-          -- last param must be "debugInfo to make this work"
-          --      ++ " and dateContextMap is <" ++ debugInfo ++ ">")
-          else showContexts dct
-        where
-          showContexts DateInStdContent = ("..." ++ (contexts !! 0), (contexts !! 1), (contexts !! 2) ++ "...")
-          showContexts DateInCalender   = ((contexts !! 0), (contexts !! 1), (contexts !! 2) ++ "...")
-          position' = position - 1
-          contexts = listOfDateContexts !! position'
-      listOfDateContexts = fromJson ((decodeStrict stringOfDateContexts) :: Text.JSON.Result [[String]])
-      fromJson (Ok a) = a
-      fromJson (Error s) = [[s]]
-
 
 -- ------------------------------------------------------------------------------
 -- | creates a HTML Link used in the Pager Splice
