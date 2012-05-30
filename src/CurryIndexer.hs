@@ -13,14 +13,18 @@ import Holumbus.Index.Common
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
 import qualified Holumbus.Index.CompactDocuments as CD
 import Data.Word (Word32)
+import Data.Char (toLower)
+import Data.Text (splitOn, pack, unpack)
+import qualified Data.Text as T
+import Data.List
 import CurryInfo
-import IndexTypesC
+import IndexTypes
 
 
 main :: IO ()
 main = do
     putStr $ "Writing index ..."
-    curryDoc <- loadFromCurryFile file
+    curryDoc <- loadFromCurryFile $ filePath ++ "firstprog.cdoc"
     let curryState = IndexerState (idx curryDoc) (doc curryDoc)
     putStr $ " done!\n"
     writeSearchBin "../index/ix.bin" $ curryState
@@ -29,7 +33,7 @@ main = do
 -- curryState index documents = IndexerState index documents
 
 doc :: CurryInfo ->  Documents CurryInfo
-doc curry = CD.singleton (Document {title = mName (moduleInfo curry) , uri = mName (moduleInfo curry), custom = Just curry})
+doc curryI = CD.singleton (Document {title = mName (moduleInfo curryI) , uri = "file:///Users/ichistmeinname/Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/CurrySearch/index/DOC_firstprog/" ++ map toLower (mName (moduleInfo curryI)) ++ ".html", custom = Just curryI})
 
 
 idx :: CurryInfo -> Inverted
@@ -43,21 +47,24 @@ contextsMod moduleI =
     map (addOcc  (occ nullDocId 1)) [("Name", mName moduleI), ("Author", mAuthor moduleI), ("Description", mDescription moduleI)]    
 
 contextsF :: FunctionInfo -> [(String, String, Occurrences)]
-contextsF functionI = 
-    map (addOcc  (occ nullDocId 1)) [("Name", fName functionI), --("Signature", fSignature functionI),
+contextsF functionI =
+    map (addOcc  (occ nullDocId 1)) [("Name", fName functionI), ("Signature", intercalate "->" $ fSignature functionI),
         ("Description", fDescription functionI)]        
     
 contextsT :: TypeInfo -> [(String, String, Occurrences)]
 contextsT typeI = 
-    map (addOcc  (occ nullDocId 1)) [("Name", tName typeI), --("Signature", tSignature typeI), 
+    map (addOcc  (occ nullDocId 1)) [("Name", tName typeI), ("Signature", intercalate "->" $ concat $ tSignature typeI), 
         ("Description", tDescription typeI)]        
 
 
 occ :: DocId -> Word32 -> Occurrences
-occ id i = singletonOccurrence (incrDocId id) i
+occ dId i = singletonOccurrence (incrDocId dId) i
 
 addOcc :: Occurrences -> (a,b) -> (a,b,Occurrences)
 addOcc occurrence (a,b) = (a,b,occurrence)
+
+splitWhitespace :: String -> [T.Text]
+splitWhitespace text = (T.splitOn  (T.pack " ") (T.pack text))
 
 -- docsInfo2 :: Documents CurryInfo
 -- docsInfo2 = snd $ insertDoc docsInfo docInfo2

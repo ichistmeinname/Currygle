@@ -24,7 +24,7 @@ import           Holumbus.Query.Fuzzy
 
 import           System.CPUTime
 
-import           IndexTypesC
+import           IndexTypes
 import           CurryInfo
 
 -- ------------------------------------------------------------
@@ -64,11 +64,13 @@ data SearchResultWords
 
 data SRDocHit
     = SRDocHit
-      { srTitle       :: String
-      , srScore       :: Float
-      , srCurryInfo   :: CurryInfo
-      , srUri         :: String
-      , srContextMap  :: M.Map Context DocWordHits  -- Context: "title", "keywords", "content", "dates", ...
+      { srTitle         :: String
+      , srScore         :: Float
+      , srModuleInfo    :: ModuleInfo
+      , srFunctionInfos :: [FunctionInfo]
+      , srTypeInfos     :: [TypeInfo]
+      , srUri           :: String
+      , srContextMap    :: M.Map Context DocWordHits  -- Context: "title", "keywords", "content", "dates", ...
                                                     -- DocWordHits: Map Word Positions
       } deriving Show
 
@@ -211,9 +213,10 @@ getDocHits h
                 )
 
 docInfoToSRDocHit :: (DocId, (DocInfo CurryInfo, DocContextHits)) -> SRDocHit
-
 docInfoToSRDocHit (_, ((DocInfo (Document title' uri' curryInfo) score), contextMap))
-    = SRDocHit title' score (fromMaybe emptyCurryInfo curryInfo) uri' contextMap
+    = SRDocHit title' score (moduleInfo (fromMaybe emptyCurryInfo curryInfo)) 
+                            (functionInfos (fromMaybe emptyCurryInfo curryInfo)) 
+                            (typeInfos (fromMaybe emptyCurryInfo curryInfo)) uri' contextMap
 
 -- | convert Word-Completions to SearchResult
 

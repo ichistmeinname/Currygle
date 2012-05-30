@@ -19,8 +19,8 @@ module Main where
 
 import Snap.Extension.Server
 
-import ApplicationC
-import SiteC
+import Application
+import Site
 
 main :: IO ()
 main = quickHttpServe applicationInitializer site

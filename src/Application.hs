@@ -1,5 +1,3 @@
-{-# OPTIONS -XTypeSynonymInstances -XMultiParamTypeClasses #-}
-
 -- ----------------------------------------------------------------------------
 
 {- |
@@ -17,7 +15,7 @@
 
 -- ----------------------------------------------------------------------------
 
-module ApplicationC
+module Application
   ( Application
   , applicationInitializer
   )
@@ -42,7 +40,7 @@ type Application = SnapExtend ApplicationState
 data ApplicationState = ApplicationState
   {
     templateState :: HeistState Application,
-    curryState      :: CurryState
+    curryState    :: CurryState
   }
 
 ------------------------------------------------------------------------------
@@ -60,7 +58,7 @@ instance HasCurryState ApplicationState where
 
 -- The 'Initializer' for ApplicationState. This is used to generate the
 -- 'ApplicationState' needed for our application and will automatically
--- generate reload\/cleanup actions for us.
+-- generate reload\cleanup actions for us.
 
 applicationInitializer :: Initializer ApplicationState
 applicationInitializer = do

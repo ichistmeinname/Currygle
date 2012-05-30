@@ -11,15 +11,14 @@ This is where all the routes and handlers are defined for our site. The
 
 -- ----------------------------------------------------------------------------
 
-module SiteC ( site )
+module Site ( site )
 
 where
 
-import ApplicationC
-import Date                     as D
-import EvalSearchC
+import Application
+import CoreData
 import Helpers
-import IndexTypesC
+import IndexTypes
 import CurrySearch
 import CurryState
 import CurryInfo
@@ -73,7 +72,7 @@ numDisplayedCompletions = 20
 getCoreIdx :: Application CompactInverted
 getCoreIdx = do
   core <- curryCore
-  return $ EvalSearchC.index core
+  return $ CoreData.index core
 
 -- ------------------------------------------------------------------------------
 -- | get the Document-Data
@@ -81,7 +80,7 @@ getCoreIdx = do
 getCoreDoc :: Application (SmallDocuments CurryInfo)
 getCoreDoc = do
   core <- curryCore
-  return $ EvalSearchC.documents core
+  return $ CoreData.documents core
 
 -- ------------------------------------------------------------------------------
 -- | the function that does the query
@@ -112,11 +111,11 @@ getQueryStringParam param = do
 --    </ul>
 --  </li>
 
-docHitToListItem :: Bool -> SRDocHit -> X.Node
-docHitToListItem _ docHit
+docHitToListItem :: SRDocHit -> X.Node
+docHitToListItem docHit
     = htmlListItem "searchResult" $ subList
     where
-      auth = mAuthor . moduleInfo . srCurryInfo $ docHit
+      auth = mAuthor . srModuleInfo $ docHit
       authText
           = if (auth == "")
             then ""
@@ -136,15 +135,11 @@ docHitToListItem _ docHit
               htmlTextNode $
               authText
             ]
-            ++ [ htmlListItem "score" $
-                 htmlTextNode . show . srScore $
-                 docHit
-               ]
             ++ [ htmlLink' "" (srUri docHit) mkContentContext ]
       mkContentContext
           =  htmlListItem "teaserText" $ htmlTextNode teaserText
       teaserText
-          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . mDescription . moduleInfo . srCurryInfo $ docHit
+          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . mDescription . srModuleInfo $ docHit
      
 
 -- ------------------------------------------------------------------------------
@@ -159,24 +154,28 @@ docHitsMetaInfo searchResultDocs
         " docs in " ++
         (show $ srTime searchResultDocs) ++ " sec."
 
+errorInfo :: X.Node
+errorInfo = htmlListItem "info" $
+            htmlTextNode $
+            "Sorry, there are no matching results."
 
 
 -- ------------------------------------------------------------------------------
 -- | maybe transform the search-query into a normalized date string.
 --  Result: (tranformedStringOrOriginalString, whetherOrNotTheStringIsADate)
 
-maybeNormalizeQuery :: String -> (String, Bool)
-maybeNormalizeQuery query
-    =  (either id id normalizedDateOrQuery, isDate)
-    where
-      normalizedDates
-          = D.dateRep2NormalizedDates . D.extractDateRep $ query
-      isDate
-          = not $ L.null normalizedDates
-      normalizedDateOrQuery
-          = if not isDate
-            then Left query
-            else Right $ L.head normalizedDates
+-- maybeNormalizeQuery :: String -> (String, Bool)
+-- maybeNormalizeQuery query
+--     =  (either id id normalizedDateOrQuery, isDate)
+--     where
+--       normalizedDates
+--           = D.dateRep2NormalizedDates . D.extractDateRep $ query
+--       isDate
+--           = not $ L.null normalizedDates
+--       normalizedDateOrQuery
+--           = if not isDate
+--             then Left query
+--             else Right $ L.head normalizedDates
 
 -- ------------------------------------------------------------------------------
 -- 
@@ -222,15 +221,15 @@ frontpage
 processquery :: Application ()
 processquery = do
   query   <- getQueryStringParam "query"
-  dateRep <- liftIO $ extractDateRepM query
-  (transformedQuery, numOfTransforms) <-liftIO $ dateRep2stringWithTransformedDates dateRep
-  let hasDate = (numOfTransforms > 0)
+  -- dateRep <- liftIO $ extractDateRepM query
+  -- (transformedQuery, numOfTransforms) <-liftIO $ dateRep2stringWithTransformedDates dateRep
+  -- let hasDate = (numOfTransforms > 0)
   -- liftIO $ P.putStrLn $ "<" ++ transformedQuery ++ ">" -- print debug info to console
   queryFunc' <- queryFunction
-  searchResultDocs <- liftIO $ getIndexSearchResults transformedQuery queryFunc'
+  searchResultDocs <- liftIO $ getIndexSearchResults query queryFunc'
   strPage <- getQueryStringParam "page"
   let intPage = strToInt 1 strPage
-  let indexSplices = [ ("result", resultSplice hasDate intPage searchResultDocs)
+  let indexSplices = [ ("result", resultSplice intPage searchResultDocs)
                      , ("oldquery", oldQuerySplice)
                      , ("pager", pagerSplice query intPage searchResultDocs)
                      ]
@@ -238,18 +237,18 @@ processquery = do
 
 -- | generates the HTML node to be inserted into "<result />"
 
-resultSplice :: Bool -> Int -> SearchResultDocs -> Splice Application
-resultSplice isDate pageNum searchResultDocs = do
+resultSplice :: Int -> SearchResultDocs -> Splice Application
+resultSplice pageNum searchResultDocs = do
   let _docHits = srDocHits searchResultDocs
-  let items = P.map (docHitToListItem isDate) (L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) $ _docHits)
-  -- if P.null $ docHits
-  --   then liftIO $ P.putStrLn "- keine Ergebnisse -"
-  -- else do
-  --   liftIO $ P.putStrLn $ "<" ++ (show . (M.member "datesContext") . srContextMap . L.head $ _docHits) ++ ">"
-  --   liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ _docHits) ++ ">"
+  let items = P.map (docHitToListItem) (L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) $ _docHits)
+  -- debug informations
+  if P.null $ _docHits 
+    then liftIO $ P.putStrLn "- keine Ergebnisse -"
+    else do
+      liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ _docHits) ++ ">"
   let infos = [docHitsMetaInfo searchResultDocs]
   if P.null $ _docHits
-     then return $ [examples]
+     then return $ [htmlList "" [errorInfo]]
      else return $ [htmlList "" (infos ++ items)]
 
 -- | generates the HTML node to be inserted into "<oldquery />"
@@ -278,16 +277,12 @@ pagerSplice query actPage searchResultDocs = do
 
 completions :: Application ()
 completions = do
-  query'' <- getQueryStringParam "query"
-  let (query', isDate) = maybeNormalizeQuery query'' -- determine if its a date
-  query <-  if isDate
-            then liftIO $ prepareNormDateForCompare (query', "") -- if its a date, truncate trailing "*"s and replace leading "*"s
-            else return query'
+  query' <- getQueryStringParam "query"
+  -- let (query', isDate) = maybeNormalizeQuery query'' -- determine if its a date
+  query <-  return query'
   queryFunc' <- queryFunction
   searchResultWords' <- liftIO $ getWordCompletions query $ queryFunc'
-  let searchResultWords = if isDate
-                          then L.map (\ (SRWordHit word hit) -> SRWordHit (D.unNormalizeDate word) hit) $ srWordHits searchResultWords'
-                          else srWordHits searchResultWords'
+  let searchResultWords = srWordHits searchResultWords'
   putResponse myResponse
   writeText (T.pack $ toJSONArray numDisplayedCompletions $ searchResultWords)
   where

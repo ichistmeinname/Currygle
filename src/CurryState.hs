@@ -34,7 +34,7 @@ import System.IO        ( stderr
                         , hPutStrLn
                         )
 
-import EvalSearchC
+import CoreData
 import CurrySearch
 
 -- ------------------------------------------------------------------------------

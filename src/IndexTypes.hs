@@ -14,8 +14,8 @@
 
 -- ----------------------------------------------------------------------------
 
-module IndexTypesC
-    ( module IndexTypesC
+module IndexTypes
+    ( module IndexTypes
     , module Holumbus.Index.CompactIndex
     -- , CurryInfo(..)
     , Score
@@ -24,7 +24,6 @@ where
 
 import           CurryInfo
 
--- import           Holumbus.Crawler
 import           Holumbus.Index.CompactIndex
 import           Holumbus.Query.Result          ( Score )
 
@@ -38,7 +37,6 @@ emptyCurryState
 
 type CurryIndexerState        = HolumbusState   CurryInfo
 type CurryIndexerConfig       = HolumbusConfig  CurryInfo
--- type W3WIndexerCrawlerState = CrawlerState W3WIndexerState
 
 -- ------------------------------------------------------------
 
