@@ -151,39 +151,6 @@ instance Binary TypeInfo where
             r <- liftM4 TypeInfo get get get get
             rnf r `seq` return r
 
--- records don't work in curry
--- data ModuleInfo   = ModuleInfo
---                     { mName         :: String           -- ^ the name
---                     , mVersion      :: String           -- ^ the latest version
---                     , mAuthor       :: String           -- ^ the author
---                     , mImports      :: [String]         -- ^ list of the imported modules
---                     , mDescription  :: String           -- ^ the description as Comment String
---                     } deriving (Show, Read)
-
-
--- data CurryInfo    = CurryInfo      
---                     { cModule      :: ModuleInfo        -- ^ the curry module
---                     , cFunctions   :: [FunctionInfo]    -- ^ the corresponding functions
---                     , cTypes       :: [TypeInfo]        -- ^ the corresponding types     
---                     } deriving (Show, Read)
-
-
--- data FunctionInfo = FunctionInfo      
---                     { fName         :: String           -- ^ the name
---                     , fSignature    :: [String]         -- ^ the signature
---                     , fModule       :: String           -- ^ the corresponding module
---                     , fDescription  :: String           -- ^ the description
---                     , fNondet       :: Bool             -- ^ 'True' if property is definied non-deterministically
---                     , fFlexRigid    :: FlexRigidResult  -- ^ the flex/rigid status 
---                     } deriving (Show, Read)
-
--- data TypeInfo     = TypeInfo
---                     { tName         :: String           -- ^ the name
---                     , tSignature    :: [[String]]       -- ^ the signature
---                     , tModule       :: String           -- ^ the corresponding module
---                     , tDescription  :: String           -- ^ the description
---                     } deriving (Show, Read)
-
 data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid deriving (Show, Read)
 
 instance NFData FlexRigidResult 
