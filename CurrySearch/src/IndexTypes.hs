@@ -29,14 +29,26 @@ import           Holumbus.Query.Result          ( Score )
 
 -- ------------------------------------------------------------
 
-emptyCurryState :: CurryIndexerState
-emptyCurryState
+emptyCurryModState :: CurryModIndexerState
+emptyCurryModState
     = emptyIndexerState emptyInverted emptyDocuments
 
+emptyCurryFctState :: CurryFctIndexerState
+emptyCurryFctState
+    = emptyIndexerState emptyInverted emptyDocuments
+
+emptyCurryTypeState :: CurryTypeIndexerState
+emptyCurryTypeState
+    = emptyIndexerState emptyInverted emptyDocuments
 -- ------------------------------------------------------------
 
-type CurryIndexerState        = HolumbusState   CurryInfo
-type CurryIndexerConfig       = HolumbusConfig  CurryInfo
+type CurryModIndexerState        = HolumbusState   ModuleInfo
+type CurryModIndexerConfig       = HolumbusConfig  ModuleInfo
 
+type CurryFctIndexerState        = HolumbusState   FunctionInfo
+type CurryFctIndexerConfig       = HolumbusConfig  FunctionInfo
+
+type CurryTypeIndexerState        = HolumbusState   TypeInfo
+type CurryTypeIndexerConfig       = HolumbusConfig  TypeInfo
 -- ------------------------------------------------------------
 
