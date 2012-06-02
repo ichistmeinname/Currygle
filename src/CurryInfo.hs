@@ -163,10 +163,10 @@ instance Binary FlexRigidResult where
       get = do
         tag_ <- getWord8
         case tag_ of
-          0 -> return UnknownFR
           1 -> return ConflictFR
           2 -> return KnownFlex
           3 -> return KnownRigid
+          _ -> return UnknownFR
           
 loadFromCurryFile :: FilePath -> IO CurryInfo
 loadFromCurryFile a = do
@@ -177,4 +177,5 @@ loadFromCurryFile a = do
 liftM6 :: Monad m => (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> r) -> m a1 -> m a2 -> m a3 -> m a4 -> m a5 -> m a6 -> m r
 liftM6 f m1 m2 m3 m4 m5 m6 = do {x1 <- m1; x2 <- m2; x3 <- m3; x4 <- m4; x5 <- m5; x6 <- m6; return (f x1 x2 x3 x4 x5 x6)}
 
+filePath :: FilePath
 filePath = "../index/"

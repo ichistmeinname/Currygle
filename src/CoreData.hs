@@ -21,11 +21,15 @@ import IndexTypes
 import CurryInfo
 
 -- ------------------------------------------------------------
--- | datatype representing the index data
+-- | represents the index data, it differs between module, fct and type information
 
 data Core = Core
-          { index     :: ! CompactInverted
-          , documents :: ! (SmallDocuments CurryInfo)
+          { modIndex      :: ! CompactInverted
+          , modDocuments  :: ! (SmallDocuments ModuleInfo)
+          , fctIndex      :: ! CompactInverted
+          , fctDocuments  :: ! (SmallDocuments FunctionInfo)
+          , typeIndex     :: ! CompactInverted
+          , typeDocuments :: ! (SmallDocuments TypeInfo)
           }
 
 -- ------------------------------------------------------------

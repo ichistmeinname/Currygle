@@ -6,11 +6,12 @@ where
 import Holumbus.Index.Common
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
 import qualified Holumbus.Index.CompactDocuments as CD
-import Data.Word (Word32)
+-- import Data.Word (Word32)
 -- import Data.Char (toLower)
 -- import Data.Text (splitOn, pack, unpack)
 import qualified Data.Text as T (splitOn, pack, unpack)
 import Data.List
+import Data.Binary
 import CurryInfo
 import IndexTypes
 
@@ -20,8 +21,8 @@ main = do
     putStr $ "Writing index ..."
     curryDoc <- loadFromCurryFile $ filePath ++ "firstprog.cdoc"
     let curryModState = IndexerState (idx (contextsMod) $ moduleInfo curryDoc) (docM $ moduleInfo curryDoc)
-    let curryFctState = unionIxDoc unionDF $ zipWith (\i d -> IndexerState i d) (map (idx contextsF) $ functionInfos curryDoc) (map docF $ functionInfos curryDoc)
-    let curryTypeState = unionIxDoc unionDT $ zipWith (\i d -> IndexerState i d) (map (idx contextsT) $ typeInfos curryDoc) (map docT $ typeInfos curryDoc)
+    let curryFctState = unionIxDoc unionDoc $ zipWith (\i d -> IndexerState i d) (map (idx contextsF) $ functionInfos curryDoc) (map docF $ functionInfos curryDoc)
+    let curryTypeState = unionIxDoc unionDoc $ zipWith (\i d -> IndexerState i d) (map (idx contextsT) $ typeInfos curryDoc) (map docT $ typeInfos curryDoc)
     putStr $ " done!\n"
     writeSearchBin "../index/ix-mod.bin" $ curryModState
     writeSearchBin "../index/ix-fct.bin" $ curryFctState
@@ -36,14 +37,22 @@ main = do
 -- -- unionIxDoc (IndexerState is1 doc1 : iss) = unionDocIndex (IndexerState is1 doc1) (unionIxDoc iss)
 
 -- DocId . (1+) . theDocId
-unionDF :: [CurryFctIndexerState] -> Documents FunctionInfo
-unionDF iss = let docs = map (\(IndexerState _ doc1) -> doc1) iss
-                  -- editIds = foldr (editDocIds (addDocId (CD.lastDocId $ (head docs)))) docs
-              in foldl unionDocs CD.emptyDocuments docs
+unionDoc :: (Binary a) => [IndexerState Inverted Documents a] -> Documents a
+unionDoc iss = let docs = map (\(IndexerState _ doc1) -> doc1) iss
+              in foldr unionDocs CD.emptyDocuments (editIds docs)
+                -- where editIds :: [Documents FunctionInfo] -> [Documents FunctionInfo]
+                      -- editIds [df1] = df1
+                      -- editIds (df1 : df2 : dfs) =  (editDocIds (addDocId (CD.lastDocId $ df1))) df2) : (editIds dfs)
 
-unionDT :: [CurryTypeIndexerState] -> Documents TypeInfo
-unionDT iss = let docs = map (\(IndexerState _ doc1) -> doc1) iss
-              in foldl unionDocs CD.emptyDocuments docs
+editIds :: (Binary a) => [Documents a] -> [Documents a]
+editIds [] = []
+editIds [info] = [editDocIds incrDocId info]
+editIds (df1 : df2 : dfs) = let newDf = editDocIds (addDocId (CD.lastDocId $ df1)) df2
+                            in newDf : editIds (newDf : dfs)
+
+-- unionDT :: (Binary a) => [IndexerState Inverted Documents a] -> Documents a
+-- unionDT iss = let docs = map (\(IndexerState _ doc1) -> doc1) iss
+--               in foldl unionDocs CD.emptyDocuments docs
 
 unionIxDoc :: ([IndexerState Inverted Documents a] -> (Documents a)) -> [IndexerState Inverted Documents a] -> IndexerState Inverted Documents a
 unionIxDoc unionD iss = IndexerState (unionI iss) (unionD iss)
