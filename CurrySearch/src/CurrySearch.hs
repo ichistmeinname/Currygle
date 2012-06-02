@@ -66,9 +66,10 @@ data SRDocHit
     = SRDocHit
       { srTitle         :: String
       , srScore         :: Float
-      , srModuleInfo    :: ModuleInfo
-      , srFunctionInfos :: [FunctionInfo]
-      , srTypeInfos     :: [TypeInfo]
+      , srFunctionInfo  :: FunctionInfo
+      -- , srModuleInfo    :: ModuleInfo
+      -- , srFunctionInfos :: [FunctionInfo]
+      -- , srTypeInfos     :: [TypeInfo]
       , srUri           :: String
       , srContextMap    :: M.Map Context DocWordHits  -- Context: "title", "keywords", "content", "dates", ...
                                                     -- DocWordHits: Map Word Positions
@@ -107,8 +108,16 @@ loadIndex       :: FilePath -> IO CompactInverted
 loadIndex       = loadFromFile
 
 -- | Just an alias with explicit type.
-loadDocuments   :: FilePath -> IO (SmallDocuments CurryInfo)
-loadDocuments   = loadFromBinFile
+loadModDocuments   :: FilePath -> IO (SmallDocuments ModuleInfo)
+loadModDocuments   = loadFromBinFile
+
+-- | Just an alias with explicit type.
+loadFctDocuments   :: FilePath -> IO (SmallDocuments FunctionInfo)
+loadFctDocuments   = loadFromBinFile
+
+-- | Just an alias with explicit type.
+loadTypeDocuments   :: FilePath -> IO (SmallDocuments TypeInfo)
+loadTypeDocuments   = loadFromBinFile
 
 -- ------------------------------------------------------------
 
@@ -120,17 +129,17 @@ processCfg
 
 -- | Perform a query on a local index.
 
-localQuery :: CompactInverted -> SmallDocuments CurryInfo -> Query -> IO (Result CurryInfo)
+localQuery :: CompactInverted -> SmallDocuments FunctionInfo -> Query -> IO (Result FunctionInfo)
 localQuery idx doc q
     = return $ processQuery processCfg idx doc q
 
 -- | get all Search Results
 
-getAllSearchResults :: String -> (Query -> IO (Result CurryInfo)) -> IO SearchResult
+getAllSearchResults :: String -> (Query -> IO (Result FunctionInfo)) -> IO SearchResult
 getAllSearchResults q f
-    = do docs   <- getIndexSearchResults q f
+    = do docs'  <- getIndexSearchResults q f
          words' <- getWordCompletions    q f
-         return $ SearchResult docs words'
+         return $ SearchResult docs' words'
 
 -- | Insert the time needed for request into SearchResultDocs data type.
 --
@@ -173,7 +182,7 @@ uniqByTitle (x:xs) = x : uniqByTitle (deleteByTitle (srTitle x) xs)
 
 -- | get only Document Search Results (without Word-Completions)
 
-getIndexSearchResults :: String -> (Query -> IO (Result CurryInfo)) -> IO SearchResultDocs
+getIndexSearchResults :: String -> (Query -> IO (Result FunctionInfo)) -> IO SearchResultDocs
 getIndexSearchResults q f
     = either printError makeQuery $ parseQuery q
     where
@@ -190,7 +199,7 @@ getIndexSearchResults q f
 
 -- | get only Word-Completions (without Document Search Results)
 
-getWordCompletions :: String -> (Query -> IO (Result CurryInfo)) -> IO SearchResultWords
+getWordCompletions :: String -> (Query -> IO (Result FunctionInfo)) -> IO SearchResultWords
 getWordCompletions q f
     = either printError makeQuery $ parseQuery q
     where
@@ -203,7 +212,7 @@ getWordCompletions q f
 
 -- | convert Document-Hits to SearchResult
 
-getDocHits :: DocHits CurryInfo -> IO SearchResultDocs
+getDocHits :: DocHits FunctionInfo -> IO SearchResultDocs
 getDocHits h
     = return $ SearchResultDocs 0.0 (sizeDocIdMap h) (map docInfoToSRDocHit docData)
     where
@@ -212,11 +221,9 @@ getDocHits h
                   toListDocIdMap h
                 )
 
-docInfoToSRDocHit :: (DocId, (DocInfo CurryInfo, DocContextHits)) -> SRDocHit
+docInfoToSRDocHit :: (DocId, (DocInfo FunctionInfo, DocContextHits)) -> SRDocHit
 docInfoToSRDocHit (_, ((DocInfo (Document title' uri' curryInfo) score), contextMap))
-    = SRDocHit title' score (moduleInfo (fromMaybe emptyCurryInfo curryInfo)) 
-                            (functionInfos (fromMaybe emptyCurryInfo curryInfo)) 
-                            (typeInfos (fromMaybe emptyCurryInfo curryInfo)) uri' contextMap
+    = SRDocHit title' score  (fromMaybe emptyFunctionInfo curryInfo)  uri' contextMap
 
 -- | convert Word-Completions to SearchResult
 

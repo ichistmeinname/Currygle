@@ -88,26 +88,41 @@ curryInitializer = liftIO getCurryInitialState >>= mkInitializer . CurryState
 
 -- ------------------------------------------------------------------------------
 
-ixBase          :: FilePath
-ixBase          = "./index"
+ixBase :: FilePath
+ixBase = "./index"
 
 -- ------------------------------------------------------------------------------
 
-getCurryInitialState    :: IO Core
+getCurryInitialState :: IO Core
 getCurryInitialState = do
-  idx  <- loadIndex curryIndex
-  infoM "Main" ("Curry index   loaded from file " ++ show curryIndex)
-  infoM "Main" ("Curry index   contains " ++ show (sizeWords idx) ++ " words")
-  doc  <- loadDocuments curryDocs
-  infoM "Main" ("Curry docs    loaded from file " ++ show curryDocs )
-  infoM "Main" ("Curry docs    contains " ++ show (sizeDocs doc) ++ " entries")
+  idxMod  <- loadIndex curryModIndex
+  infoMsg "index" (sizeWords idxMod) "words"
+  docMod  <- loadModDocuments curryModDocs
+  infoMsg "documents" (sizeDocs docMod) "entries"
+  idxFct  <- loadIndex curryFctIndex
+  infoMsg "index" (sizeWords idxFct) "words"
+  docFct  <- loadFctDocuments curryFctDocs
+  infoMsg "documents" (sizeDocs docFct) "entries"
+  idxType <- loadIndex curryTypeIndex
+  infoMsg "index" (sizeWords idxType) "words"
+  docType <- loadTypeDocuments curryTypeDocs
+  infoMsg "documents" (sizeDocs docType) "entries"
   return $ Core
-             { index      = idx
-             , documents  = doc
+             { modIndex      = idxMod
+             , modDocuments  = docMod
+             , fctIndex      = idxFct
+             , fctDocuments  = docFct
+             , typeIndex     = idxType
+             , typeDocuments = docType
              }
     where
-      curryIndex      = ixBase ++ "/ix.bin.idx"
-      curryDocs       = ixBase ++ "/ix.bin.doc"
-      infoM m msg   = hPutStrLn stderr $ m ++ ": " ++ msg
+      curryModIndex  = ixBase ++ "/ix-mod.bin.idx"
+      curryModDocs   = ixBase ++ "/ix-mod.bin.doc"
+      curryFctIndex  = ixBase ++ "/ix-fct.bin.idx"
+      curryFctDocs   = ixBase ++ "/ix-fct.bin.doc"
+      curryTypeIndex = ixBase ++ "/ix-type.bin.idx"
+      curryTypeDocs  = ixBase ++ "/ix-type.bin.doc"
+      infoMsg str1 fIdxOrDoc str2 = 
+          hPutStrLn stderr $ "Init process: Curry " ++ str1 ++ " was loaded successfully and contains " ++ show (fIdxOrDoc) ++ str2
 
 -- ------------------------------------------------------------------------------

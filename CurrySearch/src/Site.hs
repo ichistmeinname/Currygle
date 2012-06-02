@@ -72,20 +72,20 @@ numDisplayedCompletions = 20
 getCoreIdx :: Application CompactInverted
 getCoreIdx = do
   core <- curryCore
-  return $ CoreData.index core
+  return $ CoreData.fctIndex core
 
 -- ------------------------------------------------------------------------------
 -- | get the Document-Data
 
-getCoreDoc :: Application (SmallDocuments CurryInfo)
+getCoreDoc :: Application (SmallDocuments FunctionInfo)
 getCoreDoc = do
   core <- curryCore
-  return $ CoreData.documents core
+  return $ CoreData.fctDocuments core
 
 -- ------------------------------------------------------------------------------
 -- | the function that does the query
 
-queryFunction :: Application (Query -> IO (Holumbus.Query.Result.Result CurryInfo))
+queryFunction :: Application (Query -> IO (Holumbus.Query.Result.Result FunctionInfo))
 queryFunction = do
   doc <- getCoreDoc
   idx <- getCoreIdx
@@ -115,11 +115,11 @@ docHitToListItem :: SRDocHit -> X.Node
 docHitToListItem docHit
     = htmlListItem "searchResult" $ subList
     where
-      auth = mAuthor . srModuleInfo $ docHit
-      authText
-          = if (auth == "")
-            then ""
-            else "erstellt von " ++ auth
+      -- auth = mAuthor . srModuleInfo $ docHit
+      -- authText
+      --     = if (auth == "")
+      --       then ""
+      --       else "erstellt von " ++ auth
      
       subList
           = htmlList "" subListItems
@@ -129,17 +129,17 @@ docHitToListItem docHit
               htmlTextNode . srTitle $
               docHit
             ]
-            ++
-            [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultModified" $
-              htmlTextNode $
-              authText
-            ]
+            -- ++
+            -- [ htmlLink' "" (srUri docHit) $
+            --   htmlListItem "searchResultModified" $
+            --   htmlTextNode $
+            --   authText
+            -- ]
             ++ [ htmlLink' "" (srUri docHit) mkContentContext ]
       mkContentContext
           =  htmlListItem "teaserText" $ htmlTextNode teaserText
       teaserText
-          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . mDescription . srModuleInfo $ docHit
+          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . fDescription $ srFunctionInfo docHit
      
 
 -- ------------------------------------------------------------------------------
@@ -279,7 +279,7 @@ completions :: Application ()
 completions = do
   query' <- getQueryStringParam "query"
   -- let (query', isDate) = maybeNormalizeQuery query'' -- determine if its a date
-  query <-  return query'
+  query <- return query'
   queryFunc' <- queryFunction
   searchResultWords' <- liftIO $ getWordCompletions query $ queryFunc'
   let searchResultWords = srWordHits searchResultWords'
