@@ -40,6 +40,9 @@ emptyCurryFctState
 emptyCurryTypeState :: CurryTypeIndexerState
 emptyCurryTypeState
     = emptyIndexerState emptyInverted emptyDocuments
+
+emptyCurryState :: HolumbusState a
+emptyCurryState = emptyIndexerState emptyInverted emptyDocuments
 -- ------------------------------------------------------------
 
 type CurryModIndexerState        = HolumbusState   ModuleInfo
