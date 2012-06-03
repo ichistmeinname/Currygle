@@ -107,6 +107,10 @@ getCurryInitialState = do
   infoMsg "index" (sizeWords idxType) "words"
   docType <- loadTypeDocuments curryTypeDocs
   infoMsg "documents" (sizeDocs docType) "entries"
+  -- hPutStrLn stderr "doc: "
+  -- hPutStrLn stderr $ show (toMap docMod)
+  -- hPutStrLn stderr "idx: "
+  -- hPutStrLn stderr $ show (toList idxMod)
   return $ Core
              { modIndex      = idxMod
              , modDocuments  = docMod
@@ -123,6 +127,6 @@ getCurryInitialState = do
       curryTypeIndex = ixBase ++ "/ix-type.bin.idx"
       curryTypeDocs  = ixBase ++ "/ix-type.bin.doc"
       infoMsg str1 fIdxOrDoc str2 = 
-          hPutStrLn stderr $ "Init process: Curry " ++ str1 ++ " was loaded successfully and contains " ++ show (fIdxOrDoc) ++ str2
+          hPutStrLn stderr $ "Init process: Curry " ++ str1 ++ " was loaded successfully and contains " ++ show (fIdxOrDoc) ++ " " ++ str2
 
 -- ------------------------------------------------------------------------------
