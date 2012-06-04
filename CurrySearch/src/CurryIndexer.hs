@@ -1,4 +1,3 @@
-
 module Main (main) 
 
 where 
@@ -9,25 +8,39 @@ import Holumbus.Crawler.IndexerCore (IndexerState (..))
 -- import Data.Char (toLower)
 -- import Data.Text (splitOn, pack, unpack)
 import qualified Data.Text as T (splitOn, pack, unpack)
-import Data.List
+-- import Data.List
 import Data.Binary
 import CurryInfo
 import IndexTypes
+import Helpers
 
 
 main :: IO ()
 main = do
     putStr $ "Writing index ..."
     curryDoc <- loadFromCurryFile $ filePath ++ "firstprog.cdoc"
-    let curryModState = ixDoc contextsMod [moduleInfo curryDoc] [doc mName mName (moduleInfo curryDoc)] emptyCurryModState
-    let curryFctState = ixDoc contextsF (functionInfos curryDoc) (map (doc fName fName) (functionInfos curryDoc)) emptyCurryFctState
-    let curryTypeState = ixDoc contextsT (typeInfos curryDoc) (map (doc tName tName) (typeInfos curryDoc)) emptyCurryTypeState
+    let curryModState  = ixDoc 
+                         contextsMod 
+                         [moduleInfo curryDoc] 
+                         [doc mName (ModuleUri mName) (moduleInfo curryDoc)] 
+                         emptyCurryModState
+        curryFctState  =  ixDoc 
+                         contextsF 
+                         (functionInfos curryDoc) 
+                         (map (doc fName (FctOrTypeUri fModule fName)) $ functionInfos curryDoc)
+                         emptyCurryFctState
+        curryTypeState = ixDoc 
+                         contextsT 
+                         (typeInfos curryDoc) 
+                         (map (doc tName (FctOrTypeUri tModule tName)) $ typeInfos curryDoc) 
+                         emptyCurryTypeState
     putStr $ " done!\n"
     writeSearchBin "../index/ix-mod.bin" $ curryModState
     writeSearchBin "../index/ix-fct.bin" $ curryFctState
     writeSearchBin "../index/ix-type.bin" $ curryTypeState
     -- return ()
 
+-- |  Main indexer method to build indexes and documents
 ixDoc :: (Binary a) => (a -> DocId -> [(String, String, Occurrences)]) -> [a] -> [Document a] -> IndexerState Inverted Documents a -> IndexerState Inverted Documents a
 ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) = 
     let (docId, docs') = insertDoc dc doc1
@@ -35,29 +48,47 @@ ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) =
     in ixDoc contextList infos docs (IndexerState idx' docs')
 ixDoc _ _ _ is = is
 
-doc :: (Binary a) => (a -> String) -> (a -> String) -> a -> Document a
-doc fiName fiUri info = Document {title = fiName info, uri = fiUri info ++ ".html", custom = Just info}
+-- | Data to represent uri
+-- functions and types use anchors, i.e. moduleName.html#functionName
+data Uri a = ModuleUri (a -> String) | FctOrTypeUri (a -> String) (a -> String)
 
+-- | Function to build document
+doc :: (Binary a) => (a -> String) -> Uri a -> a -> Document a
+doc fiName (ModuleUri fiUri) info = 
+    Document {title  = fiName info
+             ,uri    = fiUri info ++ ".html"
+             ,custom = Just info}
+doc fiName (FctOrTypeUri fiUriModule fiUriName) info = 
+    Document {title  = fiName info
+             ,uri    = fiUriModule info ++ ".html" ++ "#" ++ fiUriName info
+             ,custom = Just info}
+ 
+-- | Function to build index
 idx :: (a -> DocId -> [(String, String, Occurrences)]) -> a -> DocId -> Inverted
 idx contextList info i = fromList emptyInverted $ contextList info i
 
+-- | Generates the context information for a module
 contextsMod :: ModuleInfo -> DocId -> [(String, String, Occurrences)]
 contextsMod moduleI i = 
     map (addOcc  (occ i 1)) $ [("Name", mName moduleI)] 
                                    ++ (author $ mAuthor moduleI) 
                                    ++ (description $ mDescription moduleI)
 
+-- | Generates the context information for a function
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
     map (addOcc  (occ i 2)) $ [("Name", fName functionI)
-                                    , ("Signature", listToSignature $ fSignature functionI)] 
-                                   ++ (description $ fDescription functionI)      
+                              , ("Module", fModule functionI) 
+                              , ("Signature", listToSignature $ fSignature functionI)] 
+                              ++ (description $ fDescription functionI)      
     
+-- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
     map (addOcc  (occ i 1)) $ [("Name", tName typeI)
-                                    , ("Signature", listToSignature $ concat $ tSignature typeI)]
-                                   ++ (description $ tDescription typeI)       
+                              , ("Module", tModule typeI)
+                              , ("Signature", listToSignature $ concat $ tSignature typeI)]
+                              ++ (description $ tDescription typeI)       
 
 occ :: DocId -> Word32 -> Occurrences
 occ dId i = singletonOccurrence dId i
@@ -73,12 +104,3 @@ addContext context s = (context, s)
 
 author :: String -> [(String, String)]
 author a = map (addContext "Author") $ splitOnWhitespace $ a
-
-splitOnWhitespace :: String -> [String]
-splitOnWhitespace text = map T.unpack (T.splitOn  (T.pack " ") (T.pack text))
-
-listToSignature :: [String] -> String
-listToSignature xs = intercalate "->" xs
-
-biasedWord :: String -> Bool
-biasedWord s = length s < 3

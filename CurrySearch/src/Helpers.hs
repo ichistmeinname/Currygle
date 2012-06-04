@@ -1,14 +1,6 @@
 -- ----------------------------------------------------------------------------
 
-{- |
-  Module     : Helpers
-
-  Maintainer : Thorben Guelck, Tobias Lueders, Mathias Leonhardt, Uwe Schmidt
-  Stability  : experimental
-  Portability: portable
-
-  Some helpers that don't fit into other modules
--}
+-- | A module full of helper functions
 
 -- ----------------------------------------------------------------------------
 
@@ -16,25 +8,23 @@ module Helpers
 where
 
 import qualified Data.Text      as T
+import Data.List
 
 import qualified Text.XmlHtml   as X
 
 -- ----------------------------------------------------------------------------
 
--- all strings with length < 2 are boring
--- and all strings not starting with a letter
-boringWord                      :: String -> Bool
-boringWord w                    = null w
-                                  ||
-                                  (null . tail $ w)
+--  Pretty printing for signatures 
+listToSignature :: [String] -> String
+listToSignature xs = intercalate "->" xs
 
-boringURIpart                   :: String -> Bool
-boringURIpart                   = ( `elem`
-                                    [ ""
-                                    , "http", "www", "wwwab", "fh-wedel", "ptl", "de"
-                                    , "html", "htm", "pdf"
-                                    ]
-                                  )
+-- splits strings at whitespaces (ex.: for better handling of comments)
+splitOnWhitespace :: String -> [String]
+splitOnWhitespace text = map T.unpack (T.splitOn  (T.pack " ") (T.pack text))
+
+-- Words shorter than 2 characters are biased
+biasedWord :: String -> Bool
+biasedWord s = length s < 3
 
 -- ------------------------------------------------------------
 --
