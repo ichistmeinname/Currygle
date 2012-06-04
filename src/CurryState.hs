@@ -43,7 +43,7 @@ import CurrySearch
 
 newtype CurryState
     = CurryState
-    { getCore :: Core
+    { core :: Core
     }
 
 -- ------------------------------------------------------------------------------
@@ -66,12 +66,12 @@ class MonadSnap m => MonadCurry m where
 -- ------------------------------------------------------------------------------
 
 instance HasCurryState s => MonadCurry (SnapExtend s) where
-    curryCore = fmap getCore $ asks getCurryState
+    curryCore = fmap core $ asks getCurryState
 
 -- ------------------------------------------------------------------------------
 
 instance (MonadSnap m, HasCurryState s) => MonadCurry (ReaderT s m) where
-    curryCore = fmap getCore $ asks getCurryState
+    curryCore = fmap core $ asks getCurryState
 
 -- ------------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ instance InitializerState CurryState where
 -- | The Initializer for 'CurryState'. No arguments are required.
 
 curryInitializer :: Initializer CurryState
-curryInitializer = liftIO getCurryInitialState >>= mkInitializer . CurryState
+curryInitializer = liftIO curryInitState >>= mkInitializer . CurryState
 
 -- ------------------------------------------------------------------------------
 
@@ -93,8 +93,8 @@ ixBase = "./index"
 
 -- ------------------------------------------------------------------------------
 
-getCurryInitialState :: IO Core
-getCurryInitialState = do
+curryInitState :: IO Core
+curryInitState = do
   idxMod  <- loadIndex curryModIndex
   infoMsg "index" (sizeWords idxMod) "words"
   docMod  <- loadModDocuments curryModDocs

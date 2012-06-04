@@ -55,3 +55,6 @@ type CurryTypeIndexerState        = HolumbusState   TypeInfo
 type CurryTypeIndexerConfig       = HolumbusConfig  TypeInfo
 -- ------------------------------------------------------------
 
+type ModuleIxDoc   = Inverted -> Documents ModuleInfo
+type FunctionIxDoc = Inverted -> Documents FunctionInfo
+type TypeIxDoc     = Inverted -> Documents TypeInfo
