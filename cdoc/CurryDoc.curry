@@ -190,11 +190,13 @@ makeDocWithComments HtmlDoc docparams recursive docdir anainfo progname
   writeOutfile docparams recursive docdir anainfo progname (generateHtmlDocs 
                currydocVersion time docparams anainfo progname modcmts progcmts)
   translateSource2ColoredHtml docdir progname
-  
+  writeOutfile (DocParams CDoc False False) False docdir anainfo progname (generateCDoc progname modcmts progcmts anainfo)
+
 
 makeDocWithComments TexDoc docparams recursive docdir anainfo progname
                     modcmts progcmts = do
   writeOutfile docparams recursive docdir anainfo progname (generateTexDocs docparams anainfo progname modcmts progcmts)
+
 
 makeDocWithComments CDoc docparams recursive docdir anainfo progname 
 		    	 modcmts progcmts = do
