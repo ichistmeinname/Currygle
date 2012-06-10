@@ -4,27 +4,22 @@ where
 
 import Holumbus.Index.Common
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
--- import Data.Word (Word32)
--- import Data.Char (toLower)
--- import Data.Text (splitOn, pack, unpack)
-import qualified Data.Text as T (splitOn, pack, unpack)
--- import Data.List
 import Data.Binary
 import CurryInfo
 import IndexTypes
-import Helpers
+import Helpers (splitOnWhitespace, biasedWord, listToSignature)
 
 
 main :: IO ()
 main = do
     putStr $ "Writing index ..."
-    curryDoc <- loadFromCurryFile $ filePath ++ "firstprog.cdoc"
+    curryDoc <- loadFromCurryFile $ filePath ++ "/DOC_FirstProg/firstprog.cdoc"
     let curryModState  = ixDoc 
                          contextsMod 
                          [moduleInfo curryDoc] 
                          [doc mName (ModuleUri mName) (moduleInfo curryDoc)] 
                          emptyCurryModState
-        curryFctState  =  ixDoc 
+        curryFctState  = ixDoc 
                          contextsF 
                          (functionInfos curryDoc) 
                          (map (doc fName (FctOrTypeUri fModule fName)) $ functionInfos curryDoc)
@@ -35,13 +30,16 @@ main = do
                          (map (doc tName (FctOrTypeUri tModule tName)) $ typeInfos curryDoc) 
                          emptyCurryTypeState
     putStr $ " done!\n"
-    writeSearchBin "../index/ix-mod.bin" $ curryModState
-    writeSearchBin "../index/ix-fct.bin" $ curryFctState
+    writeSearchBin "../index/ix-mod.bin"  $ curryModState
+    writeSearchBin "../index/ix-fct.bin"  $ curryFctState
     writeSearchBin "../index/ix-type.bin" $ curryTypeState
-    -- return ()
 
 -- |  Main indexer method to build indexes and documents
-ixDoc :: (Binary a) => (a -> DocId -> [(String, String, Occurrences)]) -> [a] -> [Document a] -> IndexerState Inverted Documents a -> IndexerState Inverted Documents a
+ixDoc :: (Binary a) => (a -> DocId -> [(String, String, Occurrences)]) -> 
+                       [a] -> 
+                       [Document a] -> 
+                       IndexerState Inverted Documents a -> 
+                       IndexerState Inverted Documents a
 ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) = 
     let (docId, docs') = insertDoc dc doc1
         idx'           = mergeIndexes ix $ idx contextList info docId
@@ -56,11 +54,13 @@ data Uri a = ModuleUri (a -> String) | FctOrTypeUri (a -> String) (a -> String)
 doc :: (Binary a) => (a -> String) -> Uri a -> a -> Document a
 doc fiName (ModuleUri fiUri) info = 
     Document {title  = fiName info
-             ,uri    = fiUri info ++ ".html"
+             ,uri    = "DOC_" ++ fiUri info ++ "/" ++ fiUri info ++ ".html"
              ,custom = Just info}
 doc fiName (FctOrTypeUri fiUriModule fiUriName) info = 
     Document {title  = fiName info
-             ,uri    = fiUriModule info ++ ".html" ++ "#" ++ fiUriName info
+             ,uri    = "DOC_" ++ fiUriModule info ++ "/" ++
+                       fiUriModule info ++ ".html" ++ 
+                       "#" ++ fiUriName info
              ,custom = Just info}
  
 -- | Function to build index

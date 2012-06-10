@@ -17,24 +17,21 @@ where
 
 import Application
 import CoreData
-import Helpers
+import Helpers hiding (htmlLink)
 import IndexTypes
 import CurrySearch
 import CurryState
 import CurryInfo
-import Helpers (listToSignature)
 
 import Control.Applicative
 import Control.Monad.Trans
 
 import Data.List                as L
-import Data.Map                 as M
 import Data.Maybe
 import Data.Text                as T
 import Data.Text.Encoding       as E
-import Data.Binary              (Binary)
+import Data.Char                as C (toUpper)      
 
-import Holumbus.Index.Common
 import Holumbus.Query.Language.Grammar
 import Holumbus.Query.Result
 
@@ -75,10 +72,10 @@ coreIdx :: Application (CompactInverted,
                         CompactInverted, 
                         CompactInverted)
 coreIdx = do
-  core <- curryCore
-  return $ (CoreData.modIndex core, 
-            CoreData.fctIndex core, 
-            CoreData.typeIndex core)
+  cCore <- curryCore
+  return $ (CoreData.modIndex cCore, 
+            CoreData.fctIndex cCore, 
+            CoreData.typeIndex cCore)
 
 -- ------------------------------------------------------------------------------
 -- | Document data consisting of module, function and type information as tripel
@@ -87,10 +84,10 @@ coreDoc :: Application (SmallDocuments ModuleInfo,
                         SmallDocuments FunctionInfo,
                         SmallDocuments TypeInfo)
 coreDoc = do
-  core <- curryCore
-  return $ (CoreData.modDocuments core, 
-            CoreData.fctDocuments core, 
-            CoreData.typeDocuments core)
+  cCore <- curryCore
+  return $ (CoreData.modDocuments cCore, 
+            CoreData.fctDocuments cCore, 
+            CoreData.typeDocuments cCore)
 
 -- ------------------------------------------------------------------------------
 -- | Function to start a query 
@@ -113,132 +110,43 @@ getQueryStringParam param = do
   return $ T.unpack (E.decodeUtf8 query)
 
 -- ------------------------------------------------------------------------------
--- | creates a HTML List-Item containing a List with the link to the document found, the teasertext and the ranking-score
+-- | Creates a sequence of html-tags to display a search result. It is placed as html-list with a link to the document, the document title, the description as a teaser and optional texts.
 --  i.e.
 --  <li>
 --    <ul>
 --      <li><a href="linkToDocumentFound">titleOfDocumentFound</a></li>
---      <li>teaserText</li>
---      <li>rankingScoreOfDocumetFound</li>
+--      <li>optionalItems</li>
+--      <li>teaser</li>
 --    </ul>
 --  </li>
 
-moduleDocHitToListItem :: SRDocHit ModuleInfo -> X.Node
-moduleDocHitToListItem docHit
-    = htmlListItem "searchResult" $ subList
-    where
-      auth     = mAuthor . srInfo $ docHit
-      authText = "Author: " ++ auth
-      subList
-          = htmlList "" subListItems
-      subListItems
-          = [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultTitle" $
-              htmlTextNode . srTitle $
-              docHit
-            ]
-            ++
-            [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultModified" $
-              htmlTextNode $
-              authText
-            ]
-            ++ [ htmlLink' "" (srUri docHit) mkContentContext ]
-      mkContentContext
-          =  htmlListItem "teaserText" $ htmlTextNode teaserText
+docHitToListItem :: [(String, a -> String)] -> (a -> String) -> SRDocHit a -> X.Node
+docHitToListItem is teaser docHit
+    = htmlListItem "searchResult" $ 
+      htmlList "" $ htmlLink htmlUri "searchResultTitle" (srTitle docHit)
+                  ++ optionalList
+                  ++ htmlLink htmlUri "descriptionTeaser" teaserText
+  where
       teaserText
-          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . mDescription $ srInfo docHit
+          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . teaser $ srInfo docHit
+      optionalList = P.concat $ 
+                     P.map (\(itemTitle,item) -> htmlLink htmlUri 
+                                                           itemTitle 
+                                                           (item $ srInfo docHit))
+                            is
+      htmlUri = srUri docHit
 
-functionDocHitToListItem :: SRDocHit FunctionInfo -> X.Node
-functionDocHitToListItem docHit
-    = htmlListItem "searchResult" $ subList
-    where
-      subList = htmlList "" subListItems
-      subListItems
-          = [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultTitle" $
-              htmlTextNode . srTitle $
-              docHit
-            ]
-            ++ 
-            [htmlLink' "" (srUri docHit) $
-             htmlListItem "searchResultModified" $
-             htmlTextNode $
-             moduleName]
-            ++
-            [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultModified" $
-              htmlTextNode $
-              signature
-            ]
-            ++ [ htmlLink' "" (srUri docHit) mkContentContext ]
-      mkContentContext
-          =  htmlListItem "teaserText" $ htmlTextNode teaserText
-      teaserText
-          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . fDescription $ srInfo docHit
-      signature = listToSignature $ fSignature $ srInfo docHit
-      moduleName = fModule $ srInfo docHit
-
-typeDocHitToListItem :: SRDocHit TypeInfo -> X.Node
-typeDocHitToListItem  docHit
-    = htmlListItem "searchResult" $ subList
-    where
-      subList
-          = htmlList "" subListItems
-      subListItems
-          = [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultTitle" $
-              htmlTextNode . srTitle $
-              docHit
-            ]
-            ++ 
-            [htmlLink' "" (srUri docHit) $
-             htmlListItem "searchResultModified" $
-             htmlTextNode $
-             moduleName]
-            ++
-            [ htmlLink' "" (srUri docHit) $
-              htmlListItem "searchResultModified" $
-              htmlTextNode $
-              signature
-            ]
-            ++ [ htmlLink' "" (srUri docHit) mkContentContext ]
-      mkContentContext
-          =  htmlListItem "teaserText" $ htmlTextNode teaserText
-      teaserText
-          = (++ "...") . L.unwords . L.take numTeaserWords . L.words . tDescription $ srInfo docHit
-      signature = listToSignature $ P.concat $ tSignature $ srInfo docHit
-      moduleName = tModule $ srInfo docHit
+htmlLink :: (String) -> String -> String -> [X.Node]
+htmlLink htmlUri tagName text = [htmlLink' "" htmlUri $
+                                 htmlListItem tagName $
+                                 htmlTextNode $ text]
+                      
 
 
-
--- docHitToListItem :: SRDocHit ModuleInfo -> X.Node
--- docHitToListItem docHit
---     = htmlListItem "searchResult" $ subList
---     where
---       auth     = mAuthor . srInfo $ docHit
---       authText = "Author: " ++ auth
---       subList
---           = htmlList "" subListItems
---       subListItems
---           = [ htmlLink' "" (srUri docHit) $
---               htmlListItem "searchResultTitle" $
---               htmlTextNode . srTitle $
---               docHit
---             ]
---             ++
---             [ htmlLink' "" (srUri docHit) $
---               htmlListItem "searchResultModified" $
---               htmlTextNode $
---               authText
---             ]
---             ++ [ htmlLink' "" (srUri docHit) mkContentContext ]
---       mkContentContext
---           =  htmlListItem "teaserText" $ htmlTextNode teaserText
---       teaserText
---           = (++ "...") . L.unwords . L.take numTeaserWords . L.words . mDescription $ srInfo docHit
-     
-
+makeTitle :: String -> String
+makeTitle [] = []
+makeTitle (t:ext) = C.toUpper t : ext ++ ": "
+            
 -- ------------------------------------------------------------------------------
 -- | creates the HTML info text describing the search result (i.e. "Found 38 docs in 0.0 sec.")
 
@@ -318,23 +226,35 @@ processquery = do
 
 resultSplice :: Int -> SearchResultDocs -> Splice Application
 resultSplice pageNum searchResultDocs = do
-  let (moduleDocHits, functionDocHits, typeDocHits) = (srModuleDocHits searchResultDocs,
-                                                       srFunctionDocHits searchResultDocs, 
-                                                       srTypeDocHits searchResultDocs)
-  let moduleItems = P.map (moduleDocHitToListItem) (L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) $ moduleDocHits)
-  let functionItems = P.map (functionDocHitToListItem) (L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) $ functionDocHits)
-  let typeItems = P.map (typeDocHitToListItem) (L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) $ typeDocHits)
+  let (mHits, fHits, tHits) = (srModuleDocHits searchResultDocs,
+                               srFunctionDocHits searchResultDocs, 
+                               srTypeDocHits searchResultDocs)
+      noHits = P.null mHits && P.null fHits && P.null tHits
+      pageHits h = L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) h
+      mItems = P.map (docHitToListItem [("author", mAuthor)] 
+                                        mDescription)  
+                     (pageHits $ mHits)
+      fItems = P.map (docHitToListItem (modSigList (fModule) (fSignature))
+                                        fDescription) 
+                     (pageHits $ fHits)
+      tItems = P.map (docHitToListItem (modSigList (tModule) (\a -> P.concat $ tSignature a))
+                                        tDescription) 
+                     (pageHits $ tHits)
+      modSigList fMod fSig = [("module", fMod), ("signature", (\a -> listToSignature $ fSig a))]
+
   -- debug informations
-  if (P.null moduleDocHits && P.null functionDocHits && P.null typeDocHits)
+  if noHits
     then liftIO $ P.putStrLn "- keine Ergebnisse -"
     else do
-      liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ moduleDocHits) 
-                                ++ (show $ P.length $ functionDocHits) 
-                                ++ (show $ P.length typeDocHits) ++ ">"
-  let infos = [docHitsMetaInfo searchResultDocs]
-  if (P.null moduleDocHits && P.null functionDocHits && P.null typeDocHits)
+      liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ mHits) 
+                                ++ (show $ P.length $ fHits) 
+                                ++ (show $ P.length tHits) ++ ">"
+  if noHits
      then return $ [htmlList "" [errorInfo]]
-     else return $ [htmlList "" (infos ++ moduleItems ++ functionItems ++ typeItems)]
+     else return $ [htmlList "" ([docHitsMetaInfo searchResultDocs] 
+                                ++ mItems 
+                                ++ fItems 
+                                ++ tItems)]
 
 -- | generates the HTML node to be inserted into "<oldquery />"
 
@@ -365,13 +285,10 @@ pagerSplice query actPage searchResultDocs = do
 completions :: Application ()
 completions = do
   query' <- getQueryStringParam "query"
-  -- let (query', isDate) = maybeNormalizeQuery query'' -- determine if its a date
-  query <- return query'
   queryFunc' <- queryFunction
-  searchResultWords' <- liftIO $ getWordCompletions query $ queryFunc'
-  let searchResultWords = srWordHits searchResultWords'
+  searchResultWords' <- liftIO $ getWordCompletions query' $ queryFunc'
   putResponse myResponse
-  writeText (T.pack $ toJSONArray numDisplayedCompletions $ searchResultWords)
+  writeText (T.pack $ toJSONArray numDisplayedCompletions $ srWordHits searchResultWords')
   where
   myResponse = setContentType "text/plain; charset=utf-8" . setResponseCode 200 $ emptyResponse
 

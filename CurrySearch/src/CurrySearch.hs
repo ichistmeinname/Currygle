@@ -12,7 +12,6 @@ import           Data.Function
 import qualified Data.List              as L
 import qualified Data.Map               as M
 import           Data.Maybe             (fromMaybe)
-import           Data.Binary            (Binary)
 
 import           Holumbus.Index.Common
 
@@ -86,12 +85,12 @@ type RankTable  = [(Context, Score)]
 
 defaultRankTable :: RankTable
 defaultRankTable
-    = [ ("headline", 1.0)
-      , ("content",  0.5)
-      , ("uri",      0.2)
-      , ("dates",    1.0)
-      , ("calender", 2.0)
-      , ("archive",  0.2)
+    = [ ("Name", 1.0)
+      , ("Signature",  0.5)
+      , ("Module",      0.2)
+      , ("Author",    1.0)
+      , ("Description", 2.0)
+      , ("Other",  0.2)
       ]
 
 defaultRankCfg :: RankConfig a
