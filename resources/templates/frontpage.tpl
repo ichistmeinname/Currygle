@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>FH Suche</title>
+    <title>Curr(y)gle</title>
     <link rel="stylesheet" type="text/css" href="screen.css" />
     <script type="text/javascript" src="ajax.js"></script>
   </head>
@@ -33,9 +33,8 @@
     </table>
     <div class="footer">
       Powered by
-      <a class="footerHref" href="http://www.haskell.org">Haskell</a>,
+      <a class="footerHref" href="http://www-ps.informatik.uni-kiel.de/currywiki/g">Curry</a>,
       <a class="footerHref" href="https://github.com/fortytools/holumbus">Holumbus</a> &amp;
-      <a class="footerHref" href="https://github.com/UweSchmidt/hxt">HXT</a>
     </div>
   </body>
 </html>
