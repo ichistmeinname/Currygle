@@ -231,16 +231,21 @@ resultSplice pageNum searchResultDocs = do
                                srTypeDocHits searchResultDocs)
       noHits = P.null mHits && P.null fHits && P.null tHits
       pageHits h = L.take hitsPerPage $ L.drop ((pageNum-1)*hitsPerPage) h
-      mItems = P.map (docHitToListItem [("author", mAuthor)] 
-                                        mDescription)  
+      mItems = P.map (docHitToListItem [("author", mAuthor)] mDescription)  
                      (pageHits $ mHits)
-      fItems = P.map (docHitToListItem (modSigList (fModule) (fSignature))
-                                        fDescription) 
+      fItems = P.map (docHitToListItem [("module", fModule),
+                     ("signature", (\a -> L.intercalate "->" $ typeSignature (fModule a) (snd $ fSignature a)))]
+                     fDescription)
                      (pageHits $ fHits)
-      tItems = P.map (docHitToListItem (modSigList (tModule) (\a -> P.concat $ tSignature a))
-                                        tDescription) 
-                     (pageHits $ tHits)
-      modSigList fMod fSig = [("module", fMod), ("signature", (\a -> listToSignature $ fSig a))]
+      tItems = P.map (docHitToListItem [("module", tModule), 
+                   ("signature", (\a -> P.concat $ P.concatMap (consToList) (tSignature a)))]
+                   tDescription) 
+                   (pageHits $ tHits) 
+      -- tItems = P.map (docHitToListItem (modSigList (tModule) (\a -> P.concat $ tSignature a)))
+      --                                   tDescription) 
+      --                (pageHits $ tHits)
+      -- modSigList fMod fSig = [("module", fMod), ("signature", 
+      --                        (\a -> L.intercalate "->" (typeSignature fMod (snd $ fSig a))))]
 
   -- debug informations
   if noHits
