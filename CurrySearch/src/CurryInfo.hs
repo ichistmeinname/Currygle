@@ -5,9 +5,11 @@
 module CurryInfo where
 
 import Control.DeepSeq
-import Control.Monad                  ( liftM5, liftM4, liftM3 )
+import Control.Monad                  ( liftM5, liftM4, liftM3, liftM2, liftM )
 
 import Data.Binary                    ( Binary(..), putWord8, getWord8 )
+
+import Helpers
 
 -- | Information about a curry module, function and type.
 
@@ -24,15 +26,15 @@ mkModuleInfo :: String -> String -> String -> [String] -> String -> ModuleInfo
 mkModuleInfo = ModuleInfo
 
 emptyFunctionInfo :: FunctionInfo
-emptyFunctionInfo = mkFunctionInfo "" [""] "" "" False UnknownFR
+emptyFunctionInfo = mkFunctionInfo "" (emptyQName, Undefined) "" "" False UnknownFR
 
-mkFunctionInfo :: String -> [String] -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
+mkFunctionInfo :: String -> (QName, TypeExpr) -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
 mkFunctionInfo = FunctionInfo
 
 emptyTypeInfo :: TypeInfo
-emptyTypeInfo = mkTypeInfo "" [[""]] "" ""
+emptyTypeInfo = mkTypeInfo "" [] "" ""
 
-mkTypeInfo :: String -> [[String]] -> String -> String -> TypeInfo
+mkTypeInfo :: String -> [(QName, [TypeExpr])] -> String -> String -> TypeInfo
 mkTypeInfo = TypeInfo
 
 -- the module
@@ -95,12 +97,12 @@ instance Binary ModuleInfo where
 -- the description
 -- True if property ist defined non-deterministically
 -- the flex/rigid status
-data FunctionInfo = FunctionInfo String [String] String String Bool FlexRigidResult deriving (Show, Read)
+data FunctionInfo = FunctionInfo String (QName, TypeExpr) String String Bool FlexRigidResult deriving (Show, Read)
 
 fName :: FunctionInfo -> String
 fName (FunctionInfo n _ _ _ _ _) = n
 
-fSignature :: FunctionInfo -> [String]
+fSignature :: FunctionInfo -> (QName, TypeExpr)
 fSignature (FunctionInfo _ s _ _ _ _) = s
 
 fModule :: FunctionInfo -> String
@@ -128,12 +130,12 @@ instance Binary FunctionInfo where
 -- the signature
 -- the corresponding module
 -- the description
-data TypeInfo = TypeInfo String [[String]] String String deriving (Show, Read)
+data TypeInfo = TypeInfo String [(QName, [TypeExpr])] String String deriving (Show, Read)
 
 tName :: TypeInfo -> String
 tName (TypeInfo n _ _ _) = n
 
-tSignature :: TypeInfo -> [[String]]
+tSignature :: TypeInfo -> [(QName, [TypeExpr])]
 tSignature (TypeInfo _ s _ _) = s
 
 tModule :: TypeInfo -> String
@@ -141,6 +143,24 @@ tModule (TypeInfo _ _ m _) = m
 
 tDescription :: TypeInfo -> String
 tDescription (TypeInfo _ _ _ d) = d
+
+instance NFData TypeExpr where
+    rnf (TVar i) = rnf i
+    rnf (FuncType t1 t2) = rnf t1 `seq` rnf t2
+    rnf (TCons name tList) = rnf name `seq` rnf tList
+
+instance Binary TypeExpr where
+    put (TVar i) = putWord8 0 >> put i
+    put (FuncType t1 t2) = putWord8 1 >> put t1 >> put t2
+    put (TCons name tList) = putWord8 2 >> put name >> put tList
+    put Undefined = putWord8 3
+    get = do 
+          tag <- getWord8
+          case tag of
+            0 -> liftM TVar get
+            1 -> liftM2 FuncType get get
+            2 -> liftM2 TCons get get
+            _ -> return Undefined
 
 instance NFData TypeInfo where
     rnf (TypeInfo n s m d) = rnf n `seq` rnf s `seq` rnf m `seq` rnf d
@@ -161,8 +181,8 @@ instance Binary FlexRigidResult where
       put KnownFlex = putWord8 2
       put KnownRigid = putWord8 3
       get = do
-        tag_ <- getWord8
-        case tag_ of
+        tag <- getWord8
+        case tag of
           1 -> return ConflictFR
           2 -> return KnownFlex
           3 -> return KnownRigid

@@ -5,29 +5,36 @@ where
 import Holumbus.Index.Common
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
 import Data.Binary
+import Data.List
 import CurryInfo
 import IndexTypes
-import Helpers (splitOnWhitespace, biasedWord, listToSignature)
-
+import Helpers (splitOnWhitespace, biasedWord, typeSignature, consSignature)
+import System.Environment (getArgs)
 
 main :: IO ()
 main = do
+     (a:b:_) <- getArgs
+     main2 a b
+     return ()
+
+main2 :: FilePath -> FilePath -> IO ()
+main2 cdocPath uriPath = do
     putStr $ "Writing index ..."
-    curryDoc <- loadFromCurryFile $ filePath ++ "/DOC_FirstProg/firstprog.cdoc"
+    curryDoc <- loadFromCurryFile $ cdocPath
     let curryModState  = ixDoc 
                          contextsMod 
                          [moduleInfo curryDoc] 
-                         [doc mName (ModuleUri mName) (moduleInfo curryDoc)] 
+                         [doc uriPath mName (ModuleUri mName) (moduleInfo curryDoc)] 
                          emptyCurryModState
         curryFctState  = ixDoc 
                          contextsF 
                          (functionInfos curryDoc) 
-                         (map (doc fName (FctOrTypeUri fModule fName)) $ functionInfos curryDoc)
+                         (map (doc uriPath fName (FctOrTypeUri fModule fName)) $ functionInfos curryDoc)
                          emptyCurryFctState
         curryTypeState = ixDoc 
                          contextsT 
                          (typeInfos curryDoc) 
-                         (map (doc tName (FctOrTypeUri tModule tName)) $ typeInfos curryDoc) 
+                         (map (doc uriPath tName (FctOrTypeUri tModule tName)) $ typeInfos curryDoc) 
                          emptyCurryTypeState
     putStr $ " done!\n"
     writeSearchBin "../index/ix-mod.bin"  $ curryModState
@@ -51,18 +58,25 @@ ixDoc _ _ _ is = is
 data Uri a = ModuleUri (a -> String) | FctOrTypeUri (a -> String) (a -> String)
 
 -- | Function to build document
-doc :: (Binary a) => (a -> String) -> Uri a -> a -> Document a
-doc fiName (ModuleUri fiUri) info = 
-    Document {title  = fiName info
-             ,uri    = "DOC_" ++ fiUri info ++ "/" ++ fiUri info ++ ".html"
-             ,custom = Just info}
-doc fiName (FctOrTypeUri fiUriModule fiUriName) info = 
-    Document {title  = fiName info
-             ,uri    = "DOC_" ++ fiUriModule info ++ "/" ++
-                       fiUriModule info ++ ".html" ++ 
-                       "#" ++ fiUriName info
-             ,custom = Just info}
- 
+doc :: (Binary a) => String -> (a -> String) -> Uri a -> a -> Document a
+-- doc uriPath fiName (ModuleUri fiUri) info = 
+--     Document {title  = fiName info
+--              ,uri    = uriPath ++ fiUri info ++ ".html"
+--              ,custom = Just info}
+-- doc uriPath fiName (FctOrTypeUri fiUriModule fiUriName) info = 
+--     Document {title  = fiName info
+--              ,uri    = uriPath ++ fiUriModule info ++ ".html" ++ 
+--                        "#" ++ fiUriName info
+--              ,custom = Just info} 
+doc uriPath fiName uriType info = 
+    Document {title  = fiName info,
+              uri    = uriP,
+              custom = Just info}
+  where uriP = case uriType of
+               ModuleUri fiUri                    -> uriPath ++ fiUri info ++ ".html"
+               FctOrTypeUri fiUriModule fiUriName -> uriPath ++ fiUriModule info ++ ".html" ++
+                                                      "#" ++ fiUriName info
+
 -- | Function to build index
 idx :: (a -> DocId -> [(String, String, Occurrences)]) -> a -> DocId -> Inverted
 idx contextList info i = fromList emptyInverted $ contextList info i
@@ -78,16 +92,20 @@ contextsMod moduleI i =
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
     map (addOcc  (occ i 2)) $ [("Name", fName functionI)
-                              , ("Module", fModule functionI) 
-                              , ("Signature", listToSignature $ fSignature functionI)] 
+                              , ("Module", fModule functionI)] 
+                              ++ (signature $ (\((modName,_), tExpr) -> typeSignature modName tExpr) 
+                                  $ fSignature functionI)
                               ++ (description $ fDescription functionI)      
     
 -- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
     map (addOcc  (occ i 1)) $ [("Name", tName typeI)
-                              , ("Module", tModule typeI)
-                              , ("Signature", listToSignature $ concat $ tSignature typeI)]
+                              , ("Module", tModule typeI)] ++
+                              (signature $ (concatMap 
+                              (\((modName,fctName), tExprList) -> consSignature modName tExprList)
+                                $ tSignature typeI)) ++
+                              (signature $ map (\((_, fctName), _) -> fctName) $ tSignature typeI)
                               ++ (description $ tDescription typeI)       
 
 occ :: DocId -> Word32 -> Occurrences
@@ -98,6 +116,9 @@ addOcc occurrence (a,b) = (a,b,occurrence)
 
 description :: String -> [(String,String)]
 description s = map (addContext "Description") $ filter (not . biasedWord) $ splitOnWhitespace s
+
+signature :: [String] -> [(String,String)]
+signature s = (addContext "Signature" (intercalate "->" s)) : map (addContext "Signature") s
 
 addContext :: String -> String -> (String, String)
 addContext context s = (context, s)

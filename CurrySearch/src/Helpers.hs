@@ -9,10 +9,80 @@ where
 
 import qualified Data.Text      as T
 import Data.List
+import Data.Char
 
 import qualified Text.XmlHtml   as X
 
 -- ----------------------------------------------------------------------------
+
+type QName = (String, String)
+
+data TypeExpr =
+     TVar Int              
+   | FuncType TypeExpr TypeExpr     
+   | TCons QName [TypeExpr]  
+   | Undefined   
+   deriving (Read, Show)   
+
+emptyQName :: QName
+emptyQName = ("","")
+
+-- pretty print for special types like lists or tupels
+prettyPrintSpecialType :: String -> String -> [TypeExpr] -> String
+prettyPrintSpecialType _ _ [] = []	      -- shouldn't occur
+prettyPrintSpecialType name fName [tExpr] 
+    | fName == "[]" = "[" ++  concat (typeSignature name tExpr) ++ "]"
+    | otherwise = fName ++ " " ++ concat (typeSignature name tExpr)
+prettyPrintSpecialType name fName tExprList@(_:_:_)  
+    | head fName == '(' =
+    "(" ++ 
+    intercalate "," (concatMap (typeSignature name) tExprList)
+    ++ ")"
+    | otherwise = fName ++ " " ++ concat (concatMap (typeSignature name) tExprList)
+
+prettyPrint :: String -> TypeExpr -> String
+prettyPrint modName (TCons (mName2, fName2) []) = 
+    let name = if qualifiedName modName mName2 then fName2 else modName++"."++fName2
+    in name
+prettyPrint modName (TCons (mName2, fName2) tExprList) =
+    let name | qualifiedName modName mName2  = fName2
+             | otherwise = modName++"."++fName2
+    in prettyPrintSpecialType modName name tExprList
+prettyPrint _ (TVar i) = [chr (i+97)]
+prettyPrint modName (FuncType tExpr1 tExpr2) =
+    prettyPrint modName tExpr1 ++ "->" ++ prettyPrint modName tExpr2
+prettyPrint _ Undefined = ""
+
+-- generate type signature  
+typeSignature :: String -> TypeExpr -> [String]
+typeSignature modName (TCons (mName2, fName2) []) = 
+    let name = if qualifiedName modName mName2 then fName2 else modName++"."++fName2
+    in [name]
+typeSignature modName (TCons (mName2, fName2) tExprList) =
+    let name | qualifiedName modName mName2 = fName2
+             | otherwise = modName++"."++fName2
+    in [prettyPrintSpecialType modName name tExprList]
+typeSignature modName (FuncType tExpr1@(FuncType _ _) tExpr2) =
+    paren True (prettyPrint modName tExpr1) : (typeSignature modName tExpr2)
+typeSignature modName tExpr@(FuncType _ _) = 
+    [prettyPrint modName tExpr]
+typeSignature _ (TVar i) = [[chr (i+97)]]
+typeSignature _ Undefined = []
+
+consSignature :: String -> [TypeExpr] -> [String]
+consSignature modName tExprList = concatMap (typeSignature modName) tExprList
+
+consToList :: (QName, [TypeExpr]) -> [String]
+consToList ((modName, fctName), tExprList) = 
+    [fctName] ++ [" "] ++ (consSignature modName tExprList)
+
+qualifiedName :: String -> String -> Bool
+qualifiedName name1 name2 = name1 == name2 || name1 == "Prelude"
+
+paren :: Bool -> String -> String
+paren parens str 
+    | parens    = "(" ++ str ++ ")"
+    | otherwise = str 
 
 --  Pretty printing for signatures 
 listToSignature :: [String] -> String
