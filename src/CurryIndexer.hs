@@ -18,7 +18,7 @@ main = do
      return ()
 
 main2 :: FilePath -> FilePath -> IO ()
-main2 cdocPath uriPath = do
+main2 cdocPath uriP = do
     putStr $ "Writing index ..."
     curryDoc <- loadFromCurryFile $ cdocPath
     let curryModState  = ixDoc 
@@ -36,6 +36,7 @@ main2 cdocPath uriPath = do
                          (typeInfos curryDoc) 
                          (map (doc uriPath tName (FctOrTypeUri tModule tName)) $ typeInfos curryDoc) 
                          emptyCurryTypeState
+        uriPath = uriP ++ "/"
     putStr $ " done!\n"
     writeSearchBin "../index/ix-mod.bin"  $ curryModState
     writeSearchBin "../index/ix-fct.bin"  $ curryFctState
@@ -84,28 +85,36 @@ idx contextList info i = fromList emptyInverted $ contextList info i
 -- | Generates the context information for a module
 contextsMod :: ModuleInfo -> DocId -> [(String, String, Occurrences)]
 contextsMod moduleI i = 
-    map (addOcc  (occ i 1)) $ [("Name", mName moduleI)] 
+    map (addOcc  (occ i 1)) $ [("TheModule", mName moduleI)] 
                                    ++ (author $ mAuthor moduleI) 
                                    ++ (description $ mDescription moduleI)
 
 -- | Generates the context information for a function
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
-    map (addOcc  (occ i 2)) $ [("Name", fName functionI)
-                              , ("Module", fModule functionI)] 
+    map (addOcc  (occ i 2)) $ [("Function", fName functionI)] ++ [("Module", fModule functionI)]
                               ++ (signature $ (\((modName,_), tExpr) -> typeSignature modName tExpr) 
                                   $ fSignature functionI)
-                              ++ (description $ fDescription functionI)      
-    
+                              ++ (flexRigid $ fFlexRigid functionI)
+                              ++ (nonDet $ fNonDet functionI)
+                              ++ (description $ fDescription functionI) 
+  where flexRigid fr = case fr of
+                       KnownFlex  -> [("Flex", "")]     
+                       KnownRigid -> [("Rigid", "")]
+                       ConflictFR -> [("Flex", ""), ("Rigid", "")]
+                       _          -> []
+        nonDet nd     = case nd of
+                        True  -> [("NonDet", "")]
+                        False -> [("Det", "")]
+
 -- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
-    map (addOcc  (occ i 1)) $ [("Name", tName typeI)
-                              , ("Module", tModule typeI)] ++
-                              (signature $ (concatMap 
-                              (\((modName,fctName), tExprList) -> consSignature modName tExprList)
-                                $ tSignature typeI)) ++
-                              (signature $ map (\((_, fctName), _) -> fctName) $ tSignature typeI)
+    map (addOcc  (occ i 1)) $ [("Type", tName typeI)] ++ [("Module", tModule typeI)]
+                              ++ (signature $ (concatMap 
+                                 (\((modName,_), tExprList) -> consSignature modName tExprList)
+                                 $ tSignature typeI))
+                              ++ (signature $ map (\((_, fctName), _) -> fctName) $ tSignature typeI)
                               ++ (description $ tDescription typeI)       
 
 occ :: DocId -> Word32 -> Occurrences
