@@ -171,13 +171,14 @@ errorInfo = htmlListItem "info" $
 -- ------------------------------------------------------------------------------
 -- | defines routes through our site
 
-site :: Application ()
-site = route
+site :: FilePath -> Application ()
+site args = route
        [ ("/",          frontpage)
        , ("/querypage", processquery)  -- render HTML Page with found Document-Hits
        , ("/completions", completions) -- return List of Completions to Ajax-caller
        ]
-       <|> serveDirectory "resources/static"
+       -- <|> serveDirectory "resources/static"
+       <|> serveDirectory (args++"resources/static")
 
 -- ------------------------------------------------------------------------------
 -- 
@@ -251,8 +252,8 @@ resultSplice pageNum searchResultDocs = do
   if noHits
     then liftIO $ P.putStrLn "- keine Ergebnisse -"
     else do
-      liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ mHits) 
-                                ++ (show $ P.length $ fHits) 
+      liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ mHits) ++ ", "
+                                ++ (show $ P.length $ fHits) ++ ", "
                                 ++ (show $ P.length tHits) ++ ">"
   if noHits
      then return $ [htmlList "" [errorInfo]]

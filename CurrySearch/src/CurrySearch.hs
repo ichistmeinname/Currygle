@@ -16,16 +16,17 @@ import           Data.Maybe             (fromMaybe)
 import           Holumbus.Index.Common
 
 import           Holumbus.Query.Language.Grammar
-import           Holumbus.Query.Language.Parser
 import           Holumbus.Query.Processor
 import           Holumbus.Query.Result
 import           Holumbus.Query.Ranking
 import           Holumbus.Query.Fuzzy
 
-import           System.CPUTime
+import           System.CPUTime 
 
 import           IndexTypes
 import           CurryInfo
+
+import           Parser
 
 -- ------------------------------------------------------------
 
@@ -134,8 +135,8 @@ localQuery :: CompactInverted -> SmallDocuments ModuleInfo
                            Result FunctionInfo,
                            Result TypeInfo)
 localQuery ixM docM ixF docF ixT docT q
-    = return $ (query ixM docM, query ixF docF, query ixT docT)
-  where query ix doc = processQuery processCfg ix doc q
+    = return $ (queryL ixM docM, queryL ixF docF, queryL ixT docT)
+  where queryL ix doc = processQuery processCfg ix doc q
 
 
 -- | get all Search Results
@@ -188,6 +189,7 @@ uniqByTitle (x:xs) = x : uniqByTitle (deleteByTitle (srTitle x) xs)
   where
     deleteByTitle t = filter (\ listItem -> (srTitle listItem /= t))
 
+
 -- | get only Document Search Results (without Word-Completions)
 
 getIndexSearchResults :: String -> (Query -> IO (Result ModuleInfo,
@@ -195,7 +197,7 @@ getIndexSearchResults :: String -> (Query -> IO (Result ModuleInfo,
                                                  Result TypeInfo)) 
                                 -> IO SearchResultDocs
 getIndexSearchResults q f
-    = either printError makeQuery $ parseQuery q
+    = either printError makeQuery $ prepareQuery q
     where
       printError _
           = return $ SearchResultDocs 0.0 0 [] [] [] 
@@ -217,7 +219,7 @@ getWordCompletions :: String -> (Query -> IO (Result ModuleInfo,
                                               Result TypeInfo)) 
                              -> IO SearchResultWords
 getWordCompletions q f
-    = either printError makeQuery $ parseQuery q
+    = either printError makeQuery $ prepareQuery q
     where
       printError _
           = return $ SearchResultWords 0 []

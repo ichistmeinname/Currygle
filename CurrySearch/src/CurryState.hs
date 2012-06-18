@@ -83,18 +83,18 @@ instance InitializerState CurryState where
 -- ------------------------------------------------------------------------------
 -- | The Initializer for 'CurryState'. No arguments are required.
 
-curryInitializer :: Initializer CurryState
-curryInitializer = liftIO curryInitState >>= mkInitializer . CurryState
+curryInitializer :: FilePath -> Initializer CurryState
+curryInitializer filePath = liftIO (curryInitState filePath) >>= mkInitializer . CurryState
 
 -- ------------------------------------------------------------------------------
 
-ixBase :: FilePath
-ixBase = "./index"
+-- ixBase :: FilePath
+-- ixBase = "./index"
 
 -- ------------------------------------------------------------------------------
 
-curryInitState :: IO Core
-curryInitState = do
+curryInitState :: FilePath -> IO Core
+curryInitState filePath = do
   idxMod  <- loadIndex curryModIndex
   infoMsg "index" (sizeWords idxMod) "words"
   docMod  <- loadModDocuments curryModDocs
@@ -120,6 +120,7 @@ curryInitState = do
              , typeDocuments = docType
              }
     where
+      ixBase = filePath++"index"
       curryModIndex  = ixBase ++ "/ix-mod.bin.idx"
       curryModDocs   = ixBase ++ "/ix-mod.bin.doc"
       curryFctIndex  = ixBase ++ "/ix-fct.bin.idx"
