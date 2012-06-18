@@ -18,11 +18,17 @@
 module Main where
 
 import Snap.Extension.Server
+import System.Environment
 
 import Application
 import Site
 
 main :: IO ()
-main = quickHttpServe applicationInitializer site
+main = do
+       (arg:_) <- getArgs
+       main2 arg
+main2 :: FilePath -> IO ()
+main2 arg = quickHttpServe (applicationInitializer arg) (site arg)
+
 
 -- ----------------------------------------------------------------------------
