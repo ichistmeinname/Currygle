@@ -74,6 +74,7 @@ executable curryServer
                , base                       >= 4     && < 5
                , binary                     >= 0.5
                , bytestring                 >= 0.9.1 && < 0.10
+               , directory
                , filepath                   == 1.2.0.*
                , heist                      >= 0.5   && < 0.6
                , Holumbus-Searchengine      >= 1.2
