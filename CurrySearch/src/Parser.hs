@@ -7,12 +7,12 @@ import           Data.Char
 import           Data.Maybe
 import           Helpers
 
-import Debug.Trace (trace)
+-- import Debug.Trace (trace)
 
 
 prepareQuery :: String -> Either String Query
 prepareQuery s
-    | customized s = trace ("WTF is the BinQuery? " ++ show (customQuery s)) (Right $ customQuery s)
+    | customized s = (Right $ customQuery s)
     | otherwise    = parseQuery s
 
 specify :: [String] -> String -> Query
@@ -26,20 +26,20 @@ customQuery s = customize $ splitOnWhitespace s
         customize (x:xs) = BinQuery And (custom x) (customize xs)
         
         custom x
-          | funcSpecifier x  = specify ["Function"] (strip "function:" x)
-          | typeSpecifier x  = specify ["Type"] (strip "type:" x)
-          | modSpecifier x   = specify ["Module"] (strip "module:" x)
+          | funcSpecifier x  = specify ["Function"] (strip ":function" x)
+          | typeSpecifier x  = specify ["Type"] (strip ":typ" x)
+          | modSpecifier x   = specify ["Module"] (strip ":module" x)
           -- | inSpecifier x   = specify ["Module"] (strip "in:" x)
-          | signature x      = specify ["Signature"] (strip "signature:" x)
-          | ndSpecifier x    = specify ["NonDet"] (strip "nd" x)
-          | detSpecifier x   = specify ["Det"] (strip "det" x)
-          | flexSpecifier x  = specify ["Flex"] (strip "flex" x)
-          | rigidSpecifier x = specify ["Rigid"] (strip "rig" x)
+          | signature x      = specify ["Signature"] (strip ":signature" x)
+          | ndSpecifier x    = specify ["NonDet"] (strip ":nondet" x)
+          | detSpecifier x   = specify ["Det"] (strip ":det" x)
+          | flexSpecifier x  = specify ["Flex"] (strip ":flex" x)
+          | rigidSpecifier x = specify ["Rigid"] (strip ":rigid" x)
           | caseSensitive x  = specify ["Type","TheModule"] x
           | otherwise        = Word x
 
 customized :: String -> Bool
-customized s = funcSpecifier s || typeSpecifier s || modSpecifier s || sigSpecifier s || caseSensitive s
+customized s = funcSpecifier s || typeSpecifier s || modSpecifier s || signature s || caseSensitive s
 
 
 -- customSignature :: String -> Query
@@ -55,25 +55,25 @@ caseSensitive [] = False
 caseSensitive (x:_) = isUpper x
 
 funcSpecifier :: String -> Bool
-funcSpecifier = isPrefixOf "function:"
+funcSpecifier = isPrefixOf ":function"
 
 typeSpecifier :: String -> Bool
-typeSpecifier = isPrefixOf "type:"
+typeSpecifier = isPrefixOf ":type"
 
 modSpecifier :: String -> Bool
-modSpecifier = isPrefixOf "module:"
+modSpecifier = isPrefixOf ":module"
 
 ndSpecifier :: String -> Bool
-ndSpecifier = isPrefixOf "nd"
+ndSpecifier = isPrefixOf ":nondet"
 
 detSpecifier :: String -> Bool
-detSpecifier = isPrefixOf "det"
+detSpecifier = isPrefixOf ":det"
 
 flexSpecifier :: String -> Bool
-flexSpecifier = isPrefixOf "flex"
+flexSpecifier = isPrefixOf ":flex"
 
 rigidSpecifier :: String -> Bool
-rigidSpecifier = isPrefixOf "rig"
+rigidSpecifier = isPrefixOf ":rigid"
 
 -- inSpecifier :: String -> Bool
 -- inSpecifier = isPrefixOf "in:"
@@ -90,11 +90,11 @@ isSignature = isInfixOf "->"
 
 -- Explicit use of search extension "signature:"
 sigSpecifier :: String -> Bool
-sigSpecifier = isPrefixOf "signature:"
+sigSpecifier = isPrefixOf ":signature"
 
 signature :: String -> Bool
 signature s = isSignature s || sigSpecifier s 
 
 stripSignature :: String -> String
-stripSignature = strip "signature:"
+stripSignature = strip ":signature"
 
