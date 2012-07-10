@@ -171,14 +171,13 @@ errorInfo = htmlListItem "info" $
 -- ------------------------------------------------------------------------------
 -- | defines routes through our site
 
-site :: FilePath -> Application ()
-site args = route
+site :: Application ()
+site = route
        [ ("/",          frontpage)
        , ("/querypage", processquery)  -- render HTML Page with found Document-Hits
        , ("/completions", completions) -- return List of Completions to Ajax-caller
        ]
-       -- <|> serveDirectory "resources/static"
-       <|> serveDirectory (args++"resources/static")
+       <|> serveDirectory "resources/static"
 
 -- ------------------------------------------------------------------------------
 -- 

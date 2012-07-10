@@ -60,10 +60,10 @@ instance HasCurryState ApplicationState where
 -- 'ApplicationState' needed for our application and will automatically
 -- generate reload\cleanup actions for us.
 
-applicationInitializer :: FilePath -> Initializer ApplicationState
-applicationInitializer filePath = do
-    heist <- heistInitializer "resources/templates"
-    curry <- curryInitializer filePath
-    return $ ApplicationState heist curry
+applicationInitializer :: Initializer ApplicationState
+applicationInitializer = do
+    heistInit <- heistInitializer "resources/templates"
+    curryInit <- curryInitializer
+    return $ ApplicationState heistInit curryInit
 
 ------------------------------------------------------------------------------
