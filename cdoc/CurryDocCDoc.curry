@@ -38,7 +38,7 @@ generateCDoc progName modCmts progCmts anaInfo = do
 	    UnknownFR 
 	typeInfo (Type (mName, tName) _ _ consDecl) = 
 		       	       	   TypeInfo tName
-	       	       	      	   (map consSignature consDecl)	
+	       	       	      	   (map consSignature (filter (\(Cons _ _ vis _) -> vis == Public) consDecl))	
 				   mName
 				   (getDataComment tName progCmts)
         typeInfo (TypeSyn (mName, tName) _ _ tExpr) =
@@ -47,11 +47,12 @@ generateCDoc progName modCmts progCmts anaInfo = do
 				  mName
 				  (getDataComment tName progCmts)
         (mCmts, avCmts) = splitComment modCmts
-	funcInfos = map funcInfo functions
-	typeInfos = map typeInfo types
+	funcInfos = map funcInfo (filter (\(Func _ _ vis _ _) -> vis == Public) functions)
+	typeInfos = map typeInfo (concatMap filterT types)
     return $ showTerm (CurryInfo modInfo funcInfos typeInfos)
   where fcyName  = flatCurryFileName progName
-
+  	filterT f@(Type _ vis _ _) = if vis == Public then [f] else []
+	filterT f@(TypeSyn _ vis _ _) = if vis == Public then [f] else []
 
 -- the name
 -- the latest version
