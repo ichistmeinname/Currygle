@@ -1,27 +1,27 @@
--- ----------------------------------------------------------------------------
-
 {- |
-  Module     : CoreData
+Module      :  CoreData
+Description :  Representation of index and documents
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
-  Author     : Sandra Dylus
-  Version    : 0.1
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
 
-  Maintains the definition of the data Core, that represents the index and
-  documents. 
+Maintains the definition of the data Core, that represents the index and documents. 
 -}
 
 -- ----------------------------------------------------------------------------
 
 module CoreData
-    ( Core(..)
-    )
+    ( Core(..) )
 where
 
 import IndexTypes
 import CurryInfo
 
 -- ------------------------------------------------------------
--- | represents the index data, it differs between module, fct and type information
+-- | Represents the index data, it differs between module, fct and type information
 
 data Core = Core
           { modIndex      :: ! CompactInverted

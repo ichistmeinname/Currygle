@@ -1,15 +1,23 @@
--- ----------------------------------------------------------------------------
+{- |
+Module      :  Helpers
+Description :  
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
--- | A module full of helper functions
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
 
--- ----------------------------------------------------------------------------
+A module full of helper functions.
+-}
 
 module Helpers
 where
 
 import qualified Data.Text      as T
-import Data.List
-import Data.Char
+import           Data.List
+import           Data.Char
+
 
 import qualified Text.XmlHtml   as X
 
@@ -63,21 +71,21 @@ typeSignature modName (TCons (mName2, fName2) tExprList) =
              | otherwise = modName++"."++fName2
     in [prettyPrintSpecialType modName name tExprList]
 typeSignature modName (FuncType tExpr1@(FuncType _ _) tExpr2) =
-    paren True (prettyPrint modName tExpr1) : (typeSignature modName tExpr2)
+    paren True (prettyPrint modName tExpr1) : typeSignature modName tExpr2
 typeSignature modName tExpr@(FuncType _ _) = 
     [prettyPrint modName tExpr]
 typeSignature _ (TVar i) = [[chr (i+97)]]
 typeSignature _ Undefined = []
 
 consSignature :: String -> [TypeExpr] -> [String]
-consSignature modName tExprList = concatMap (typeSignature modName) tExprList
+consSignature modName = concatMap (typeSignature modName)
 
 consToList :: (QName, [TypeExpr]) -> [String]
 consToList ((modName, fctName), tExprList) = 
-    [fctName] ++ [" "] ++ (consSignature modName tExprList)
+    [fctName] ++ [" "] ++ consSignature modName tExprList
 
 qualifiedName :: String -> String -> Bool
-qualifiedName name1 name2 = name1 == name2 || name1 == "Prelude"
+qualifiedName name1 name2 = name1 == name2 || name2 == "Prelude"
 
 paren :: Bool -> String -> String
 paren parens str 
@@ -86,7 +94,7 @@ paren parens str
 
 --  Pretty printing for signatures 
 listToSignature :: [String] -> String
-listToSignature xs = intercalate "->" xs
+listToSignature = intercalate "->"
 
 -- splits strings at whitespaces (ex.: for better handling of comments)
 splitOnWhitespace :: String -> [String]
@@ -124,10 +132,10 @@ box x = [x]
 
 strToInt :: Int -> String -> Int
 strToInt defaultValue str
-  | (length readsResult > 0) = fst $ head readsResult
+  | length readsResult > 0 = fst $ head readsResult
   | otherwise = defaultValue
   where
-  readsResult = reads $ str
+  readsResult = reads str
 
 
 saveHead :: [a] -> a -> a
@@ -138,25 +146,24 @@ saveHead (x:_) _   = x
 -- | creates a HTML List-Item with css-class-attribute
 
 htmlList :: String -> [X.Node] -> X.Node
-htmlList cssClass xNodes =
-  X.Element (T.pack $ "ul")
+htmlList cssClass =
+  X.Element (T.pack "ul")
     (
-      if (cssClass == "")
+      if cssClass == ""
         then []
-        else [(T.pack $ "class", T.pack $ cssClass)]
+        else [(T.pack "class", T.pack cssClass)]
     )
-    xNodes
 
 -- ------------------------------------------------------------------------------
 -- | creates a HTML List-Item with css-class-attribute
 
 htmlListItem :: String -> X.Node -> X.Node
 htmlListItem cssClass xNode =
-  X.Element (T.pack $ "li")
+  X.Element (T.pack "li")
     (
-      if (cssClass == "")
+      if cssClass == ""
         then []
-        else [(T.pack $ "class", T.pack $ cssClass)]
+        else [(T.pack "class", T.pack cssClass)]
     )
     [xNode]
 
@@ -164,18 +171,18 @@ htmlListItem cssClass xNode =
 -- | creates a HTML Txt Node
 
 htmlTextNode :: String -> X.Node
-htmlTextNode text = X.TextNode $ T.pack $ text
+htmlTextNode text = X.TextNode $ T.pack text
 
 -- ------------------------------------------------------------------------------
 -- | creates a HTML Txt Node in a <span class="???"></span> element
 
 htmlSpanTextNode :: String -> String -> X.Node
 htmlSpanTextNode cssClass text =
-  X.Element (T.pack $ "span")
+  X.Element (T.pack "span")
     (
-      if (cssClass == "")
+      if cssClass == ""
         then []
-        else [(T.pack $ "class", T.pack $ cssClass)]
+        else [(T.pack "class", T.pack cssClass)]
     )
     [htmlTextNode text]
 
@@ -184,7 +191,7 @@ htmlSpanTextNode cssClass text =
 
 htmlParaTextNode :: String -> X.Node
 htmlParaTextNode text =
-  X.Element (T.pack $ "p")
+  X.Element (T.pack "p")
     []
     [htmlTextNode text]
 
@@ -193,14 +200,14 @@ htmlParaTextNode text =
 
 htmlLink :: String -> String -> String -> X.Node
 htmlLink cssClass href text =
-  X.Element (T.pack $ "a")
+  X.Element (T.pack "a")
     (
-      [(T.pack $ "href", T.pack $ href)]
+      [(T.pack "href", T.pack href)]
       ++
       (
-        if (cssClass == "")
+        if cssClass == ""
           then []
-          else [(T.pack $ "class", T.pack $ cssClass)]
+          else [(T.pack "class", T.pack cssClass)]
       )
     )
     [htmlTextNode text]
@@ -210,14 +217,14 @@ htmlLink cssClass href text =
 
 htmlLink' :: String -> String -> X.Node -> X.Node
 htmlLink' cssClass href xNode =
-  X.Element (T.pack $ "a")
+  X.Element (T.pack "a")
     (
-      [(T.pack $ "href", T.pack $ href)]
+      [(T.pack "href", T.pack href)]
       ++
       (
-        if (cssClass == "")
+        if cssClass == ""
           then []
-          else [(T.pack $ "class", T.pack $ cssClass)]
+          else [(T.pack "class", T.pack cssClass)]
       )
     )
     [xNode]
@@ -247,13 +254,13 @@ mkPagerLink query actPage number =
 
 examples :: X.Node
 examples
-    = X.Element (T.pack $ "div")
-      [(T.pack $ "class", T.pack $ "examples")]
+    = X.Element (T.pack "div")
+      [(T.pack "class", T.pack "examples")]
       [ htmlParaTextNode "Beispiele für Suchanfragen:"
       , htmlList "examples"
         [ htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlLink "" "querypage?query=Holumbus%20AND%20Hayoo&button=Suchen" "Holumbus AND Hayoo"
           , htmlSpanTextNode "" " sucht nach Seiten, die sowohl das Wort "
           , htmlSpanTextNode "green" "Holumbus"
@@ -264,14 +271,14 @@ examples
           , htmlSpanTextNode "" ")."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlLink "" "querypage?query=Holumbus%20OR%20Hayoo&button=Suchen" "Holumbus OR Hayoo"
           , htmlSpanTextNode "" " sucht nach Seiten, die mindestens eines der beider Wörter enthalten."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlLink "" "querypage?query=Haskell%20AND%20NOT%20(Holumbus%20OR%20Hayoo)&button=Suchen" "Haskell AND NOT (Holumbus OR Hayoo)"
           , htmlSpanTextNode "" " sucht nach Seiten, die das Wort "
           , htmlSpanTextNode "green" "Haskell"
@@ -282,8 +289,8 @@ examples
           , htmlSpanTextNode "" " enthalten."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlLink "" "querypage?query=Seminar%20Juni%202011&button=Suchen" "Seminar Juni 2011"
           , htmlSpanTextNode "" " sucht nach allen Vorkommen des Textes "
           , htmlSpanTextNode "green" "Seminar"
@@ -297,8 +304,8 @@ examples
           , htmlLink "" "querypage?query=3.6.%2011:00&button=Suchen" "13.6. 9:00"
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlLink "" "querypage?query=PTL%20dieser%20Monat&button=Suchen" "PTL dieser Monat"
           , htmlSpanTextNode "" " sucht nach allen Vorkommen des Textes "
           , htmlSpanTextNode "green" "PTL"
@@ -325,8 +332,8 @@ examples
           , htmlSpanTextNode "" "."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlSpanTextNode "" "Die Eingaben der Terminsuche können abgekürzt werden: "
           , htmlLink "" "querypage?query=di%20wo&button=Suchen" "di wo"
           , htmlSpanTextNode "" " oder "
@@ -336,8 +343,8 @@ examples
           , htmlSpanTextNode "" " interpretiert."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlSpanTextNode "" "Termine für bestimmte Monate können ebenfalls abgekürzt gesucht werden. Bei einer Eingabe von "
           , htmlLink "" "querypage?query=September&button=Suchen" "September"
           , htmlSpanTextNode "" " oder "
@@ -345,14 +352,14 @@ examples
           , htmlSpanTextNode "" " werden Termine im kommenden (oder laufenden) September gesucht."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlLink "" "querypage?query=Kalender%20dieser Monat&button=Suchen" "Kalender dieser Monat"
           , htmlSpanTextNode "" " findet unter anderem die gesuchten Daten im FH Wedel Kalender. Die dort aufgelisteten Daten k\246nnen direkt angeklickt werden um zu den entsprechenden Unterseiten zu gelangen."
           ]
         , htmlListItem "" $
-          X.Element (T.pack $ "div")
-          [ (T.pack $ "class", T.pack $ "example") ]
+          X.Element (T.pack "div")
+          [ (T.pack "class", T.pack "example") ]
           [ htmlSpanTextNode "" "Die Suche kann auf bestimmte URLs eingeschränkt werden: "
           , htmlLink "" "querypage?query=href:vorlesungen/java%20AND%20Stack&button=Suchen" "href:vorlesungen/java AND Stack"
           , htmlSpanTextNode "" " sucht in allen Dokumenten, deren URL den Teilpfad "
@@ -363,5 +370,3 @@ examples
           ]
         ]
       ]
-
--- ------------------------------------------------------------------------------

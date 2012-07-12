@@ -1,6 +1,15 @@
--- Created by Sandra Dylus on 12.05.2012
+{- |
+Module      :  CurryInfo
+Description :  Module for curry data type.
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
--- first idea for the information associated with a curry module, function and type
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
+
+Module for the information associated with a curry module, function and type.
+-}
 
 module CurryInfo where
 

@@ -1,69 +1,54 @@
--- ----------------------------------------------------------------------------
-
 {- |
-  Module     : Application
+Module      :  Application
+Description :  Defines the application's monad and related informations
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
-  Maintainer : Thorben Guelck, Tobias Lueders, Mathias Leonhardt, Uwe Schmidt
-  Stability  : experimental
-  Portability: portable
-  Version    : 0.1
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
 
-  This module defines our application's monad and any application-specific
-  information it requires.
-
+Defines the application's monad, provides HasState instances and an initializer function to construct the AppState.
 -}
 
--- ----------------------------------------------------------------------------
 
 module Application
   ( Application
-  , applicationInitializer
+  , appInitializer
   )
 where
 import Snap.Extension
 import Snap.Extension.Heist.Impl
 import CurryState
 
-------------------------------------------------------------------------------
 
--- 'Application' is our application's monad. It uses 'SnapExtend' from
--- 'Snap.Extension' to provide us with an extended 'MonadSnap' making use of
--- the Heist extension.
 type Application = SnapExtend ApplicationState
 
-------------------------------------------------------------------------------
-
--- 'ApplicationState' is a record which contains the state needed by the Snap
--- extension we're using.  We're using Heist so we can easily render Heist
--- templates.
+-- | Record type for holding application's state
+-- this includes the state needed by the used extensions
 
 data ApplicationState = ApplicationState
   {
-    templateState :: HeistState Application,
-    curryState    :: CurryState
+    heistState :: HeistState Application,
+    curryState :: CurryState
   }
 
-------------------------------------------------------------------------------
+-- | Instance to find the heist state
 
 instance HasHeistState Application ApplicationState where
-  getHeistState     = templateState
-  setHeistState s a = a { templateState = s }
+  getHeistState     = heistState
+  setHeistState s a = a { heistState = s }
 
+-- | Instance to find the curry state
 
 instance HasCurryState ApplicationState where
   getCurryState     = curryState
   setCurryState s a = a { curryState = s }
 
-------------------------------------------------------------------------------
+-- | Constructs an AppState
 
--- The 'Initializer' for ApplicationState. This is used to generate the
--- 'ApplicationState' needed for our application and will automatically
--- generate reload\cleanup actions for us.
-
-applicationInitializer :: Initializer ApplicationState
-applicationInitializer = do
-    heistInit <- heistInitializer "resources/templates"
-    curryInit <- curryInitializer
-    return $ ApplicationState heistInit curryInit
-
-------------------------------------------------------------------------------
+appInitializer :: Initializer ApplicationState
+appInitializer = do
+    heistS <- heistInitializer "resources/templates"
+    curryS <- curryInitializer
+    return $ ApplicationState heistS curryS

@@ -1,19 +1,15 @@
--- ----------------------------------------------------------------------------
-
 {- |
-  Module     : Main
+Module      :  Main
+Description :  
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
-  Maintainer : Thorben Guelck, Tobias Lueders, Mathias Leonhardt, Uwe Schmidt
-  Stability  : experimental
-  Portability: portable
-  Version    : 0.1
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
 
-  This is the entry point for this web server application.
+Entry point to start server.
 -}
-
--- ----------------------------------------------------------------------------
-{-# LANGUAGE CPP #-}
-{-# LANGUAGE TemplateHaskell #-}
 
 module Main where
 
@@ -23,7 +19,7 @@ import Application
 import Site
 
 main :: IO ()
-main = quickHttpServe applicationInitializer site
+main = quickHttpServe appInitializer site
 
 
 -- ----------------------------------------------------------------------------
