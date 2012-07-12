@@ -1,15 +1,14 @@
-{-# OPTIONS #-}
-
--- ----------------------------------------------------------------------------
-
 {- |
-  Module     : IndexTypes
+Module      :  IndexTypes
+Description :  Defines indexer states
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
-  Maintainer : Thorben Guelck, Tobias Lueders, Mathias Leonhardt, Uwe Schmidt
-  Stability  : experimental
-  Portability: portable
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
 
-  The List of sub indexes created in the index file
+This module define the indexer types that are used by the search engine.
 -}
 
 -- ----------------------------------------------------------------------------
@@ -17,7 +16,6 @@
 module IndexTypes
     ( module IndexTypes
     , module Holumbus.Index.CompactIndex
-    -- , CurryInfo(..)
     , Score
     )
 where
@@ -51,8 +49,10 @@ type CurryModIndexerConfig       = HolumbusConfig  ModuleInfo
 type CurryFctIndexerState        = HolumbusState   FunctionInfo
 type CurryFctIndexerConfig       = HolumbusConfig  FunctionInfo
 
-type CurryTypeIndexerState        = HolumbusState   TypeInfo
-type CurryTypeIndexerConfig       = HolumbusConfig  TypeInfo
+type CurryTypeIndexerState       = HolumbusState   TypeInfo
+type CurryTypeIndexerConfig      = HolumbusConfig  TypeInfo
+
+type CurryIndexerState a         = CompactInverted -> SmallDocuments a
 -- ------------------------------------------------------------
 
 type ModuleIxDoc   = Inverted -> Documents ModuleInfo

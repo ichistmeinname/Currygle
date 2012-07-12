@@ -1,19 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 
--- ----------------------------------------------------------------------------
+{- |
+Module      :  Site
+Description :  Routes, handlers and web representation
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
-{-
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
 
-This is where all the routes and handlers are defined for our site. The
-'site' function combines everything together and is exported by this module.
-
+This module defines all used routes and handlers. Furthermore the representation of the web site is handled and gathered by the function site, which is exported.
 -}
 
--- ----------------------------------------------------------------------------
-
-module Site ( site )
-
-where
+module Site ( site ) where
 
 import Application
 import CoreData
@@ -30,7 +30,7 @@ import Data.List                as L
 import Data.Maybe
 import Data.Text                as T
 import Data.Text.Encoding       as E
-import Data.Char                as C (toUpper)      
+import Data.Char                as C (toUpper) 
 
 import Holumbus.Query.Language.Grammar
 import Holumbus.Query.Result
@@ -73,7 +73,7 @@ coreIdx :: Application (CompactInverted,
                         CompactInverted)
 coreIdx = do
   cCore <- curryCore
-  return $ (CoreData.modIndex cCore, 
+  return (CoreData.modIndex cCore, 
             CoreData.fctIndex cCore, 
             CoreData.typeIndex cCore)
 
@@ -85,7 +85,7 @@ coreDoc :: Application (SmallDocuments ModuleInfo,
                         SmallDocuments TypeInfo)
 coreDoc = do
   cCore <- curryCore
-  return $ (CoreData.modDocuments cCore, 
+  return (CoreData.modDocuments cCore, 
             CoreData.fctDocuments cCore, 
             CoreData.typeDocuments cCore)
 
@@ -129,17 +129,16 @@ docHitToListItem is teaser docHit
   where
       teaserText
           = (++ "...") . L.unwords . L.take numTeaserWords . L.words . teaser $ srInfo docHit
-      optionalList = P.concat $ 
-                     P.map (\(itemTitle,item) -> htmlLink htmlUri 
+      optionalList = L.concatMap (\(itemTitle,item) -> htmlLink htmlUri 
                                                            itemTitle 
                                                            (item $ srInfo docHit))
                             is
       htmlUri = srUri docHit
 
-htmlLink :: (String) -> String -> String -> [X.Node]
+htmlLink :: String -> String -> String -> [X.Node]
 htmlLink htmlUri tagName text = [htmlLink' "" htmlUri $
                                  htmlListItem tagName $
-                                 htmlTextNode $ text]
+                                 htmlTextNode text]
                       
 
 
@@ -161,8 +160,7 @@ docHitsMetaInfo searchResultDocs
 
 errorInfo :: X.Node
 errorInfo = htmlListItem "info" $
-            htmlTextNode $
-            "Sorry, there are no matching results."
+            htmlTextNode "Sorry, there are no matching results."
 
 -- ------------------------------------------------------------------------------
 -- 

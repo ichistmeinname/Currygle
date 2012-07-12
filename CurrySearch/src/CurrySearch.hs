@@ -1,10 +1,15 @@
--- ----------------------------------------------------------------------------
-
 {- |
-  A simple example of searching with Holumbus.
--}
+Module      :  CurrySearch
+Description :  The Heart of the search engine.
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
 
--- ----------------------------------------------------------------------------
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
+
+This module holds the functions to interpret a given query.
+-}
 
 module CurrySearch where
 
@@ -23,12 +28,10 @@ import           Holumbus.Query.Fuzzy
 
 import           System.CPUTime 
 
+import           Parser
 import           IndexTypes
 import           CurryInfo
-
-import           Parser
-
--- ------------------------------------------------------------
+import           FilesAndLoading
 
 -- | number of hits shown per page
 hitsPerPage :: Int
@@ -100,26 +103,6 @@ defaultRankCfg
       (docRankWeightedByCount  defaultRankTable)
       (wordRankWeightedByCount defaultRankTable)
 
--- ------------------------------------------------------------
-
--- | Just an alias with explicit type.
-loadIndex       :: FilePath -> IO CompactInverted
-loadIndex       = loadFromFile
-
--- | Just an alias with explicit type.
-loadModDocuments   :: FilePath -> IO (SmallDocuments ModuleInfo)
-loadModDocuments   = loadFromBinFile
-
--- | Just an alias with explicit type.
-loadFctDocuments   :: FilePath -> IO (SmallDocuments FunctionInfo)
-loadFctDocuments   = loadFromBinFile
-
--- | Just an alias with explicit type.
-loadTypeDocuments   :: FilePath -> IO (SmallDocuments TypeInfo)
-loadTypeDocuments   = loadFromBinFile
-
--- ------------------------------------------------------------
-
 -- | Create the configuration for the query processor.
 
 processCfg :: ProcessConfig
@@ -135,7 +118,7 @@ localQuery :: CompactInverted -> SmallDocuments ModuleInfo
                            Result FunctionInfo,
                            Result TypeInfo)
 localQuery ixM docM ixF docF ixT docT q
-    = return $ (queryL ixM docM, queryL ixF docF, queryL ixT docT)
+    = return (queryL ixM docM, queryL ixF docF, queryL ixT docT)
   where queryL ix doc = processQuery processCfg ix doc q
 
 
@@ -167,11 +150,13 @@ mkDocSearchResult requestTime searchResultDocs
     -- not a good idea: (length $ uniqByTitle $ srDocHits searchResultDocs), since the whole list would be processed by the O(n^2) algorithm "uniqByTitle"
 
       dislayedNumOfHits
-          = if (numElemsShortList == hitsPerPage * maxPages)
+          = if numElemsShortList == hitsPerPage * maxPages
             then numElemsLongList
             else numElemsShortList
 
-      numElemsShortList = (length $ docHits' srModuleDocHits) + (length $ docHits' srFunctionDocHits) + (length $ docHits' srTypeDocHits)
+      numElemsShortList = (length $ docHits' srModuleDocHits) 
+                          + (length $ docHits' srFunctionDocHits)
+                          + (length $ docHits' srTypeDocHits)
 
       -- this is the length without filtering!
       numElemsLongList = srDocCount searchResultDocs
@@ -187,7 +172,7 @@ uniqByTitle :: [SRDocHit a] -> [SRDocHit a]
 uniqByTitle []     = []
 uniqByTitle (x:xs) = x : uniqByTitle (deleteByTitle (srTitle x) xs)
   where
-    deleteByTitle t = filter (\ listItem -> (srTitle listItem /= t))
+    deleteByTitle t = filter (\ listItem -> srTitle listItem /= t)
 
 
 -- | get only Document Search Results (without Word-Completions)
@@ -239,22 +224,21 @@ getDocHits (m, f, t) = return $ SearchResultDocs 0.0 size (map docModuleInfoToSR
                                                                   (map docFunctionInfoToSRDocHit $ docData f)
                                                                   (map docTypeInfoToSRDocHit $ docData t)
     where
-      docData d = ( L.reverse $ 
+      docData d = L.reverse $ 
                   L.sortBy (compare `on` (docScore . fst . snd)) $
                   toListDocIdMap d
-                )
       size      = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
 
 docModuleInfoToSRDocHit :: (DocId, (DocInfo ModuleInfo, DocContextHits)) -> SRDocHit ModuleInfo
-docModuleInfoToSRDocHit (_, ((DocInfo (Document title' uri' info') score'), contextMap'))
+docModuleInfoToSRDocHit (_, (DocInfo (Document title' uri' info') score', contextMap'))
     = SRDocHit title' score' (fromMaybe emptyModuleInfo info') uri' contextMap'
 
 docFunctionInfoToSRDocHit :: (DocId, (DocInfo FunctionInfo, DocContextHits)) -> SRDocHit FunctionInfo
-docFunctionInfoToSRDocHit (_, ((DocInfo (Document title' uri' info') score'), contextMap'))
+docFunctionInfoToSRDocHit (_, (DocInfo (Document title' uri' info') score', contextMap'))
     = SRDocHit title' score' (fromMaybe emptyFunctionInfo info') uri' contextMap'
 
 docTypeInfoToSRDocHit :: (DocId, (DocInfo TypeInfo, DocContextHits)) -> SRDocHit TypeInfo
-docTypeInfoToSRDocHit  (_, ((DocInfo (Document title' uri' info') score'), contextMap'))
+docTypeInfoToSRDocHit  (_, (DocInfo (Document title' uri' info') score', contextMap'))
     = SRDocHit title' score' (fromMaybe emptyTypeInfo info') uri' contextMap'
 
 -- | convert Word-Completions to SearchResult
@@ -264,16 +248,15 @@ getWordHits h
     = return $ SearchResultWords (M.size h) (getWordHits' wordData)
     where
       wordData
-          = ( L.reverse $
+          = L.reverse $
               L.sortBy (compare `on` snd)
                    (map (\ (c, (_, o)) ->
                              (c, M.fold (\m r -> r + sizeDocIdMap m) 0 o)
                         ) (M.toList h)
                    )
-            )
       getWordHits' []
           = []
       getWordHits' ((c, s) : xs)
-          = SRWordHit c s : (getWordHits' xs)
+          = SRWordHit c s : getWordHits' xs
 
 -- ----------------------------------------------------------------------------
