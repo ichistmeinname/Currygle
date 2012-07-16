@@ -13,6 +13,7 @@ This module holds the functions to interpret a given query.
 
 module CurrySearch where
 
+import           Data.Binary
 import           Data.Function
 import qualified Data.List              as L
 import qualified Data.Map               as M
@@ -26,12 +27,10 @@ import           Holumbus.Query.Result
 import           Holumbus.Query.Ranking
 import           Holumbus.Query.Fuzzy
 
-import           System.CPUTime 
-
 import           Parser
 import           IndexTypes
 import           CurryInfo
-import           FilesAndLoading
+import           Helpers
 
 -- | number of hits shown per page
 hitsPerPage :: Int
@@ -39,9 +38,9 @@ hitsPerPage = 10
 
 -- ------------------------------------------------------------
 
--- | max number of pages
-maxPages :: Int
-maxPages = 10
+-- -- | max number of pages
+-- maxPages :: Int
+-- maxPages = 10
 
 -- ------------------------------------------------------------
 
@@ -55,8 +54,7 @@ data SearchResult
 
 data SearchResultDocs
     = SearchResultDocs
-      { srTime      :: Float
-      , srDocCount  :: Int
+      { srDocCount  :: Int
       , srModuleDocHits   :: [SRDocHit ModuleInfo]
       , srFunctionDocHits :: [SRDocHit FunctionInfo]
       , srTypeDocHits :: [SRDocHit TypeInfo]
@@ -77,31 +75,36 @@ data  SRDocHit a
       , srContextMap    :: M.Map Context DocWordHits 
       } deriving Show
 
-data SRWordHit
-    = SRWordHit
-      { srWord :: String
-      , srHits :: Int
-      }
+data SRWordHit = SRWordHit { srWord :: String, srHits :: Int}
 
 -- Ranking for different kinds of Contexts
 
 type RankTable  = [(Context, Score)]
 
 defaultRankTable :: RankTable
-defaultRankTable
-    = [ ("Name", 1.0)
-      , ("Signature",  0.5)
-      , ("Module",      0.2)
-      , ("Author",    1.0)
-      , ("Description", 2.0)
-      , ("Other",  0.2)
-      ]
+defaultRankTable = 
+    [("Function", 1.0),
+     ("Type", 0.75),
+     ("TheModule", 0.25),
+     ("Signature", 0.75),
+     ("Module", 0.5),
+     ("Author", 0.2),
+     ("Description", 0.5),
+     ("Other", 0.2)]
+
+wordCompletionRankTable :: RankTable
+wordCompletionRankTable = [("Function", 1.0), ("Type", 0.5), ("Module", 0.5)]
 
 defaultRankCfg :: RankConfig a
-defaultRankCfg
-    = RankConfig
-      (docRankWeightedByCount  defaultRankTable)
-      (wordRankWeightedByCount defaultRankTable)
+defaultRankCfg = RankConfig (docRankWeightedByCount defaultRankTable)
+                            (wordRankWeightedByCount wordCompletionRankTable)
+
+type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
+
+defaultRanks :: MFTResult -> IO MFTResult 
+defaultRanks (m, f, t) = return (rank defaultRankCfg m, 
+                                 rank defaultRankCfg f,
+                                 rank defaultRankCfg t)
 
 -- | Create the configuration for the query processor.
 
@@ -121,142 +124,124 @@ localQuery ixM docM ixF docF ixT docT q
     = return (queryL ixM docM, queryL ixF docF, queryL ixT docT)
   where queryL ix doc = processQuery processCfg ix doc q
 
+-- -- | get all Search Results
 
--- | get all Search Results
+-- allSearchResults :: String -> (Query -> IO (Result ModuleInfo, 
+--                                             Result FunctionInfo, 
+--                                             Result TypeInfo)) 
+--                               -> IO SearchResult
+-- allSearchResults q f
+--     = do docs'  <- getIndexSearchResults q f
+--          words' <- getWordCompletions    q f
+--          return $ SearchResult docs' words'
 
-getAllSearchResults :: String -> (Query -> IO (Result ModuleInfo, 
-                                               Result FunctionInfo, 
-                                               Result TypeInfo)) 
-                              -> IO SearchResult
-getAllSearchResults q f
-    = do docs'  <- getIndexSearchResults q f
-         words' <- getWordCompletions    q f
-         return $ SearchResult docs' words'
+-- -- | Insert the time needed for request into SearchResultDocs data type.
+-- --
+-- --  Delete all elements in the list of search-results such that the list is uniq
+-- --  by the title of a found document.
+-- --  Shorten the search-result list to (hitsPerPage * maxPages) elements.
+-- --  Adapt the displayed number of docs found 
 
--- | Insert the time needed for request into SearchResultDocs data type.
---
---  Delete all elements in the list of search-results such that the list is uniq
---  by the title of a found document.
---  Shorten the search-result list to (hitsPerPage * maxPages) elements.
---  Adapt the displayed number of docs found 
+-- addTime :: Float -> SearchResultDocs -> SearchResultDocs
+-- addTime requestTime searchResultDocs
+--     = SearchResultDocs requestTime dislayedNumOfHits (docHits' srModuleDocHits) (docHits' srFunctionDocHits) (docHits' srTypeDocHits)
+--     where
+--       docHits' info = take (hitsPerPage * maxPages) $
+--                       uniqByTitle $
+--                       info searchResultDocs
+--     -- not a good idea: (length $ uniqByTitle $ srDocHits searchResultDocs), since the whole list would be processed by the O(n^2) algorithm "uniqByTitle"
 
-mkDocSearchResult :: Float -> SearchResultDocs -> SearchResultDocs
-mkDocSearchResult requestTime searchResultDocs
-    = SearchResultDocs requestTime dislayedNumOfHits (docHits' srModuleDocHits) (docHits' srFunctionDocHits) (docHits' srTypeDocHits)
-    where
-      docHits' info = take (hitsPerPage * maxPages) $
-                      uniqByTitle $
-                      info searchResultDocs
-    -- not a good idea: (length $ uniqByTitle $ srDocHits searchResultDocs), since the whole list would be processed by the O(n^2) algorithm "uniqByTitle"
+--       dislayedNumOfHits
+--           = if numElemsShortList == hitsPerPage * maxPages
+--             then numElemsLongList
+--             else numElemsShortList
 
-      dislayedNumOfHits
-          = if numElemsShortList == hitsPerPage * maxPages
-            then numElemsLongList
-            else numElemsShortList
+--       numElemsShortList = (length $ docHits' srModuleDocHits) 
+--                           + (length $ docHits' srFunctionDocHits)
+--                           + (length $ docHits' srTypeDocHits)
 
-      numElemsShortList = (length $ docHits' srModuleDocHits) 
-                          + (length $ docHits' srFunctionDocHits)
-                          + (length $ docHits' srTypeDocHits)
+--       -- this is the length without filtering!
+--       numElemsLongList = srDocCount searchResultDocs
 
-      -- this is the length without filtering!
-      numElemsLongList = srDocCount searchResultDocs
+-- -- | helper for addTime:
+-- --  delete all elements in the list of search-results such that the list is uniq
+-- --  by the title of a found document.
+-- --  This is an O(n^2) algorithm but we truncate the result list of uniqByTitle to (hitsPerPage*maxPages) elements,
+-- --  so only these elements are computed due to lazy evaluation.
+-- --  This has proven to be the best method to get rid of many equal search results.
 
--- | helper for mkDocSearchResult:
---  delete all elements in the list of search-results such that the list is uniq
---  by the title of a found document.
---  This is an O(n^2) algorithm but we truncate the result list of uniqByTitle to (hitsPerPage*maxPages) elements,
---  so only these elements are computed due to lazy evaluation.
---  This has proven to be the best method to get rid of many equal search results.
-
-uniqByTitle :: [SRDocHit a] -> [SRDocHit a]
-uniqByTitle []     = []
-uniqByTitle (x:xs) = x : uniqByTitle (deleteByTitle (srTitle x) xs)
-  where
-    deleteByTitle t = filter (\ listItem -> srTitle listItem /= t)
+-- uniqByTitle :: [SRDocHit a] -> [SRDocHit a]
+-- uniqByTitle []     = []
+-- uniqByTitle (x:xs) = x : uniqByTitle (deleteByTitle (srTitle x) xs)
+--   where
+--     deleteByTitle t = filter (\ listItem -> srTitle listItem /= t)
 
 
 -- | get only Document Search Results (without Word-Completions)
 
-getIndexSearchResults :: String -> (Query -> IO (Result ModuleInfo,
-                                                 Result FunctionInfo,
-                                                 Result TypeInfo)) 
-                                -> IO SearchResultDocs
-getIndexSearchResults q f
-    = either printError makeQuery $ prepareQuery q
+searchResultDocs :: String -> (Query -> IO MFTResult) -> IO SearchResultDocs
+searchResultDocs q f
+    = either noResults makeQuery $ prepareQuery q
     where
-      printError _
-          = return $ SearchResultDocs 0.0 0 [] [] [] 
+      noResults _
+          = return $ SearchResultDocs 0 [] [] [] 
       makeQuery pq
-          = do t1 <- getCPUTime
-               (rM, rF, rT)  <- f pq -- This is where the magic happens!
-               (rrM, rrF, rrT) <- return (rank defaultRankCfg rM, 
-                                          rank defaultRankCfg rF,
-                                          rank defaultRankCfg rT)
-               docsSearchResult <- getDocHits (docHits rrM, docHits rrF, docHits rrT)
-               t2 <- getCPUTime
-               let d = (fromIntegral (t2 - t1) / 1000000000000.0) :: Float
-               return $ mkDocSearchResult d docsSearchResult
+          = do results      <- f pq
+               (rM, rF, rT) <- defaultRanks results
+               resultDocs   <- docHitsToResult (docHits rM, docHits rF, docHits rT)
+               return resultDocs
 
 -- | get only Word-Completions (without Document Search Results)
+wordCompletions :: String -> (Query -> IO MFTResult) -> IO SearchResultWords
+wordCompletions q f = 
+    --either noResults 
+    makeQuery $ prepare q
+  where noResults _ = return $ SearchResultWords 0 []
+        prepare = wordCompletionSpecifier . prepareWordCompletionQuery
+        makeQuery pq = 
+          do results <- f pq -- This is where the magic happens!
+             (rrM, rrF, rrT) <- defaultRanks results
+             
+             wordResults (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
 
-getWordCompletions :: String -> (Query -> IO (Result ModuleInfo,
-                                              Result FunctionInfo,
-                                              Result TypeInfo)) 
-                             -> IO SearchResultWords
-getWordCompletions q f
-    = either printError makeQuery $ prepareQuery q
-    where
-      printError _
-          = return $ SearchResultWords 0 []
-      makeQuery pq
-          = do (rM, rF, rT) <- f pq -- This is where the magic happens!
-               (rrM, rrF, rrT) <- return (rank defaultRankCfg rM,
-                                          rank defaultRankCfg rF,
-                                          rank defaultRankCfg rT)
-               -- getWordHits (wordHits rrM, wordHits rrF, wordHits rrT))
-               getWordHits (wordHits rrF)
+wordCompletionSpecifier :: String -> Query
+wordCompletionSpecifier = Specifier ["Function","TheModule","Type"] . Word
+
+prepareWordCompletionQuery :: String -> String
+prepareWordCompletionQuery queryString = 
+  concat $ filter (not . (":" `L.isPrefixOf`)) $ splitOnWhitespace queryString
+
 -- | convert Document-Hits to SearchResult
 
-getDocHits :: (DocHits ModuleInfo, 
-               DocHits FunctionInfo, 
-               DocHits TypeInfo) -> IO SearchResultDocs
-getDocHits (m, f, t) = return $ SearchResultDocs 0.0 size (map docModuleInfoToSRDocHit $ docData m)
-                                                                  (map docFunctionInfoToSRDocHit $ docData f)
-                                                                  (map docTypeInfoToSRDocHit $ docData t)
-    where
-      docData d = L.reverse $ 
-                  L.sortBy (compare `on` (docScore . fst . snd)) $
-                  toListDocIdMap d
-      size      = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
+docHitsToResult :: (DocHits ModuleInfo, 
+                    DocHits FunctionInfo, 
+                    DocHits TypeInfo) -> IO SearchResultDocs
+docHitsToResult (m, f, t) = return $ SearchResultDocs size 
+                            (sortedSRDocHits emptyModuleInfo m)
+                            (sortedSRDocHits emptyFunctionInfo f)
+                            (sortedSRDocHits emptyTypeInfo t)
+ where size = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
 
-docModuleInfoToSRDocHit :: (DocId, (DocInfo ModuleInfo, DocContextHits)) -> SRDocHit ModuleInfo
-docModuleInfoToSRDocHit (_, (DocInfo (Document title' uri' info') score', contextMap'))
-    = SRDocHit title' score' (fromMaybe emptyModuleInfo info') uri' contextMap'
-
-docFunctionInfoToSRDocHit :: (DocId, (DocInfo FunctionInfo, DocContextHits)) -> SRDocHit FunctionInfo
-docFunctionInfoToSRDocHit (_, (DocInfo (Document title' uri' info') score', contextMap'))
-    = SRDocHit title' score' (fromMaybe emptyFunctionInfo info') uri' contextMap'
-
-docTypeInfoToSRDocHit :: (DocId, (DocInfo TypeInfo, DocContextHits)) -> SRDocHit TypeInfo
-docTypeInfoToSRDocHit  (_, (DocInfo (Document title' uri' info') score', contextMap'))
-    = SRDocHit title' score' (fromMaybe emptyTypeInfo info') uri' contextMap'
+sortedSRDocHits :: (Binary a) => a -> DocHits a -> [SRDocHit a]
+sortedSRDocHits emptyInfo info = map (docInfoToSRDocHit emptyInfo) $ docData info
+  where docData = L.sortBy (compare `on` docHitScore) . toListDocIdMap
+        docHitScore = docScore . fst . snd
 
 -- | convert Word-Completions to SearchResult
 
-getWordHits :: WordHits -> IO SearchResultWords
-getWordHits h
-    = return $ SearchResultWords (M.size h) (getWordHits' wordData)
+wordResults :: WordHits -> IO SearchResultWords
+wordResults h
+    = return $ SearchResultWords (M.size h) (wordHits' wordData)
     where
       wordData
-          = L.reverse $
+          =   L.reverse $
               L.sortBy (compare `on` snd)
                    (map (\ (c, (_, o)) ->
                              (c, M.fold (\m r -> r + sizeDocIdMap m) 0 o)
-                        ) (M.toList h)
-                   )
-      getWordHits' []
-          = []
-      getWordHits' ((c, s) : xs)
-          = SRWordHit c s : getWordHits' xs
+                        ) (M.toList h))
+      wordHits' [] = []
+      wordHits' ((c, s) : xs) = SRWordHit c s : wordHits' xs
 
--- ----------------------------------------------------------------------------
+docInfoToSRDocHit :: (Binary a) => a -> (DocId, (DocInfo a, DocContextHits)) -> SRDocHit a
+docInfoToSRDocHit emptyInfo (_, (DocInfo (Document title' uri' info') score', contextMap'))
+    = SRDocHit title' score' (fromMaybe emptyInfo info') uri' contextMap'
