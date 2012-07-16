@@ -5,54 +5,85 @@ import           Holumbus.Query.Language.Parser
 import           Data.List
 import           Data.Char
 import           Data.Maybe
+-- import           Data.Map as Map
 import           Helpers
 
 -- import Debug.Trace (trace)
 
+-- import Debug.Trace (trace)
 
 prepareQuery :: String -> Either String Query
 prepareQuery s
-    | customized s = (Right $ customQuery s)
+    | customized s = customQuery s
     | otherwise    = parseQuery s
 
 specify :: [String] -> String -> Query
+specify names "" = BinQuery Or (Specifier names $ Word "") (Specifier names (Negation $ Word "")) 
+-- an empty string query does not produce the wanted result
 specify names str = Specifier names $ Word str
 
-customQuery :: String -> Query
-customQuery s = customize $ splitOnWhitespace s
+customQuery :: String -> Either String Query
+customQuery s = Right $ customize $ splitOnWhitespace s
   where customize :: [String] -> Query
-        customize [] = Word ""
-        customize [x] = custom x
-        customize (x:xs) = BinQuery And (custom x) (customize xs)
+        customize [x] = if binary x then Word "" else custom x
+        customize (x:y:xs) 
+          | x == "NOT" = BinQuery But (Word "") (customize $ y:xs)
+          | binary x = customize $ y:xs 
+          | not (isSpecifier y || binary y) = customize $ (x++y):xs
+          | binary y = binQuery y (custom x) $ customize xs
+          | isSpecifier y = BinQuery And (custom x) (customize $ y:xs)
+        customize _ = Word ""
+        binary x = x `elem`["AND", "OR", "NOT"]
         
-        custom x
-          | funcSpecifier x  = specify ["Function"] (strip ":function" x)
-          | typeSpecifier x  = specify ["Type"] (strip ":typ" x)
-          | modSpecifier x   = specify ["Module"] (strip ":module" x)
-          -- | inSpecifier x   = specify ["Module"] (strip "in:" x)
-          | signature x      = specify ["Signature"] (strip ":signature" x)
-          | ndSpecifier x    = specify ["NonDet"] (strip ":nondet" x)
-          | detSpecifier x   = specify ["Det"] (strip ":det" x)
-          | flexSpecifier x  = specify ["Flex"] (strip ":flex" x)
-          | rigidSpecifier x = specify ["Rigid"] (strip ":rigid" x)
-          | caseSensitive x  = specify ["Type","TheModule"] x
-          | otherwise        = Word x
 
 customized :: String -> Bool
-customized s = funcSpecifier s || typeSpecifier s || modSpecifier s || signature s || caseSensitive s
+customized s 
+    | ":" `isPrefixOf` s = isSpecifier s
+    | isSignature s      = True
+    | caseSensitive s    = True
+    | otherwise          = False
 
+-- creates specified query for a string
+custom :: String -> Query
+custom x
+    | funcSpecifier x  = specify ["Function"] (strip ":function" x)
+    | typeSpecifier x  = specify ["Type"] (strip ":typ" x) 
+    | modSpecifier x   = specify ["Module"] (strip ":module" x)
+    | signature x      = specify ["Signature"] (strip ":signature" x)
+    | ndSpecifier x    = specify ["NonDet"] (strip ":nondet" x)
+    | detSpecifier x   = specify ["Det"] (strip ":det" x)
+    | flexSpecifier x  = specify ["Flex"] (strip ":flex" x)
+    | rigidSpecifier x = specify ["Rigid"] (strip ":rigid" x)
+    | caseSensitive x  = specify ["Type","TheModule"] x
+    | otherwise        = Word x
 
--- customSignature :: String -> Query
--- customSignature s = signature $ splitOnWhitespace s
---   where signature :: [String] -> Query 
---         signature []     = Word ""
---         signature (x:xs) = if isSignature x 
---                              then BinQuery And (specify ["Signature"] $ Word x) (signature xs)
---                              else BinQuery And (Word x) (signature xs)
+-- creates binary query for a string
+binQuery :: String -> Query -> Query -> Query
+binQuery x 
+    | x == "AND"       = BinQuery And
+    | x == "OR"        = BinQuery Or
+    | otherwise        = BinQuery But
+
+-- checks if a given string is a specifier
+isSpecifier :: String -> Bool
+isSpecifier s = any (`isPrefixOf` s) specifiers
 
 caseSensitive :: String -> Bool
 caseSensitive [] = False
 caseSensitive (x:_) = isUpper x
+
+-- normalizeSignature :: String -> String
+-- -- (Int -> Char)-> [Int] -> [Char]
+-- normalizeSignature s = trace (show (Prelude.map (\c -> (pairMap s) ! [c]) s)) (Prelude.map (\c -> (pairMap s) ! [c]) s) 
+--   where pairMap = insertNext (Map.fromList []) (ord 'a') . splitOnArrow
+--         insertNext pMap _ [] = pMap
+--         insertNext pMap i (x:xs) = if Map.notMember x pMap then insertNext (Map.insert x (chr i) pMap) (i+1) xs else insertNext pMap i xs
+
+
+-- list of all definied specifiers
+specifiers :: [String] 
+specifiers = [":function", ":type", ":module", ":nondet", 
+              ":det", ":flex", ":rigid", ":signature"]
 
 funcSpecifier :: String -> Bool
 funcSpecifier = isPrefixOf ":function"
@@ -75,26 +106,20 @@ flexSpecifier = isPrefixOf ":flex"
 rigidSpecifier :: String -> Bool
 rigidSpecifier = isPrefixOf ":rigid"
 
--- inSpecifier :: String -> Bool
--- inSpecifier = isPrefixOf "in:"
-
-strip :: String -> String -> String
-strip prefix s = 
-    if isPrefixOf prefix str then fromJust $ stripPrefix prefix str
-                           else s
-  where str = concat $ splitOnWhitespace s
+sigSpecifier :: String -> Bool
+sigSpecifier = isPrefixOf ":signature"
 
 -- Implicit search for signature when string includes "->"
 isSignature :: String -> Bool
 isSignature = isInfixOf "->"
 
--- Explicit use of search extension "signature:"
-sigSpecifier :: String -> Bool
-sigSpecifier = isPrefixOf ":signature"
-
 signature :: String -> Bool
 signature s = isSignature s || sigSpecifier s 
 
-stripSignature :: String -> String
-stripSignature = strip ":signature"
+strip :: String -> String -> String
+strip prefix s = 
+    if isPrefixOf prefix str then fromJust $ stripPrefix prefix str
+                             else s
+  where str = concat $ splitOnWhitespace s
+
 
