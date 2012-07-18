@@ -18,62 +18,15 @@ import Control.Monad                  ( liftM5, liftM4, liftM3, liftM2, liftM )
 
 import Data.Binary                    ( Binary(..), putWord8, getWord8 )
 
-import Helpers
+-- | Reads a given CurryInfo data file
+loadFromCurryFile :: FilePath -> IO CurryInfo
+loadFromCurryFile a = do
+       text <- readFile a
+       CurryInfo m f t <- readIO text 
+       return $ (CurryInfo m f t)
 
--- | Information about a curry module, function and type.
-
-emptyCurryInfo   :: CurryInfo
-emptyCurryInfo   = mkCurryInfo emptyModuleInfo [emptyFunctionInfo] [emptyTypeInfo]
-
-mkCurryInfo  :: ModuleInfo -> [FunctionInfo] -> [TypeInfo] -> CurryInfo
-mkCurryInfo  = CurryInfo
-
-emptyModuleInfo :: ModuleInfo
-emptyModuleInfo = mkModuleInfo "" "" "" [""] ""
-
-mkModuleInfo :: String -> String -> String -> [String] -> String -> ModuleInfo
-mkModuleInfo = ModuleInfo
-
-emptyFunctionInfo :: FunctionInfo
-emptyFunctionInfo = mkFunctionInfo "" (emptyQName, Undefined) "" "" False UnknownFR
-
-mkFunctionInfo :: String -> (QName, TypeExpr) -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
-mkFunctionInfo = FunctionInfo
-
-emptyTypeInfo :: TypeInfo
-emptyTypeInfo = mkTypeInfo "" [] "" ""
-
-mkTypeInfo :: String -> [(QName, [TypeExpr])] -> String -> String -> TypeInfo
-mkTypeInfo = TypeInfo
-
--- the module
--- the corresponding functions
--- the corresponding data and type declaration
-data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo] deriving (Show, Read)
-
-moduleInfo :: CurryInfo -> ModuleInfo
-moduleInfo (CurryInfo m _ _) = m
-
-functionInfos :: CurryInfo -> [FunctionInfo]
-functionInfos (CurryInfo _ f _) = f
-
-typeInfos :: CurryInfo -> [TypeInfo]
-typeInfos (CurryInfo _ _ t) = t
-
-instance NFData CurryInfo where
-    rnf (CurryInfo m f t) = rnf m `seq` rnf f `seq` rnf t
-
-instance Binary CurryInfo where
-    put (CurryInfo m f t) = put m >> put f >> put t
-    get = do
-            r <- liftM3 CurryInfo get get get
-            rnf r `seq` return r
-
--- the name
--- the latest version
--- the author
--- list of the imported modules
--- the description
+-- | ModuleInfo holds information about the name, latest version, author,
+--   list of imported modules and the description of a given module
 data ModuleInfo = ModuleInfo String String String [String] String deriving (Show, Read)
 
 mName :: ModuleInfo -> String
@@ -100,12 +53,62 @@ instance Binary ModuleInfo where
             r <- liftM5 ModuleInfo get get get get get
             rnf r `seq` return r
 
--- the name
--- the signature
--- the corresponding module
--- the description
--- True if property ist defined non-deterministically
--- the flex/rigid status
+-- | Data to represent the flexible and rigid attribute of a function
+data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid deriving (Show, Read)
+
+instance NFData FlexRigidResult 
+
+instance Binary FlexRigidResult where
+      put UnknownFR = putWord8 0
+      put ConflictFR = putWord8 1
+      put KnownFlex = putWord8 2
+      put KnownRigid = putWord8 3
+      get = do
+        tag <- getWord8
+        case tag of
+          1 -> return ConflictFR
+          2 -> return KnownFlex
+          3 -> return KnownRigid
+          _ -> return UnknownFR
+
+-- | Type for qualified names
+type QName = (String, String)
+
+-- empty constructor
+emptyQName :: QName
+emptyQName = ("","")
+
+-- | This data represents a type expression and can occur as type variable with an index (Int),
+--   a function type constructed with two type expressions or a type constructor with a qualified
+--   and a list of type expressions.
+data TypeExpr =
+    TVar Int              
+  | FuncType TypeExpr TypeExpr     
+  | TCons QName [TypeExpr]  
+  | Undefined   
+  deriving (Read, Show)   
+
+instance NFData TypeExpr where
+    rnf (TVar i) = rnf i
+    rnf (FuncType t1 t2) = rnf t1 `seq` rnf t2
+    rnf (TCons name tList) = rnf name `seq` rnf tList
+    rnf Undefined = ()
+
+instance Binary TypeExpr where
+    put (TVar i) = putWord8 0 >> put i
+    put (FuncType t1 t2) = putWord8 1 >> put t1 >> put t2
+    put (TCons name tList) = putWord8 2 >> put name >> put tList
+    put Undefined = putWord8 3
+    get = do 
+          tag <- getWord8
+          case tag of
+            0 -> liftM TVar get
+            1 -> liftM2 FuncType get get
+            2 -> liftM2 TCons get get
+            _ -> return Undefined
+
+-- | FunctionInfo holds information about the name, signature, corresponding module,
+--   description and flexible/rigid status of a function and its non-/deterministic behaviour
 data FunctionInfo = FunctionInfo String (QName, TypeExpr) String String Bool FlexRigidResult deriving (Show, Read)
 
 fName :: FunctionInfo -> String
@@ -126,6 +129,12 @@ fNonDet (FunctionInfo _ _ _ _ nd _) = nd
 fFlexRigid :: FunctionInfo -> FlexRigidResult
 fFlexRigid (FunctionInfo _ _ _ _ _ fr) = fr  
 
+-- lifts six arguments
+liftM6 :: Monad m => (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> r) 
+                  -> m a1 -> m a2 -> m a3 -> m a4 -> m a5 -> m a6 -> m r
+liftM6 f m1 m2 m3 m4 m5 m6 = 
+  do {x1 <- m1; x2 <- m2; x3 <- m3; x4 <- m4; x5 <- m5; x6 <- m6; return (f x1 x2 x3 x4 x5 x6)}
+
 instance NFData FunctionInfo where
     rnf (FunctionInfo n s m d nd fr) = rnf n `seq` rnf s `seq` rnf m `seq` rnf d `seq` rnf nd `seq` rnf fr
 
@@ -135,10 +144,8 @@ instance Binary FunctionInfo where
             r <- liftM6 FunctionInfo get get get get get get
             rnf r `seq` return r
 
--- the name
--- the signature
--- the corresponding module
--- the description
+-- | TypeInfo holds information about the name, signature, corresponding module,
+--   and description of a given type
 data TypeInfo = TypeInfo String [(QName, [TypeExpr])] String String deriving (Show, Read)
 
 tName :: TypeInfo -> String
@@ -153,24 +160,6 @@ tModule (TypeInfo _ _ m _) = m
 tDescription :: TypeInfo -> String
 tDescription (TypeInfo _ _ _ d) = d
 
-instance NFData TypeExpr where
-    rnf (TVar i) = rnf i
-    rnf (FuncType t1 t2) = rnf t1 `seq` rnf t2
-    rnf (TCons name tList) = rnf name `seq` rnf tList
-
-instance Binary TypeExpr where
-    put (TVar i) = putWord8 0 >> put i
-    put (FuncType t1 t2) = putWord8 1 >> put t1 >> put t2
-    put (TCons name tList) = putWord8 2 >> put name >> put tList
-    put Undefined = putWord8 3
-    get = do 
-          tag <- getWord8
-          case tag of
-            0 -> liftM TVar get
-            1 -> liftM2 FuncType get get
-            2 -> liftM2 TCons get get
-            _ -> return Undefined
-
 instance NFData TypeInfo where
     rnf (TypeInfo n s m d) = rnf n `seq` rnf s `seq` rnf m `seq` rnf d
 
@@ -179,32 +168,53 @@ instance Binary TypeInfo where
     get = do
             r <- liftM4 TypeInfo get get get get
             rnf r `seq` return r
-
-data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid deriving (Show, Read)
-
-instance NFData FlexRigidResult 
-
-instance Binary FlexRigidResult where
-      put UnknownFR = putWord8 0
-      put ConflictFR = putWord8 1
-      put KnownFlex = putWord8 2
-      put KnownRigid = putWord8 3
-      get = do
-        tag <- getWord8
-        case tag of
-          1 -> return ConflictFR
-          2 -> return KnownFlex
-          3 -> return KnownRigid
-          _ -> return UnknownFR
           
-loadFromCurryFile :: FilePath -> IO CurryInfo
-loadFromCurryFile a = do
-       text <- readFile a
-       CurryInfo m f t <- readIO text 
-       return $ (CurryInfo m f t)
+-- | The CurryInfo data holds information about the module, and corresponding functions,
+--   data and type declaration of a given 'curry file'
+data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo] deriving (Show, Read)
 
-liftM6 :: Monad m => (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> r) -> m a1 -> m a2 -> m a3 -> m a4 -> m a5 -> m a6 -> m r
-liftM6 f m1 m2 m3 m4 m5 m6 = do {x1 <- m1; x2 <- m2; x3 <- m3; x4 <- m4; x5 <- m5; x6 <- m6; return (f x1 x2 x3 x4 x5 x6)}
+moduleInfo :: CurryInfo -> ModuleInfo
+moduleInfo (CurryInfo m _ _) = m
 
-filePath :: FilePath
-filePath = "../resources/static"
+functionInfos :: CurryInfo -> [FunctionInfo]
+functionInfos (CurryInfo _ f _) = f
+
+typeInfos :: CurryInfo -> [TypeInfo]
+typeInfos (CurryInfo _ _ t) = t
+
+instance NFData CurryInfo where
+    rnf (CurryInfo m f t) = rnf m `seq` rnf f `seq` rnf t
+
+instance Binary CurryInfo where
+    put (CurryInfo m f t) = put m >> put f >> put t
+    get = do
+            r <- liftM3 CurryInfo get get get
+            rnf r `seq` return r
+
+-- | Empty constructor for CurryInfo
+emptyCurryInfo   :: CurryInfo
+emptyCurryInfo   = mkCurryInfo emptyModuleInfo [emptyFunctionInfo] [emptyTypeInfo]
+
+mkCurryInfo  :: ModuleInfo -> [FunctionInfo] -> [TypeInfo] -> CurryInfo
+mkCurryInfo  = CurryInfo
+
+-- | Empty constructor for ModuleInfo
+emptyModuleInfo :: ModuleInfo
+emptyModuleInfo = mkModuleInfo "" "" "" [""] ""
+
+mkModuleInfo :: String -> String -> String -> [String] -> String -> ModuleInfo
+mkModuleInfo = ModuleInfo
+
+-- | Empty constructor for FunctionInfo
+emptyFunctionInfo :: FunctionInfo
+emptyFunctionInfo = mkFunctionInfo "" (emptyQName, Undefined) "" "" False UnknownFR
+
+mkFunctionInfo :: String -> (QName, TypeExpr) -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
+mkFunctionInfo = FunctionInfo
+
+-- | Empty constructor for TypeInfo
+emptyTypeInfo :: TypeInfo
+emptyTypeInfo = mkTypeInfo "" [] "" ""
+
+mkTypeInfo :: String -> [(QName, [TypeExpr])] -> String -> String -> TypeInfo
+mkTypeInfo = TypeInfo

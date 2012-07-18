@@ -34,6 +34,46 @@ loadFctDocuments   = loadFromBinFile
 loadTypeDocuments   :: FilePath -> IO (SmallDocuments TypeInfo)
 loadTypeDocuments   = loadFromBinFile
 
+-- add file extension
+addFileExtension :: FilePath -> FilePath -> FilePath
+addFileExtension extension fileName = fileName ++ extension
+
+indexExtension :: FilePath -> FilePath 
+indexExtension = addFileExtension indexFileExtension
+
+documentExtension :: FilePath -> FilePath
+documentExtension = addFileExtension documentFileExtension
+
+moduleIndexPath :: FilePath
+moduleIndexPath = "./index/ix-mod.bin"
+-- moduleIndex2 :: FilePath
+-- moduleIndex2 = "./index/ix-mod.bin2"
+
+functionIndexPath :: FilePath
+functionIndexPath = "./index/ix-fct.bin"
+-- functionIndex2 :: FilePath
+-- functionIndex2 = "./index/ix-fct.bin2"
+
+typeIndexPath :: FilePath
+typeIndexPath = "./index/ix-type.bin"
+-- typeIndex2 :: FilePath
+-- typeIndex2 = "./index/ix-type.bin2""
+
+-- extension for the temporary index/doc file
+tempFile :: String
+tempFile = "2"
+
+-- filePath :: FilePath
+-- filePath = "../resources/static"
+
+-- index file extension
+indexFileExtension :: FilePath
+indexFileExtension = ".idx"
+
+-- document file extension
+documentFileExtension :: FilePath
+documentFileExtension = ".doc"
+
 -- paths to load index and document files
 curryModIndex :: FilePath
 curryModIndex  = "./index/ix-mod.bin.idx"

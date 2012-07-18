@@ -8,7 +8,7 @@ Maintainer  :  sad@informatik.uni-kiel.de
 Stability   :  experimental
 Portability :  portable
 
-This module holds the functions to interpret a given query.
+This module holds the functions to interpret a given query. It produces a result that consists of possible word completions and documents, that match the query.
 -}
 
 module CurrySearch where
@@ -21,227 +21,161 @@ import           Data.Maybe             (fromMaybe)
 
 import           Holumbus.Index.Common
 
-import           Holumbus.Query.Language.Grammar
-import           Holumbus.Query.Processor
+import           Holumbus.Query.Fuzzy (FuzzyConfig (..), englishReplacements)
+import           Holumbus.Query.Language.Grammar (Query (..))
+import           Holumbus.Query.Processor (ProcessConfig (..), processQuery)
+import           Holumbus.Query.Ranking 
 import           Holumbus.Query.Result
-import           Holumbus.Query.Ranking
-import           Holumbus.Query.Fuzzy
 
-import           Parser
-import           IndexTypes
-import           CurryInfo
+import           CurryInfo (emptyFunctionInfo, emptyTypeInfo, emptyModuleInfo)
 import           Helpers
+import           IndexTypes
+import           Parser (prepareQuery)
 
--- | number of hits shown per page
-hitsPerPage :: Int
-hitsPerPage = 10
+-- | Processes a query for a given module, function and type indexer pair. 
+queryResult :: CompactInverted -> SmallDocuments ModuleInfo 
+           -> CompactInverted -> SmallDocuments FunctionInfo 
+           -> CompactInverted -> SmallDocuments TypeInfo 
+           -> Query -> IO MFTResult
+queryResult ixM docM ixF docF ixT docT q
+    = return (process ixM docM, process ixF docF, process ixT docT)
+  where process ix doc = processQuery processCfg ix doc q
 
--- ------------------------------------------------------------
+-- Converts matching documents (DocHits) to a InfoDoc structure that holds information
+-- about the document and the corresponding curryInfo.
+infoDoc :: (Binary a) => a -> (DocId, (DocInfo a, DocContextHits)) -> InfoDoc a
+infoDoc emptyInfo (_, (DocInfo (Document title' uri' info') score', contextMap'))
+    = InfoDoc title' uri' (fromMaybe emptyInfo info') contextMap' score'
 
--- -- | max number of pages
--- maxPages :: Int
--- maxPages = 10
+-- Sorts the documents by score considering the (possibly) applied rank table
+-- and returns a list of these documents as info document data structure.
+sortedInfoDoc :: (Binary a) => a -> DocHits a -> [InfoDoc a]
+sortedInfoDoc emptyInfo info = map (infoDoc emptyInfo) $ docData info
+  where docData = L.reverse . L.sortBy (compare `on` docHitScore) . toListDocIdMap
+        docHitScore = docScore . fst . snd
 
--- ------------------------------------------------------------
+-- | Converts a triple of curryInfos to a QRDocs data structure.
+--   It sorts the documents by a given rank and counts the total number of matching documents.
+docHitsToResult :: (DocHits ModuleInfo, 
+                    DocHits FunctionInfo, 
+                    DocHits TypeInfo) -> IO QRDocs
+docHitsToResult (m, f, t) = return $ QRDocs size 
+                            (sortedInfoDoc emptyModuleInfo m)
+                            (sortedInfoDoc emptyFunctionInfo f)
+                            (sortedInfoDoc emptyTypeInfo t)
+ where size = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
 
--- Representation of all Document-Hits and Word-Completions found
+-- | Returns only the documents of a query result.
+queryResultDocs :: (Query -> IO MFTResult) -> String -> IO QRDocs
+queryResultDocs process
+    = either noResults makeQuery . prepareQuery
+    where
+      noResults _  = return emptyQRDocs
+      makeQuery query = do 
+               results      <- process query
+               (rM, rF, rT) <- defaultRanks results
+               qResultDocs  <- docHitsToResult (docHits rM, docHits rF, docHits rT)
+               return qResultDocs
 
-data SearchResult
-    = SearchResult
-      { srDocs  :: SearchResultDocs
-      , srWords :: SearchResultWords
-      }
+-- Sorts word completions by score that considers an (possibly) applied rank table
+-- and returns a word completion data structure.
+sortedWords :: WordHits -> IO QRWords
+sortedWords h = 
+  return $ QRWords (M.size h) wordData
+ where wordData = L.reverse $ L.sortBy (compare `on` iwScore)
+                  (map (\ (word, (wordInfo, _)) -> uncurry InfoWord (word, wordScore wordInfo)) 
+                       $ M.toList h)
 
-data SearchResultDocs
-    = SearchResultDocs
-      { srDocCount  :: Int
-      , srModuleDocHits   :: [SRDocHit ModuleInfo]
-      , srFunctionDocHits :: [SRDocHit FunctionInfo]
-      , srTypeDocHits :: [SRDocHit TypeInfo]
-      } deriving Show
+-- When processing word completions consider only the function, module and type contexts.
+wordCompletionSpecifier :: String -> Query
+wordCompletionSpecifier = Specifier ["Function","TheModule","Type"] . Word
 
-data SearchResultWords
-    = SearchResultWords
-      { srWordCount :: Int
-      , srWordHits  :: [SRWordHit]
-      }
+-- Removes context specifiers (substrings starting with '"') from the string.
+prepareWordCompletionQuery :: String -> String
+prepareWordCompletionQuery queryString = 
+  concat $ filter (not . (":" `L.isPrefixOf`)) $ splitOnWhitespace queryString
 
-data  SRDocHit a
-    = SRDocHit
-      { srTitle         :: String
-      , srScore         :: Float
-      , srInfo          :: a
-      , srUri           :: String
-      , srContextMap    :: M.Map Context DocWordHits 
-      } deriving Show
+-- | Returns only the word completions of a query result.
+wordCompletions :: (Query -> IO MFTResult) -> String -> IO QRWords
+wordCompletions process = makeQuery . prepare
+ where prepare = wordCompletionSpecifier . prepareWordCompletionQuery
+       makeQuery query = do
+            results <- process query
+            (rrM, rrF, rrT) <- defaultRanks results
+            sortedWords (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
 
-data SRWordHit = SRWordHit { srWord :: String, srHits :: Int}
+-- | Shortcut for the used result triple.
+type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
 
--- Ranking for different kinds of Contexts
-
-type RankTable  = [(Context, Score)]
-
+-- The default weights for the contexts.
 defaultRankTable :: RankTable
 defaultRankTable = 
-    [("Function", 1.0),
-     ("Type", 0.75),
-     ("TheModule", 0.25),
-     ("Signature", 0.75),
-     ("Module", 0.5),
-     ("Author", 0.2),
-     ("Description", 0.5),
-     ("Other", 0.2)]
+  [("Function", 1.0),
+   ("Type", 0.75),
+   ("TheModule", 0.25),
+   ("Signature", 0.75),
+   ("Module", 0.5),
+   ("Author", 0.2),
+   ("Description", 0.5),
+   ("Other", 0.2)]
 
+-- The context weights for a word completion, only function, type, and module names are important.
 wordCompletionRankTable :: RankTable
-wordCompletionRankTable = [("Function", 1.0), ("Type", 0.5), ("Module", 0.5)]
+wordCompletionRankTable = [("Function", 1.0), ("Type", 0.5), ("TheModule", 0.5)]
 
+-- For this search engine, the documents and word completions have different rank tables.
 defaultRankCfg :: RankConfig a
 defaultRankCfg = RankConfig (docRankWeightedByCount defaultRankTable)
                             (wordRankWeightedByCount wordCompletionRankTable)
 
-type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
-
+-- | The function to apply a rank table (weights) to a given result.
 defaultRanks :: MFTResult -> IO MFTResult 
 defaultRanks (m, f, t) = return (rank defaultRankCfg m, 
                                  rank defaultRankCfg f,
                                  rank defaultRankCfg t)
 
--- | Create the configuration for the query processor.
+-- | A RankTable represents a context and its given score to allow weighted query results.
+type RankTable  = [(Context, Score)]
 
+-- | Defaul configuration to process query. Search fuzzy (with switched adjacent characters and 
+--   some specified replacements for the english language), with an optimized query and no limit to
+--   found words or documents.
 processCfg :: ProcessConfig
-processCfg
-    = ProcessConfig (FuzzyConfig True True 1.0 germanReplacements) True 100 500
+processCfg = 
+  ProcessConfig (FuzzyConfig True True 1.0 englishReplacements) True 0 0
 
--- | Perform a query on a local index.
+-- | A possible word completion holds a name (aka the word itself) and a score.
+data InfoWord = InfoWord { iwName :: String, iwScore :: Score}
 
-localQuery :: CompactInverted -> SmallDocuments ModuleInfo 
-           -> CompactInverted -> SmallDocuments FunctionInfo 
-           -> CompactInverted -> SmallDocuments TypeInfo 
-           -> Query -> IO (Result ModuleInfo, 
-                           Result FunctionInfo,
-                           Result TypeInfo)
-localQuery ixM docM ixF docF ixT docT q
-    = return (queryL ixM docM, queryL ixF docF, queryL ixT docT)
-  where queryL ix doc = processQuery processCfg ix doc q
+-- | The data to represent the word completions. 
+--   It stores the number of possible completions and a list of these words.
+data QRWords = QRWords { qwCount :: Int, qwInfo :: [InfoWord] }
 
--- -- | get all Search Results
+-- | A document stores information about its title, uri and score. 
+--   Furthermore it consits of a mapping of the contexts (i.e. function, module, type, author etc)
+--   and its words and the corresponding curryInfo data (i.e. FunctionInfo, ModuleInfo, TypeInfo).
+data InfoDoc a = 
+  InfoDoc 
+    { idTitle      :: String,
+      idUri        :: String,
+      idInfo       :: a,
+      idContextMap :: M.Map Context DocWordHits,
+      idScore      :: Score
+    } deriving Show
 
--- allSearchResults :: String -> (Query -> IO (Result ModuleInfo, 
---                                             Result FunctionInfo, 
---                                             Result TypeInfo)) 
---                               -> IO SearchResult
--- allSearchResults q f
---     = do docs'  <- getIndexSearchResults q f
---          words' <- getWordCompletions    q f
---          return $ SearchResult docs' words'
+-- | Empty construtctor.
+emptyQRDocs :: QRDocs
+emptyQRDocs = QRDocs 0 [] [] []
 
--- -- | Insert the time needed for request into SearchResultDocs data type.
--- --
--- --  Delete all elements in the list of search-results such that the list is uniq
--- --  by the title of a found document.
--- --  Shorten the search-result list to (hitsPerPage * maxPages) elements.
--- --  Adapt the displayed number of docs found 
+-- | The documents that match a query are divided into three groups (aka the curryInfo data).
+--   So the data holds these three lists and an attribute that represents the total number of documents.
+data QRDocs = 
+  QRDocs
+    { qdDocCount     :: Int,
+      qdModuleDocs   :: [InfoDoc ModuleInfo],
+      qdFunctionDocs :: [InfoDoc FunctionInfo],
+      qdTypeDocs     :: [InfoDoc TypeInfo]
+    } deriving Show
 
--- addTime :: Float -> SearchResultDocs -> SearchResultDocs
--- addTime requestTime searchResultDocs
---     = SearchResultDocs requestTime dislayedNumOfHits (docHits' srModuleDocHits) (docHits' srFunctionDocHits) (docHits' srTypeDocHits)
---     where
---       docHits' info = take (hitsPerPage * maxPages) $
---                       uniqByTitle $
---                       info searchResultDocs
---     -- not a good idea: (length $ uniqByTitle $ srDocHits searchResultDocs), since the whole list would be processed by the O(n^2) algorithm "uniqByTitle"
-
---       dislayedNumOfHits
---           = if numElemsShortList == hitsPerPage * maxPages
---             then numElemsLongList
---             else numElemsShortList
-
---       numElemsShortList = (length $ docHits' srModuleDocHits) 
---                           + (length $ docHits' srFunctionDocHits)
---                           + (length $ docHits' srTypeDocHits)
-
---       -- this is the length without filtering!
---       numElemsLongList = srDocCount searchResultDocs
-
--- -- | helper for addTime:
--- --  delete all elements in the list of search-results such that the list is uniq
--- --  by the title of a found document.
--- --  This is an O(n^2) algorithm but we truncate the result list of uniqByTitle to (hitsPerPage*maxPages) elements,
--- --  so only these elements are computed due to lazy evaluation.
--- --  This has proven to be the best method to get rid of many equal search results.
-
--- uniqByTitle :: [SRDocHit a] -> [SRDocHit a]
--- uniqByTitle []     = []
--- uniqByTitle (x:xs) = x : uniqByTitle (deleteByTitle (srTitle x) xs)
---   where
---     deleteByTitle t = filter (\ listItem -> srTitle listItem /= t)
-
-
--- | get only Document Search Results (without Word-Completions)
-
-searchResultDocs :: String -> (Query -> IO MFTResult) -> IO SearchResultDocs
-searchResultDocs q f
-    = either noResults makeQuery $ prepareQuery q
-    where
-      noResults _
-          = return $ SearchResultDocs 0 [] [] [] 
-      makeQuery pq
-          = do results      <- f pq
-               (rM, rF, rT) <- defaultRanks results
-               resultDocs   <- docHitsToResult (docHits rM, docHits rF, docHits rT)
-               return resultDocs
-
--- | get only Word-Completions (without Document Search Results)
-wordCompletions :: String -> (Query -> IO MFTResult) -> IO SearchResultWords
-wordCompletions q f = 
-    --either noResults 
-    makeQuery $ prepare q
-  where noResults _ = return $ SearchResultWords 0 []
-        prepare = wordCompletionSpecifier . prepareWordCompletionQuery
-        makeQuery pq = 
-          do results <- f pq -- This is where the magic happens!
-             (rrM, rrF, rrT) <- defaultRanks results
-             
-             wordResults (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
-
-wordCompletionSpecifier :: String -> Query
-wordCompletionSpecifier = Specifier ["Function","TheModule","Type"] . Word
-
-prepareWordCompletionQuery :: String -> String
-prepareWordCompletionQuery queryString = 
-  concat $ filter (not . (":" `L.isPrefixOf`)) $ splitOnWhitespace queryString
-
--- | convert Document-Hits to SearchResult
-
-docHitsToResult :: (DocHits ModuleInfo, 
-                    DocHits FunctionInfo, 
-                    DocHits TypeInfo) -> IO SearchResultDocs
-docHitsToResult (m, f, t) = return $ SearchResultDocs size 
-                            (sortedSRDocHits emptyModuleInfo m)
-                            (sortedSRDocHits emptyFunctionInfo f)
-                            (sortedSRDocHits emptyTypeInfo t)
- where size = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
-
-sortedSRDocHits :: (Binary a) => a -> DocHits a -> [SRDocHit a]
-sortedSRDocHits emptyInfo info = map (docInfoToSRDocHit emptyInfo) $ docData info
-  where docData = L.sortBy (compare `on` docHitScore) . toListDocIdMap
-        docHitScore = docScore . fst . snd
-
--- | convert Word-Completions to SearchResult
-
-wordResults :: WordHits -> IO SearchResultWords
-wordResults h
-    = return $ SearchResultWords (M.size h) (wordHits' wordData)
-    where
-      wordData
-          =   L.reverse $
-              L.sortBy (compare `on` snd)
-                   (map (\ (c, (_, o)) ->
-                             (c, M.fold (\m r -> r + sizeDocIdMap m) 0 o)
-                        ) (M.toList h))
-      wordHits' [] = []
-      wordHits' ((c, s) : xs) = SRWordHit c s : wordHits' xs
-
-docInfoToSRDocHit :: (Binary a) => a -> (DocId, (DocInfo a, DocContextHits)) -> SRDocHit a
-docInfoToSRDocHit emptyInfo (_, (DocInfo (Document title' uri' info') score', contextMap'))
-    = SRDocHit title' score' (fromMaybe emptyInfo info') uri' contextMap'
+-- | The QueryResult includes the matching documents and the matching word completions to a given query.
+data QueryResult = QueryResult { qDocuments :: QRDocs, qCompletions :: QRWords }
