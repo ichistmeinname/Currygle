@@ -18,43 +18,81 @@ import qualified Data.Text      as T
 import           Data.List
 import           Data.Char
 
+import           CurryInfo (TypeExpr (..), QName)
 
 import qualified Text.XmlHtml   as X
 
--- ----------------------------------------------------------------------------
+-- when types are used in the module where they're defined, a qualified name is not necessary,
+-- same holds for types of the prelude
+isQualifiedName :: String -> String -> Bool
+isQualifiedName moduleName fModuleName = moduleName == fModuleName || fModuleName == "Prelude"
 
-type QName = (String, String)
+qualifiedName :: String -> String -> String -> String
+qualifiedName moduleName fModuleName fName = 
+  if isQualifiedName moduleName fModuleName then fName else moduleName ++ "." ++ fName
 
-data TypeExpr =
-     TVar Int              
-   | FuncType TypeExpr TypeExpr     
-   | TCons QName [TypeExpr]  
-   | Undefined   
-   deriving (Read, Show)   
+-- parens a given string when parens flag is true
+paren :: Bool -> String -> String
+paren parens str 
+    | parens    = "(" ++ str ++ ")"
+    | otherwise = str 
 
-emptyQName :: QName
-emptyQName = ("","")
+-- splits strings at whitespaces (ex.: for better handling of comments)
+splitOnWhitespace :: String -> [String]
+splitOnWhitespace = splitStringOn " "
+
+splitOnArrow :: String -> [String]
+splitOnArrow = splitStringOn "->"
+
+-- recombineSignature :: [String] -> [String]
+-- recombineSignature str@(x:y:z:xs) = 
+--   if y == "->" then (x++y++z) : endOfSignature xs 
+--                else x : recombineSignature (tail str)
+-- recombineSignature str = str
+--  where endOfSignature "
+
+
+-- findSignature xs            = []
+
+-- endOfSignature (x++"->") xs
+--  where endOfSignature xs ys = (xs ++
+
+test :: String -> [[String]]
+test = map splitOnWhitespace . splitOnArrow
+
+splitStringOn :: String -> String -> [String]
+splitStringOn splitter text = map T.unpack (T.splitOn  (T.pack splitter) (T.pack text))
+
+-- returns a path that ends with '/'
+fullPath :: String -> String
+fullPath path  = if last path == '/' then path else path ++ "/"
+
+-- Words shorter than 2 characters are biased
+biasedWord :: String -> Bool
+biasedWord s = length s < 3
+
+-------------------------------------
+--- Some pretty printig functions ---
+-------------------------------------
 
 -- pretty print for special types like lists or tupels
 prettyPrintSpecialType :: String -> String -> [TypeExpr] -> String
-prettyPrintSpecialType _ _ [] = []	      -- shouldn't occur
+prettyPrintSpecialType _ name [] = name
 prettyPrintSpecialType name fName [tExpr] 
     | fName == "[]" = "[" ++  concat (typeSignature name tExpr) ++ "]"
     | otherwise = fName ++ " " ++ concat (typeSignature name tExpr)
 prettyPrintSpecialType name fName tExprList@(_:_:_)  
     | head fName == '(' =
-    "(" ++ 
+    "(" ++
     intercalate "," (concatMap (typeSignature name) tExprList)
     ++ ")"
     | otherwise = fName ++ " " ++ concat (concatMap (typeSignature name) tExprList)
 
 prettyPrint :: String -> TypeExpr -> String
 prettyPrint modName (TCons (mName2, fName2) []) = 
-    let name = if qualifiedName modName mName2 then fName2 else modName++"."++fName2
-    in name
+  qualifiedName modName mName2 fName2
 prettyPrint modName (TCons (mName2, fName2) tExprList) =
-    let name | qualifiedName modName mName2  = fName2
-             | otherwise = modName++"."++fName2
+    let name = qualifiedName modName mName2 fName2
     in prettyPrintSpecialType modName name tExprList
 prettyPrint _ (TVar i) = [chr (i+97)]
 prettyPrint modName (FuncType tExpr1 tExpr2) =
@@ -64,18 +102,31 @@ prettyPrint _ Undefined = ""
 -- generate type signature  
 typeSignature :: String -> TypeExpr -> [String]
 typeSignature modName (TCons (mName2, fName2) []) = 
-    let name = if qualifiedName modName mName2 then fName2 else modName++"."++fName2
+    let name = if isQualifiedName modName mName2 then fName2 else modName++"."++fName2
     in [name]
 typeSignature modName (TCons (mName2, fName2) tExprList) =
-    let name | qualifiedName modName mName2 = fName2
+    let name | isQualifiedName modName mName2 = fName2
              | otherwise = modName++"."++fName2
     in [prettyPrintSpecialType modName name tExprList]
 typeSignature modName (FuncType tExpr1@(FuncType _ _) tExpr2) =
     paren True (prettyPrint modName tExpr1) : typeSignature modName tExpr2
+-- typeSignature modName (FuncType tExpr1 tExpr2) =
+--     (prettyPrint modName tExpr1) : (prettyPrint modName tExpr2) : []
 typeSignature modName tExpr@(FuncType _ _) = 
     [prettyPrint modName tExpr]
 typeSignature _ (TVar i) = [[chr (i+97)]]
 typeSignature _ Undefined = []
+
+signatureList :: String -> TypeExpr -> [String]
+signatureList modName (TCons (mName2, fName2) tExprList) = 
+  [prettyPrintSpecialType modName name tExprList]
+ where name = qualifiedName modName mName2 fName2
+signatureList modName (FuncType tExpr1 tExpr2) = 
+  case tExpr1 of
+    FuncType _ _ -> [paren True (prettyPrint modName tExpr1)] ++ signatureList modName tExpr2
+    _            -> signatureList modName tExpr1 ++ signatureList modName tExpr2
+signatureList _ (TVar i) = [[chr (i+97)]]
+signatureList _ Undefined = []
 
 consSignature :: String -> [TypeExpr] -> [String]
 consSignature modName = concatMap (typeSignature modName)
@@ -84,25 +135,9 @@ consToList :: (QName, [TypeExpr]) -> [String]
 consToList ((modName, fctName), tExprList) = 
     [fctName] ++ [" "] ++ consSignature modName tExprList
 
-qualifiedName :: String -> String -> Bool
-qualifiedName name1 name2 = name1 == name2 || name2 == "Prelude"
-
-paren :: Bool -> String -> String
-paren parens str 
-    | parens    = "(" ++ str ++ ")"
-    | otherwise = str 
-
---  Pretty printing for signatures 
+-- Pretty printing for signatures 
 listToSignature :: [String] -> String
 listToSignature = intercalate "->"
-
--- splits strings at whitespaces (ex.: for better handling of comments)
-splitOnWhitespace :: String -> [String]
-splitOnWhitespace text = map T.unpack (T.splitOn  (T.pack " ") (T.pack text))
-
--- Words shorter than 2 characters are biased
-biasedWord :: String -> Bool
-biasedWord s = length s < 3
 
 -- ------------------------------------------------------------
 --

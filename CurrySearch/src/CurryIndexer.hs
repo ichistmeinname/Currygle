@@ -31,6 +31,8 @@ import IndexTypes
 import Holumbus.Index.CompactSmallDocuments
 import Holumbus.Index.Common
 
+import Debug.Trace (trace)
+
 -- singleton shortcut
 occ :: DocId -> Word32 -> Occurrences
 occ = singletonOccurrence
@@ -121,8 +123,9 @@ contextsMod moduleI i =
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
     map (addOcc  (occ i 2)) $ [("Function", fName functionI)] ++ [("Module", fModule functionI)]
-                              ++ (signature $ (\((modName,_), tExpr) -> typeSignature modName tExpr) 
-                                  $ fSignature functionI)
+                              ++ trace (show $ (signature $ (\((modName,_), tExpr) -> signatureList modName tExpr) 
+                                  $ fSignature functionI)) ((signature $ (\((modName,_), tExpr) -> signatureList modName tExpr) 
+                                  $ fSignature functionI))
                               ++ (flexRigid $ fFlexRigid functionI)
                               ++ (nonDet $ fNonDet functionI)
                               ++ (description $ fDescription functionI) 
