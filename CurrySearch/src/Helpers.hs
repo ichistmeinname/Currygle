@@ -44,22 +44,6 @@ splitOnWhitespace = splitStringOn " "
 splitOnArrow :: String -> [String]
 splitOnArrow = splitStringOn "->"
 
--- recombineSignature :: [String] -> [String]
--- recombineSignature str@(x:y:z:xs) = 
---   if y == "->" then (x++y++z) : endOfSignature xs 
---                else x : recombineSignature (tail str)
--- recombineSignature str = str
---  where endOfSignature "
-
-
--- findSignature xs            = []
-
--- endOfSignature (x++"->") xs
---  where endOfSignature xs ys = (xs ++
-
-test :: String -> [[String]]
-test = map splitOnWhitespace . splitOnArrow
-
 splitStringOn :: String -> String -> [String]
 splitStringOn splitter text = map T.unpack (T.splitOn  (T.pack splitter) (T.pack text))
 
@@ -129,11 +113,15 @@ signatureList _ (TVar i) = [[chr (i+97)]]
 signatureList _ Undefined = []
 
 consSignature :: String -> [TypeExpr] -> [String]
-consSignature modName = concatMap (typeSignature modName)
+consSignature modName = concatMap (signatureList modName)
 
 consToList :: (QName, [TypeExpr]) -> [String]
-consToList ((modName, fctName), tExprList) = 
-    [fctName] ++ [" "] ++ consSignature modName tExprList
+consToList ((modName, typeName), tExprList) = 
+  (consSignature modName tExprList) ++ [typeName]
+
+typeToList :: (QName, TypeExpr) -> [String]
+typeToList ((modName, _), tExpr) =
+  signatureList modName tExpr 
 
 -- Pretty printing for signatures 
 listToSignature :: [String] -> String
