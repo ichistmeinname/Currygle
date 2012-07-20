@@ -31,8 +31,6 @@ import IndexTypes
 import Holumbus.Index.CompactSmallDocuments
 import Holumbus.Index.Common
 
-import Debug.Trace (trace)
-
 -- singleton shortcut
 occ :: DocId -> Word32 -> Occurrences
 occ = singletonOccurrence
@@ -45,7 +43,7 @@ addOcc occurrence (a,b) = (a,b,occurrence)
 description :: String -> [(String,String)]
 description s = map (addContext "Description") $ filter (not . biasedWord) $ splitOnWhitespace s
 
--- adds signature context to a string
+-- adds signature context to a signature string and all its suffixes
 signature :: [String] -> [(String,String)]
 signature = map (addContext "Signature") . init . map listToSignature . tails
 
@@ -123,9 +121,7 @@ contextsMod moduleI i =
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
     map (addOcc  (occ i 2)) $ [("Function", fName functionI)] ++ [("Module", fModule functionI)]
-                              ++ trace (show $ (signature $ (\((modName,_), tExpr) -> signatureList modName tExpr) 
-                                  $ fSignature functionI)) ((signature $ (\((modName,_), tExpr) -> signatureList modName tExpr) 
-                                  $ fSignature functionI))
+                              ++ ((signature $ typeToList $ fSignature functionI))
                               ++ (flexRigid $ fFlexRigid functionI)
                               ++ (nonDet $ fNonDet functionI)
                               ++ (description $ fDescription functionI) 
@@ -140,9 +136,7 @@ contextsF functionI i =
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
     map (addOcc  (occ i 1)) $ [("Type", tName typeI)] ++ [("Module", tModule typeI)]
-                              ++ (signature (concatMap 
-                                 (\((modName,_), tExprList) -> consSignature modName tExprList)
-                                 $ tSignature typeI))
+                              ++ (concatMap signature $ map consToList $ tSignature typeI)
                               ++ (signature $ map (\((_, fctName), _) -> fctName) $ tSignature typeI)
                               ++ (description $ tDescription typeI)   
 
