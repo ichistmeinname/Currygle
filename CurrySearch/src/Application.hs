@@ -21,34 +21,29 @@ import Snap.Extension
 import Snap.Extension.Heist.Impl
 import CurryState
 
+-- | Constructs an ApplicationState.
+appInitializer :: Initializer ApplicationState
+appInitializer = do
+  heistS <- heistInitializer "resources/templates"
+  curryS <- curryInitializer
+  return $ ApplicationState heistS curryS
 
-type Application = SnapExtend ApplicationState
+-- | Instance to find the heist state.
+instance HasHeistState Application ApplicationState where
+  getHeistState     = heistState
+  setHeistState s a = a { heistState = s }
 
--- | Record type for holding application's state
--- this includes the state needed by the used extensions
+-- | Instance to find the curry state.
+instance HasCurryState ApplicationState where
+  getCurryState     = curryState
+  setCurryState s a = a { curryState = s }
 
+-- | Record type for holding application's state,
+-- this includes the state needed by the used extensions.
 data ApplicationState = ApplicationState
   {
     heistState :: HeistState Application,
     curryState :: CurryState
   }
 
--- | Instance to find the heist state
-
-instance HasHeistState Application ApplicationState where
-  getHeistState     = heistState
-  setHeistState s a = a { heistState = s }
-
--- | Instance to find the curry state
-
-instance HasCurryState ApplicationState where
-  getCurryState     = curryState
-  setCurryState s a = a { curryState = s }
-
--- | Constructs an AppState
-
-appInitializer :: Initializer ApplicationState
-appInitializer = do
-    heistS <- heistInitializer "resources/templates"
-    curryS <- curryInitializer
-    return $ ApplicationState heistS curryS
+type Application = SnapExtend ApplicationState
