@@ -1,6 +1,6 @@
 {- |
 Module      :  Main
-Description :  
+Description :  There's nothing to see here but a simple function to start the server.
 Copyright   :  (c) Sandra Dylus
 License     :  <license>
 
@@ -20,6 +20,3 @@ import Site
 
 main :: IO ()
 main = quickHttpServe appInitializer site
-
-
--- ----------------------------------------------------------------------------

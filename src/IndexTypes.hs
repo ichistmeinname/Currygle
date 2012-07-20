@@ -12,10 +12,13 @@ This module define the indexer types that are used by the search engine.
 -}
 
 module IndexTypes
-    (module IndexTypes,
-    module Holumbus.Index.CompactIndex,
-    IndexerState (..)
-    )
+ ( module IndexTypes,
+   module Holumbus.Index.CompactIndex,
+   IndexerState (..),
+   ModuleInfo,
+   FunctionInfo,
+   TypeInfo
+ )
 where
 
 import CurryInfo

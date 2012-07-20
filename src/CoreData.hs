@@ -11,29 +11,20 @@ Portability :  portable
 Maintains the definition of the data Core, that represents the index and documents. 
 -}
 
--- ----------------------------------------------------------------------------
-
 module CoreData
     ( Core(..) )
 where
 
 import IndexTypes
-import CurryInfo
 
--- ------------------------------------------------------------
--- | Represents the index data, it differs between module, fct and type information
-
+-- | Represents the index data, it differs between module, function and type information.
 data Core = Core
-          { modIndex      :: ! CompactInverted
-          , modDocuments  :: ! (SmallDocuments ModuleInfo)
-          , fctIndex      :: ! CompactInverted
-          , fctDocuments  :: ! (SmallDocuments FunctionInfo)
-          , typeIndex     :: ! CompactInverted
-          , typeDocuments :: ! (SmallDocuments TypeInfo)
+          { modIndex      :: ! CompactInverted,
+            modDocuments  :: ! (SmallDocuments ModuleInfo),
+            fctIndex      :: ! CompactInverted,
+            fctDocuments  :: ! (SmallDocuments FunctionInfo),
+            typeIndex     :: ! CompactInverted,
+            typeDocuments :: ! (SmallDocuments TypeInfo)
           }
-
--- ------------------------------------------------------------
-
-
 
 
