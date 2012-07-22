@@ -136,8 +136,9 @@ contextsF functionI i =
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
     map (addOcc  (occ i 1)) $ [("Type", tName typeI)] ++ [("Module", tModule typeI)]
-                              ++ (concatMap signature $ map consToList $ tSignature typeI)
-                              ++ (signature $ map (\((_, fctName), _) -> fctName) $ tSignature typeI)
+                              ++ (concatMap signature $ map (fst . consToList (tName typeI)) 
+                                 $ tSignature typeI)
+                              ++ (signature $ map (snd . consToList (tName typeI)) $ tSignature typeI)
                               ++ (description $ tDescription typeI)   
 
 -- returns the maxId of a given document
