@@ -1,40 +1,36 @@
 <html>
   <head>
     <title>Curr(y)gle</title>
-    <link rel="stylesheet" type="text/css" href="screen.css" />
-    <script type="text/javascript" src="ajax.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+    <script src="jquery-1.7.2.js"></script>
+    <script src="searching.js"></script>
+    <script src="bootstrap.js"></script>
   </head>
   <body>
-    <div class="header"/>
-    <table cellspacing="0" cellpadding="0">
-      <tr>
-        <td class="contentTd">
-          <div class="content">
-            <div class="form">
-              <form action="/querypage">
-                <input id="query" name="query" type="text" autocomplete="off"
-                       value=$(oldquery) onblur="hide()" onkeyup="keyUpHandler(event)"/>
-                <input class="button" name="button" type="submit" value="Suchen"/>
-                <div id="suggestion"/>
-              </form>
-            </div>
-            <div class="result">
-              <result/>
-            </div>
-            <div class="pager">
-              <pager/>
-            </div>
-          </div>
-        </td>
-        <td class="siderTd">
-          <div class="sider"/>
-        </td>
-      </tr>
-    </table>
-    <div class="footer">
-      Powered by
-      <a class="footerHref" href="http://www-ps.informatik.uni-kiel.de/currywiki/g">Curry</a>,
-      <a class="footerHref" href="https://github.com/fortytools/holumbus">Holumbus</a> &amp;
+    <header>
+    <div class="row-fluid">
+      <div class="span12">
+	<div class="hero-unit">
+	  <h1>Curr(y)gle</h1>
+	  <p>Spice up your code</p>
+	</div>
+      </div>
+    </div>
+    </header>
+    <div class="row-fluid">
+      <div class="span2"> Sidebar</div>
+      <div class="span10 offset2">
+	<form onsubmit="return searchQuery();" class="well">
+	  <input id="query" type="search" value=$(oldquery)
+  provide-data="typeahead" class="search-query" onkeyup="getCompletions(event)">
+	  <button type="submit" class="btn">Search</button>
+	</form>
+      </div>
+      <div class="span10 offset2"><div class="well"><result/></div></div>
+      <div class="span10 offset2">
+	<pager/>
+      </div>
+      <div class="span12">Footer</div>
     </div>
   </body>
 </html>
