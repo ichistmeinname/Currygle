@@ -113,11 +113,10 @@ defaultRankTable =
   [("Function", 1.0),
    ("Type", 0.75),
    ("TheModule", 0.25),
-   ("Signature", 0.75),
+   ("Signature", 0.50),
    ("Module", 0.5),
    ("Author", 0.2),
-   ("Description", 0.5),
-   ("Other", 0.2)]
+   ("Description", 0.1)]
 
 -- The context weights for a word completion, only function, type, and module names are important.
 wordCompletionRankTable :: RankTable
