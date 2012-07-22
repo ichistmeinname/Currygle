@@ -264,12 +264,12 @@ prepareFilePaths _ _                       = putStr howToUseMessage
 -- analyzes arguments of the command line
 processArgs :: [String] -> IO ()
 processArgs args =
-    case args of 
-         [fPath,"--n"]             -> readFilePaths True fPath
-         [fPath,"--u"]             -> readFilePaths False fPath
-         [cdocPath,uriPath,"--n"]  -> main2 True cdocPath uriPath
-         [cdocPath,uriPath,"--u"]  -> main2 False cdocPath uriPath
-         _                         -> putStr howToUseMessage
+  case args of 
+    [fPath,"--n"]             -> readFilePaths True fPath
+    [fPath,"--u"]             -> readFilePaths False fPath
+    [cdocPath,uriPath,"--n"]  -> main2 True cdocPath uriPath
+    [cdocPath,uriPath,"--u"]  -> main2 False cdocPath uriPath
+    _                         -> putStr howToUseMessage
 
 main :: IO ()
 main = do args <- getArgs

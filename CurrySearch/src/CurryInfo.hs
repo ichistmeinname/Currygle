@@ -14,7 +14,7 @@ Module for the information associated with a curry module, function and type.
 module CurryInfo where
 
 import Control.DeepSeq
-import Control.Monad                  ( liftM5, liftM4, liftM3, liftM2, liftM )
+import Control.Monad                  ( liftM5, liftM3, liftM2, liftM )
 
 import Data.Binary                    ( Binary(..), putWord8, getWord8 )
 
@@ -146,27 +146,30 @@ instance Binary FunctionInfo where
 
 -- | TypeInfo holds information about the name, signature, corresponding module,
 --   and description of a given type
-data TypeInfo = TypeInfo String [(QName, [TypeExpr])] String String deriving (Show, Read)
+data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [Int] String String deriving (Show, Read)
 
 tName :: TypeInfo -> String
-tName (TypeInfo n _ _ _) = n
+tName (TypeInfo n _ _ _ _) = n
 
 tSignature :: TypeInfo -> [(QName, [TypeExpr])]
-tSignature (TypeInfo _ s _ _) = s
+tSignature (TypeInfo _ s _ _ _) = s
+
+tVarIndex :: TypeInfo -> [Int]
+tVarIndex (TypeInfo _ _ v _ _) = v
 
 tModule :: TypeInfo -> String
-tModule (TypeInfo _ _ m _) = m
+tModule (TypeInfo _ _ _ m _) = m
 
 tDescription :: TypeInfo -> String
-tDescription (TypeInfo _ _ _ d) = d
+tDescription (TypeInfo _ _ _ _ d) = d
 
 instance NFData TypeInfo where
-    rnf (TypeInfo n s m d) = rnf n `seq` rnf s `seq` rnf m `seq` rnf d
+    rnf (TypeInfo n s v m d) = rnf n `seq` rnf s `seq` rnf v `seq` rnf m `seq` rnf d
 
 instance Binary TypeInfo where
-    put (TypeInfo n s m d) = put n >> put s >> put m >> put d
+    put (TypeInfo n s v m d) = put n >> put s >> put v >> put m >> put d
     get = do
-            r <- liftM4 TypeInfo get get get get
+            r <- liftM5 TypeInfo get get get get get
             rnf r `seq` return r
           
 -- | The CurryInfo data holds information about the module, and corresponding functions,
@@ -214,7 +217,7 @@ mkFunctionInfo = FunctionInfo
 
 -- | Empty constructor for TypeInfo
 emptyTypeInfo :: TypeInfo
-emptyTypeInfo = mkTypeInfo "" [] "" ""
+emptyTypeInfo = mkTypeInfo "" [] [] "" ""
 
-mkTypeInfo :: String -> [(QName, [TypeExpr])] -> String -> String -> TypeInfo
+mkTypeInfo :: String -> [(QName, [TypeExpr])] -> [Int] -> String -> String -> TypeInfo
 mkTypeInfo = TypeInfo

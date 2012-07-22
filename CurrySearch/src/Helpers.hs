@@ -68,10 +68,8 @@ prettyPrintSpecialType name funcName [tExpr]
     | otherwise = funcName ++ " " ++ (prettyPrint name tExpr)
 prettyPrintSpecialType name funcName tExprList@(_:_:_)  
     | head funcName == '(' =
-    "(" ++
-    intercalate "," (map (prettyPrint name) tExprList)
-    ++ ")"
-    | otherwise = funcName ++ " " ++ concat (map (prettyPrint name) tExprList)
+    "(" ++ intercalate "," (map (prettyPrint name) tExprList) ++ ")"
+    | otherwise = funcName ++ " " ++ intercalate " " (map (prettyPrint name) tExprList)
 
 prettyPrint :: String -> TypeExpr -> String
 prettyPrint modName (TCons (mName2, fName2) []) = 
@@ -114,6 +112,8 @@ typeToList ((modName, _), tExpr) =
 listToSignature :: [String] -> String
 listToSignature = intercalate "->"
 
+varIndex :: [Int] -> String
+varIndex = (++) " " . intercalate " " . map (\index -> [chr (97+index)])
 
 -- Converts a String to an Int, returns defaultValue if conversion fails.
 strToInt :: Int -> String -> Int

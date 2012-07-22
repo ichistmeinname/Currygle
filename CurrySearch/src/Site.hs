@@ -117,9 +117,9 @@ funcDocsToListItem doc =
 typeDocsToListItem :: InfoDoc TypeInfo -> X.Node
 typeDocsToListItem doc =
   makeResult title (idUri doc) (moduleText $ tModule tInfo) (tDescription tInfo) (consPairs consName consSig)
- where consSig = map listToSignature $ map (fst . consToList (tName tInfo)) 
+ where consSig = map listToSignature $ map (fst . consToList (tName tInfo ++ (varIndex $ tVarIndex tInfo))) 
                                      $ tSignature tInfo
-       consName = map (snd . consToList (tName tInfo)) $ tSignature tInfo  
+       consName = map (snd . consToList ("")) $ tSignature tInfo  
        title = "data " ++ idTitle doc ++ constructors 
        constructors = ifNotEmpty consName $ " = " ++  L.intercalate " | " consName     
        tInfo = idInfo doc
