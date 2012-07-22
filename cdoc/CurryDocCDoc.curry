@@ -26,26 +26,28 @@ generateCDoc progName modCmts progCmts anaInfo = do
             FunctionInfo fName 
 	    ((mName, fName), tExpr) 
 	    mName 
-	    (getFuncComment fName progCmts) 
+	    (funcComment fName progCmts)
 	    (getOverlappingInfo anaInfo (modName, fName)) 
 	    (getFlexRigid expr)
 	funcInfo (Func (mName, fName) _ _ tExpr (External _)) = 
             FunctionInfo fName 
 	    ((mName, fName), tExpr)
 	    mName 
-	    (getFuncComment fName progCmts) 
+	    (funcComment fName progCmts)
 	    (getOverlappingInfo anaInfo (modName, fName)) 
 	    UnknownFR 
-	typeInfo (Type (mName, tName) _ _ consDecl) = 
+	typeInfo (Type (mName, tName) _ vars consDecl) = 
 		       	       	   TypeInfo tName
-	       	       	      	   (map consSignature (filter (\(Cons _ _ vis _) -> vis == Public) consDecl))	
+	       	       	      	   (map consSignature (filter (\(Cons _ _ vis _) -> vis == Public) consDecl))
+				   vars
 				   mName
-				   (getDataComment tName progCmts)
-        typeInfo (TypeSyn (mName, tName) _ _ tExpr) =
+				   (dataComment tName progCmts)
+        typeInfo (TypeSyn (mName, tName) _ vars tExpr) =
 		 	  	  TypeInfo tName
 				  [((mName, tName), [tExpr])]
+				  vars
 				  mName
-				  (getDataComment tName progCmts)
+				  (dataComment tName progCmts)
         (mCmts, avCmts) = splitComment modCmts
 	funcInfos = map funcInfo (filter (\(Func _ _ vis _ _) -> vis == Public) functions)
 	typeInfos = map typeInfo (concatMap filterT types)
@@ -53,6 +55,12 @@ generateCDoc progName modCmts progCmts anaInfo = do
   where fcyName  = flatCurryFileName progName
   	filterT f@(Type _ vis _ _) = if vis == Public then [f] else []
 	filterT f@(TypeSyn _ vis _ _) = if vis == Public then [f] else []
+
+funcComment :: String -> [(SourceLine,String)] -> String
+funcComment str = fst . splitComment . getFuncComment str 
+
+dataComment :: String -> [(SourceLine,String)] -> String
+dataComment str = fst . splitComment . getDataComment str
 
 -- the name
 -- the latest version
@@ -78,46 +86,14 @@ data FunctionInfo = FunctionInfo String (QName, TypeExpr) String String Bool Fle
 -- the signature
 -- the corresponding module
 -- the description
-data TypeInfo = TypeInfo String [(QName, [TypeExpr])] String String
+data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [TVarIndex] String String
 
 -- auxilieres --------------------------------------------------------
 
 versionOrAuthor :: String -> [(String, String)] -> String
 versionOrAuthor string av = concat $ getCommentType string av
 
--- pretty print for special types like lists or tupels
--- prettyPrintType :: [TypeExpr] -> String
--- prettyPrintType [] = []	      -- shouldn't occur
--- prettyPrintType [tExpr] = "[" ++ concat (typeSignature tExpr) ++ "]"
--- prettyPrintType tExprList@(_:_:_) = "(" ++ intercalate "," (concatMap typeSignature tExprList) ++ ")"
-
--- generate type signature  
--- typeSignature :: TypeExpr -> String -> [String]
--- typeSignature (TCons (mName, cName) tExprList) moduleName =
---    case tExprList of
---    []   -> if isQualified mName moduleName then [cName] else [mName ++"."++ cName]
---    list -> [prettyPrintType tExprList]
-   -- if null tExprList then [cName] else [prettyPrintType tExprList]
--- typeSignature (FuncType (TCons (_, cName) []) tExpr) =
-  -- cName : typeSignature tExpr
-  -- [cName] ++ typeSignature tExpr
-  -- typeSignature tExpr' ++ typeSignature tExpr
--- typeSignature (FuncType (TCons (_, _) tExprList@(_:_)) tExpr) =
-  -- prettyPrintType tExprList : typeSignature tExpr
--- typeSignature (FuncType tExpr1 tExpr2) = typeSignature tExpr1 ++ typeSignature tExpr2
--- typeSignature (TVar i) = [show i]
-
--- isQualified :: String -> String -> Bool
--- isQualfied mName moduleName = mName == moduleName || moduleName == "Prelude"
-
--- showParen :: Bool -> String -> String
--- showParen parens str = 
---   | parens    = "(" ++ str ++ ")"
---   | otherwise = str
-
 -- generate data and type constructors
 consSignature :: ConsDecl -> (QName, [TypeExpr])
 consSignature (Cons (mName, cName) _ _ tExprList) = ((mName, cName), tExprList)
 
--- intercalate :: [a] -> [[a]] -> [a]
--- intercalate sep = concat . intersperse sep
