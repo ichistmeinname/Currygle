@@ -18,13 +18,6 @@ import Control.Monad                  ( liftM5, liftM3, liftM2, liftM )
 
 import Data.Binary                    ( Binary(..), putWord8, getWord8 )
 
--- | Reads a given CurryInfo data file
-loadFromCurryFile :: FilePath -> IO CurryInfo
-loadFromCurryFile a = do
-       text <- readFile a
-       CurryInfo m f t <- readIO text 
-       return $ (CurryInfo m f t)
-
 -- | ModuleInfo holds information about the name, latest version, author,
 --   list of imported modules and the description of a given module
 data ModuleInfo = ModuleInfo String String String [String] String deriving (Show, Read)

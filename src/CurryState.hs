@@ -35,17 +35,17 @@ import FilesAndLoading
 -- Helper function to load the three pairs of index and documents and return it as Core data.
 curryInitState :: IO Core
 curryInitState = do
-  idxMod  <- loadIndex curryModIndex
+  idxMod  <- loadIndex _curryModIndex
   infoMsg "index" (sizeWords idxMod) "words"
-  docMod  <- loadDocuments curryModDocs
+  docMod  <- loadDocuments _curryModDocs
   infoMsg "documents" (sizeDocs docMod) "entries"
-  idxFct  <- loadIndex curryFctIndex
+  idxFct  <- loadIndex _curryFctIndex
   infoMsg "index" (sizeWords idxFct) "words"
-  docFct  <- loadDocuments curryFctDocs
+  docFct  <- loadDocuments _curryFctDocs
   infoMsg "documents" (sizeDocs docFct) "entries"
-  idxType <- loadIndex curryTypeIndex
+  idxType <- loadIndex _curryTypeIndex
   infoMsg "index" (sizeWords idxType) "words"
-  docType <- loadDocuments curryTypeDocs
+  docType <- loadDocuments _curryTypeDocs
   infoMsg "documents" (sizeDocs docType) "entries"
   return Core { modIndex      = idxMod,
                 modDocuments  = docMod,
