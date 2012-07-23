@@ -7,7 +7,6 @@
     <script src="bootstrap.js"></script>
   </head>
   <body>
-    <header>
     <div class="row-fluid">
       <div class="span12">
 	<div class="hero-unit">
@@ -15,22 +14,30 @@
 	  <p>Spice up your code</p>
 	</div>
       </div>
-    </div>
-    </header>
     <div class="row-fluid">
-      <div class="span2"> Sidebar</div>
-      <div class="span10 offset2">
+      <div class="span3"><div class="sidebar">S</div></div>
+      <div class="span9">
 	<form onsubmit="return searchQuery();" class="well">
 	  <input id="query" type="search" value=$(oldquery)
-  provide-data="typeahead" class="search-query" onkeyup="getCompletions(event)">
+             provide-data="typeahead" class="search-query"
+             onkeyup="getCompletions(event)">
 	  <button type="submit" class="btn">Search</button>
 	</form>
       </div>
-      <div class="span10 offset2"><div class="well"><result/></div></div>
-      <div class="span10 offset2">
+    </div>
+    <div class="row-fluid">
+      <div class="span3"><div class="sidebar">S</div></div>
+      <div class="span9"><div class="well"><result/></div></div>
+    </div>
+    <div class="row-fluid">
+      <div class="span3"><div class="sidebar">S</div></div>
+      <div class="span9">
 	<pager/>
       </div>
-      <div class="span12">Footer</div>
+    </div>
+    <div class="row-fluid">
+      <div class="span12"><div class="footer">F</div></div>
+    </div>
     </div>
   </body>
 </html>
