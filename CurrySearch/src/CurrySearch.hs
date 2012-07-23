@@ -32,6 +32,26 @@ import           Helpers
 import           IndexTypes
 import           Parser (prepareQuery)
 
+-- The default weights for the contexts.
+_defaultRankTable :: RankTable
+_defaultRankTable = 
+  [("Function", 1.0),
+   ("Type", 0.75),
+   ("TheModule", 0.25),
+   ("Signature", 0.50),
+   ("Module", 0.5),
+   ("Author", 0.2),
+   ("Description", 0.1)]
+
+-- The context weights for a word completion, only function, type, and module names are important.
+_wordCompletionRankTable :: RankTable
+_wordCompletionRankTable = [("Function", 1.0), ("Type", 0.5), ("TheModule", 0.5)]
+
+-- For this search engine, the documents and word completions have different rank tables.
+_defaultRankCfg :: RankConfig a
+_defaultRankCfg = RankConfig (docRankWeightedByCount _defaultRankTable)
+                             (wordRankWeightedByCount _wordCompletionRankTable)
+
 -- | Processes a query for a given module, function and type indexer pair. 
 queryResult :: CompactInverted -> SmallDocuments ModuleInfo 
            -> CompactInverted -> SmallDocuments FunctionInfo 
@@ -107,31 +127,11 @@ wordCompletions process = makeQuery . prepare
 -- | Shortcut for the used result triple.
 type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
 
--- The default weights for the contexts.
-defaultRankTable :: RankTable
-defaultRankTable = 
-  [("Function", 1.0),
-   ("Type", 0.75),
-   ("TheModule", 0.25),
-   ("Signature", 0.50),
-   ("Module", 0.5),
-   ("Author", 0.2),
-   ("Description", 0.1)]
-
--- The context weights for a word completion, only function, type, and module names are important.
-wordCompletionRankTable :: RankTable
-wordCompletionRankTable = [("Function", 1.0), ("Type", 0.5), ("TheModule", 0.5)]
-
--- For this search engine, the documents and word completions have different rank tables.
-defaultRankCfg :: RankConfig a
-defaultRankCfg = RankConfig (docRankWeightedByCount defaultRankTable)
-                            (wordRankWeightedByCount wordCompletionRankTable)
-
 -- | The function to apply a rank table (weights) to a given result.
 defaultRanks :: MFTResult -> IO MFTResult 
-defaultRanks (m, f, t) = return (rank defaultRankCfg m, 
-                                 rank defaultRankCfg f,
-                                 rank defaultRankCfg t)
+defaultRanks (m, f, t) = return (rank _defaultRankCfg m, 
+                                 rank _defaultRankCfg f,
+                                 rank _defaultRankCfg t)
 
 -- | A RankTable represents a context and its given score to allow weighted query results.
 type RankTable  = [(Context, Score)]

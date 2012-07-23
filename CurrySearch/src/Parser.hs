@@ -1,4 +1,17 @@
-module Parser where
+{- |
+Module      :  CurryIndexer
+Description :  Modified parser for the search engine.
+Copyright   :  (c) Sandra Dylus
+License     :  <license>
+
+Maintainer  :  sad@informatik.uni-kiel.de
+Stability   :  experimental
+Portability :  portable
+
+The module holds the functionalty for parsing the search string to a query. To narrow down the search, a special syntax can be used (i.e. :function map searches only for functions with the name "map"). The processing of this syntax is handled in this module.
+-}
+
+module Parser (prepareQuery) where
 
 import           Data.List
 import           Data.Char
@@ -9,26 +22,86 @@ import           Holumbus.Query.Language.Parser
 
 import           Helpers
 
-import Debug.Trace (trace)
+funcSpecifier :: String -> Bool
+funcSpecifier = isPrefixOf ":function"
 
+typeSpecifier :: String -> Bool
+typeSpecifier = isPrefixOf ":type"
 
-prepareQuery :: String -> Either String Query
-prepareQuery s
-    | customized s = customQuery s
-    | otherwise    = parseQuery s
+modSpecifier :: String -> Bool
+modSpecifier = isPrefixOf ":module"
 
+ndSpecifier :: String -> Bool
+ndSpecifier = isPrefixOf ":nondet"
+
+detSpecifier :: String -> Bool
+detSpecifier = isPrefixOf ":det"
+
+flexSpecifier :: String -> Bool
+flexSpecifier = isPrefixOf ":flex"
+
+rigidSpecifier :: String -> Bool
+rigidSpecifier = isPrefixOf ":rigid"
+
+sigSpecifier :: String -> Bool
+sigSpecifier = isPrefixOf ":signature"
+
+strip :: String -> String -> String
+strip prefix s = 
+    if isPrefixOf prefix str then fromJust $ stripPrefix prefix s
+                             else s
+  where str = concat $ splitOnWhitespace s
+
+-- checks if a given string is a specifier
+isSpecifier :: String -> Bool
+isSpecifier s = any (`isPrefixOf` s) specifiers
+
+-- list of all definied specifiers
+specifiers :: [String] 
+specifiers = [":function", ":type", ":module", ":nondet", 
+              ":det", ":flex", ":rigid", ":signature"]
+
+caseSensitive :: String -> Bool
+caseSensitive [] = False
+caseSensitive (x:_) = isUpper x
+
+-- Implicit search for signature when string includes "->"
+isSignature :: String -> Bool
+isSignature = isInfixOf "->"
+
+signature :: String -> Bool
+signature s = isSignature s || sigSpecifier s 
+
+-- Creates a Specifier Query 
+-- Attention! An empty Word Query does not search for all words!
 specify :: [String] -> String -> Query
 specify names "" = BinQuery Or (Specifier names $ Word "") (Specifier names (Negation $ Word "")) 
 -- an empty string query does not produce the wanted result
 specify names str = Specifier names $ Word str
 
-customQuery :: String -> Either String Query
-customQuery s 
-  | isSignature s = trace (show $ customize $ searchForSignature $ splitQuery s) (Right $ customize $ searchForSignature $ splitQuery s)
-  | otherwise     = trace (show $ customize $ splitQuery s) (Right $ customize $ splitQuery s)
- where splitQuery = searchForParens . searchForMonads . fixForSignatures
-       fixForSignatures = intercalate ["->"] . removeEmptyStrings . map splitOnWhitespace . splitOnArrow
-       removeEmptyStrings = map (filter (\x -> not $ x == []))
+-- Creates specified query for a string depending on the specifier
+custom :: String -> Query
+custom x
+    | funcSpecifier x  = specify ["Function"] (strip ":function" x)
+    | typeSpecifier x  = specify ["Type"] (strip ":type" x) 
+    | modSpecifier x   = specify ["Module"] (strip ":module" x)
+    | signature x      = specify ["Signature"] (strip ":signature" x)
+    | ndSpecifier x    = specify ["NonDet"] (strip ":nondet" x)
+    | detSpecifier x   = specify ["Det"] (strip ":det" x)
+    | flexSpecifier x  = specify ["Flex"] (strip ":flex" x)
+    | rigidSpecifier x = specify ["Rigid"] (strip ":rigid" x)
+    | caseSensitive x  = specify ["Type","TheModule"] x
+    | otherwise        = Word x
+
+-- Creates binary query for a string
+binQuery :: String -> Query -> Query -> Query
+binQuery x 
+    | x == "AND"       = BinQuery And
+    | x == "OR"        = BinQuery Or
+    | otherwise        = BinQuery But
+
+binary :: String -> Bool        
+binary = flip elem ["AND", "OR", "NOT"] 
 
 customize :: [String] -> Query
 customize [x] = if binary x then Word "" else custom x
@@ -75,8 +148,14 @@ searchForSignature (x:y:xs) =
        endSignature (sig, []) = [sig]
 searchForSignature xs = xs
 
-binary :: String -> Bool        
-binary = flip elem ["AND", "OR", "NOT"]
+-- Prepares a given string to be converted to a query (whitespaces, parens, monads have to be considered)
+customQuery :: String -> Either String Query
+customQuery s 
+  | isSignature s = Right $ customize $ searchForSignature $ splitQuery s
+  | otherwise     = Right $ customize $ splitQuery s
+ where splitQuery = searchForParens . searchForMonads . fixForSignatures
+       fixForSignatures = intercalate ["->"] . removeEmptyStrings . map splitOnWhitespace . splitOnArrow
+       removeEmptyStrings = map (filter (\x -> not $ x == []))
 
 customized :: String -> Bool
 customized s 
@@ -85,75 +164,8 @@ customized s
     | caseSensitive s    = True
     | otherwise          = False
 
--- creates specified query for a string
-custom :: String -> Query
-custom x
-    | funcSpecifier x  = specify ["Function"] (strip ":function" x)
-    | typeSpecifier x  = specify ["Type"] (strip ":type" x) 
-    | modSpecifier x   = specify ["Module"] (strip ":module" x)
-    | signature x      = specify ["Signature"] (strip ":signature" x)
-    | ndSpecifier x    = specify ["NonDet"] (strip ":nondet" x)
-    | detSpecifier x   = specify ["Det"] (strip ":det" x)
-    | flexSpecifier x  = specify ["Flex"] (strip ":flex" x)
-    | rigidSpecifier x = specify ["Rigid"] (strip ":rigid" x)
-    | caseSensitive x  = specify ["Type","TheModule"] x
-    | otherwise        = Word x
-
--- creates binary query for a string
-binQuery :: String -> Query -> Query -> Query
-binQuery x 
-    | x == "AND"       = BinQuery And
-    | x == "OR"        = BinQuery Or
-    | otherwise        = BinQuery But
-
--- checks if a given string is a specifier
-isSpecifier :: String -> Bool
-isSpecifier s = any (`isPrefixOf` s) specifiers
-
-caseSensitive :: String -> Bool
-caseSensitive [] = False
-caseSensitive (x:_) = isUpper x
-
--- list of all definied specifiers
-specifiers :: [String] 
-specifiers = [":function", ":type", ":module", ":nondet", 
-              ":det", ":flex", ":rigid", ":signature"]
-
-funcSpecifier :: String -> Bool
-funcSpecifier = isPrefixOf ":function"
-
-typeSpecifier :: String -> Bool
-typeSpecifier = isPrefixOf ":type"
-
-modSpecifier :: String -> Bool
-modSpecifier = isPrefixOf ":module"
-
-ndSpecifier :: String -> Bool
-ndSpecifier = isPrefixOf ":nondet"
-
-detSpecifier :: String -> Bool
-detSpecifier = isPrefixOf ":det"
-
-flexSpecifier :: String -> Bool
-flexSpecifier = isPrefixOf ":flex"
-
-rigidSpecifier :: String -> Bool
-rigidSpecifier = isPrefixOf ":rigid"
-
-sigSpecifier :: String -> Bool
-sigSpecifier = isPrefixOf ":signature"
-
--- Implicit search for signature when string includes "->"
-isSignature :: String -> Bool
-isSignature = isInfixOf "->"
-
-signature :: String -> Bool
-signature s = isSignature s || sigSpecifier s 
-
-strip :: String -> String -> String
-strip prefix s = 
-    if isPrefixOf prefix str then fromJust $ stripPrefix prefix s
-                             else s
-  where str = concat $ splitOnWhitespace s
-
-
+-- | Distinguishes between a string with and without specifiers (like :signature) and processes it.
+prepareQuery :: String -> Either String Query
+prepareQuery s
+    | customized s = customQuery s
+    | otherwise    = parseQuery s

@@ -44,69 +44,55 @@ import Text.Templating.Heist
 import qualified Text.XmlHtml   as X
 
 
--- ------------------------------------------------------------------------------
--- 
---  some constants
--- 
--- ------------------------------------------------------------------------------
+-- Return the HTML info text for the number of search results found (i.e. "Found 38 docs")
+_docsMetaInfo :: QRDocs -> X.Node
+_docsMetaInfo docs =
+  htmlLiClass "info" [htmlTextNode $"Found " ++ (show $ qdDocCount docs) ++ " docs"]
 
--- | number of hits shown per page
-hitsPerPage :: Int
-hitsPerPage = 10
+-- Returns the HTML info text, if no resuls were found
+_errorInfo :: X.Node
+_errorInfo = htmlLiClass "info" [htmlTextNode "Sorry, there are no matching results."]
 
--- ------------------------------------------------------------------------------
--- | number of word completions send in response to the Ajax request
+-- Number of hits shown per page
+_hitsPerPage :: Int
+_hitsPerPage = 10
 
-numDisplayedCompletions :: Int
-numDisplayedCompletions = 20
+-- Function to convert to list to a list of tuples (used for pairs of constructor names and signatures)
+consPairs :: [String] -> [String] -> [(String, String)]
+consPairs (e1:l1) (e2:l2) = (e1, e2) : consPairs l1 l2
+consPairs _ _             = []    
 
--- ------------------------------------------------------------------------------
--- | Index data consisting of module, function and type information as triple
+-- Shortcut to build a tuples (used for the HTML node (css class, moduleName))
+moduleText :: String -> (String, String)
+moduleText text = ("module", text)
 
+-- | Index data consisting of module, function and type information as triple.
 coreIdx :: Application (CompactInverted, 
                         CompactInverted, 
                         CompactInverted)
 coreIdx = do
   cCore <- curryCore
-  return (CoreData.modIndex cCore, 
-          CoreData.fctIndex cCore, 
-          CoreData.typeIndex cCore)
+  return (modIndex cCore,fctIndex cCore, typeIndex cCore)
 
--- ------------------------------------------------------------------------------
--- | Document data consisting of module, function and type information as triple
-
+-- | Document data consisting of module, function and type information as triple.
 coreDoc :: Application (SmallDocuments ModuleInfo, 
                         SmallDocuments FunctionInfo,
                         SmallDocuments TypeInfo)
 coreDoc = do
   cCore <- curryCore
-  return (CoreData.modDocuments cCore, 
-          CoreData.fctDocuments cCore, 
-          CoreData.typeDocuments cCore)
+  return (modDocuments cCore, fctDocuments cCore, typeDocuments cCore)
 
--- ------------------------------------------------------------------------------
--- | Function to start a query 
-
-queryFunction :: Application (Query -> IO MFTResult)
-queryFunction = do
-  (docM, docF, docT) <- coreDoc
-  (idxM, idxF, idxT) <- coreIdx
-  return $ queryResult idxM docM idxF docF idxT docT
-
--- ------------------------------------------------------------------------------
--- | get the value associated to a specific param from the Query-String
-
-getQueryStringParam :: String -> Application String
-getQueryStringParam param = do
-  let decodedParam p = fromMaybe "" <$> getParam p
-  query <- decodedParam $ encodeUtf8 $ T.pack param
-  return $ T.unpack (E.decodeUtf8 query)
-
+-- Returns the HTML node for a result that is a module.
+-- The title is the module name, the description is passed unchanged, but instead of the module name,
+-- the author's name (the authors' names) are passed.
 modDocsToListItem :: InfoDoc ModuleInfo -> X.Node
 modDocsToListItem doc =
   makeResult (idTitle doc) (idUri doc) author (mDescription $ idInfo doc) []
  where author = ("author", mAuthor $ idInfo doc)
 
+-- Returns the HTML node for a result that is function.
+-- The description and the name of the module are passed unmodified.
+-- special title: NAME :: SIGNATURE
 funcDocsToListItem :: InfoDoc FunctionInfo -> X.Node
 funcDocsToListItem doc =
   makeResult title (idUri doc) (moduleText $ fModule fInfo) (fDescription fInfo) []
@@ -114,125 +100,99 @@ funcDocsToListItem doc =
        signature = listToSignature $ typeToList $ fSignature fInfo
        fInfo = idInfo doc
 
+-- Returns the HTML node for a result that is a type/data structure.
+-- The description and module name are treated normally.
+-- special title: data NAME = CONSTR1 | CONSTR2
 typeDocsToListItem :: InfoDoc TypeInfo -> X.Node
 typeDocsToListItem doc =
-  makeResult title (idUri doc) (moduleText $ tModule tInfo) (tDescription tInfo) (consPairs consName consSig)
- where consSig = map listToSignature $ map (fst . consToList (tName tInfo ++ (varIndex $ tVarIndex tInfo))) 
-                                     $ tSignature tInfo
+  makeResult title (idUri doc) (moduleText $ tModule tInfo) 
+             (tDescription tInfo) (consPairs consName consSig)
+ where consSig = map listToSignature $ map (fst . consToList (tName tInfo ++ 
+                     (varIndex $ tVarIndex tInfo))) $ tSignature tInfo
        consName = map (snd . consToList ("")) $ tSignature tInfo  
        title = "data " ++ idTitle doc ++ constructors 
        constructors = ifNotEmpty consName $ " = " ++  L.intercalate " | " consName     
        tInfo = idInfo doc
             
--- ------------------------------------------------------------------------------
--- | creates the HTML info text describing the search result (i.e. "Found 38 docs")
-
-docsMetaInfo :: QRDocs -> X.Node
-docsMetaInfo docs =
-  htmlLiClass "info" [htmlTextNode $"Found " ++ (show $ qdDocCount docs) ++ " docs"]
-
-errorInfo :: X.Node
-errorInfo = htmlLiClass "info" [htmlTextNode "Sorry, there are no matching results."]
-
--- ------------------------------------------------------------------------------
--- 
---  site
--- 
--- ------------------------------------------------------------------------------
--- | defines routes through our site
-
-site :: Application ()
-site = route
-       [ ("/",          frontpage)
-       , ("/querypage", processquery)  -- render HTML Page with found Document-Hits
-       , ("/completions", completions) -- return List of Completions to Ajax-caller
-       ]
-       <|> serveDirectory "resources/static"
-
--- ------------------------------------------------------------------------------
--- 
---  frontpage
--- 
--- ------------------------------------------------------------------------------
--- | renders the front page.
---  simply display "frontpage.tpl" Template-file without substituting any <... /> Tags
-
-frontpage :: Application ()
-frontpage
-    = ifTop $
-      heistLocal (bindSplices [("result", return [])]) $
-      render "frontpage"
-
--- ------------------------------------------------------------------------------
---
---  processquery
--- 
--- ------------------------------------------------------------------------------
-
--- | render HTML Page with the doc-hits found.
---  display "frontpage.tpl" Template-file with substituting following Tags:
---    <result />
---    <oldquery />
---    <pager />
-
-processquery :: Application ()
-processquery = do
-    strPage    <- getQueryStringParam "page"
-    query      <- getQueryStringParam "query"
-    queryFunc' <- queryFunction
-    docs       <- liftIO $ queryResultDocs queryFunc' query
-    let indexSplices = [("result", resultSplice (strToInt 1 strPage) docs),
-                        ("oldquery", oldQuerySplice),
-                        ("pager", pagerSplice query (strToInt 1 strPage) docs)]
-    heistLocal (bindSplices indexSplices) $ render "frontpage"
-
--- | generates the HTML node to be inserted into "<result />"
-
+-- | Generates the HTML node of the search results.
 resultSplice :: Int -> QRDocs -> Splice Application
 resultSplice pageNum docs = do
   let (mHits, fHits, tHits) = (qdModuleDocs docs,
                                qdFunctionDocs docs, 
                                qdTypeDocs docs)
       noHits = P.null mHits && P.null fHits && P.null tHits
-      pageHits = L.take hitsPerPage . L.drop ((pageNum-1)*hitsPerPage)
+      pageHits = L.take _hitsPerPage . L.drop ((pageNum-1)*_hitsPerPage)
       mItems = map modDocsToListItem  mHits
       fItems = map funcDocsToListItem fHits
       tItems = map typeDocsToListItem tHits 
-      -- test = (\(InfoDoc idTitle _ _ _ _) -> map (fst . (consToList idTitle))) tHits 
-      itemsForPage = pageHits (fItems ++ tItems ++ mItems)
+      itemsForPage = pageHits (fItems ++ tItems ++ mItems) -- the order matters for the listings of the results
   if noHits
      then liftIO $ P.putStrLn "- keine Ergebnisse -" >> -- debug info
-          (return $ [htmlUl [errorInfo]])
+          (return $ [htmlUl [_errorInfo]])
      else (liftIO $ P.putStrLn $ "<" ++ (show $ P.length $ mHits) ++ ", "
                    ++ (show $ P.length $ fHits) ++ ", "
                    ++ (show $ P.length tHits) ++ ">") >> -- debug info
-          (return $ ([docsMetaInfo docs] ++ itemsForPage))
+          (return $ ([_docsMetaInfo docs] ++ itemsForPage))
 
--- | generates the HTML node to be inserted into "<oldquery />"
-
-oldQuerySplice :: Splice Application
-oldQuerySplice = do
-  let decodedParam p = fromMaybe "" <$> getParam p
-  query <- lift $ decodedParam "query"
-  let query' = T.unpack (E.decodeUtf8 query)
-  return $ [htmlTextNode query']
-
--- | generates the HTML node to be inserted into "<pager />"
-
+-- | Generates the HTML node for the pagination, if necessary.
 pagerSplice :: String -> Int -> QRDocs -> Splice Application
 pagerSplice query actPage docs = do
   let numberOfDocs = qdDocCount docs
-      numberOfPages = ceiling $ (toRational numberOfDocs) / (toRational hitsPerPage)
+      numberOfPages = ceiling $ (toRational numberOfDocs) / (toRational _hitsPerPage)
   if numberOfDocs <= 10 then return [] 
                         else return (mkPagerLink query actPage numberOfPages)
 
--- ------------------------------------------------------------------------------
--- 
---  completions
--- 
--- ------------------------------------------------------------------------------
--- returns the list of found completions to the Ajax-caller
+-- | Renders the template file without substituing any tags.
+frontpage :: Application ()
+frontpage = 
+  ifTop $ heistLocal (bindSplices []) $ render "frontpage"
 
+-- | Generates the HTML node for the searchfield after a processed query.
+oldQuerySplice :: Splice Application
+oldQuerySplice = do
+  query <- lift $ decodedParam "query"
+  let query' = T.unpack (E.decodeUtf8 query)
+  return $ [htmlTextNode query']
+ where decodedParam p = fromMaybe "" <$> getParam p
+
+-- Returns the value associated to a specific param from the Query-String (i.e. query or page)
+getQueryStringParam :: String -> Application String
+getQueryStringParam param = do
+  let decodedParam p = fromMaybe "" <$> getParam p
+  query <- decodedParam $ encodeUtf8 $ T.pack param
+  return $ T.unpack (E.decodeUtf8 query)
+
+-- Function to start the query processing
+queryFunction :: Application (Query -> IO MFTResult)
+queryFunction = do
+  (docM, docF, docT) <- coreDoc
+  (idxM, idxF, idxT) <- coreIdx
+  return $ queryResult idxM docM idxF docF idxT docT
+
+-- | Renders HTML page by substituing the tags <result />, and < pager /> and the value $(oldQuery)
+--   for the template file.
+processquery :: Application ()
+processquery = do
+  strPage    <- getQueryStringParam "page"
+  query      <- getQueryStringParam "query"
+  queryFunc' <- queryFunction
+  docs       <- liftIO $ queryResultDocs queryFunc' query
+  let splices = [("result", resultSplice (strToInt 1 strPage) docs),
+                 ("oldquery", oldQuerySplice),
+                 ("pager", pagerSplice query (strToInt 1 strPage) docs)]
+  heistLocal (bindSplices splices) $ render "frontpage"
+
+-- Converts a list to a JSON-Array
+toJSONArray :: Int -> [InfoWord] -> String
+toJSONArray n srwh
+    = encodeStrict $
+      showJSONs (map (\ (InfoWord w1 _) -> w1 {- ++ " (" ++ (show h1) ++ ")" -} ) (L.take n srwh))
+
+-- Number of word completions that are sent to the javascript
+numDisplayedCompletions :: Int
+numDisplayedCompletions = 20
+
+-- | Returns the list of found word completions for the typed text to the javascript.
 completions :: Application ()
 completions = do
   query <- getQueryStringParam "query"
@@ -243,9 +203,13 @@ completions = do
   where
   myResponse = setContentType "text/plain; charset=utf-8" . setResponseCode 200 $ emptyResponse
 
--- convert List to JSON-Array
-toJSONArray :: Int -> [InfoWord] -> String
-toJSONArray n srwh
-    = encodeStrict $
-      showJSONs (map (\ (InfoWord w1 _) -> w1 {- ++ " (" ++ (show h1) ++ ")" -} ) (L.take n srwh))
+-- | Defines the routing of the web site. It differs between the front- and querypage
+--   as well as the word completions. All necessary files have to be stored in "resources/static".
+site :: Application ()
+site = route
+       [ ("/",          frontpage)     -- just render the frontpage
+       , ("/querypage", processquery)  -- show search results
+       , ("/completions", completions) -- show word completions (javascript)
+       ]
+       <|> serveDirectory "resources/static"
 
