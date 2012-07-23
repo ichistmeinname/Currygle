@@ -7,6 +7,10 @@
   min-height: 512px;
 }
 
+.sidebar, .footer {
+  color: #ffffff;
+}
+
 body {
   margin: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -65,7 +69,6 @@ h3 {
   display: block;
   float: left;
   width: 100%;
-  min-height: 28px;
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
       -ms-box-sizing: border-box;
@@ -100,9 +103,32 @@ h3 {
   *width: 82.92553190663828%;
 }
 
+.row-fluid .span9 {
+  width: 74.468085099%;
+  *width: 74.4148936096383%;
+}
+
+.row-fluid .span8 {
+  width: 65.95744680199999%;
+  *width: 65.90425531263828%;
+}
+
+.row-fluid .span3 {
+  width: 23.404255317%;
+  *width: 23.3510638276383%;
+}
+
 .row-fluid .span2 {
   width: 14.89361702%;
   *width: 14.8404255306383%;
+}
+
+.offset4 {
+  margin-left: 340px;
+}
+
+.offset3 {
+  margin-left: 260px;
 }
 
 .offset2 {
@@ -112,7 +138,7 @@ h3 {
 .hero-unit {
   padding-top: 10px;
   padding-bottom: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   background-color: #f5f5f5;
   border: 1px solid #eee;
   border: 1px solid rgba(0, 0, 0, 0.05);
@@ -140,6 +166,7 @@ h3 {
 
 .search-query {
   width: 530px;
+  margin-left: 20px;
 }
 
 button, 
