@@ -31,6 +31,8 @@ import IndexTypes
 import Holumbus.Index.CompactSmallDocuments
 import Holumbus.Index.Common
 
+import Debug.Trace (trace)
+
 _howToUseMessage :: String
 _howToUseMessage = 
   "\n"++"No no no, you don't use it the right way. Let me give you a hint. \n"++
@@ -54,7 +56,7 @@ description s = map (addContext "Description") $ filter (not . biasedWord) $ spl
 
 -- Adds signature context to a signature string and all its suffixes
 signature :: [String] -> [(String,String)]
-signature = map (addContext "Signature") . init . map listToSignature . tails
+signature = map (addContext "Signature")
 
 -- Adds author context to a string
 author :: String -> [(String, String)]
@@ -145,7 +147,8 @@ contextsMod moduleI i =
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
     map (addOcc  (occ i 2)) $ [("Function", fName functionI)] ++ [("Module", fModule functionI)]
-                              ++ ((signature $ typeToList $ fSignature functionI))
+                              ++ trace (show $ signature $ signatureComponents $ fSignature functionI)
+                                       (signature $ signatureComponents $ fSignature functionI)
                               ++ (flexRigid $ fFlexRigid functionI)
                               ++ (nonDet $ fNonDet functionI)
                               ++ (description $ fDescription functionI) 
@@ -159,10 +162,11 @@ contextsF functionI i =
 -- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
-    map (addOcc  (occ i 1)) $ [("Type", tName typeI)] ++ [("Module", tModule typeI)]
-                              ++ (concatMap signature $ map (fst . consToList (tName typeI)) 
-                                 $ tSignature typeI)
-                              ++ (signature $ map (snd . consToList (tName typeI)) $ tSignature typeI)
+  let sigPair = map (showTypeList (tName typeI ++ (varIndex $ tVarIndex typeI))) 
+                                $ tSignature typeI
+  in map (addOcc  (occ i 1)) $ [("Type", tName typeI)] ++ [("Module", tModule typeI)]
+                              ++ (concatMap signature $ map fst sigPair)
+                              ++ (signature $ map snd sigPair)
                               ++ (description $ tDescription typeI)   
 
 -- Returns the maxId of a given document

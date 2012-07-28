@@ -183,57 +183,96 @@ paren parens str
     | parens    = "(" ++ str ++ ")"
     | otherwise = str 
 
--- Pretty printing for special types like lists, tupels or type variables
-prettyPrintSpecialType :: String -> String -> [TypeExpr] -> String
-prettyPrintSpecialType _ name [] = name
-prettyPrintSpecialType name funcName [tExpr] 
-    | funcName == "[]" = "[" ++  (prettyPrint name tExpr) ++ "]"
-    | otherwise = funcName ++ " " ++ (prettyPrint name tExpr)
-prettyPrintSpecialType name funcName tExprList@(_:_:_)  
-    | head funcName == '(' =
-    "(" ++ intercalate "," (map (prettyPrint name) tExprList) ++ ")"
-    | otherwise = funcName ++ " " ++ intercalate " " (map (prettyPrint name) tExprList)
+showType :: String -> Bool -> TypeExpr -> String
+showType _ _ (TVar i) = [chr (97+i)]
+showType modName nested (FuncType t1 t2) =
+   paren nested
+    (showType modName (isFunctionType t1) t1 ++ " -> " ++ showType modName False t2)
+showType modName nested (TCons tc ts)
+ | null ts = showTypeCons modName tc
+ | tc==("Prelude","[]") && (isString $ head ts) = 
+     "String"
+ | tc==("Prelude","[]") =
+     "[" ++ showType modName False (head ts) ++ "]" -- list type
+ | take 2 (snd tc) == "(," =                        -- tuple type
+     "(" ++ intercalate "," (map (showType modName False) ts) ++ ")"
+ | otherwise = 
+     paren nested
+      (showTypeCons modName tc ++ " " ++
+       intercalate " " (map (showType modName True) ts))
+showType _ _ _ = ""
 
--- Pretty printing for function types
-prettyPrint :: String -> TypeExpr -> String
-prettyPrint modName (TCons (mName2, fName2) []) = 
-  qualifiedName modName mName2 fName2
-prettyPrint modName (TCons (mName2, fName2) tExprList) =
-    let name = qualifiedName modName mName2 fName2
-    in prettyPrintSpecialType modName name tExprList
-prettyPrint _ (TVar i) = [chr (i+97)]
-prettyPrint modName (FuncType tExpr1 tExpr2) =
-    prettyPrint modName tExpr1 ++ "->" ++ prettyPrint modName tExpr2
-prettyPrint _ Undefined = ""
+showTypeList :: String -> (QName, [TypeExpr]) -> ([String], String)
+showTypeList typeName ((modName, consName), tExprList) =
+  ( map (\expr -> (showType modName False expr) ++ (" -> " ++ typeName)) tExprList, consName)
 
--- Converts a TypeExpr to a list of Strings
-signatureList :: String -> TypeExpr -> [String]
-signatureList modName (TCons (mName2, fName2) tExprList) = 
-  [prettyPrintSpecialType modName name tExprList]
- where name = qualifiedName modName mName2 fName2
-signatureList modName (FuncType tExpr1 tExpr2) = 
-  case tExpr1 of
-    FuncType _ _ -> [paren True (prettyPrint modName tExpr1)] ++ signatureList modName tExpr2
-    _            -> signatureList modName tExpr1 ++ signatureList modName tExpr2
-signatureList _ (TVar i) = [[chr (i+97)]]
-signatureList _ Undefined = []
+splitType :: String -> Bool -> TypeExpr -> [String]
+splitType _ _ (TVar i) = [[chr (97+i)]]
+splitType modName nested (FuncType t1 t2) =
+   paren nested
+    (showType modName (isFunctionType t1) t1) : (splitType modName False t2)
+splitType modName nested (TCons tc ts)
+ | null ts = [showTypeCons modName tc]
+ | tc==("Prelude","[]") && (isString $ head ts) = 
+     ["String"]
+ | tc==("Prelude","[]") =
+     ["[" ++ showType modName False (head ts) ++ "]"] -- list type
+ | take 2 (snd tc) == "(," =                        -- tuple type
+     ["(" ++ intercalate "," (map (showType modName False) ts) ++ ")"]
+ | otherwise = 
+     [paren nested
+      (showTypeCons modName tc ++ " " ++
+       intercalate " " (map (showType modName True) ts))]
+splitType _ _ _ = [""]
+
+searchForParens :: [String] -> [String]
+searchForParens (x:xs) = 
+  if "(" `isPrefixOf` x then endParen (x, xs) else x : searchForParens xs
+ where endParen (parenString, (y:ys)) = 
+         if ")" `isSuffixOf` y then (parenString ++ " " ++ y) : ys
+                               else endParen (parenString++ " " ++ y, ys)
+       endParen (p, []) = [p]
+searchForParens [] = [[]]
+
+redundantParens :: [[String]] -> [[String]]
+redundantParens [[x]]
+  | head x == '(' = [[take (length x - 2) $ drop 1 x]]
+redundantParens (x:ys) = x : redundantParens ys
+redundantParens x      = x
+
+removeEmptyStrings :: [String] -> [String]
+removeEmptyStrings = filter (\x -> not $ x == "")
+
+signatureComponents :: (QName, TypeExpr) -> [String]
+signatureComponents ((modName, _), expr) = map listToSignature (partA ++ partB)
+ where partA = map removeEmptyStrings $ init $ tails $ splitType modName False expr
+       partB = 
+         if --("(" `isInfixOf` (concat $ last partA) || "[" `isInfixOf` (concat $ last partA)) && 
+            not ("()" `isInfixOf` (concat $ last partA))
+            then redundantParens [removeEmptyStrings $ tail $ concatMap searchForParens $ map splitOnWhitespace $ last partA] 
+            else []
+test =  (("FileGoodies","splitDirectoryBaseName"),(FuncType (TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]) (TCons ("Prelude","(,)") [(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]),(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])])])))
+
+isString :: TypeExpr -> Bool
+isString (TCons ("Prelude","Char") []) = True
+isString _                             = False
+
+isFunctionType :: TypeExpr -> Bool
+isFunctionType (FuncType _ _) = True
+isFunctionType _              = False
+
+showTypeCons :: String -> (String, String) -> String
+showTypeCons modName (mtc,tc) =
+  qualifiedName modName mtc tc
 
 consSignature :: String -> [TypeExpr] -> [String]
-consSignature modName = concatMap (signatureList modName)
+consSignature modName = concatMap (\tExpr -> signatureComponents ((modName,""), tExpr))
 
--- Converts a TypeInfo signature (QName, [TypeExpr) to a tuple of list of strings and a string,
--- i.e. (["a","Maybe a"], "Just")
 consToList :: String -> (QName, [TypeExpr]) -> ([String], String)
 consToList typeName ((modName, consName), tExprList) = 
-   ((consSignature modName tExprList) ++ [typeName], consName)
+  ((consSignature modName tExprList) ++ [typeName], consName)
 
--- Converts a FunctionInfo signature (QName, TypeExpr) to a list of strings,
--- i.e. ["Int","(Int->[Char])","Bool"]
-typeToList :: (QName, TypeExpr) -> [String]
-typeToList ((modName, _), tExpr) =
-  signatureList modName tExpr 
-
--- Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")
+-- -- Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")
 listToSignature :: [String] -> String
 listToSignature = intercalate "->"
 
@@ -263,7 +302,8 @@ biasedWord s = length s < 3
 
 -- Converts a list of indices to a string of variables
 varIndex :: [Int] -> String
-varIndex = (++) " " . intercalate " " . map (\index -> [chr (97+index)])
+varIndex [] = ""
+varIndex varIndices = (++) " " $ intercalate " " $ map (\index -> [chr (97+index)]) varIndices
 
 -- Converts a String to an Int, returns defaultValue if conversion fails.
 strToInt :: Int -> String -> Int
