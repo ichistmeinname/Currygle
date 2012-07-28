@@ -22,6 +22,8 @@ import           Holumbus.Query.Language.Parser
 
 import           Helpers
 
+import Debug.Trace (trace)
+
 funcSpecifier :: String -> Bool
 funcSpecifier = isPrefixOf ":function"
 
@@ -129,15 +131,6 @@ searchForMonads (x:y:xs) =
                                                  else x : searchForMonads (y:xs)
 searchForMonads xs = xs
 
-searchForParens :: [String] -> [String]
-searchForParens (x:xs) = 
-  if "(" `isPrefixOf` x then endParen (x, xs) else x : searchForParens xs
- where endParen (parenString, (y:ys)) = 
-         if ")" `isSuffixOf` y then (parenString ++ y) : ys
-                               else endParen (parenString++y, ys)
-       endParen (p, []) = [p]
-searchForParens [] = [[]]
-
 searchForSignature :: [String] -> [String]
 searchForSignature (x:y:xs) = 
   if y == "->" then endSignature ((x++y), xs) else x : searchForSignature (y:xs)
@@ -151,11 +144,10 @@ searchForSignature xs = xs
 -- Prepares a given string to be converted to a query (whitespaces, parens, monads have to be considered)
 customQuery :: String -> Either String Query
 customQuery s 
-  | isSignature s = Right $ customize $ searchForSignature $ splitQuery s
-  | otherwise     = Right $ customize $ splitQuery s
+  | isSignature s = trace (show $ customize $ searchForSignature $ splitQuery s) (Right $ customize $ searchForSignature $ splitQuery s)
+  | otherwise     = trace (show $ customize $ splitQuery s) (Right $ customize $ splitQuery s)
  where splitQuery = searchForParens . searchForMonads . fixForSignatures
-       fixForSignatures = intercalate ["->"] . removeEmptyStrings . map splitOnWhitespace . splitOnArrow
-       removeEmptyStrings = map (filter (\x -> not $ x == []))
+       fixForSignatures = intercalate ["->"] . map removeEmptyStrings . map splitOnWhitespace . splitOnArrow
 
 customized :: String -> Bool
 customized s 
@@ -167,5 +159,6 @@ customized s
 -- | Distinguishes between a string with and without specifiers (like :signature) and processes it.
 prepareQuery :: String -> Either String Query
 prepareQuery s
+    -- | True = Right $ Word s
     | customized s = customQuery s
     | otherwise    = parseQuery s

@@ -43,6 +43,9 @@ import Text.JSON hiding (Result)
 import Text.Templating.Heist
 import qualified Text.XmlHtml   as X
 
+-- Number of word completions that are sent to the javascript
+_numDisplayedCompletions :: Int
+_numDisplayedCompletions = 20
 
 -- Return the HTML info text for the number of search results found (i.e. "Found 38 docs")
 _docsMetaInfo :: QRDocs -> X.Node
@@ -97,7 +100,7 @@ funcDocsToListItem :: InfoDoc FunctionInfo -> X.Node
 funcDocsToListItem doc =
   makeResult title (idUri doc) (moduleText $ fModule fInfo) (fDescription fInfo) []
  where title = idTitle doc ++ " :: " ++ signature
-       signature = listToSignature $ typeToList $ fSignature fInfo
+       signature = (\((modName,_), expr) -> showType modName False expr) $ fSignature fInfo
        fInfo = idInfo doc
 
 -- Returns the HTML node for a result that is a type/data structure.
@@ -107,9 +110,10 @@ typeDocsToListItem :: InfoDoc TypeInfo -> X.Node
 typeDocsToListItem doc =
   makeResult title (idUri doc) (moduleText $ tModule tInfo) 
              (tDescription tInfo) (consPairs consName consSig)
- where consSig = map listToSignature $ map (fst . consToList (tName tInfo ++ 
-                     (varIndex $ tVarIndex tInfo))) $ tSignature tInfo
-       consName = map (snd . consToList ("")) $ tSignature tInfo  
+ where consPair = map (showTypeList (tName tInfo ++ (varIndex $ tVarIndex tInfo))) 
+                      $ tSignature tInfo
+       consSig  = P.concatMap fst consPair
+       consName = map snd consPair
        title = "data " ++ idTitle doc ++ constructors 
        constructors = ifNotEmpty consName $ " = " ++  L.intercalate " | " consName     
        tInfo = idInfo doc
@@ -186,11 +190,7 @@ processquery = do
 toJSONArray :: Int -> [InfoWord] -> String
 toJSONArray n srwh
     = encodeStrict $
-      showJSONs (map (\ (InfoWord w1 _) -> w1 {- ++ " (" ++ (show h1) ++ ")" -} ) (L.take n srwh))
-
--- Number of word completions that are sent to the javascript
-numDisplayedCompletions :: Int
-numDisplayedCompletions = 20
+      showJSONs $ map (\ (InfoWord w1 _) -> w1) (L.take n srwh) 
 
 -- | Returns the list of found word completions for the typed text to the javascript.
 completions :: Application ()
@@ -199,7 +199,7 @@ completions = do
   queryFunc' <- queryFunction
   queryResultWords' <- liftIO $ wordCompletions queryFunc' query
   putResponse myResponse
-  writeText (T.pack $ toJSONArray numDisplayedCompletions $ qwInfo queryResultWords')
+  writeText (T.pack $ toJSONArray _numDisplayedCompletions $ qwInfo queryResultWords')
   where
   myResponse = setContentType "text/plain; charset=utf-8" . setResponseCode 200 $ emptyResponse
 
