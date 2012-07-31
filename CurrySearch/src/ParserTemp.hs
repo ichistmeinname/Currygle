@@ -17,7 +17,7 @@ import Helpers (showType)
 infixr 4 -->
 
 runAllTests :: IO Counts
-runAllTests = runSigTests >> runBinTests >> runSpecTests 
+runAllTests = runSigTests >> runBinTests >> runSpecTests >> runParenTests
 
 runSigTests :: IO Counts
 runSigTests = runTestTT sigTests
@@ -85,6 +85,27 @@ allAtOnce =
   BinQuery And (BinQuery And (BinQuery And (Specifier [":module"] (Word "Prelude")) (Specifier [":function"] (Word "map"))) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":type"] (Word "something")) ~=? unRight (run binaryParser ":type something Int->Int :module Prelude :function map")
 andAllAtOnce =
   BinQuery And (BinQuery And (BinQuery And (Specifier [":type"] (Word "something")) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":module"] (Word "Prelude"))) (Specifier [":function"] (Word "map")) ~=? unRight (run binaryParser ":type something AND Int->Int AND :module Prelude AND :function map")
+
+runParenTests :: IO Counts
+runParenTests = runTestTT parenTests
+
+parenTests :: Test
+parenTests = test [p1, p2, p3, p4]
+
+p1 = 
+  BinQuery And (Specifier [":signature"] (Word "(Int -> Int) -> Int)")) (specify [":type"] "b") ~=? unRight (run binaryParser "((Int->Int)->Int) AND (:type b)")
+
+p2 = 
+  BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run binaryParser "(Int -> Int) AND (:type b)")
+
+p3 = 
+  BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run binaryParser "(Int -> Int AND :type b)")
+
+p4 = 
+  BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run binaryParser "Int -> Int AND :type b")
+
+
+
 
 unRight :: Either a b -> b
 unRight (Right b) = b
@@ -174,10 +195,9 @@ binaryTerm :: Parsec String String Query
 binaryTerm =
   -- try $ parens binaryTokenParser binOpParser
   -- <|> try (specifierParser <* eof)
-  -- <|>
+  -- <|> 
   try (Word <$> identifier binaryTokenParser)
   <|> permutations
-  
   <|> parens binaryTokenParser binOpParser 
 
 permutations = 
