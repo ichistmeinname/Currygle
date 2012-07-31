@@ -5,7 +5,7 @@ import Text.Parsec.Language (emptyDef)
 import Text.Parsec.Prim  (runP, Parsec, try, many, (<?>))
 import Text.Parsec.Perm
 import Text.Parsec.Combinator (sepBy1, eof, many1, notFollowedBy)
-import Text.Parsec.Char (upper, alphaNum, oneOf, lower, anyChar)
+import Text.Parsec.Char (upper, alphaNum, oneOf, noneOf, lower, anyChar)
 import Control.Applicative ((<*>), (<$>), (<|>), (*>), (<*), empty)
 import Test.HUnit
 
@@ -15,6 +15,9 @@ import CurryInfo
 import Helpers (showType)
 
 infixr 4 -->
+
+runAllTests :: IO Counts
+runAllTests = runSigTests >> runBinTests >> runSpecTests 
 
 runSigTests :: IO Counts
 runSigTests = runTestTT sigTests
@@ -69,7 +72,9 @@ notTest =
 multipleBins =
   BinQuery But (BinQuery Or (BinQuery Or (BinQuery And (Word "a") (Word "b")) (Word "c")) (Word "d")) (Word "e") ~=? unRight (run binaryParser "a AND b OR c OR d NOT e")
 nestedBinsAndSigs =
-  BinQuery And (Word $ testShow (prim "Int" --> prim "Int")) (Word "Float") ~=? unRight (run binaryParser "Int -> Int AND Float")
+  BinQuery And ((Specifier [":signature"] $ Word $ testShow (prim "Int" --> prim "Int"))) ((Specifier [":signature"] $ Word "Float")) ~=? unRight (run binaryParser "Int -> Int AND Float")
+
+runSpecTests = runTestTT specTests
 
 specTests :: Test
 specTests = test [signatureTest, allAtOnce, andAllAtOnce]
@@ -77,9 +82,9 @@ specTests = test [signatureTest, allAtOnce, andAllAtOnce]
 signatureTest =
   Specifier [":signature"] (Word $ testShow (prim "Int" --> prim "String")) ~=? unRight (run binaryParser ":signature Int->String")
 allAtOnce = 
-  BinQuery Or (BinQuery Or (BinQuery Or (Specifier [":module"] (Word "Prelude")) (Specifier [":function"] (Word "map"))) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":type"] (Word "something")) ~=? unRight (run binaryParser ":type something Int->Int :module Prelude :function map")
+  BinQuery And (BinQuery And (BinQuery And (Specifier [":module"] (Word "Prelude")) (Specifier [":function"] (Word "map"))) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":type"] (Word "something")) ~=? unRight (run binaryParser ":type something Int->Int :module Prelude :function map")
 andAllAtOnce =
-  BinQuery And (BinQuery And (BinQuery And (Specifier [":module"] (Word "Prelude")) (Specifier [":function"] (Word "map"))) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":type"] (Word "something")) ~=? unRight (run binaryParser ":type something AND Int->Int AND :module Prelude AND :function map")
+  BinQuery And (BinQuery And (BinQuery And (Specifier [":type"] (Word "something")) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":module"] (Word "Prelude"))) (Specifier [":function"] (Word "map")) ~=? unRight (run binaryParser ":type something AND Int->Int AND :module Prelude AND :function map")
 
 unRight :: Either a b -> b
 unRight (Right b) = b
@@ -167,20 +172,26 @@ tupelParser = (\item _ itemList -> item:itemList) <$> (tExprParser False) <*> sy
 
 binaryTerm :: Parsec String String Query
 binaryTerm =
-  try $ parens binaryTokenParser binOpParser 
+  -- try $ parens binaryTokenParser binOpParser
   -- <|> try (specifierParser <* eof)
-  -- <|> try (Word <$> identifier binaryTokenParser)
-  <|> (try $ permute ((\specs1 identsig specs2-> binQuery (specs1++identsig++specs2)) 
+  -- <|>
+  try (Word <$> identifier binaryTokenParser)
+  <|> permutations
+  
+  <|> parens binaryTokenParser binOpParser 
+
+permutations = 
+  try $ permute ((\specs1 identsig specs2-> binQuery (specs1++identsig++specs2)) 
    <$$> many specifierParser
-        <||> many (try (Word <$> (identifier binaryTokenParser <* notFollowedBy (reservedOp signatureTokenParser "->")))
+        <||> many (try (Word <$> (identifier binaryTokenParser <* notFollowedBy (oneOf "-> ")))
              <|> try ((\word -> specify [":signature"] (testShow word)) 
                          <$> signatureParser)
-             <|> Word <$> (identifier binaryTokenParser))
-        <||>  many specifierParser))
+             <|> Word <$> (identifier binaryTokenParser <?> "lastHelp"))
+        <||>  many specifierParser)
 
 binQuery :: [Query] -> Query
 binQuery [] = Word ""
-binQuery qList = foldl (BinQuery And) (last qList) (init qList)
+binQuery (q:qs) = foldl (BinQuery And) q qs
 
 signatureDef :: LanguageDef String
 signatureDef = emptyDef 
@@ -206,7 +217,7 @@ specifierDef = emptyDef
 binOpDef :: LanguageDef String
 binOpDef = emptyDef 
            { identStart = lower,
-             identLetter = anyChar,
+             identLetter = alphaNum,
              opStart = oneOf "AON",
              opLetter = oneOf "ANDORT",
              reservedOpNames = ["AND", "OR", "NOT"],
