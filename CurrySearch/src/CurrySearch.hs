@@ -30,7 +30,7 @@ import           Holumbus.Query.Result
 import           CurryInfo (emptyFunctionInfo, emptyTypeInfo, emptyModuleInfo)
 import           Helpers
 import           IndexTypes
-import           Parser (prepareQuery)
+import           Parser (parse)
 
 -- The default weights for the contexts.
 _defaultRankTable :: RankTable
@@ -88,7 +88,7 @@ docHitsToResult (m, f, t) = return $ QRDocs size
 -- | Returns only the documents of a query result.
 queryResultDocs :: (Query -> IO MFTResult) -> String -> IO QRDocs
 queryResultDocs process
-    = either noResults makeQuery . prepareQuery
+    = either noResults makeQuery . parse
     where
       noResults _  = return emptyQRDocs
       makeQuery query = do 
