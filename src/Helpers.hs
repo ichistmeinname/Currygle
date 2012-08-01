@@ -183,6 +183,7 @@ paren parens str
     | parens    = "(" ++ str ++ ")"
     | otherwise = str 
 
+-- Pretty printing for signatures
 showType :: String -> Bool -> TypeExpr -> String
 showType _ _ (TVar i) = [chr (97+i)]
 showType modName nested (FuncType t1 t2) =
@@ -190,9 +191,9 @@ showType modName nested (FuncType t1 t2) =
     (showType modName (isFunctionType t1) t1 ++ " -> " ++ showType modName False t2)
 showType modName nested (TCons tc ts)
  | null ts = showTypeCons modName tc
- | tc==("Prelude","[]") && (isString $ head ts) = 
+ | (tc == ("Prelude","[]") || tc == ("","[]")) && (isString $ head ts) = 
      "String"
- | tc==("Prelude","[]") =
+ | tc == ("Prelude","[]") || tc == ("","[]") =
      "[" ++ showType modName False (head ts) ++ "]" -- list type
  | take 2 (snd tc) == "(," =                        -- tuple type
      "(" ++ intercalate "," (map (showType modName False) ts) ++ ")"
@@ -252,10 +253,9 @@ signatureComponents ((modName, _), expr) = map listToSignature (partA ++ partB)
             then redundantParens [removeEmptyStrings $ tail $ concatMap searchForParens $ map splitOnWhitespace $ last partA] 
             else []
 
-test = (("FileGoodies","splitDirectoryBaseName"),(FuncType (TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]) (TCons ("Prelude","(,)") [(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]),(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])])])))
-
 isString :: TypeExpr -> Bool
 isString (TCons ("Prelude","Char") []) = True
+isString (TCons ("","Char")        []) = True 
 isString _                             = False
 
 isFunctionType :: TypeExpr -> Bool
