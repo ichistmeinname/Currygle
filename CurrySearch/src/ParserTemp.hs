@@ -4,9 +4,9 @@ import Text.Parsec.Token
 import Text.Parsec.Language (emptyDef)
 import Text.Parsec.Prim  (runP, Parsec, try, many, (<?>))
 import Text.Parsec.Perm
-import Text.Parsec.Combinator (sepBy1, eof, many1, notFollowedBy)
+import Text.Parsec.Combinator (sepBy1, eof, many1, notFollowedBy, option, optional, anyToken)
 import Text.Parsec.Char (upper, alphaNum, oneOf, noneOf, lower, anyChar)
-import Control.Applicative ((<*>), (<$>), (<|>), (*>), (<*), empty)
+import Control.Applicative ((<*>), (<$>), (<|>), (*>), (<*))
 import Test.HUnit
 
 import Holumbus.Query.Language.Grammar
@@ -93,7 +93,7 @@ parenTests :: Test
 parenTests = test [p1, p2, p3, p4]
 
 p1 = 
-  BinQuery And (Specifier [":signature"] (Word "(Int -> Int) -> Int)")) (specify [":type"] "b") ~=? unRight (run binaryParser "((Int->Int)->Int) AND (:type b)")
+  BinQuery And (Specifier [":signature"] (Word "(Int -> Int) -> Int")) (specify [":type"] "b") ~=? unRight (run binaryParser "((Int->Int)->Int) AND (:type b)")
 
 p2 = 
   BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run binaryParser "(Int -> Int) AND (:type b)")
@@ -103,9 +103,6 @@ p3 =
 
 p4 = 
   BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run binaryParser "Int -> Int AND :type b")
-
-
-
 
 unRight :: Either a b -> b
 unRight (Right b) = b
@@ -133,18 +130,55 @@ consParser =
   (\constr _ expr -> cons constr expr) 
    <$> identifier signatureTokenParser 
    <*> whiteSpace signatureTokenParser 
-   <*> sepBy1 (tExprParser True) (whiteSpace signatureTokenParser)
+   <*> sepBy1 temp (whiteSpace signatureTokenParser)
+
+temp = 
+  try tupelParser 
+  <|> parens signatureTokenParser (tExprParser False) 
+  <|> unaryTExpr
 
 tExprParser :: Bool -> Parsec String String TypeExpr
-tExprParser paren = buildExpressionParser signatureTable (signatureTerm paren)
+tExprParser paren = buildExpressionParser signatureTable 
+                    (signatureTerm paren)
+
+unaryTExpr = 
+  -- try ((\tupel -> cons (tupelCons tupel) tupel) 
+     -- <$> parens signatureTokenParser tupelParser)
+  listParser
+  -- <|> parens signatureTokenParser (tExprParser False)         
+  <|> primParser
+  <|> varParser
+  -- where tupelCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
+
+signatureTerm :: Bool -> Parsec String String TypeExpr
+signatureTerm paren = 
+  try consParser <|> temp
+  -- <|> tupelParser
+  -- <|> listParser
+  -- <|> parens signatureTokenParser (tExprParser False)  
+  -- <|> unaryTExpr       
+  -- <|> primParser
+  -- <|> varParser
+  -- where tupelCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
+
+tupelParser =
+  try ((\tupel -> cons (tupelCons tupel) tupel) 
+       <$> parens signatureTokenParser parseTupel)
+  where tupelCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
+        parseTupel = (\item _ itemList -> item:itemList) <$> 
+                     (tExprParser False) <*> symbol signatureTokenParser "," 
+                     <*> sepBy1 (tExprParser False) (symbol signatureTokenParser ",")
+listParser :: Parsec String String TypeExpr
+listParser = (\texpr -> cons "[]" [texpr]) <$> brackets signatureTokenParser (tExprParser False)
+
+-- tupelParser :: Parsec String String [TypeExpr]
+-- tupelParser = (\item _ itemList -> item:itemList) <$> (tExprParser False) <*> symbol signatureTokenParser "," <*> sepBy1 (tExprParser False) (symbol signatureTokenParser ",")
+
+signatureParser :: Parsec String String TypeExpr
+signatureParser = (tExprParser False)
 
 binOpParser :: Parsec String String Query
 binOpParser = buildExpressionParser binOpTable binaryTerm
-
-signatureParser :: Parsec String String TypeExpr
-signatureParser =
---  whiteSpace signatureTokenParser *>  
-  (tExprParser False)
 
 aSpecifierParser :: String -> Parsec String String Query
 aSpecifierParser str = 
@@ -165,48 +199,30 @@ signatureSpecifier =
   (reservedOp specifierTokenParser ":signature" *> signatureParser)
 
 specifierParser :: Parsec String String Query
-specifierParser = 
-  moduleSpecifier
+specifierParser =
+  try $ parens specifierTokenParser specifierParser
+  <|> moduleSpecifier
   <|> typeSpecifier
   <|> functionSpecifier
-  <|> signatureSpecifier
+  <|> signatureSpecifier:
 
 binaryParser :: Parsec String String Query
 binaryParser = whiteSpace binaryTokenParser *> binOpParser <* eof
 
-signatureTerm :: Bool -> Parsec String String TypeExpr
-signatureTerm paren = 
-  try (if paren then parens signatureTokenParser consParser else consParser)
-  <|> try ((\tupel -> cons (tupelCons tupel) tupel) 
-     <$> parens signatureTokenParser tupelParser)
-  <|> listParser
-  <|> parens signatureTokenParser (tExprParser False)         
-  <|> primParser
-  <|> varParser
-  where tupelCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
-
-listParser :: Parsec String String TypeExpr
-listParser = (\texpr -> cons "[]" [texpr]) <$> brackets signatureTokenParser (tExprParser False)
-
-tupelParser :: Parsec String String [TypeExpr]
-tupelParser = (\item _ itemList -> item:itemList) <$> (tExprParser False) <*> symbol signatureTokenParser "," <*> sepBy1 (tExprParser False) (symbol signatureTokenParser ",")
-
 binaryTerm :: Parsec String String Query
 binaryTerm =
-  -- try $ parens binaryTokenParser binOpParser
-  -- <|> try (specifierParser <* eof)
-  -- <|> 
-  try (Word <$> identifier binaryTokenParser)
+  try (permutations *> parens specifierTokenParser specifierParser)
+  <|> try (permutations *> parens binaryTokenParser binOpParser)
   <|> permutations
-  <|> parens binaryTokenParser binOpParser 
 
+permutations :: Parsec String String Query
 permutations = 
   try $ permute ((\specs1 identsig specs2-> binQuery (specs1++identsig++specs2)) 
    <$$> many specifierParser
-        <||> many (try (Word <$> (identifier binaryTokenParser <* notFollowedBy (oneOf "-> ")))
+        <||>  many (try (Word <$> (identifier binaryTokenParser <* notFollowedBy (oneOf "-> ")))
              <|> try ((\word -> specify [":signature"] (testShow word)) 
                          <$> signatureParser)
-             <|> Word <$> (identifier binaryTokenParser <?> "lastHelp"))
+             <|> Word <$> (identifier binaryTokenParser))
         <||>  many specifierParser)
 
 binQuery :: [Query] -> Query
@@ -253,6 +269,7 @@ specifierTokenParser = makeTokenParser specifierDef
 binaryTokenParser :: TokenParser String
 binaryTokenParser = makeTokenParser binOpDef
 
+-- some shortcut constructors
 var :: String -> TypeExpr
 var str = TVar ((ord $ head str) - 97)
 
@@ -268,77 +285,6 @@ prim str = TCons ("",str) []
 specify :: [String] -> String -> Query
 specify specs str = Specifier specs (Word str)
 
--- instance Show TExpr where
---   -- show (PrimType str)         = str
---   show (FuncType expr1 expr2) = "(" ++ show expr1 ++ " -> " ++ show expr2 ++ ")"
---   show (TCons (_,name) [])        = name
---   show (TCons (_,name) exprList)  = "(" ++ name ++ " " ++ intercalate " " (map show exprList) ++ ")"
---   show (TVar name)            = name
-
--- data TExpr = FuncType TExpr TExpr | --PrimType String | 
---              TCons (String,String) [TExpr] | TVar String
---   deriving (Eq)
-
--- -- | The query language.
--- data Query = Word       String            -- ^ Single case-insensitive word.
---            | Phrase     String            -- ^ Single case-insensitive phrase.
---            | CaseWord   String            -- ^ Single case-sensitive word.
---            | CasePhrase String            -- ^ Single case-sensitive phrase.
---            | FuzzyWord  String            -- ^ Single fuzzy word.
---            | Specifier  [Context] Query   -- ^ Restrict query to a list of contexts.
---            | Negation   Query             -- ^ Negate the query.
---            | BinQuery   BinOp Query Query -- ^ Combine two queries through a binary operation.
---            deriving (Eq, Show)
-
--- type Context = String
-
--- -- | A binary operation.
--- data BinOp = And  -- ^ Intersect two queries.
---            | Or   -- ^ Union two queries.
---            | But  -- ^ Filter a query by another, @q1 BUT q2@ is equivalent to @q1 AND NOT q2@.
---            deriving (Eq, Show)
-
+-- shortcut prettyprint
+testShow :: TypeExpr -> String
 testShow = showType "" False
-
--- showType :: String -> Bool -> TExpr -> String
--- showType _ _ (TVar str) = str
--- showType modName nested (FuncType t1 t2) =
---    parenthesis nested
---     (showType modName (isFunctionType t1) t1 ++ " -> " ++ showType modName False t2)
--- showType modName nested (TCons tc ts)
---  | null ts = showTypeCons modName tc
---  | tc==("Prelude","[]") && (isString $ head ts) = 
---      "String"
---  | tc==("Prelude","[]") =
---      "[" ++ showType modName False (head ts) ++ "]" -- list type
---  | take 2 (snd tc) == "(," =                        -- tuple type
---      "(" ++ intercalate "," (map (showType modName False) ts) ++ ")"
---  | otherwise = 
---      parenthesis nested
---       (showTypeCons modName tc ++ " " ++
---        intercalate " " (map (showType modName True) ts))
--- -- showType _ _ _ = ""
-
--- parenthesis :: Bool -> String -> String
--- parenthesis p str 
---     | p         = "(" ++ str ++ ")"
---     | otherwise = str 
-
--- isString :: TExpr -> Bool
--- isString (TCons ("Prelude","Char") []) = True
--- isString _                             = False
-
--- isFunctionType :: TExpr -> Bool
--- isFunctionType (FuncType _ _) = True
--- isFunctionType _              = False
-
--- isQualifiedName :: String -> String -> Bool
--- isQualifiedName moduleName fModuleName = moduleName == fModuleName || fModuleName == "Prelude"
-
--- qualifiedName :: String -> String -> String -> String
--- qualifiedName moduleName fModuleName funcName = 
---   if isQualifiedName moduleName fModuleName then funcName else moduleName ++ "." ++ funcName
-
--- showTypeCons :: String -> (String, String) -> String
--- showTypeCons modName (mtc,tc) =
---   qualifiedName modName mtc tc
