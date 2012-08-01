@@ -247,11 +247,12 @@ signatureComponents :: (QName, TypeExpr) -> [String]
 signatureComponents ((modName, _), expr) = map listToSignature (partA ++ partB)
  where partA = map removeEmptyStrings $ init $ tails $ splitType modName False expr
        partB = 
-         if --("(" `isInfixOf` (concat $ last partA) || "[" `isInfixOf` (concat $ last partA)) && 
+         if -- ("(" `isInfixOf` (concat $ last partA) || "[" `isInfixOf` (concat $ last partA)) && 
             not ("()" `isInfixOf` (concat $ last partA))
             then redundantParens [removeEmptyStrings $ tail $ concatMap searchForParens $ map splitOnWhitespace $ last partA] 
             else []
-test =  (("FileGoodies","splitDirectoryBaseName"),(FuncType (TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]) (TCons ("Prelude","(,)") [(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]),(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])])])))
+
+test = (("FileGoodies","splitDirectoryBaseName"),(FuncType (TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]) (TCons ("Prelude","(,)") [(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])]),(TCons ("Prelude","[]") [(TCons ("Prelude","Char") [])])])))
 
 isString :: TypeExpr -> Bool
 isString (TCons ("Prelude","Char") []) = True
@@ -274,7 +275,7 @@ consToList typeName ((modName, consName), tExprList) =
 
 -- -- Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")
 listToSignature :: [String] -> String
-listToSignature = intercalate "->"
+listToSignature = intercalate " -> "
 
 --------------------------------------------------------------------------------
 ------------------------------   miscellaneous    ------------------------------

@@ -15,7 +15,6 @@ Three pairs of index and documents are stored: for the module, function and type
 module Main (main) where 
 
 import Data.Binary
-import Data.List
 import Data.Text as T           (splitOn, unpack, pack)
 import Data.Text.IO as TIO      (readFile)
 
@@ -30,8 +29,6 @@ import IndexTypes
 
 import Holumbus.Index.CompactSmallDocuments
 import Holumbus.Index.Common
-
-import Debug.Trace (trace)
 
 _howToUseMessage :: String
 _howToUseMessage = 
@@ -52,15 +49,15 @@ addOcc occurrence (a,b) = (a,b,occurrence)
 
 -- Adds description context to a string
 description :: String -> [(String,String)]
-description s = map (addContext "Description") $ filter (not . biasedWord) $ splitOnWhitespace s
+description s = map (addContext ":description") $ filter (not . biasedWord) $ splitOnWhitespace s
 
 -- Adds signature context to a signature string and all its suffixes
 signature :: [String] -> [(String,String)]
-signature = map (addContext "Signature")
+signature = map (addContext ":signature")
 
 -- Adds author context to a string
 author :: String -> [(String, String)]
-author a = map (addContext "Author") $ splitOnWhitespace a
+author a = map (addContext ":author") $ splitOnWhitespace a
 
 -- Returns tupel of two strings
 addContext :: String -> String -> (String, String)
@@ -139,35 +136,35 @@ indexAndDocuments curryDoc uriPath (cMod, cFct, cTyp) =
 -- | Generates the context information for a module
 contextsMod :: ModuleInfo -> DocId -> [(String, String, Occurrences)]
 contextsMod moduleI i = 
-    map (addOcc  (occ i 1)) $ [("TheModule", mName moduleI)] 
-                                   ++ (author $ mAuthor moduleI)
-                                   ++ (description $ mDescription moduleI)
+  map (addOcc  (occ i 1)) $ [(":module", mName moduleI)] 
+   ++ (author $ mAuthor moduleI)
+   ++ (description $ mDescription moduleI)
 
 -- | Generates the context information for a function
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
-    map (addOcc  (occ i 2)) $ [("Function", fName functionI)] ++ [("Module", fModule functionI)]
-                              ++ trace (show $ signature $ signatureComponents $ fSignature functionI)
-                                       (signature $ signatureComponents $ fSignature functionI)
-                              ++ (flexRigid $ fFlexRigid functionI)
-                              ++ (nonDet $ fNonDet functionI)
-                              ++ (description $ fDescription functionI) 
-  where flexRigid fr = case fr of
-                       KnownFlex  -> [("Flex", "")]     
-                       KnownRigid -> [("Rigid", "")]
-                       ConflictFR -> [("Flex", ""), ("Rigid", "")]
-                       _          -> []
-        nonDet nd    = if nd then [("NonDet", "")] else [("Det", "")]
+  map (addOcc  (occ i 2)) $ [(":function", fName functionI)] 
+   ++ [("Module", fModule functionI)]
+   ++ (signature $ signatureComponents $ fSignature functionI)
+   ++ (flexRigid $ fFlexRigid functionI)
+   ++ (nonDet $ fNonDet functionI)
+   ++ (description $ fDescription functionI) 
+ where flexRigid fr = case fr of
+                      KnownFlex  -> [(":flexible", "")]     
+                      KnownRigid -> [(":rigid", "")]
+                      ConflictFR -> [(":flexible", ""), (":rigid", "")]
+                      _          -> []
+       nonDet nd    = if nd then [(":nondet", "")] else [(":det", "")]
 
 -- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
   let sigPair = map (showTypeList (tName typeI ++ (varIndex $ tVarIndex typeI))) 
-                                $ tSignature typeI
-  in map (addOcc  (occ i 1)) $ [("Type", tName typeI)] ++ [("Module", tModule typeI)]
-                              ++ (concatMap signature $ map fst sigPair)
-                              ++ (signature $ map snd sigPair)
-                              ++ (description $ tDescription typeI)   
+                 $ tSignature typeI
+  in map (addOcc  (occ i 1)) $ [(":type", tName typeI)] ++ [(":module", tModule typeI)]
+      ++ (concatMap signature $ map fst sigPair)
+      ++ (signature $ map snd sigPair)
+      ++ (description $ tDescription typeI)   
 
 -- Returns the maxId of a given document
 maxId :: Binary a => SmallDocuments a -> DocId
