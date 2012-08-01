@@ -14,7 +14,7 @@ The module holds the functionalty for parsing the search string to a query. To n
 module Parser (parse) where
 
 import Data.Char (ord)
-import Data.Functor.Identity (Identity)
+-- import Data.Functor.Identity (Identity)
 
 import Control.Applicative ((<*>), (<$>), (<|>), (*>), (<*))
 
@@ -23,15 +23,15 @@ import Text.Parsec.Prim  (runP, Parsec, try, many, parserZero, parserReturn)
 import Text.Parsec.Perm
 import Text.Parsec.Language (emptyDef)
 import Text.Parsec.Expr (buildExpressionParser, Operator (..), Assoc (..))
-import Text.Parsec.Error (ParseError)
-import Text.Parsec.Combinator (sepBy1, eof, many1, notFollowedBy, option)
-import Text.Parsec.Char (upper, alphaNum, oneOf, lower)
-import Test.HUnit
+import Text.Parsec.Combinator (sepBy1, notFollowedBy, option)
+import Text.Parsec.Char (upper, alphaNum, lower, anyChar)
 
 import Holumbus.Query.Language.Grammar
 
 import CurryInfo
 import Helpers (showType)
+
+import Debug.Trace (trace)
 
 infixr 4 -->
 
@@ -83,111 +83,13 @@ _flexibleSpecifierNameShort = ":fl"
 _rigidSpecifierNameShort :: String
 _rigidSpecifierNameShort = ":ri"
 
-
----------------------------------------------------------------------------------------
------------------------------------ A LOT OF TESTS ------------------------------------
----------------------------------------------------------------------------------------
-
-runAllTests :: IO Counts
-runAllTests = runSigTests >> runBinTests >> runSpecTests >> runParenTests
-
-runSigTests :: IO Counts
-runSigTests = runTestTT sigTests
-
-sigTests :: Test
-sigTests = test [simpleFuncType, funcTypeWithWhitespace, funcTypeWithParens, manyWhitespaces, leadingWhitespaces, typeConstructor, naryTypeConstructor, 
-              consParserTest, primWithParens, moreParens, varParserTest, consParser2Test, tupelTest, listTest, listTupelTest]
-
-simpleFuncType = 
-  unRight (run queryParser "Int->Int") ~=? (Specifier [":signature"] (Word $ testShow (prim "Int" --> prim "Int")))
-funcTypeWithWhitespace = 
-  unRight (run queryParser "String -> String") ~=? (Specifier [":signature"] (Word  $ testShow (prim "String" --> prim "String")))
-funcTypeWithParens = 
-  unRight (run queryParser "(String -> String) -> Float") ~=? (Specifier [":signature"](Word $ testShow ((prim "String" --> prim "String") --> prim "Float")))
-manyWhitespaces = 
-  unRight (run queryParser "String         ->     String    ") ~=? (Specifier [":signature"](Word $ testShow (prim "String" --> prim "String")))
-leadingWhitespaces = 
-  unRight (run queryParser "  String ") ~=? (Specifier [":signature"](Word $ testShow (prim "String")))
-typeConstructor =
-  unRight (run queryParser "IO String") ~=? (Specifier [":signature"](Word $ testShow (cons "IO" [prim "String"])))
-naryTypeConstructor = 
-  unRight (run queryParser "Something Int Float Int Float (Int->Int)") ~=? (Specifier [":signature"](Word $ testShow (cons "Something" (map prim ["Int", "Float", "Int", "Float"] ++ [prim "Int" --> prim "Int"]))))
-consParserTest =
-  unRight (run queryParser "Something Int Float") ~=? (Specifier [":signature"](Word $ testShow (cons "Something" [prim "Int", prim "Float"])))
-primWithParens =
-  unRight (run queryParser "(A)") ~=? (Specifier [":signature"](Word $ testShow (prim "A")))
-moreParens =
-  unRight (run queryParser "( ( B  ) ) ") ~=? (Specifier [":signature"](Word $ testShow (prim "B")))
-varParserTest =
-  unRight (run queryParser "Maybe a") ~=? (Specifier [":signature"](Word $ testShow (cons "Maybe" [var "a"])))
-consParser2Test =
-  unRight (run queryParser "String -> Maybe Int") ~=? (Specifier [":signature"](Word $ testShow (prim "String" --> cons "Maybe" [prim "Int"])))
-tupelTest =
-  (Specifier [":signature"] $ Word (testShow (TCons ("","(,,)") [prim "Int", prim "Float" --> prim "Map", prim "Int" --> prim "Float" --> prim "Map"]))) ~=? unRight (run queryParser "(Int, Float -> Map, Int -> Float -> Map)")
-listTest = 
-  (Specifier [":signature"] $ Word (testShow (TCons ("","[]") [prim "Float" --> prim "Map"]))) ~=? unRight (run queryParser "[Float -> Map]")
-listTupelTest = 
- (Specifier [":signature"] $ Word (testShow (TCons ("","(,)") [prim "Float" --> prim "Int", TCons ("","[]") [prim "Map"]]))) ~=? unRight (run queryParser "(Float -> Int, [Map])")
-
-runBinTests :: IO Counts
-runBinTests = runTestTT binTests
-
-binTests :: Test
-binTests = test [andTest, orTest, notTest, multipleBins, nestedBinsAndSigs]
-
-andTest =
-  BinQuery And (Word "a") (Word "b") ~=? unRight (run queryParser "a AND b")
-orTest =
-  BinQuery Or (Word "a") (Word "b") ~=? unRight (run queryParser "a OR b")
-notTest =
-  BinQuery But (Word "a") (Word "b") ~=? unRight (run queryParser "a NOT b")
-multipleBins =
-  BinQuery But (BinQuery Or (BinQuery Or (BinQuery And (Word "a") (Word "b")) (Word "c")) (Word "d")) (Word "e") ~=? unRight (run queryParser "a AND b OR c OR d NOT e")
-nestedBinsAndSigs =
-  BinQuery And ((Specifier [":signature"] $ Word $ testShow (prim "Int" --> prim "Int"))) ((Specifier [":signature"] $ Word "Float")) ~=? unRight (run queryParser "Int -> Int AND Float")
-
-runSpecTests = runTestTT specTests
-
-specTests :: Test
-specTests = test [signatureTest, allAtOnce, andAllAtOnce]
-
-signatureTest =
-  Specifier [":signature"] (Word $ testShow (prim "Int" --> prim "String")) ~=? unRight (run queryParser ":signature Int->String")
-allAtOnce = 
-  BinQuery And (BinQuery And (BinQuery And (Specifier [":module"] (Word "Prelude")) (Specifier [":function"] (Word "map"))) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":type"] (Word "something")) ~=? unRight (run queryParser ":type something Int->Int :module Prelude :function map")
-andAllAtOnce =
-  BinQuery And (BinQuery And (BinQuery And (Specifier [":type"] (Word "something")) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":module"] (Word "Prelude"))) (Specifier [":function"] (Word "map")) ~=? unRight (run queryParser ":type something AND Int->Int AND :module Prelude AND :function map")
-
-runParenTests :: IO Counts
-runParenTests = runTestTT parenTests
-
-parenTests :: Test
-parenTests = test [p1, p2, p3, p4]
-
-p1 = 
-  BinQuery And (Specifier [":signature"] (Word "(Int -> Int) -> Int")) (specify [":type"] "b") ~=? unRight (run queryParser "((Int->Int)->Int) AND (:type b)")
-
-p2 = 
-  BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run queryParser "(Int -> Int) AND (:type b)")
-
-p3 = 
-  BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run queryParser "(Int -> Int AND :type b)")
-
-p4 = 
-  BinQuery And (Specifier [":signature"] (Word "Int -> Int")) (specify [":type"] "b") ~=? unRight (run queryParser "Int -> Int AND :type b")
-
-unRight :: Either a b -> b
-unRight (Right b) = b
-
-run p = runP p "" ""
-
 --------------------------
 -- the signature parser --
 --------------------------
 
--- | Parses type varibales and following whitespaces due to lexeme.
+-- | Parses type varibales (i.e. a character) and following whitespaces due to lexeme.
 varParser :: TypeExprParser
-varParser = var <$> lexeme signatureTokenParser (many1 lower)
+varParser = var <$> lexeme signatureTokenParser lower <* notFollowedBy anyChar
 
 -- | Parses primitive (unary) types (i.e. Int, Float, Bool ...) and following whitespaces due to identifier that is provided by signatureParser.
 primParser :: TypeExprParser
@@ -236,8 +138,8 @@ binary parser name fun =
 
 -- Defines the binary "->"-operator used in the signature parser. 
 -- It has a right associativity and returns the partial application "FuncType".
-signatureTable :: [[OperatorTable TypeExpr]]
-signatureTable = [[binary signatureTokenParser "->" FuncType AssocRight]]
+-- signatureTable :: [[OperatorTable TypeExpr]]
+signatureTable = [[binary signatureTokenParser "->" (FuncType) AssocRight]]
 
 -- | Buils an expression parser for signatures with the given term (signatureTerm) and table (signatureTable). 
 signatureParser :: TypeExprParser
@@ -353,7 +255,7 @@ queryParser = whiteSpace binaryTokenParser *> binOpParser
 parse :: String -> Either String Query
 parse = result . runP queryParser "" "curr(y)gle"
  where result (Left err) = Left (show err)
-       result (Right q)  = Right q
+       result (Right q)  = trace (show q) (Right q)
 
 ---------------------------------------------------------------------------------------
 {- The expression makeTokenParser language creates a GenTokenParser record that contains lexical parsers that are defined using the definitions in the language record (i.e. identifier, which also fails on reserved names). -}
@@ -402,8 +304,8 @@ binaryTokenParser = makeTokenParser binOpDef
 --  some shortcut constructors  --
 ----------------------------------
 
-var :: String -> TypeExpr
-var str = TVar ((ord $ head str) - 97)
+var :: Char -> TypeExpr
+var chr = TVar (ord chr - 97)
 
 cons :: String -> [TypeExpr] -> TypeExpr
 cons str = TCons ("", str)
@@ -423,7 +325,7 @@ specify specs str = Specifier specs (Word str)
 
 type TypeExprParser = Parsec String String TypeExpr
 type QueryParser    = Parsec String String Query
-type OperatorTable a = Operator String String Identity a
+-- type OperatorTable a = Operator String String Identity a
 
 -- shortcut prettyprint
 testShow :: TypeExpr -> String

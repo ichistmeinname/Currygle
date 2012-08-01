@@ -35,17 +35,16 @@ import           Parser (parse)
 -- The default weights for the contexts.
 _defaultRankTable :: RankTable
 _defaultRankTable = 
-  [("Function", 1.0),
-   ("Type", 0.75),
-   ("TheModule", 0.25),
-   ("Signature", 0.50),
-   ("Module", 0.5),
-   ("Author", 0.2),
-   ("Description", 0.1)]
+  [(":function", 1.0),
+   (":type", 0.75),
+   (":signature", 0.50),
+   (":module", 0.5),
+   (":author", 0.2),
+   (":description", 0.1)]
 
 -- The context weights for a word completion, only function, type, and module names are important.
 _wordCompletionRankTable :: RankTable
-_wordCompletionRankTable = [("Function", 1.0), ("Type", 0.5), ("TheModule", 0.5)]
+_wordCompletionRankTable = [(":function", 1.0), (":type", 0.5), (":module", 0.5)]
 
 -- For this search engine, the documents and word completions have different rank tables.
 _defaultRankCfg :: RankConfig a
@@ -108,7 +107,7 @@ sortedWords h =
 
 -- When processing word completions consider only the function, module and type contexts.
 wordCompletionSpecifier :: String -> Query
-wordCompletionSpecifier = Specifier ["Function","TheModule","Type"] . Word
+wordCompletionSpecifier = Specifier [":function",":module",":type"] . Word
 
 -- Removes context specifiers (substrings starting with '"') from the string.
 prepareWordCompletionQuery :: String -> String
