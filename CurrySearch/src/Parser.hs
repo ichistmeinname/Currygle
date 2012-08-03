@@ -31,8 +31,6 @@ import Holumbus.Query.Language.Grammar
 import CurryInfo
 import Helpers (showType)
 
-import Debug.Trace (trace)
-
 infixr 4 -->
 
 _moduleSpecifierName :: String
@@ -139,7 +137,7 @@ binary parser name fun =
 -- Defines the binary "->"-operator used in the signature parser. 
 -- It has a right associativity and returns the partial application "FuncType".
 -- signatureTable :: [[OperatorTable TypeExpr]]
-signatureTable = [[binary signatureTokenParser "->" (FuncType) AssocRight]]
+signatureTable = [[binary signatureTokenParser "->" (-->) AssocRight]]
 
 -- | Buils an expression parser for signatures with the given term (signatureTerm) and table (signatureTable). 
 signatureParser :: TypeExprParser
@@ -255,7 +253,7 @@ queryParser = whiteSpace binaryTokenParser *> binOpParser
 parse :: String -> Either String Query
 parse = result . runP queryParser "" "curr(y)gle"
  where result (Left err) = Left (show err)
-       result (Right q)  = trace (show q) (Right q)
+       result (Right q)  = Right q
 
 ---------------------------------------------------------------------------------------
 {- The expression makeTokenParser language creates a GenTokenParser record that contains lexical parsers that are defined using the definitions in the language record (i.e. identifier, which also fails on reserved names). -}
@@ -279,8 +277,6 @@ specifierDef =
   emptyDef
   { identStart      = alphaNum,
     identLetter     = alphaNum,
-    -- reservedOpNames = [":signature", ":module", ":function",":type"
-    --                    ":nondet", ":det", ":flexible", ":rigid"],
     reservedNames   = ["AND","NOT","OR"]
   }
 
@@ -292,9 +288,6 @@ binOpDef =
   emptyDef 
   { identStart      = lower,
     identLetter     = alphaNum
-    -- reservedOpNames = ["AND", "OR", "NOT"],
-    -- reservedNames   = ["->", ":signature", ":module", ":function",":type", 
-    --                    ":nondet", ":det", ":flexible", ":rigid"]
   }
 
 binaryTokenParser :: TokenParser String
