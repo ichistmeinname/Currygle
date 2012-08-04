@@ -86,7 +86,7 @@ prepareIndex uriPath cdocPath states = do
   putStr "."
   return $ indexAndDocuments curryDoc uriPath (cMod, cFct, cTyp)
 
--- | Function to build document
+-- | Function to build a document.
 doc :: Binary a => String -> (a -> String) -> Uri a -> a -> Document a
 doc uriPath fiName uriType info = Document {title  = fiName info,
                                             uri    = uriP,
@@ -96,15 +96,15 @@ doc uriPath fiName uriType info = Document {title  = fiName info,
               FctOrTypeUri fiUriModule fiUriName -> uriPath ++ fiUriModule info ++ ".html"
                                                              ++ "#" ++ fiUriName info
 
--- | Data to represent uri
--- functions and types use anchors, i.e. moduleName.html#functionName
+-- | Data to represent uri,
+-- functions and types use anchors, i.e. moduleName.html#functionName.
 data Uri a = ModuleUri (a -> String) | FctOrTypeUri (a -> String) (a -> String)
 
--- | Function to build index
+-- | Function to build index.
 idx :: (a -> DocId -> [(String, String, Occurrences)]) -> a -> DocId -> Inverted
 idx contextList info i = fromList emptyInverted $ contextList info i
     
--- |  Main indexer method to build indexes and documents
+-- |  Main indexer method to build indexes and documents.
 ixDoc :: Binary a => (a -> DocId -> [(String, String, Occurrences)]) -> 
                        [a] -> [Document a] -> HolumbusState a -> HolumbusState a
 ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) = 
@@ -116,31 +116,33 @@ ixDoc _ _ _ is = is
 -- Calls ixDoc to create index and documents for the module, functions and types
 indexAndDocuments :: CurryInfo -> FilePath  -> CurryIndexerStates -> CurryIndexerStates
 indexAndDocuments curryDoc uriPath (cMod, cFct, cTyp) = 
-  let curryModState  = ixDoc 
-                       contextsMod 
-                       [moduleInfo curryDoc] 
-                       [doc uriPath mName (ModuleUri mName) (moduleInfo curryDoc)] 
-                       cMod
-      curryFctState  = ixDoc 
-                       contextsF 
-                       (functionInfos curryDoc) 
-                       (map (doc uriPath fName (FctOrTypeUri fModule fName)) $ functionInfos curryDoc)
-                       cFct
-      curryTypeState = ixDoc 
-                       contextsT 
-                       (typeInfos curryDoc) 
-                       (map (doc uriPath tName (FctOrTypeUri tModule tName)) $ typeInfos curryDoc) 
-                       cTyp
-  in (curryModState, curryFctState, curryTypeState)
+  let cModState  = ixDoc 
+                   contextsMod 
+                   [moduleInfo curryDoc] 
+                   [doc uriPath mName (ModuleUri mName) (moduleInfo curryDoc)]
+                   cMod
+      cFctState  = ixDoc 
+                   contextsF                     
+                   (functionInfos curryDoc) 
+                   (map (doc uriPath fName (FctOrTypeUri fModule fName)) 
+                        $ functionInfos curryDoc)
+                   cFct
+      cTypeState = ixDoc 
+                   contextsT 
+                   (typeInfos curryDoc) 
+                   (map (doc uriPath tName (FctOrTypeUri tModule tName)) 
+                        $ typeInfos curryDoc) 
+                   cTyp
+  in (cModState, cFctState, cTypeState)
 
--- | Generates the context information for a module
+-- | Generates the context information for a module.
 contextsMod :: ModuleInfo -> DocId -> [(String, String, Occurrences)]
 contextsMod moduleI i = 
   map (addOcc  (occ i 1)) $ [(":module", mName moduleI)] 
    ++ (author $ mAuthor moduleI)
    ++ (description $ mDescription moduleI)
 
--- | Generates the context information for a function
+-- | Generates the context information for a function.
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
   map (addOcc  (occ i 2)) $ [(":function", fName functionI)] 
@@ -215,7 +217,7 @@ writeDocIndex path cDoc cIndex = do
     writeBin (indexExtension (path++_tempFile)) cIndex
     writeBin (documentExtension (path++_tempFile)) cDoc
 
--- | Writes and merges an existing pair of index and documents with a new one
+-- | Writes and merges an existing pair of index and documents with a new one.
 mergeIdxDoc :: [String] -> IO LoadedIndexerStates -> CurryIndexerStates -> IO ()
 mergeIdxDoc moduleList ixDoc1 (cMod, cFct, cTyp) = do
   ((iM1, m1), (iF1, f1), (iT1, t1)) <- ixDoc1
@@ -284,8 +286,8 @@ readFilePaths new fPath = do
        filePathList = map T.unpack . concatMap (T.splitOn $ T.pack ";") . pairs
     
 -- Main function to start the index creation
-main2 :: Bool -> FilePath -> FilePath -> IO ()
-main2 new cdocP uriP = do
+startIndexer :: Bool -> FilePath -> FilePath -> IO ()
+startIndexer new cdocP uriP = do
   putStr "Writing index..."
   files <- getDirectoryContents cdocP >>= return . filter (\c -> takeExtension c == ".cdoc")
   writeIndex new uriPath $ map (cdocPath ++) files
@@ -296,20 +298,22 @@ main2 new cdocP uriP = do
 -- Recursive function to start indexing,
 -- either a new index is created or the existing index is updated (new flag)
 prepareFilePaths :: Bool -> [FilePath] -> IO ()
-prepareFilePaths new (cdocPath:uriPath:xs) = main2 new cdocPath uriPath >> prepareFilePaths False xs
-prepareFilePaths _ [""]                    = return ()
-prepareFilePaths _ _                       = putStr _howToUseMessage
+prepareFilePaths new (cdocPath:uriPath:xs) = 
+  startIndexer new cdocPath uriPath >> prepareFilePaths False xs
+prepareFilePaths _ [""] = return ()
+prepareFilePaths _ _    = putStr _howToUseMessage
 
 -- Analyzes arguments of the command line
 processArgs :: [String] -> IO ()
 processArgs args =
   case args of 
-    [fPath,"--n"]             -> readFilePaths True fPath
-    [fPath,"--u"]             -> readFilePaths False fPath
-    [cdocPath,uriPath,"--n"]  -> main2 True cdocPath uriPath
-    [cdocPath,uriPath,"--u"]  -> main2 False cdocPath uriPath
-    _                         -> putStr _howToUseMessage
+   [fPath,"--n"]             -> readFilePaths True fPath
+   [fPath,"--u"]             -> readFilePaths False fPath
+   [cdocPath,uriPath,"--n"]  -> startIndexer True cdocPath uriPath
+   [cdocPath,uriPath,"--u"]  -> startIndexer False cdocPath uriPath    
+   _                         -> putStr _howToUseMessage
 
 main :: IO ()
-main = do args <- getArgs
-          processArgs args
+main = getArgs >>= processArgs 
+     -- do args <- getArgs
+       --   processArgs args
