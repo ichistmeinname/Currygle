@@ -127,7 +127,7 @@ pageLinks query actPage pageNumber =
        
 -- Concats the link for the pagination for a given query and page
 paginationLink :: String -> Int -> String
-paginationLink query nr = "/querypage?query=" ++ query ++ "&page=" ++ show nr
+paginationLink query nr = "/currygle?query=" ++ query ++ "&page=" ++ show nr
 
 -- Creates the pagination
 pagination :: String -> Int -> Int -> [X.Node]
@@ -293,9 +293,9 @@ splitOnArrow = splitStringOn "->"
 splitStringOn :: String -> String -> [String]
 splitStringOn splitter text = map T.unpack (T.splitOn  (T.pack splitter) (T.pack text))
 
--- returns a path that ends with '/'
-fullPath :: String -> String
-fullPath path  = if last path == '/' then path else path ++ "/"
+-- -- returns a path that ends with '/'
+-- fullPath :: String -> String
+-- fullPath path  = if hasTrailingPathSeperator then path else path ++ "/"
 
 -- Words shorter than 2 characters are biased
 biasedWord :: String -> Bool

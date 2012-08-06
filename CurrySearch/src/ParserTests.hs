@@ -79,7 +79,7 @@ specTests = test [signatureTest, allAtOnce, andAllAtOnce]
 signatureTest =
   Specifier [":signature"] (Word $ testShow (prim "Int" --> prim "String")) ~=? unRight (parse ":signature Int->String")
 allAtOnce = 
-  BinQuery And (BinQuery And (BinQuery And (Specifier [":module"] (Word "Prelude")) (Specifier [":function"] (Word "map"))) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":type"] (Word "something")) ~=? unRight (parse ":type something Int->Int :module Prelude :function map")
+  BinQuery And (BinQuery And (BinQuery And (Specifier [":type"] (Word "something")) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":module"] (Word "Prelude"))) (Specifier [":function"] (Word "map")) ~=? unRight (parse ":type something Int->Int :module Prelude :function map")
 andAllAtOnce =
   BinQuery And (BinQuery And (BinQuery And (Specifier [":type"] (Word "something")) (Specifier [":signature"] (Word "Int -> Int"))) (Specifier [":module"] (Word "Prelude"))) (Specifier [":function"] (Word "map")) ~=? unRight (parse ":type something AND Int->Int AND :module Prelude AND :function map")
 
