@@ -31,7 +31,7 @@ import Data.Maybe
 import Data.Text                as T hiding (map)
 import Data.Text.Encoding       as E
 
-import Holumbus.Query.Language.Grammar
+import Holumbus.Query.Language.Grammar (Query (..))
 
 import Prelude                  as P
 
@@ -41,6 +41,7 @@ import Snap.Util.FileServe
 
 import Text.JSON hiding (Result)
 import Text.Templating.Heist
+
 import qualified Text.XmlHtml   as X
 
 -- Number of word completions that are sent to the javascript
@@ -95,14 +96,15 @@ modDocsToListItem doc =
 
 -- Returns the HTML node for a result that is function.
 -- The description and the name of the module are passed unmodified.
--- special title: NAME :: SIGNATURE
+-- special title: NAME :: SIGNATURE or (OPERATOR) :: SIGNATURE
 funcDocsToListItem :: InfoDoc FunctionInfo -> X.Node
 funcDocsToListItem doc =
   makeResult title (idUri doc) (moduleText $ fModule fInfo) (fDescription fInfo) []
- where title = idTitle doc ++ " :: " ++ signature
+ where title = operatorOrFunction ++ " :: " ++ signature
        signature = (\((modName,_), expr) -> showType modName False expr) $ fSignature fInfo
        fInfo = idInfo doc
-
+       operatorOrFunction = paren ((P.head (idTitle doc)) `elem` ":!#$%&*+./<=>?@\\^|-~_") 
+                                  (idTitle doc)
 -- Returns the HTML node for a result that is a type/data structure.
 -- The description and module name are treated normally.
 -- special title: data NAME = CONSTR1 | CONSTR2
@@ -162,9 +164,10 @@ oldQuerySplice = do
 -- Returns the value associated to a specific param from the Query-String (i.e. query or page)
 getQueryStringParam :: String -> Application String
 getQueryStringParam param = do
-  let decodedParam p = fromMaybe "" <$> getParam p
   query <- decodedParam $ encodeUtf8 $ T.pack param
   return $ T.unpack (E.decodeUtf8 query)
+ where decodedParam p = fromMaybe "" <$> getParam p
+
 
 -- Function to start the query processing
 queryFunction :: Application (Query -> IO MFTResult)
@@ -201,15 +204,14 @@ completions = do
   putResponse myResponse
   writeText (T.pack $ toJSONArray _numDisplayedCompletions $ qwInfo queryResultWords')
   where
-  myResponse = setContentType "text/plain; charset=utf-8" . setResponseCode 200 $ emptyResponse
+  myResponse = setContentType "text/plain; charset=UTF-8" . setResponseCode 200 $ emptyResponse
 
 -- | Defines the routing of the web site. It differs between the front- and querypage
 --   as well as the word completions. All necessary files have to be stored in "resources/static".
 site :: Application ()
 site = route
        [ ("/",          frontpage)     -- just render the frontpage
-       , ("/querypage", processquery)  -- show search results
+       , ("/currygle", processquery)  -- show search results
        , ("/completions", completions) -- show word completions (javascript)
        ]
        <|> serveDirectory "resources/static"
-

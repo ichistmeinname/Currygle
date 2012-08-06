@@ -14,12 +14,12 @@ function createRequestObject() {
 var http=createRequestObject();
 
 function searchQuery() { 
-  location.href="/querypage?query="+document.getElementById("query").value;
+  location.href="/currygle?query="+encodeURIComponent(document.getElementById("query").value);
     return false;
 }
 
 function getCompletions(e) {
-   var query=document.getElementById("query").value;
+   var query=encodeURIComponent(document.getElementById("query").value);
    var autocomplete=$('input').typeahead();
    switch(e.keyCode) {
         case 9: // tab
@@ -50,7 +50,6 @@ function getCompletions(e) {
 
 function getHTTPResponse() {
   if (http.readyState==4) {
-      console.log("httpResponse: "+http.responseText);	
       var suggestions = eval(http.responseText);
       var autocomplete=$('input').typeahead();
       autocomplete.data('typeahead').source=suggestions;
