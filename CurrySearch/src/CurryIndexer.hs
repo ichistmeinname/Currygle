@@ -14,21 +14,25 @@ Three pairs of index and documents are stored: for the module, function and type
 
 module Main (main) where 
 
-import Data.Binary
+import Data.Binary              (Binary (..), Word32, decodeFile)
 import Data.Text as T           (splitOn, unpack, pack)
 import Data.Text.IO as TIO      (readFile)
 
 import System.Environment       (getArgs)
 import System.Directory         (renameFile, getDirectoryContents)
-import System.FilePath.Posix
+import System.FilePath.Posix    (addTrailingPathSeparator, dropExtension, takeExtension)
 
 import CurryInfo
 import FilesAndLoading
-import Helpers
+import Helpers (biasedWord, splitStringOn, splitOnWhitespace, showTypeList, 
+                signatureComponents, varIndex)
 import IndexTypes
 
-import Holumbus.Index.CompactSmallDocuments
-import Holumbus.Index.Common
+import Holumbus.Index.CompactSmallDocuments (docTable2smallDocTable, idToSmallDoc)
+import Holumbus.Index.Common.Occurences
+import Holumbus.Index.Common.DocId (DocId, addDocId)
+import Holumbus.Index.Common.DocIdMap (maxKeyDocIdMap)
+import Holumbus.Index.Common (HolIndex (..), HolDocuments (..), HolDocIndex (..), Document (..))
 
 _howToUseMessage :: String
 _howToUseMessage = 
@@ -276,7 +280,7 @@ writeIndex new uriPath files = do
  where emptyStates = return (emptyCurryModState, emptyCurryFctState, emptyCurryTypeState)
        moduleNames = map (dropExtension . last . splitStringOn "/") files
 
--- Reads out txt-file with pairs of cdoc and uri paths that are seperated by ';'
+-- Reads txt-file with pairs of cdoc and uri paths that are seperated by ';'
 -- to create or update (new flag) the index
 readFilePaths :: Bool -> FilePath -> IO ()
 readFilePaths new fPath = do
@@ -292,8 +296,8 @@ startIndexer new cdocP uriP = do
   files <- getDirectoryContents cdocP >>= return . filter (\c -> takeExtension c == ".cdoc")
   writeIndex new uriPath $ map (cdocPath ++) files
   putStr "done!\n"
- where uriPath        = fullPath uriP
-       cdocPath       = fullPath cdocP
+ where uriPath        = addTrailingPathSeparator uriP
+       cdocPath       = addTrailingPathSeparator cdocP
 
 -- Recursive function to start indexing,
 -- either a new index is created or the existing index is updated (new flag)
@@ -314,6 +318,4 @@ processArgs args =
    _                         -> putStr _howToUseMessage
 
 main :: IO ()
-main = getArgs >>= processArgs 
-     -- do args <- getArgs
-       --   processArgs args
+main = getArgs >>= processArgs
