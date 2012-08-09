@@ -31,8 +31,6 @@ import Holumbus.Query.Language.Grammar
 import CurryInfo
 import Helpers (showType)
 
-import Debug.Trace (trace)
-
 infixr 4 -->
 
 _moduleSpecifierName :: String
@@ -277,7 +275,7 @@ queryParser = whiteSpace binaryTokenParser *> binOpParser
 parse :: String -> Either String Query
 parse = result . runP queryParser "" "curr(y)gle"
  where result (Left err) = Left (show err)
-       result (Right q)  = trace (show q) (Right q)
+       result (Right q)  = Right q
 
 ---------------------------------------------------------------------------------------
 {- The expression makeTokenParser language creates a GenTokenParser record that contains lexical parsers that are defined using the definitions in the language record (i.e. identifier, which also fails on reserved names). -}
