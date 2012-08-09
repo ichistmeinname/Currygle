@@ -27,10 +27,6 @@ import qualified Text.XmlHtml   as X
 ------------------------------     HTML STUFF     ------------------------------
 --------------------------------------------------------------------------------
 
--- | Number of words contained in the teaser of the description text.
-_numTeaserWords :: Int
-_numTeaserWords = 30
-
 -- Constant for the pagination label
 _previousPage :: String 
 _previousPage = "Prev"
@@ -65,6 +61,12 @@ htmlP = makeHtml "p" "" ""
 
 icon :: [X.Node] -> X.Node
 icon = makeHtml "i" "" "icon-leaf"
+
+italic :: String -> X.Node
+italic str = makeHtml "i" "" "" [htmlTextNode str]
+
+br :: [X.Node]
+br = [makeHtml "br" "" "" []]
 
 -- Flexible html construction (like <attribute class="css"> </> or <a href=link class=link> </a>
 makeHtml :: String -> String -> String -> [X.Node] -> X.Node
@@ -103,10 +105,7 @@ typeConsHtml constr = htmlTextNode ("Constructors: " ++ intercalate ", " constr)
             
 -- Creates the HTML list item for a given curryInfo description text
 descriptionHtml :: String -> [X.Node]
-descriptionHtml text = [htmlLiClass "description" [htmlTextNode descr]]
- where descr = if (length $ words text) > _numTeaserWords then teaserText ++ " ..."
-                  else teaserText
-       teaserText = unwords $ take _numTeaserWords $ words text
+descriptionHtml text = [htmlLiClass "description" [htmlTextNode text]]
 
 -- Creates one "document" of the search results as HTML node
 -- Short example:
@@ -117,6 +116,12 @@ makeResult title uri (oAtt, oText) descr sig =
                  [htmlUl (sigHtml signature ++ othersHtml ++ descriptionHtml descr)])
  where signature = ifNotEmpty sig [typeConsHtml $ map (\(name, consSig) -> name ++ " :: " ++ consSig) sig]
        othersHtml = ifNotEmpty oText [htmlLiClass oAtt [htmlTextNode $ modOrAuthorText oAtt ++ oText]]
+
+example :: X.Node
+example = 
+  htmlDiv "examples" (welcome ++ br ++ howToUse)
+ where welcome = [htmlTextNode "Since you're already here, why don't you stay a bit and use this little Curry API search engine."]
+       howToUse = [htmlTextNode "For the start, try to search for the popular function "] ++ [italic "map"] ++ [htmlTextNode " by typing "] ++ [italic ":function map"] ++ [htmlTextNode ". This restricts the search results to function, so you won't find any module or type by this name."]
 
 -- Creates a htmt list item (possibly with a class attribute) with a html link
 -- <li class="active"><a href=$link>$pageNumber</a></li>
