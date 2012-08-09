@@ -1,3 +1,0 @@
-./example/DOC_HTML;http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/
-./example/DOC_URL;http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/
-./example/DOC_XML;http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/
