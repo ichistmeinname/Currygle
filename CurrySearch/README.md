@@ -67,7 +67,10 @@ localhost on a given port with the curryServer.
 > curryServer -p 1337
 
 
-How-to-search -------------- There are several identifier available to
+How-to-search
+--------------
+
+There are several identifier available to
 restrict your search.
 
 * :module io - searches for modules starting with _io_ (also :m io), without a following name, it searches for all modules
