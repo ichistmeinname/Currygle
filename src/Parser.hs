@@ -227,12 +227,12 @@ specifierParser :: QueryParser
 specifierParser =
   try $ parens specifierTokenParser specifierParser
   <|> moduleSpecifier
-  <|> functionSpecifier
   <|> typeSpecifier
   <|> nondeterminismSpecifier
   <|> determinismSpecifier
   <|> flexibleSpecifier
   <|> rigidSpecifier
+  <|> functionSpecifier
   <|> signatureSpecifier
 
 ----------------------
