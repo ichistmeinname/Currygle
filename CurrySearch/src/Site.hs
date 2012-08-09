@@ -151,7 +151,7 @@ pagerSplice query actPage docs = do
 -- | Renders the template file without substituing any tags.
 frontpage :: Application ()
 frontpage = 
-  ifTop $ heistLocal (bindSplices []) $ render "frontpage"
+  ifTop $ heistLocal (bindSplices [("result", return [example])]) $ render "frontpage"
 
 -- | Generates the HTML node for the searchfield after a processed query.
 oldQuerySplice :: Splice Application

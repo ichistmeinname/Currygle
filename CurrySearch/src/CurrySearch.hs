@@ -174,6 +174,3 @@ data QRDocs =
       qdFunctionDocs :: [InfoDoc FunctionInfo],
       qdTypeDocs     :: [InfoDoc TypeInfo]
     } deriving Show
-
--- | The QueryResult includes the matching documents and the matching word completions to a given query.
-data QueryResult = QueryResult { qDocuments :: QRDocs, qCompletions :: QRWords }
