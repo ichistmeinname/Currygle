@@ -26,11 +26,12 @@ Installation
 This directory contains cabal-file, for the installation you simply
 have to run cabal.
 
-> cabal configure cabal build cabal install
+> $ cabal configure cabal build cabal install
 
-Alternatively you can use the provided *Setup.hs*.  > runhaskell
-Setup.hs configure > runhaskell Setup.hs build > runhaskell Setup.hs
-install
+Alternatively you can use the provided *Setup.hs*.  
+> $ runhaskell Setup.hs configure 
+> $ runhaskell Setup.hs build 
+> $ runhaskell Setup.hs install
 
 
 How-to-use
@@ -51,23 +52,26 @@ curryIndexer can either generate a new index or update the existing
 one, to distinguish between these options, you can use the flag *--n*
 for generating a new index and *--u* for updating the index.
 
-> curryIndexer ./example/CDOC_HTML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --n 
-> curryIndexer ./example/CDOC_URLhttp://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u 
-curryIndexer ./example/CDOC_XML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u
+> $ curryIndexer ./example/CDOC_HTML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --n 
+> $ curryIndexer ./example/CDOC_URL http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u 
+> $ curryIndexer ./example/CDOC_XML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u
 
 Since it can take a very long time to add each single module, you can
 pass a .txt-file as argument that consists of pairs of .cdoc-file and
 uri to generate the index.
 
-> curryIndexer ./example/test.txt --n
+> $ curryIndexer ./example/test.txt --n
 
 With a generated index, you can run the web application on your
 localhost on a given port with the curryServer.
 
-> curryServer -p 1337
+> $ curryServer -p 1337
 
 
-How-to-search -------------- There are several identifier available to
+How-to-search
+--------------
+
+There are several identifier available to
 restrict your search.
 
 * :module io - searches for modules starting with _io_ (also :m io), without a following name, it searches for all modules
