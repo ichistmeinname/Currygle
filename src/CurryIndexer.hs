@@ -150,7 +150,7 @@ contextsMod moduleI i =
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
   map (addOcc  (occ i 2)) $ [(":function", fName functionI)] 
-   ++ [("Module", fModule functionI)]
+   ++ [(":inModule", fModule functionI)]
    ++ (signature $ signatureComponents $ fSignature functionI)
    ++ (flexRigid $ fFlexRigid functionI)
    ++ (nonDet $ fNonDet functionI)
@@ -167,7 +167,7 @@ contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
   let sigPair = map (showTypeList (tName typeI ++ (varIndex $ tVarIndex typeI))) 
                  $ tSignature typeI
-  in map (addOcc  (occ i 1)) $ [(":type", tName typeI)] ++ [(":module", tModule typeI)]
+  in map (addOcc  (occ i 1)) $ [(":type", tName typeI)] ++ [(":inModule", tModule typeI)]
       ++ (concatMap signature $ map fst sigPair)
       ++ (signature $ map snd sigPair)
       ++ (description $ tDescription typeI)   
