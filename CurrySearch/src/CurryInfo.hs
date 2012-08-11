@@ -18,35 +18,28 @@ import Control.Monad                  ( liftM5, liftM3, liftM2, liftM )
 
 import Data.Binary                    ( Binary(..), putWord8, getWord8 )
 
--- | ModuleInfo holds information about the name, latest version, author,
---   list of imported modules and the description of a given module
-data ModuleInfo = ModuleInfo String String String [String] String deriving (Show, Read)
+-- | ModuleInfo holds information about the name, author, and the description of a given module.
+data ModuleInfo = ModuleInfo String String String deriving (Show, Read)
 
 mName :: ModuleInfo -> String
-mName (ModuleInfo n _ _ _ _) = n
-
-mVersion :: ModuleInfo -> String
-mVersion (ModuleInfo _ v _ _ _) = v
+mName (ModuleInfo n _ _) = n
 
 mAuthor :: ModuleInfo -> String
-mAuthor (ModuleInfo _ _ a _ _) = a
-
-mImports :: ModuleInfo -> [String]
-mImports (ModuleInfo _ _ _ i _) = i
+mAuthor (ModuleInfo _ a _) = a
 
 mDescription :: ModuleInfo -> String
-mDescription (ModuleInfo _ _ _ _ d) = d
+mDescription (ModuleInfo _ _ d) = d
 
 instance NFData ModuleInfo where
-    rnf (ModuleInfo n v a i d) = rnf n `seq` rnf v `seq` rnf a `seq` rnf i `seq` rnf d
+    rnf (ModuleInfo n a d) = rnf n `seq` rnf a `seq` rnf d
 
 instance Binary ModuleInfo where
-    put (ModuleInfo n v a i d) = put n >> put v >> put a >> put i >> put d
+    put (ModuleInfo n a d) = put n >> put a >> put d
     get = do
-            r <- liftM5 ModuleInfo get get get get get
+            r <- liftM3 ModuleInfo get get get
             rnf r `seq` return r
 
--- | Data to represent the flexible and rigid attribute of a function
+-- | Data to represent the flexible and rigid attribute of a function.
 data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid deriving (Show, Read)
 
 instance NFData FlexRigidResult 
@@ -101,7 +94,7 @@ instance Binary TypeExpr where
             _ -> return Undefined
 
 -- | FunctionInfo holds information about the name, signature, corresponding module,
---   description and flexible/rigid status of a function and its non-/deterministic behaviour
+--   description and flexible/rigid status of a function and its non-/deterministic behaviour.
 data FunctionInfo = FunctionInfo String (QName, TypeExpr) String String Bool FlexRigidResult deriving (Show, Read)
 
 fName :: FunctionInfo -> String
@@ -137,8 +130,8 @@ instance Binary FunctionInfo where
             r <- liftM6 FunctionInfo get get get get get get
             rnf r `seq` return r
 
--- | TypeInfo holds information about the name, signature, corresponding module,
---   and description of a given type
+-- | TypeInfo holds information about the name, signature, type variables, corresponding module,
+--   and description of a given type.
 data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [Int] String String deriving (Show, Read)
 
 tName :: TypeInfo -> String
@@ -166,7 +159,7 @@ instance Binary TypeInfo where
             rnf r `seq` return r
           
 -- | The CurryInfo data holds information about the module, and corresponding functions,
---   data and type declaration of a given 'curry file'
+--   data and type declaration of a given 'curry file'.
 data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo] deriving (Show, Read)
 
 moduleInfo :: CurryInfo -> ModuleInfo
@@ -187,28 +180,28 @@ instance Binary CurryInfo where
             r <- liftM3 CurryInfo get get get
             rnf r `seq` return r
 
--- | Empty constructor for CurryInfo
+-- | Empty constructor for CurryInfo.
 emptyCurryInfo   :: CurryInfo
 emptyCurryInfo   = mkCurryInfo emptyModuleInfo [emptyFunctionInfo] [emptyTypeInfo]
 
 mkCurryInfo  :: ModuleInfo -> [FunctionInfo] -> [TypeInfo] -> CurryInfo
 mkCurryInfo  = CurryInfo
 
--- | Empty constructor for ModuleInfo
+-- | Empty constructor for ModuleInfo.
 emptyModuleInfo :: ModuleInfo
-emptyModuleInfo = mkModuleInfo "" "" "" [""] ""
+emptyModuleInfo = mkModuleInfo "" "" ""
 
-mkModuleInfo :: String -> String -> String -> [String] -> String -> ModuleInfo
+mkModuleInfo :: String -> String -> String -> ModuleInfo
 mkModuleInfo = ModuleInfo
 
--- | Empty constructor for FunctionInfo
+-- | Empty constructor for FunctionInfo.
 emptyFunctionInfo :: FunctionInfo
 emptyFunctionInfo = mkFunctionInfo "" (emptyQName, Undefined) "" "" False UnknownFR
 
 mkFunctionInfo :: String -> (QName, TypeExpr) -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
 mkFunctionInfo = FunctionInfo
 
--- | Empty constructor for TypeInfo
+-- | Empty constructor for TypeInfo.
 emptyTypeInfo :: TypeInfo
 emptyTypeInfo = mkTypeInfo "" [] [] "" ""
 

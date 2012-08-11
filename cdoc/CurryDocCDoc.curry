@@ -15,13 +15,8 @@ import List
 
 generateCDoc :: String  -> String -> [(SourceLine,String)] -> AnaInfo -> IO String
 generateCDoc progName modCmts progCmts anaInfo = do
-    putStrLn $ "Reading FlatCurry program \""++fcyName++"\"..."
-    Prog modName imports types functions _ <- readFlatCurryFile fcyName
-    let modInfo = ModuleInfo 
-	    modName 
-	    (versionOrAuthor "version" avCmts) 
-	    (versionOrAuthor "author" avCmts) 
-	    imports mCmts
+    Prog modName _ types functions _ <- readFlatCurryFile fcyName
+    let modInfo = ModuleInfo modName (author avCmts) mCmts 
 	funcInfo (Func (mName, fName) _ _ tExpr (Rule _ expr)) = 
             FunctionInfo fName 
 	    ((mName, fName), tExpr) 
@@ -51,6 +46,7 @@ generateCDoc progName modCmts progCmts anaInfo = do
         (mCmts, avCmts) = splitComment modCmts
 	funcInfos = map funcInfo (filter (\(Func _ _ vis _ _) -> vis == Public) functions)
 	typeInfos = map typeInfo (concatMap filterT types)
+    putStrLn $ "Writing " ++ modName ++ ".cdoc file"
     return $ showTerm (CurryInfo modInfo funcInfos typeInfos)
   where fcyName  = flatCurryFileName progName
   	filterT f@(Type _ vis _ _) = if vis == Public then [f] else []
@@ -63,11 +59,9 @@ dataComment :: String -> [(SourceLine,String)] -> String
 dataComment str = fst . splitComment . getDataComment str
 
 -- the name
--- the latest version
 -- the author
--- list of the imported modules
 -- the description
-data ModuleInfo = ModuleInfo String String String [String] String
+data ModuleInfo = ModuleInfo String String String
 
 -- the module
 -- the corresponding functions
@@ -90,8 +84,8 @@ data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [TVarIndex] String String
 
 -- auxilieres --------------------------------------------------------
 
-versionOrAuthor :: String -> [(String, String)] -> String
-versionOrAuthor string av = concat $ getCommentType string av
+author :: [(String, String)] -> String
+author av = concat $ getCommentType "author" av
 
 -- generate data and type constructors
 consSignature :: ConsDecl -> (QName, [TypeExpr])
