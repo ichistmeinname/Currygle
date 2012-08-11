@@ -1,0 +1,13 @@
+TeXerei/liesmich.txt
+TeXerei/*.log
+TeXerei/*.aux
+TeXerei/*.bbl
+TeXerei/*.blg
+TeXerei/*.lof
+TeXerei/*.lot
+TeXerei/*.out
+TeXerei/*.pdf
+TeXerei/*.ptb
+TeXerei/*.run.xml
+TeXerei/*.toc
+TeXerei/bachelor-blx.bib

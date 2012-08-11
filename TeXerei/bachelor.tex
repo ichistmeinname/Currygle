@@ -1,0 +1,1540 @@
+% Header mit Deklarationen
+\documentclass[%
+	pdftex,%              PDFTex verwenden
+	a4paper,%             A4 Papier
+	oneside,%             Einseitig
+	chapterprefix,%       Kapitel anschreiben als Kapitel
+	headsepline,%         Linie nach Kopfzeile
+	%footsepline,%         Linie vor Fusszeile
+	%pointlessnumbers,%     Nummern ohne abschließenden Punkt
+	12pt%                 Grössere Schrift, besser lesbar am bildschrim
+]{scrbook}
+%
+% Paket für Übersetzungen ins Deutsche
+%
+% \usepackage[french,ngerman]{babel}
+
+%
+% Pakete um Latin1 Zeichnensätze verwenden zu können und die dazu
+% passenden Schriften.
+%
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+
+%
+% Paket für Quotes
+%
+% \usepackage[babel,french=guillemets,german=swiss]{csquotes}
+
+%
+% Paket zum Erweitern der Tabelleneigenschaften
+%
+\usepackage{array}
+
+%
+% Paket für schönere Tabellen
+%
+\usepackage{booktabs}
+
+%
+% Paket um Grafiken einbetten zu können
+%
+\usepackage{graphicx}
+
+%
+% Spezielle Schrift im Koma-Script setzen.
+%
+\usepackage{titlesec}
+\newcommand*{\justifyheading}{\raggedleft}
+\titleformat{\chapter}[display]
+  {\normalfont\Huge\bfseries\justifyheading}{\thechapter}
+  {10pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection}{1em}{}
+% \setkomafont{sectioning}{\normalfont\bfseries}
+\setkomafont{captionlabel}{\normalfont\bfseries} 
+\setkomafont{pagehead}{\normalfont\bfseries} % Kopfzeilenschrift
+\setkomafont{descriptionlabel}{\normalfont\bfseries}
+
+%
+% Zeilenumbruch bei Bildbeschreibungen.
+%
+\setcapindent{1em}
+
+%
+% Kopf und Fußzeilen
+%
+\usepackage{scrpage2}
+\pagestyle{scrheadings}
+% Inhalt bis Section rechts und Chapter links
+\automark[section]{chapter}
+% Mitte: leer
+\chead{}
+
+%
+% mathematische symbole aus dem AMS Paket.
+%
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+%
+% Type 1 Fonts für bessere darstellung in PDF verwenden.
+%
+%\usepackage{mathptmx}           % Times + passende Mathefonts
+%\usepackage[scaled=.92]{helvet} % skalierte Helvetica als \sfdefault
+\usepackage{courier}            % Courier als \ttdefault
+
+%
+% Paket um Textteile drehen zu können
+%
+\usepackage{rotating}
+
+%
+% Paket für Farben im PDF
+%
+\usepackage{color}
+
+%
+% Paket für Links innerhalb des PDF Dokuments
+%
+\definecolor{LinkColor}{rgb}{0,0,0.5}
+\usepackage[%
+	pdftitle={An API Search Engine for Curry},% Titel der Diplomarbeit
+	pdfauthor={Sandra Dylus},% Autor(en)
+	pdfcreator={LaTeX, LaTeX with hyperref and KOMA-Script},% Genutzte Programme
+	pdfsubject={Bachelor thesis}, % Betreff
+	pdfkeywords={Curry, Haskell, API, search engine}]{hyperref} % Keywords halt :-)
+\hypersetup{colorlinks=true,% Definition der Links im PDF File
+	linkcolor=LinkColor,%
+	citecolor=LinkColor,%
+	filecolor=LinkColor,%
+	menucolor=LinkColor,%
+	pagecolor=LinkColor,%
+	urlcolor=LinkColor}
+
+%
+% Paket um LIstings sauber zu formatieren.
+%
+\usepackage[savemem]{listings}
+\lstloadlanguages{TeX}
+
+%
+% Listing Definationen für PHP Code
+%
+\definecolor{lbcolor}{rgb}{0.85,0.85,0.85}
+\lstset{language=[LaTeX]TeX,
+	numbers=left,
+	stepnumber=1,
+	numbersep=5pt,
+	numberstyle=\tiny,
+	breaklines=true,
+	breakautoindent=true,
+	postbreak=\space,
+	tabsize=2,
+	basicstyle=\ttfamily\footnotesize,
+	showspaces=false,
+	showstringspaces=false,
+	extendedchars=true,
+	backgroundcolor=\color{lbcolor}}
+%
+% ---------------------------------------------------------------------------
+%
+
+%
+% Neue Umgebungen
+%
+\newenvironment{ListChanges}%
+	{\begin{list}{$\diamondsuit$}{}}%
+	{\end{list}}
+
+%
+% aller Bilder werden im Unterverzeichnis figures gesucht:
+%
+\graphicspath{{bilder/}}
+
+%
+% Literaturverzeichnis-Stil
+%
+\bibliographystyle{plain}
+
+%
+% Anführungsstriche mithilfe von \textss{-anzufuehrendes-}
+%
+\newcommand{\textss}[1]{"`#1"'}
+
+%
+% Strukturiertiefe bis subsubsection{} möglich
+%
+\setcounter{secnumdepth}{3}
+
+%
+% Dargestellte Strukturiertiefe im Inhaltsverzeichnis
+%
+\setcounter{tocdepth}{3}
+
+%
+% Zeilenabstand wird um den Faktor 1.5 verändert
+%
+%\renewcommand{\baselinestretch}{1.5}
+%% ODER: format ==         = "\mathrel{==}"
+%% ODER: format /=         = "\neq "
+%
+%
+\makeatletter
+\@ifundefined{lhs2tex.lhs2tex.sty.read}%
+  {\@namedef{lhs2tex.lhs2tex.sty.read}{}%
+   \newcommand\SkipToFmtEnd{}%
+   \newcommand\EndFmtInput{}%
+   \long\def\SkipToFmtEnd#1\EndFmtInput{}%
+  }\SkipToFmtEnd
+
+\newcommand\ReadOnlyOnce[1]{\@ifundefined{#1}{\@namedef{#1}{}}\SkipToFmtEnd}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\DeclareFontFamily{OT1}{cmtex}{}
+\DeclareFontShape{OT1}{cmtex}{m}{n}
+  {<5><6><7><8>cmtex8
+   <9>cmtex9
+   <10><10.95><12><14.4><17.28><20.74><24.88>cmtex10}{}
+\DeclareFontShape{OT1}{cmtex}{m}{it}
+  {<-> ssub * cmtt/m/it}{}
+\newcommand{\texfamily}{\fontfamily{cmtex}\selectfont}
+\DeclareFontShape{OT1}{cmtt}{bx}{n}
+  {<5><6><7><8>cmtt8
+   <9>cmbtt9
+   <10><10.95><12><14.4><17.28><20.74><24.88>cmbtt10}{}
+\DeclareFontShape{OT1}{cmtex}{bx}{n}
+  {<-> ssub * cmtt/bx/n}{}
+\newcommand{\tex}[1]{\text{\texfamily#1}}	% NEU
+
+\newcommand{\Sp}{\hskip.33334em\relax}
+
+
+\newcommand{\Conid}[1]{\mathit{#1}}
+\newcommand{\Varid}[1]{\mathit{#1}}
+\newcommand{\anonymous}{\kern0.06em \vbox{\hrule\@width.5em}}
+\newcommand{\plus}{\mathbin{+\!\!\!+}}
+\newcommand{\bind}{\mathbin{>\!\!\!>\mkern-6.7mu=}}
+\newcommand{\rbind}{\mathbin{=\mkern-6.7mu<\!\!\!<}}% suggested by Neil Mitchell
+\newcommand{\sequ}{\mathbin{>\!\!\!>}}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\usepackage{polytable}
+
+%mathindent has to be defined
+\@ifundefined{mathindent}%
+  {\newdimen\mathindent\mathindent\leftmargini}%
+  {}%
+
+\def\resethooks{%
+  \global\let\SaveRestoreHook\empty
+  \global\let\ColumnHook\empty}
+\newcommand*{\savecolumns}[1][default]%
+  {\g@addto@macro\SaveRestoreHook{\savecolumns[#1]}}
+\newcommand*{\restorecolumns}[1][default]%
+  {\g@addto@macro\SaveRestoreHook{\restorecolumns[#1]}}
+\newcommand*{\aligncolumn}[2]%
+  {\g@addto@macro\ColumnHook{\column{#1}{#2}}}
+
+\resethooks
+
+\newcommand{\onelinecommentchars}{\quad-{}- }
+\newcommand{\commentbeginchars}{\enskip\{-}
+\newcommand{\commentendchars}{-\}\enskip}
+
+\newcommand{\visiblecomments}{%
+  \let\onelinecomment=\onelinecommentchars
+  \let\commentbegin=\commentbeginchars
+  \let\commentend=\commentendchars}
+
+\newcommand{\invisiblecomments}{%
+  \let\onelinecomment=\empty
+  \let\commentbegin=\empty
+  \let\commentend=\empty}
+
+\visiblecomments
+
+\newlength{\blanklineskip}
+\setlength{\blanklineskip}{0.66084ex}
+
+\newcommand{\hsindent}[1]{\quad}% default is fixed indentation
+\let\hspre\empty
+\let\hspost\empty
+\newcommand{\NB}{\textbf{NB}}
+\newcommand{\Todo}[1]{$\langle$\textbf{To do:}~#1$\rangle$}
+
+\EndFmtInput
+\makeatother
+%
+%
+%
+%
+%
+%
+% This package provides two environments suitable to take the place
+% of hscode, called "plainhscode" and "arrayhscode". 
+%
+% The plain environment surrounds each code block by vertical space,
+% and it uses \abovedisplayskip and \belowdisplayskip to get spacing
+% similar to formulas. Note that if these dimensions are changed,
+% the spacing around displayed math formulas changes as well.
+% All code is indented using \leftskip.
+%
+% Changed 19.08.2004 to reflect changes in colorcode. Should work with
+% CodeGroup.sty.
+%
+\ReadOnlyOnce{polycode.fmt}%
+\makeatletter
+
+\newcommand{\hsnewpar}[1]%
+  {{\parskip=0pt\parindent=0pt\par\vskip #1\noindent}}
+
+% can be used, for instance, to redefine the code size, by setting the
+% command to \small or something alike
+\newcommand{\hscodestyle}{}
+
+% The command \sethscode can be used to switch the code formatting
+% behaviour by mapping the hscode environment in the subst directive
+% to a new LaTeX environment.
+
+\newcommand{\sethscode}[1]%
+  {\expandafter\let\expandafter\hscode\csname #1\endcsname
+   \expandafter\let\expandafter\endhscode\csname end#1\endcsname}
+
+% "compatibility" mode restores the non-polycode.fmt layout.
+
+\newenvironment{compathscode}%
+  {\par\noindent
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\\=\@normalcr
+   \let\hspre\(\let\hspost\)%
+   \pboxed}%
+  {\endpboxed\)%
+   \par\noindent
+   \ignorespacesafterend}
+
+\newcommand{\compaths}{\sethscode{compathscode}}
+
+% "plain" mode is the proposed default.
+% It should now work with \centering.
+% This required some changes. The old version
+% is still available for reference as oldplainhscode.
+
+\newenvironment{plainhscode}%
+  {\hsnewpar\abovedisplayskip
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\hspre\(\let\hspost\)%
+   \pboxed}%
+  {\endpboxed%
+   \hsnewpar\belowdisplayskip
+   \ignorespacesafterend}
+
+\newenvironment{oldplainhscode}%
+  {\hsnewpar\abovedisplayskip
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\\=\@normalcr
+   \(\pboxed}%
+  {\endpboxed\)%
+   \hsnewpar\belowdisplayskip
+   \ignorespacesafterend}
+
+% Here, we make plainhscode the default environment.
+
+\newcommand{\plainhs}{\sethscode{plainhscode}}
+\newcommand{\oldplainhs}{\sethscode{oldplainhscode}}
+\plainhs
+
+% The arrayhscode is like plain, but makes use of polytable's
+% parray environment which disallows page breaks in code blocks.
+
+\newenvironment{arrayhscode}%
+  {\hsnewpar\abovedisplayskip
+   \advance\leftskip\mathindent
+   \hscodestyle
+   \let\\=\@normalcr
+   \(\parray}%
+  {\endparray\)%
+   \hsnewpar\belowdisplayskip
+   \ignorespacesafterend}
+
+\newcommand{\arrayhs}{\sethscode{arrayhscode}}
+
+% The mathhscode environment also makes use of polytable's parray 
+% environment. It is supposed to be used only inside math mode 
+% (I used it to typeset the type rules in my thesis).
+
+\newenvironment{mathhscode}%
+  {\parray}{\endparray}
+
+\newcommand{\mathhs}{\sethscode{mathhscode}}
+
+% texths is similar to mathhs, but works in text mode.
+
+\newenvironment{texthscode}%
+  {\(\parray}{\endparray\)}
+
+\newcommand{\texths}{\sethscode{texthscode}}
+
+% The framed environment places code in a framed box.
+
+\def\codeframewidth{\arrayrulewidth}
+\RequirePackage{calc}
+
+\newenvironment{framedhscode}%
+  {\parskip=\abovedisplayskip\par\noindent
+   \hscodestyle
+   \arrayrulewidth=\codeframewidth
+   \tabular{@{}|p{\linewidth-2\arraycolsep-2\arrayrulewidth-2pt}|@{}}%
+   \hline\framedhslinecorrect\\{-1.5ex}%
+   \let\endoflinesave=\\
+   \let\\=\@normalcr
+   \(\pboxed}%
+  {\endpboxed\)%
+   \framedhslinecorrect\endoflinesave{.5ex}\hline
+   \endtabular
+   \parskip=\belowdisplayskip\par\noindent
+   \ignorespacesafterend}
+
+\newcommand{\framedhslinecorrect}[2]%
+  {#1[#2]}
+
+\newcommand{\framedhs}{\sethscode{framedhscode}}
+
+% The inlinehscode environment is an experimental environment
+% that can be used to typeset displayed code inline.
+
+\newenvironment{inlinehscode}%
+  {\(\def\column##1##2{}%
+   \let\>\undefined\let\<\undefined\let\\\undefined
+   \newcommand\>[1][]{}\newcommand\<[1][]{}\newcommand\\[1][]{}%
+   \def\fromto##1##2##3{##3}%
+   \def\nextline{}}{\) }%
+
+\newcommand{\inlinehs}{\sethscode{inlinehscode}}
+
+% The joincode environment is a separate environment that
+% can be used to surround and thereby connect multiple code
+% blocks.
+
+\newenvironment{joincode}%
+  {\let\orighscode=\hscode
+   \let\origendhscode=\endhscode
+   \def\endhscode{\def\hscode{\endgroup\def\@currenvir{hscode}\\}\begingroup}
+   %\let\SaveRestoreHook=\empty
+   %\let\ColumnHook=\empty
+   %\let\resethooks=\empty
+   \orighscode\def\hscode{\endgroup\def\@currenvir{hscode}}}%
+  {\origendhscode
+   \global\let\hscode=\orighscode
+   \global\let\endhscode=\origendhscode}%
+
+\makeatother
+\EndFmtInput
+%
+
+
+
+\begin{document}
+
+% Römische Nummerierung für Sonderseiten, wie Verzeichnisse und Anhang
+\pagenumbering{Roman}
+
+% Titelblatt
+% Die Titelseite
+% Im folgenden kommen ein paar Variablen, die auszufüllen sind
+% Bisher steht dort nur Musterinhalt
+% Außerdem müssen zei Dateien erstellt werden, Bild/Logo/Emblem des Fachgebietes
+% sowie der Universität
+
+\newcommand{\trtitle}{An API Search Engine for Curry}
+\newcommand{\trtype}{Bachelor Thesis}
+\newcommand{\trauthor}{Sandra Dylus}
+\newcommand{\trstrasse}{Gutenbergstra\ss e 3}
+\newcommand{\trmatrikelnummer}{1083}
+\newcommand{\trort}{24116 Kiel}
+\newcommand{\trbetreuer}{M.o.Sc. Bj\"orn Peem\"oller}
+\newcommand{\trprof}{Prof. Dr. Michael Hanus}
+\newcommand{\trfachgebiet}{Programming Languages and Compiler Construction}
+\newcommand{\trinstitut}{Computer Science}
+\newcommand{\trfakultaet}{Technische Fakult\"at}
+\newcommand{\truni}{Christian-Albrechts-Universit\"at zu Kiel}
+\newcommand{\trdate}{\today}
+
+\thispagestyle{empty}
+
+% Kopfzeile mit Logos.
+% Eventuell die \hspace{} je nach Logogröße anpassen
+\begin{tabular}{lcr}
+  % \includegraphics[scale=0.8]{dein_unilogo} & % dein_unilogo.jpg/.eps im Verzeichnis "bilder" ablegen
+  % \hspace{2cm}  
+\truni 
+% \hspace{2cm} &
+  % \includegraphics[scale=0.8]{dein_fglogo} % dein_fglogo.jpg/.eps im Verzeichnis "bilder" ablegen, Fachgebietslogo
+  \\
+\end{tabular}
+
+\rule{\textwidth}{0.4pt}
+
+\vspace{2.5cm}
+\begin{center}
+  \textbf{\LARGE \trtitle}
+\end{center}
+\vspace{2cm}
+
+\begin{center}
+  \textbf{\trtype} \\
+  \trfachgebiet \\
+  \trprof \\
+  Department for \trinstitut \\
+  % \trfakultaet \\
+  \truni \\[0.5cm]
+  % vorgelegt von \\
+  \textbf{\trauthor}
+\end{center}
+
+\vspace{1cm}
+
+
+\begin{center}
+\begin{tabular}{ll}
+Advised by & \trbetreuer \\
+\end{tabular}
+\end{center}
+
+\vfill
+
+\begin{tabular}{l}
+\trauthor \\
+Matrikelnummer:  \trmatrikelnummer \\
+\trstrasse \\
+\trort
+\end{tabular}
+
+\rule{\textwidth}{0.4pt}
+
+% Verzeichnisse
+% Kopfzeile links Kapitel, rechts leer
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter\ #1}{}}
+\ihead{\leftmark}
+\ohead{}
+%
+% Inhaltsverzeichnis
+%
+\tableofcontents
+
+%
+% Abbildungsverzeichnis
+%
+\listoffigures
+
+%
+% Tabellenverzeichnis
+%
+\listoftables
+
+% Merke mir die römische Seitenzahl in 'roemisch' und setzte Nummeriernung 
+% auf arabisch für die eigentlichen Kapitel
+\newpage
+\newcounter{roemisch}
+\setcounter{roemisch}{\value{page}}
+\pagenumbering{arabic}
+
+% Die einzelnen Kapitel
+% Kopfzeile: links Kapitel, rechts Sektion
+\ihead{\leftmark}
+\ohead{\rightmark}
+\chapter{Introduction}
+
+\section{Motivation}
+
+\section{Structure}
+At first \hyperref[preliminaries]{Chapter \ref*{preliminaries}} gives
+the preliminiaries to understand this thesis. This includes basic
+information about the programming language Curry, a tool to generate
+documentation, and the Holumbus framework that is used to build the
+search engine in connection with this thesis. In
+\hyperref[analysis]{Chapter \ref*{analysis}} we analyze the
+requirements to create an API search engine for Curry. It outlines the
+first ideas for the following implementation, which is given in
+\hyperref[implementation]{Chapter \ref*{implementation}}. Thereby we
+focus on the most important implementation ideas and decisions. At the
+very end we consider the results of this development. Also we give a
+short outlook on features or ideas to expand the given result.
+\chapter{Preliminaries}\label{preliminaries}
+This chapter gives a brief introduction to background information
+that are necessary to comprehend the following chapters. The first
+section gives an introduction to the programming language Curry. It
+outlines main concepts and features of the language and gives short
+explanations for a better understanding. The Curry implementation we
+refer to in the following sections is PAKCS\cite{pakcs}. Furthermore
+we present CurryDoc\cite{currydoc}, a tool to generate documentation
+that is distributed with PAKCS, in the second section. The last
+section introduces the Holumbus\cite{holumbus} framework, a library
+written in Haskell to configure and build search engines.
+
+\section{The programming language Curry}\label{preliminaries:curry}
+
+% Say that curry is a functional logic programming language and what
+% this section is about.\\
+
+Curry is a functional logic programming language, that is an
+international development project to provide a platform for research
+and teaching mostly. As the description suggest, it offers features of
+both programming paradigms. The first subsection will start with some general
+features, followed by two subsections that cover
+functional and logical concepts of Curry. \\
+
+% Start with the structure of a curry program. \\
+\subsection{General overview}
+Like in Haskell, a program consists of function definitions and data
+structures. A Curry module \emph{Test} is a program that is saved as
+\emph{Test.curry}.
+% After that explain how a function definition looks like and how
+% pattern matching works (mention left-hand and right-hand
+% side). Currys layout applies to the so called off-side rule. Add
+% that Curry is strongly-typed and also type-inferred, so a signature
+% is optional. \\
+The syntax of a program is quite similar to Haskell, where function
+application are also written in juxtaposition.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{addTwo}\;\Varid{x}\mathrel{=}\Varid{x}\mathbin{+}\mathrm{2}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+The left-hand side of this function \ensuremath{\Varid{addTwo}\;\Varid{x}} is evaluated to the
+right-hand side \ensuremath{\Varid{x}\mathbin{+}\mathrm{2}}, i.e. the call \ensuremath{\Varid{addTwo}\;\mathrm{3}} yields \ensuremath{\mathrm{3}\mathbin{+}\mathrm{3}\mathrel{=}\mathrm{5}}. Curry supports function definition with pattern matching, which is
+often used in functional and logical programming languages. That means
+that instantiated values like \ensuremath{\Conid{True}} and \ensuremath{\Conid{False}} can stand on the
+left-hand side of a definition. The boolean operation \emph{not} is a
+good example for a definition with pattern matching, since the result
+depends on the input. The definition distinguishes between more than
+one value , so we have to write one rule for each possible input
+value.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\neg \mathbin{::}\Conid{Bool}\to \Conid{Bool}{}\<[E]%
+\\
+\>[B]{}\neg \;\Conid{False}\mathrel{=}\Conid{True}{}\<[E]%
+\\
+\>[B]{}\neg \;\Conid{True}\mathrel{=}\Conid{False}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+The first line indicates that the function expects a boolean value as
+argument and yields to a boolean value as well. The following two
+lines are rules, that describe that \ensuremath{\neg \;\Conid{False}} yields \ensuremath{\Conid{True}}, whereas
+\ensuremath{\neg \;\Conid{True}} yields \ensuremath{\Conid{False}}. There are no more possible values for the
+argument of the function \ensuremath{\neg }, since Curry is a strongly-typed
+language and \ensuremath{\Conid{True}} and \ensuremath{\Conid{False}} are the only possible values with
+boolean type.  In addition Curry also allows polymorphism. You can use
+polymorphism for functions that work independent of the value's
+type. For instance the identity function just returns the argument
+that you apply to the function. This means you can apply the function
+to all types of values, because the type does not matter. You use a
+type variable in your type signature to indicate a polymorphic
+type. The following code presents the type signature of the identity
+function.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{id}\mathbin{::}\Varid{a}\to \Varid{a}{}\<[E]%
+\\
+\>[B]{}\Varid{id}\;\Varid{value}\mathrel{=}\Varid{value}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Overall a strong type system as well as polymorphism and pattern
+matching are among Curry's general features. The
+next section covers functional characteristics of Curry.
+% Mention that there are more concepts provided by Curry, which can be
+% grouped by their underlying paradigm (use it as connection to the
+% following subsections). Also the evaluation models are introduced.\\
+
+% Curry is a functional logic programming language. As the name suggests
+% it offers features of both programming paradigms. This section will
+% outline the basic characteristics that Curry uses and give a short
+% introduction to these characteristics.
+
+% A program written in Curry is a collection of function definitions and
+% data structures, which can be organized as a module. A module with the
+% name \emph{M} is saved as \emph{M.curry} and can be imported in other
+% modules. 
+% The syntax of function definitions is quite similar to
+% Haskell. Most functions are used as prefix operators, so the
+% application of a function to an expression is denoted by
+% juxtaposition. Arithmetic operators like |+| or |-| are infix
+% operators like in the mathematical notation. Furthermore Curry also
+% supports a conditional expression that corresponds to
+% \emph{if-then-else}-expressions of other programming languages.
+
+% In general one can say that Curry combines the features of the
+% functional programming language Haskell and the logic programming
+% language Prolog.
+
+% \begin{itemize}
+% \item pattern matching
+% \item types (success)
+% \item strongly typed
+% \item type inference algorithm
+% \item (pakcs) lazy, but incomplete - the strategy evaluates
+%   non-deterministic choices sequentially instead of concurrently
+% \item statically scoped (depends on layout - also: layout/off-side
+%   rule), local scope with where and let
+% \end{itemize}
+\subsection{Functional features}\label{preliminaries:curryInfo}
+% Begin with data structures that als can be defined by the user. Use
+% CurryInfo as example.\\
+The boolean values mentioned in the previous section are part of the
+predefined data structures.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{Bool}\mathrel{=}\Conid{True}\mid \Conid{False}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+This code defines a data structure with the name \emph{Bool} that has
+to constructors \ensuremath{\Conid{False}} and \ensuremath{\Conid{True}} with the type \ensuremath{\Conid{Bool}}. In this case
+the constructors are unary. Let's define a data structure that is more
+interesting and will be used in the following chapters. For example a
+data structure that represents a Curry program, because we want to
+create an API search engine for Curry. You can save a Curry program as
+a module and it exists of functions and types (data structures).
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{CurryInfo}\mathrel{=}\Conid{CurryInfo}\;\Conid{ModuleInfo}\;[\mskip1.5mu \Conid{FunctionInfo}\mskip1.5mu]\;[\mskip1.5mu \Conid{TypeInfo}\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+In this example \emph{CurryInfo} is the name of the type and also the
+name of the constructor. As a constructor it needs three arguments, a
+\ensuremath{\Conid{ModuleInfo}} and a list of \ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}}. We define
+these data structures that hold the information about specific
+proporties of the program in chapter 3.
+
+% Introduce the idea of higher-order functions.\\
+In Curry functions are first-class citizens. This means that they can
+appear as argument of an expression or even in a data structure. The
+most popular use-case is the manipulation of all elements of a list by
+a given function. PAKCS provides the function map, which also exists
+in Haskell, that takes two arguments, a function and a list and
+returns a list. The important thing is, that the type of the function
+matches the elements of the list. For a example a function, that
+converts an integer to a character can be applied to a list of
+integers and yields to list of characters. The following code presents
+the a definition of the function map.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{map}\mathbin{::}(\Varid{a}\to \Varid{b})\to [\mskip1.5mu \Varid{a}\mskip1.5mu]\to [\mskip1.5mu \Varid{b}\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{map}\;\Varid{function}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{map}\;\Varid{function}\;(\Varid{element}\mathbin{:}\Varid{list})\mathrel{=}\Varid{function}\;\Varid{element}\mathbin{:}\Varid{map}\;\Varid{list}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+The syntax for lists is the same as in Haskell. \ensuremath{[\mskip1.5mu \mskip1.5mu]} is the empty
+list, whereas \ensuremath{\mathrm{1}\mathbin{:}\mathrm{2}\mathbin{:}\mathrm{3}\mathbin{:}[\mskip1.5mu \mskip1.5mu]} is the same as \ensuremath{[\mskip1.5mu \mathrm{1},\mathrm{2},\mathrm{3}\mskip1.5mu]} or \ensuremath{\mathrm{1}\mathbin{:}[\mskip1.5mu \mathrm{2},\mathrm{3}\mskip1.5mu]}. The
+first representation is often used in pattern matching, to use the
+first element of the list in the right-hand side of the
+definition. 
+The first line presents the type signature. The function
+\ensuremath{(\Varid{a}\to \Varid{b})} takes a value of an unspecific type and returns another
+unspecific type. The second argument is a list of elements with the
+type, that the function expects. Furthermore the resulting list
+contains elements that have the same type as the resulting type of the
+function. 
+The definition of map says that an empty list yields an
+empty list, whereas the function is applied to
+the elements of a list with at least one element recursively.\\
+
+% Explain lazy evaluation. Mention infinite structures.
+The last functional concept Curry supports is \emph{lazy
+  evaluation}. In general an expression is evaluated by replacing the
+left-hand side of a definition by the right-hand side. The evaluation
+proceeds one replacement after another until it yields a value. A
+value is an expression that only consists of built-in data structures
+or literals. If the last replacement does not result in a value, the
+evaluation fails. If an evaluation has more than one possible
+replacement step, so called subexpression can be evaluated. Lazy
+evaluation means that such a subexpression is only evaluated, if its
+result is necessary to continue the evaluation.\\
+
+In summary Curry's functional programming features covers data
+structures, higher-order functions and lazy evaluation as evaluation
+strategy. Since the logic characteristics of Curry induce that
+there is another strategy besides lazy evaluation, we will go one to
+the next section and take a closer look into these characteristics.
+\subsection{Logic features}
+% Start with the connection between functional and logical programming:
+% introduce the logical feature of non-deterministic functions. Therefor
+% give an example for a rule and later a non-deterministic function.\\
+
+Besides the already mentioned functional characteristics, Curry also
+offers non-deterministic functions and logical variables.
+Logic programming languages consist of rules, for example a constant
+function that represents my favourite number.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{favouriteNumber}\;\Conid{Sandra}\mathrel{=}\mathrm{7}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+Let's now assume that I don't have one, but two favourite
+numbers. Curry as a hybrid of functional and logic programming language
+allows multiple rules for function definitions.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{favouriteNumber}\;\Conid{Sandra}\mathrel{=}\mathrm{3}{}\<[E]%
+\\
+\>[B]{}\Varid{favouriteNumber}\;\Conid{Sandra}\mathrel{=}\mathrm{7}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+This function is non-deterministic because it returns different values
+for the same input. The pattern of this function overlaps in
+functional programming languages, but Curry's ability to search for
+results allows to define those non-deterministic functions.\\
+
+% After that explain how logical variables work.\\
+% Give an example request with free variables. Mention the similarity
+% to Prolog.
+Curry also offers logical variables. A variable is called logical, if
+it appears on the right-hand side but not on the left-hand side of a
+rule. Free variables are unbound values, that are instantiated to
+evaluate an expression. It is possible, that it exists more than one
+binding, since Curry computes all possible solutions of an expression.
+
+% As connection to free variables, mention the evaluation methods
+% ``narrowing'' and ``residuation'' next. Give an example with boolean and
+% constraint equality. Connect this to flexible and rigid functions.\\
+
+Curry provides two different approaches to evaluate an expression with
+logical variables. The first approach suspends the evaluation in hopes
+that the logical variable will be bound due to another evaluation of
+an expression. If there is no other expression to bind the value, the
+evaluation fails.This approach is called residuation and Curry uses it
+for boolean operators like the boolean equality \ensuremath{==}.  The second
+approach, called narrowing, guesses a value for an unbound
+value. Constraint operators like the boolean constraint \ensuremath{\mathbin{=.=}} use
+narrowing for evaluation. In this context Curry distinguishes two
+types of operators: flexible operators that narrow and rigid operators
+that use residuation. For example arithmetic (i.e. \ensuremath{\mathbin{+}}, \ensuremath{\mathbin{-}}, \ensuremath{\mathbin{*}} etc)
+and other primitive operations are rigid. However these distinctions
+do not have any significance for expressions without logical
+variables, so called \emph{ground expressions}. As mentioned in the
+previous section, Curry evaluates ground expressions with lazy
+strategy.
+
+% \begin{itemize}
+% \item Non-determinism
+%   \begin{itemize}
+%   \item choose
+%   \item vs flexible functions
+%   \item not in IO!
+%   \end{itemize}
+% \end{itemize}
+\section{Currydoc}\label{preliminaries:currydoc}
+% Explain the idea of CurryDoc, mention the similarity to the known
+% javadoc. Current status of the tool (HTML and LaTeX export).\\
+
+CurryDoc is a tool to generate documentation for a program written in
+Curry. The current version can generate either a HTML or \LaTeX~ file
+as output. CurryDoc works similar to code generating tools like
+javadoc\cite{javadoc} as it uses the comments in the source code, which
+are provided by the user, to gain information about the function or
+data structure. It also provides the type signatures of functions,
+since Curry uses a type inferencer algorithm. In addition the CurryDoc tool
+analyzes the program's structure and approximates the run-time
+behavior to gain further information\cite{currydoc2}. This includes information about
+in-/completeness, overlapping pattern matches and non-/deterministic
+functions.
+
+Since CurryDoc is implemented in Curry, it uses the meta-programming
+module \emph{Flat}\cite{flat2} that provides an intermediate language of the Curry
+program to analyze the special function proporties. Such a
+FlatCurry\cite{flat} program consists mainly of a list of functions, a
+list of types and information about the module itself.
+% As you may notice, these are the informations we want to provide for
+% the API search engine.
+
+% Introduce FlatCurry program as utility. What is FlatCurry? Give an example of a
+% Curry program and the corresponding FlatCurry program.\\
+
+\section{The Holumbus Framework}\label{preliminaries:holumbus}
+The Holumbus Framework is a Haskell library created by students of FH
+Wedel in connection with three master's theses\footnote{references here?}. The main idea is to
+collect documents with a specific data structure, like an API of a
+programming language, and to take advantage of this structure to
+improve the search results.\\
+
+The framework supports three steps to create a search engine: the
+crawling, the indexing and the searching part itself. The search
+engine produced in connection with this thesis uses the latter two steps. The
+indexer preprocesses the documents to create the characteristical data
+structure that is used to process a search query. Furthermore Holumbus
+provides a data structure that represents the results of a search
+query. This data structure corresponds to the structure of the
+documents, which simplifies the further processing.
+\chapter{Analysis}\label{analysis}
+This chaper looks into the requirements to build and run an API search
+engine for Curry. The first section deals with the creation of an
+index, whereas the second section addresses the process of searching
+for a query. In this context, we take a closer look of the Holumbus
+framework and its features concering search and evaluate the criteria
+to accomplish a user-friendy search mechanism. Above all we need a web
+application to handle user queries, which is analyzed in the last
+section.
+
+% Give a short summary about the following sections.\\
+
+% What do we need to create this search engine? 
+% The possibility to generate and update the index.\\
+% The possibility to search for these informations in the index. At
+% best: user-friendly \\
+
+% What do we want above all?
+% A web application for queries.
+
+% \section{Currydoc}
+\section{Creating the Index}
+At first, we have to decide what kind of data we want to store in
+the index. Secondly the data structure of the index and documents
+provided by the Holumbus framework, that hold
+these information, is discussed.\\
+
+The data we want to extract from a given Curry module are at least the
+defined functions and data structures as well as general information
+about the module like the name and author. Since Curry is currently
+organized by the module documentation generated by CurryDoc, we
+already have a mechanism to gain these information about a Curry
+module. In fact, we even have function related information like a
+non-deterministic definition or a flexible evaluation as we
+stated in the \hyperref[preliminaries:curryInfo]{previous chapter}.
+
+Currently CurryDoc processes Curry modules and generates documentation
+as HTML or \LaTeX~ output. For our index, we are not interested in any
+document markup language, but the pure information about the Curry
+module. This leads to the idea of generating a new readable data
+structure as an extension to CurryDoc. We discuss the actual
+implementation in \hyperref[implementation:currydoc]{Chapter
+  \ref{implementation} Section \ref{implementation:currydoc}}.\\
+
+% CurryDoc uses the meta-programming language FlatCurry to gain an
+% intermediate data structure. We can use this data structure for our
+% purposes. But at first, we have to discuss the which information to
+% provide in our data structures. We already introduced \emph{CurryInfo}
+% as structure for a Curry module in the
+% \hyperref[preliminaries:currydoc:curryInfo]{previous chapter}.
+% As next step we want to describe the information this data
+% structure holds. The information about a module covers its name,
+% author and description.
+
+% Thanks to FlatCurry, we get quite more details about functions and
+% types. Besides basic information like the name, description and the
+% corresponding module, we have access to function characteristics like
+% its flexible or rigid status and non- or deterministic property. In addition
+% FlatCurry provides a data structure |TypeExpr| to describe type
+% signatures (see \hyperref[fig:typeExpr]{Figure \ref{fig:typeExpr}}),
+% which we use in both data structures. All described data structures to
+% provide a representation for a Curry module can be seen in
+% \hyperref[fig:curryInfo]{Figure \ref{fig:curryInfo}}.
+
+% \begin{figure}[h]
+% \begin{code}
+% -- || The CurryInfo data holds information about the module, and
+% --  corresponding  functions, data and type declaration of a given 
+% --  Curry module.
+% data CurryInfo = 
+%   CurryInfo ModuleInfo [FunctionInfo] [TypeInfo]
+
+
+% -- || ModuleInfo holds information about the name, author,
+% --    and the description of a given module.
+% data ModuleInfo = 
+%   ModuleInfo String String String
+
+% -- || FunctionInfo holds information about the name, signature, corresponding 
+% -- module, description and flexible/rigid status of a function and 
+% -- its non-/deterministic behaviour.
+% data FunctionInfo = 
+%   FunctionInfo String (QName, TypeExpr) String String Bool
+%   FlexRigidResult
+
+% -- || TypeInfo holds information about the name, signature, type variables,
+% -- corresponding module, and description of a given type.
+% data TypeInfo = 
+%   TypeInfo String [(QName, [TypeExpr])] [Int] String String
+% \end{code}
+% \caption{The data structures for a Curry module}
+% \label{fig:curryInfo}
+% \end{figure}
+
+
+% What do we need to create an index that can be used for the Curry
+% search engine?\\
+
+% First: Curry specific information (CurryDoc)\\
+
+% First start with the idea of the extension: instead of generating a
+% document markup language, generate a readable data structure.\\
+
+% Introduce the TypeExpr data structure that is part of the FlatCurry
+% feature.\\
+
+\begin{figure}
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{6}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{35}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{37}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{TypeExpr}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{6}{}\<[6]%
+\>[6]{}\Conid{TVar}\;\Conid{TVarIndex}{}\<[37]%
+\>[37]{}\mbox{\onelinecomment  type variable}{}\<[E]%
+\\
+\>[B]{}\hsindent{4}{}\<[4]%
+\>[4]{}\mid \Conid{FuncType}\;\Conid{TypeExpr}\;\Conid{TypeExpr}{}\<[37]%
+\>[37]{}\mbox{\onelinecomment  function type t1->t2}{}\<[E]%
+\\
+\>[B]{}\hsindent{4}{}\<[4]%
+\>[4]{}\mid \Conid{TCons}\;\Conid{QName}\;[\mskip1.5mu \Conid{TypeExpr}\mskip1.5mu]{}\<[37]%
+\>[37]{}\mbox{\onelinecomment  type constructor application}{}\<[E]%
+\\
+\>[37]{}\mbox{\onelinecomment  TCons (module, name) typeargs}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{QName}\mathrel{=}(\Conid{String},\Conid{String}){}\<[35]%
+\>[35]{}\mbox{\onelinecomment  (module, type or constructor  name)}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{TVarIndex}\mathrel{=}\Conid{Int}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{FlatCurry data structure for type signatures}
+\label{fig:typeExpr}
+\end{figure}
+% Second: a data structure to hold the information (index and document
+% structure from the Holumbus framework)\\
+
+% \begin{itemize}
+% \item HolDocuments - Stores the documents that correspond to the
+%   index. A mapping is provided.
+% \item HolIndex - Data structure to store the information, that is
+%   traversed in the search process.
+% \item HolumbusState a - the combination of index and document,
+%   polymorph by the data the HolDocuments holds.
+% \end{itemize}
+
+\section{Searching}
+How do we search for the information in the index?
+
+Holumbus provides search mechanism with a special syntax.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{Query}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{Word}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{Phrase}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{CaseWord}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{CasePhrase}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{FuzzyWord}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{Specifier}\;[\mskip1.5mu \Conid{Context}\mskip1.5mu]\;\Conid{Query}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{Negation}\;\Conid{Query}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{14}{}\<[14]%
+\>[14]{}\Conid{BinQuery}\;\Conid{BinOp}\;\Conid{Query}\;\Conid{Query}{}\<[E]%
+\\
+\>[B]{}\mathbf{data}\;\Conid{BinOp}\mathrel{=}\Conid{And}\mid \Conid{Or}\mid \Conid{But}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+And this data structure can be processed by processQuery (Holumbus.Query.Processor).\\
+
+Holumbus also provides a data structure that is returned after a query
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{16}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{28}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{29}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{Result}\;\Varid{a}{}\<[16]%
+\>[16]{}\mathrel{=}\Conid{Result}{}\<[E]%
+\\
+\>[16]{}\hsindent{1}{}\<[17]%
+\>[17]{}\{\mskip1.5mu \Varid{docHits}{}\<[28]%
+\>[28]{}\mathbin{::}(\Conid{DocHits}\;\Varid{a}){}\<[E]%
+\\
+\>[16]{}\hsindent{1}{}\<[17]%
+\>[17]{},\Varid{wordHits}\mathbin{::}\Conid{WordHits}{}\<[E]%
+\\
+\>[16]{}\hsindent{1}{}\<[17]%
+\>[17]{}\mskip1.5mu\}\;\mathbf{deriving}\;(\Conid{Eq},\Conid{Show}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{data}\;\Conid{DocInfo}\;\Varid{a}\mathrel{=}\Conid{DocInfo}{}\<[E]%
+\\
+\>[B]{}\hsindent{17}{}\<[17]%
+\>[17]{}\{\mskip1.5mu \Varid{document}\mathbin{::}(\Conid{Document}\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\hsindent{17}{}\<[17]%
+\>[17]{},\Varid{docScore}\mathbin{::}\Conid{Score}{}\<[E]%
+\\
+\>[B]{}\hsindent{17}{}\<[17]%
+\>[17]{}\mskip1.5mu\}\;\mathbf{deriving}\;(\Conid{Eq},\Conid{Show}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{data}\;\Conid{WordInfo}{}\<[16]%
+\>[16]{}\mathrel{=}\Conid{WordInfo}{}\<[E]%
+\\
+\>[16]{}\hsindent{1}{}\<[17]%
+\>[17]{}\{\mskip1.5mu \Varid{terms}{}\<[29]%
+\>[29]{}\mathbin{::}\Conid{Terms}{}\<[E]%
+\\
+\>[16]{}\hsindent{1}{}\<[17]%
+\>[17]{},\Varid{wordScore}\mathbin{::}\Conid{Score}{}\<[E]%
+\\
+\>[16]{}\hsindent{1}{}\<[17]%
+\>[17]{}\mskip1.5mu\}\;\mathbf{deriving}\;(\Conid{Eq},\Conid{Show}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{DocHits}\;\Varid{a}{}\<[22]%
+\>[22]{}\mathrel{=}\Conid{DocIdMap}\;(\Conid{DocInfo}\;\Varid{a},\Conid{DocContextHits}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{DocContextHits}{}\<[22]%
+\>[22]{}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{DocWordHits}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{DocWordHits}{}\<[22]%
+\>[22]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;\Conid{Positions}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{WordHits}{}\<[22]%
+\>[22]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;(\Conid{WordInfo},\Conid{WordContextHits}){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{WordContextHits}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{WordDocHits}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{WordDocHits}{}\<[22]%
+\>[22]{}\mathrel{=}\Conid{Occurrences}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{Score}{}\<[22]%
+\>[22]{}\mathrel{=}\Conid{Float}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Terms}{}\<[22]%
+\>[22]{}\mathrel{=}[\mskip1.5mu \Conid{String}\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+But first the user input has to be parsed into the query structure to
+start the processing.
+
+\subsection{Parsing User-Queries}
+Which criteria do we want to search for? Modules, functions, types,
+signatures, and  det./non-det., flexible/rigid functions. \\
+
+First describe the idea, that the use of a specific language increases
+the usability. But it also restricts the user in her usage of the
+search engine, if this language gets more complex. So this results in
+a compromise between a simply to use language and a language that can
+be parsed.  Show the example of searching IO, where the restriction to
+modules minimizes the result.\\
+
+% After that list all language components that describe the restriction
+% to contexts (module, function, type, signature and  non-/deterministic,
+% flexible, rigid functions.\\
+
+Set the focus on signatures. Because Hayoo! does not find signatures with
+redundant parentheses, Curr(y)gle supports parenthesized signatures
+and parenthesized query parts in general. \\
+
+In addition: binary operations/conjunctions. \\
+Explain that in most cases, a combination of more search words is
+desirable, because first popular search engines like Google\texttrademark~use this
+feature so it's common knowledge (the user expects this features) and
+second it's easier to search for more search words, if the desired
+result is still vague.
+
+The parser becomes a complex, but very important matter.
+\chapter{Implementation}\label{implementation}
+Mention that the implementation is done in Haskell.\\
+
+Give a short summary of the next sections.
+\section{CurryDoc extension}\label{implementation:currydoc}
+
+% First start with the idea of the extension: instead of generating a
+% document markup language, generate a readable data structure.
+
+% Introduce the TypeExpr data structure that is part of the FlatCurry
+% feature.
+
+% \begin{code}
+% data TypeExpr =
+%      TVar TVarIndex                 -- type variable
+%    | FuncType TypeExpr TypeExpr     -- function type t1->t2
+%    | TCons QName [TypeExpr]         -- type constructor application
+%                                     -- TCons (module, name) typeargs
+
+% type QName = (String, String)
+% type TVarIndex = Int
+% \end{code}
+
+Present the general structure of the \ensuremath{\Conid{CurryInfo}} data and the
+sub-structures \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}}.
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{CurryInfo}\mathrel{=}\Conid{CurryInfo}\;\Conid{ModuleInfo}\;[\mskip1.5mu \Conid{FunctionInfo}\mskip1.5mu]\;[\mskip1.5mu \Conid{TypeInfo}\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The name, author and description is the interesting information that
+is exported. 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{ModuleInfo}\mathrel{=}\Conid{ModuleInfo}\;\Conid{String}\;\Conid{String}\;\Conid{String}\;[\mskip1.5mu \Conid{String}\mskip1.5mu]\;\Conid{String}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The model contains the name, signature, module, and description of a function
+and extra information about the non-/determinism and flexible/rigid status.
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{FunctionInfo}\mathrel{=}\Conid{FunctionInfo}\;\Conid{String}\;(\Conid{QName},\Conid{TypeExpr})\;\Conid{String}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}\;\Conid{Bool}\;\Conid{FlexRigidResult}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+The TypeInfo includes the name, signature, list of type variables,
+module, and description.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{TypeInfo}\mathrel{=}\Conid{TypeInfo}\;\Conid{String}\;[\mskip1.5mu (\Conid{QName},[\mskip1.5mu \Conid{TypeExpr}\mskip1.5mu])\mskip1.5mu]\;[\mskip1.5mu \Conid{TVarIndex}\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}\;\Conid{String}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Explain how this extension is used in the CurryDoc tool. 
+
+The same data structure is used on the Haskell side that implements
+the search engine.
+
+\section{Indexing}
+
+First mention that the interessting parts (that we want to add to the
+index) are already filtered by the CurryDoc part. So the indexer only
+processes the information to the structure provided by the Holumbus
+framework (HolumbusState).
+
+Present the output (files) the indexer produces. After that introduce
+the concept of documents and index. In addition to that, say something
+about refreshing and checking the list of modules.
+
+Mention the three different kinds of documents for the three
+structures: module, function, type.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{35}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mbox{\onelinecomment  | Pair of index and documents of the type ModuleInfo}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{CurryModIndexerState}{}\<[35]%
+\>[35]{}\mathrel{=}\Conid{HolumbusState}\;\Conid{ModuleInfo}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  | Pair of index and documents of the type FunctionInfo}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{CurryFctIndexerState}{}\<[35]%
+\>[35]{}\mathrel{=}\Conid{HolumbusState}\;\Conid{FunctionInfo}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  | Pair of index and documents of the type TypeInfo}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{CurryTypeIndexerState}{}\<[35]%
+\>[35]{}\mathrel{=}\Conid{HolumbusState}\;\Conid{TypeInfo}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Explain how each kind of information (description, module name,
+function signature etc) is combined with its context, and that these
+are stored in the index. Note that information can be extracted by the
+context again.
+
+Note the difficulties of updating the index, because the data
+structure of the loaded pair of index and document differs from
+HolumbusState a. Conversion of \ensuremath{\Conid{Inverted}} to \ensuremath{\Conid{CompactInverted}} and
+\ensuremath{\Conid{Documents}\;\Varid{a}} to \ensuremath{\Conid{SmallDocuments}\;\Varid{a}}.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{type}\;\Conid{LoadedIndexerState}\;\Varid{a}\mathrel{=}(\Conid{CompactInverted},\Conid{SmallDocuments}\;\Varid{a}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Refer to the appendix, where the usage of the curryIndexer is
+explained.
+
+\section{Parsing user queries}
+
+% First describe the idea, that the use of a specific language increases
+% the usability. But it also restricts the user in her usage of the
+% search engine, if this language gets more complex. So this results in
+% a compromise between a simply to use language and a language that can
+% be parsed.  Show the example of searching IO, where the restriction to
+% modules minimizes the result.
+
+% After that list all language components that describe the restriction
+% to contexts (module, function, type, signature and  non-/deterministic,
+% flexible, rigid functions.
+
+% Set the focus on signatures. Because Hayoo does not find signatures with
+% redundant parenthesis, Curr(y)gle supports parenthesized signatures
+% and parenthesized query parts in general.  
+
+Explain the general idea of parsers: a parser is used to analyze the
+user query with these different kinds of information. While parsing
+the string, a new data structure is composed for further use. This
+data structure is provided by the Holumbus framework and is used to
+starte the processs that returns the search results.
+
+Introduce the parser type that is parametrized with the type to parse and the
+resulting type.
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{type}\;\Conid{Parser}\;\Varid{s}\;\Varid{a}\mathrel{=}[\mskip1.5mu \Varid{s}\mskip1.5mu]\to [\mskip1.5mu (\Varid{a},[\mskip1.5mu \Varid{s}\mskip1.5mu])\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Explain the operator \ensuremath{(\mathbin{<|>})} that applies two parsers and concats the
+parsing results.  
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}(\mathbin{<|>})\mathbin{::}\Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{a}{}\<[E]%
+\\
+\>[B]{}\Varid{p}\mathbin{<|>}\Varid{q}\mathrel{=}(\lambda \Varid{ts}\to \Varid{p}\;\Varid{ts}++\Varid{q}\;\Varid{ts}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Introduce the combination of two parsers that is similar to a monadic
+bind operator. 
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}(\mathbin{<*>})\mathbin{::}\Conid{Parser}\;\Varid{s}\;(\Varid{a}\to \Varid{b})\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{b}{}\<[E]%
+\\
+\>[B]{}\Varid{p}\mathbin{<*>}\Varid{q}\mathrel{=}\lambda \Varid{ts}\to [\mskip1.5mu (\Varid{f}\;\Varid{x},\Varid{ts2})\mid (\Varid{f},\Varid{ts1})\leftarrow \Varid{p}\;\Varid{ts},(\Varid{x},\Varid{ts2})\leftarrow \Varid{q}\;\Varid{ts1}\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Now show that a function has to be applied, to use the binding operator.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{12}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}(\mathbin{<\$>})\mathbin{::}(\Varid{a}\to \Varid{b})\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{b}{}\<[E]%
+\\
+\>[B]{}\Varid{f}\mathbin{<\$>}\Varid{p}\mathrel{=}{}\<[12]%
+\>[12]{}\lambda \Varid{ts}\to [\mskip1.5mu (\Varid{f}\;\Varid{x},\Varid{ts1})\mid (\Varid{x},\Varid{ts1})\leftarrow \Varid{p}\;\Varid{ts}\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Present a simple example that can parse a given character.
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{parsePredicate}\mathbin{::}(\Conid{Char}\to \Conid{Bool})\to \Conid{Parser}\;\Conid{Char}\;\Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{parsePredicate}\;\Varid{predicate}\;(\Varid{t}\mathbin{:}\Varid{ts}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mid \Varid{predicate}\;\Varid{t}\mathrel{=}[\mskip1.5mu ([\mskip1.5mu \mskip1.5mu],\Varid{ts})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mid \Varid{otherwise}{}\<[17]%
+\>[17]{}\mathrel{=}[\mskip1.5mu ([\mskip1.5mu \mskip1.5mu],\Varid{t}\mathbin{:}\Varid{ts})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{parsePredicate}\;\anonymous \;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Present the concept by writing a parser for expressions with or without
+parentheses using \ensuremath{\mathbin{<|>}} and \ensuremath{\mathbin{<*>}}. 
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mbox{\onelinecomment  Parses an opening parenthesis by using the predicate parser.}{}\<[E]%
+\\
+\>[B]{}\Varid{parseOpenParenthesis}\mathbin{::}\Conid{Parser}\;\Conid{Char}\;\Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{parseOpenParenthesis}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{parsePredicate}\;(\text{\tt '('}==){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  Parses an closing parenthesis.}{}\<[E]%
+\\
+\>[B]{}\Varid{parseCloseParenthesis}\mathbin{::}\Conid{Parser}\;\Conid{Char}\;\Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{parseCloseParenthesis}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{parsePredicate}\;(\text{\tt ')'}==){}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  Parses a sequence of alpha numeric characters. }{}\<[E]%
+\\
+\>[B]{}\Varid{parseExpression}\mathbin{::}\Conid{Parser}\;\Conid{Char}\;\Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{parseExpression}\;(\Varid{t}\mathbin{:}\Varid{ts})\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathbf{if}\;\Varid{isAlphaNum}\;\Varid{t}\;\mathbf{then}\;\Varid{parseExpression}\;\Varid{ts}\;\mathbf{else}\;[\mskip1.5mu ([\mskip1.5mu \mskip1.5mu],\Varid{t}\mathbin{:}\Varid{ts})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{parseExpression}\;[\mskip1.5mu \mskip1.5mu]\mathrel{=}[\mskip1.5mu \mskip1.5mu]{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mbox{\onelinecomment  Parses an expression or a parenthesized expression.}{}\<[E]%
+\\
+\>[B]{}\Varid{parenthesizedExpression}\mathbin{::}\Conid{Parser}\;\Conid{Char}\;\Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{parenthesizedExpression}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}((\mathbin{\char92 \char95 }\Varid{expr}\;\anonymous \to \Varid{expr}){}\<[E]%
+\\
+\>[5]{}\hsindent{2}{}\<[7]%
+\>[7]{}\mathbin{<\$>}\Varid{parseOpenParenthesis}\mathbin{<*>}\Varid{parseExpression}\mathbin{<*>}\Varid{parseCloseParenthesis}){}\<[E]%
+\\
+\>[B]{}\hsindent{5}{}\<[5]%
+\>[5]{}\mathbin{<|>}\Varid{parseExpression}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Mention that the used type in the implementation correlates to \ensuremath{\Conid{Parser}\;\Conid{String}\;\Conid{TypeExpr}} (which is already used for the data exchange) for
+signatures and \ensuremath{\Conid{Parser}\;\Conid{String}\;\Conid{Query}} (which is provided by the Holumbus framework) for the end
+result. 
+
+% Explain that in most cases, a combination of more search words is
+% desirable, because first popular search engines like Google\texttrademark~use this
+% feature so it's common knowledge (the user expects this features) and
+% second it's easier to search for more search words, if the desired
+% result is still vague.
+
+Give a definition of the language (EBNF(?) / appendix). 
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{16}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{43}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{60}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{64}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{query}\mathbin{:=}\Varid{expr}\;[\mskip1.5mu \Varid{expr}\mskip1.5mu]\mid \Varid{expr}\;\Varid{bool}\;\Varid{expr}\mid (\Varid{expr}){}\<[E]%
+\\
+\>[B]{}\Varid{expr}\mathbin{:=}(\Varid{expr})\mid \Varid{specifier}\mid \Varid{signature}\mid \Varid{string}{}\<[E]%
+\\
+\>[B]{}\Varid{bool}\mathbin{:=}``\Conid{AND''}\mid ``\Conid{OR''}\mid ``\Conid{NOT''}{}\<[E]%
+\\
+\>[B]{}\Varid{specifier}\mathbin{:=}{}\<[16]%
+\>[16]{}``\mathbin{:}\Varid{module''}\;[\mskip1.5mu \Varid{alphaNum}\mskip1.5mu]\mid ``\mathbin{:}\Varid{signature''}\;{}\<[60]%
+\>[60]{}[\mskip1.5mu \Varid{signature}\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\mid {}\<[5]%
+\>[5]{}``\mathbin{:}\Varid{function''}\;[\mskip1.5mu \Varid{alphaNum}\mskip1.5mu]\mid ``\mathbin{:}\Varid{flexible''}\mid ``\mathbin{:}\Varid{rigid''}\mid {}\<[64]%
+\>[64]{}``\mathbin{:}\Varid{nondet''}\mid ``\mathbin{:}\Varid{det''}{}\<[E]%
+\\
+\>[B]{}\Varid{signature}\mathbin{:=}\Conid{Upper}\;\Varid{alphaNum}\mid \Varid{function}\mid \Varid{constructor}{}\<[E]%
+\\
+\>[B]{}\Varid{function}\mathbin{:=}\Varid{signature}``\mathbin{-->}\text{\tt ''}\;\Varid{signature}{}\<[43]%
+\>[43]{}\mid \Varid{lower}``\mathbin{-->}\text{\tt ''}\;\Varid{signature}\mid {}\<[E]%
+\\
+\>[B]{}\Varid{signature}``\to \text{\tt ''}\;\Varid{lower}{}\<[E]%
+\\
+\>[B]{}\Varid{constructor}\mathbin{:=}\Conid{Upper}\;\Varid{alphaNum}\;\Varid{signature}\mid \Conid{Upper}\;\Varid{alphaNum}\;\Varid{lower}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The actual use case of the search engine is to search for a given query.
+
+% For the user, it's important that the search engine understands her
+% query. For this cause, the user is obliged to use a specific language
+% that can be interpreted unambiguously.
+
+% To simplify the usage of the search engine, Curr(y)gle\texttrademark
+% provides a language to restrict the search to a specific
+% context. This feature not only simplifies the use, but results in a better
+% user-experience.
+
+% (Example) Let's assume you want to search for the module Map. Without
+% the restriction to modules, there are numerous results, because map is
+% a very common name (as it is associated with higher-order functions)
+% in functional languages. Thanks to the feature to search for specific
+% contexts, you can search for the query \emph{:module map} instead,
+% where \emph{:module} indicates the context of modules.
+
+% Curr(y)gle \texttrademark supports to search explicitly for modules,
+% functions, types and signatures. In addition to that, it allows
+% to search for functions with a given characteristic, like
+% non-deterministic, flexible and rigid functions.
+
+% As the number of the supported features increases, the query gets more
+% complex to parse. 
+
+\chapter{Conclusion}\label{conclusion}
+\section{Summary and Results}
+\section{Outlook}
+
+% Setze Numerierung wieder auf römisch zurück und setzte von oben fort
+% Wert ist demnach der von 'roemisch'
+% \newpage
+% \pagenumbering{Roman}
+% \setcounter{page}{\value{roemisch}}
+
+% Literaturverzeichnis
+\bibliography{literatur/bib}
+
+% Appendix, falls vorhanden
+% \appendix
+% \input{extras/anhang}
+
+% Eidesstattliche Erklärung
+% \input{extras/eidesstattliche}
+
+\end{document}
