@@ -33,27 +33,39 @@ import Helpers (showType)
 
 infixr 4 -->
 
+-- Name for the specifier to restrict the search to module names.
 _moduleSpecifierName :: String
 _moduleSpecifierName = ":module"
 
+-- Name for the specifier to restrict the search to function names.
 _functionSpecifierName :: String
 _functionSpecifierName = ":function"
 
+-- Name for the specifier to restrict the search to type names.
 _typeSpecifierName :: String
 _typeSpecifierName = ":type"
 
+-- Name for the specifier to restrict the search to signatures.
 _signatureSpecifierName :: String
 _signatureSpecifierName = ":signature"
 
+-- Name for the specifier to only search for information in the given module.
+_inModuleSpecifierName :: String
+_inModuleSpecifierName = ":inModule"
+
+-- Name for the specifier to restrict the search to non-deterministic functions
 _nondetSpecifierName :: String
 _nondetSpecifierName = ":nondet"
 
+-- Name for the specifier to restrict the search to deterministic functions
 _detSpecifierName :: String
 _detSpecifierName = ":det"
 
+-- Name for the specifier to restrict the search to flexible functions
 _flexibleSpecifierName :: String
 _flexibleSpecifierName = ":flexible"
 
+-- Name for the specifier to restrict the search to rigid functions
 _rigidSpecifierName :: String
 _rigidSpecifierName = ":rigid"
 
@@ -68,6 +80,9 @@ _typeSpecifierNameShort = ":t"
 
 _signatureSpecifierNameShort :: String
 _signatureSpecifierNameShort = ":s"
+
+_inModuleSpecifierNameShort :: String
+_inModuleSpecifierNameShort = ":in"
 
 _nondetSpecifierNameShort :: String
 _nondetSpecifierNameShort = ":nd"
@@ -188,6 +203,12 @@ typeSpecifier =
   aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort
    (identifier specifierTokenParser <|> string ":" <|> string "[]")
 
+-- | Parser a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
+inModuleSpecifier :: QueryParser
+inModuleSpecifier =
+  aSpecifierParser True _inModuleSpecifierName _inModuleSpecifierNameShort
+   (identifier specifierTokenParser)
+
 -- | Parses a nondetSpecifierName.
 nondeterminismSpecifier :: QueryParser
 nondeterminismSpecifier = 
@@ -220,12 +241,13 @@ signatureSpecifier =
         (\sig -> specify [_signatureSpecifierName] (testShow sig))
         <$> (reservedOp specifierTokenParser name *> signatureParser False)
 
--- | All possible forms of a specifier.
+-- | Parses all possible forms of specifiers.
 specifierParser :: QueryParser
 specifierParser =
   try $ parens specifierTokenParser specifierParser
   <|> moduleSpecifier
   <|> typeSpecifier
+  <|> inModuleSpecifier
   <|> nondeterminismSpecifier
   <|> determinismSpecifier
   <|> flexibleSpecifier
@@ -236,15 +258,6 @@ specifierParser =
 ----------------------
 -- the query parser --
 ----------------------
-
--- -- | Parses the permutation of specifiers, identifiers and signatures. 
--- permutations :: QueryParser
--- permutations = 
---   try ((\a -> binQuery a) <$> many (specifierParser 
---   <|> (Word <$> identifier binaryTokenParser)
---   <|> (Word <$> operator binaryTokenParser)
---   <|> ((\word -> specify [":signature"] (testShow word)) 
---                  <$> signatureParser)))
 
 -- | Parses all possible forms of a user query: a specifier or the whole query with parentheses or permutation of specifiers, identifiers and signatures.
 binOpTerm :: QueryParser
@@ -291,7 +304,7 @@ signatureDef =
     -- reservedOpNames = [":", "[]", "()"],
     reservedNames   = 
      ["AND", "NOT", "OR", ":signature", ":module", ":function",":type", 
-      ":nondet", ":det", ":flexible", ":rigid"]
+      ":nondet", ":det", ":flexible", ":rigid", ":in"]
    }
 
 signatureTokenParser :: TokenParser String
@@ -318,7 +331,7 @@ binOpDef =
     reservedOpNames = ["->",":"],
     reservedNames   = 
      ["AND", "NOT", "OR", ":signature", ":module", ":function",":type", 
-      ":nondet", ":det", ":flexible", ":rigid"]
+      ":nondet", ":det", ":flexible", ":rigid", ":in"]
   }
 
 binaryTokenParser :: TokenParser String
