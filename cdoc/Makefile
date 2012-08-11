@@ -24,9 +24,7 @@ CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
 	(cd /Users/ichistmeinname/Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/cdoc ; \
 	 rm -f currydoc ; \
 		ln -s ./CurryDoc.state currydoc)
-	
-
 
 .PHONY: clean
 clean:
-	rm -f ./currydoc
+	rm -f ./currydoc ; rm -f ./CurryDoc.state ; rm -R ./.curry
