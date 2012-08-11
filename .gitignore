@@ -11,3 +11,6 @@ TeXerei/*.ptb
 TeXerei/*.run.xml
 TeXerei/*.toc
 TeXerei/bachelor-blx.bib
+cdoc/.curry
+CurrySearch/dist
+CurrySearch/log/*.log
