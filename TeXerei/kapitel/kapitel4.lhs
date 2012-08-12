@@ -1,5 +1,5 @@
 \chapter{Implementation}\label{implementation}
-Mention that the implementation is done in Haskell.\\
+Mention that the implementation is done in Haskell or Curry.\\
 
 Give a short summary of the next sections.
 \section{CurryDoc extension}\label{implementation:currydoc}
@@ -54,7 +54,7 @@ Explain how this extension is used in the CurryDoc tool.
 The same data structure is used on the Haskell side that implements
 the search engine.
 
-\section{Indexing}
+\section{Indexing}\label{implementation:index}
 
 First mention that the interessting parts (that we want to add to the
 index) are already filtered by the CurryDoc part. So the indexer only

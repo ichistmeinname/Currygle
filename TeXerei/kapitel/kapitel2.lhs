@@ -20,7 +20,7 @@ international development project to provide a platform for research
 and teaching mostly. As the description suggest, it offers features of
 both programming paradigms. The first subsection will start with some general
 features, followed by two subsections that cover
-functional and logical concepts of Curry. \\
+functional and logical concepts of Curry.
 
 % Start with the structure of a curry program. \\
 \subsection{General overview}
@@ -233,7 +233,11 @@ and other primitive operations are rigid. However these distinctions
 do not have any significance for expressions without logical
 variables, so called \emph{ground expressions}. As mentioned in the
 previous section, Curry evaluates ground expressions with lazy
-strategy.
+strategy.\\
+
+Simply put, one can say that Curry combines the features of the
+functional programming language Haskell and the logic programming
+language Prolog.
 
 % \begin{itemize}
 % \item Non-determinism
@@ -272,10 +276,13 @@ list of types and information about the module itself.
 
 \section{The Holumbus Framework}\label{preliminaries:holumbus}
 The Holumbus Framework is a Haskell library created by students of FH
-Wedel in connection with three master's theses\footnote{references here?}. The main idea is to
-collect documents with a specific data structure, like an API of a
-programming language, and to take advantage of this structure to
-improve the search results.\\
+Wedel in connection with three master's theses\footnote{references
+  here?}. The main idea of the framework is to collect data with a
+specific structure, like an API of a programming language, and to take
+advantage of this structure to improve the search results. In addition
+to the framework, they also build an example application named
+\emph{Hayoo!}\cite{hayoo}, an API search engine for the functional
+programming language Haskell.\\
 
 The framework supports three steps to create a search engine: the
 crawling, the indexing and the searching part itself. The search
@@ -284,4 +291,5 @@ indexer preprocesses the documents to create the characteristical data
 structure that is used to process a search query. Furthermore Holumbus
 provides a data structure that represents the results of a search
 query. This data structure corresponds to the structure of the
-documents, which simplifies the further processing.
+documents, which simplifies the further processing.\\
+
