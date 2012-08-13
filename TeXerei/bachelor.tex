@@ -550,9 +550,9 @@ Matrikelnummer:  \trmatrikelnummer \\
 \ihead{\leftmark}
 \ohead{\rightmark}
 \chapter{Introduction}
-
+Once upon a time ...
 \section{Motivation}
-
+Curr(y)gle > Hayoo!
 \section{Structure}
 At first \hyperref[preliminaries]{Chapter \ref*{preliminaries}} gives
 the preliminiaries to understand this thesis. This includes basic
@@ -937,8 +937,7 @@ module. This leads to the idea of generating a new readable data
 structure as an extension to CurryDoc. In the process we take
 advantage of the FlatCurry representation of a Curry module to access
 these information we mentioned above. We discuss the actual
-implementation in \hyperref[implementation:currydoc]{Chapter
-  \ref{implementation} Section \ref{implementation:currydoc}}. But in
+implementation in \hyperref[implementation:currydoc]{Section \ref{implementation:currydoc}}. But in
 preparation of the next chapter, we introduce the data structure
 \ensuremath{\Conid{TypeExpr}} that is provided by the Flat module (see
 \hyperref[fig:typeExpr]{Figure \ref{fig:typeExpr}}).
@@ -1101,7 +1100,7 @@ association between the information in the index and the corresponding
 document through a mapping. A further structure provided by the
 framework is \ensuremath{\Conid{HolumbusState}\;\Varid{a}}: a combination of index and document,
 polymorph by the data \ensuremath{\Conid{HolDocuments}\;\Varid{a}} holds. In
-\hyperref[implementation:index]{Chapter \ref{implementation} Section
+\hyperref[implementation:index]{Section
   \ref{implementation:index}} we illustrate the use of these data
 structures in our implementation.\\
 
@@ -1131,62 +1130,72 @@ results of the processed query for further use.\\
 
 Thankfully these are all features the Holumbus framework provides. At
 first we take a look at the search mechanism. The data structure
-\ensuremath{\Conid{Query}} allows to search for a word and a phrase, both
-case-insensitive and case-sensitive. Since the search depends on
-user-input, the framework also allows something called \emph{fuzzy
-  search} to scan for results with spelling errors like transposed
-letters. Furthermore the structure provides binary operators like
-\ensuremath{\Conid{AND}}, \ensuremath{\Conid{OR}} and \ensuremath{\Conid{NOT}} to combine multiple
-queries. \hyperref[analysis:query]{Figure \ref{analysis:query}} shows
-the discussed data structure.\\
-
+\ensuremath{\Conid{Query}} (see \hyperref[analysis:query]{Figure \ref{analysis:query}})
+allows to search for a word and a phrase, both case-insensitive and
+case-sensitive. Since the search depends on user-input, the framework
+also allows something called \emph{fuzzy search} to scan for results
+with spelling errors like transposed letters. Since the index data
+structure of Holumbus uses pairs of words and contexts, a special
+mechanism to search for these contexts is given. Furthermore the
+structure provides binary operators like \ensuremath{\Conid{AND}}, \ensuremath{\Conid{OR}} and \ensuremath{\Conid{NOT}} to
+combine multiple queries.
 % Holumbus provides search mechanism with a special syntax.
-\begin{figure}[h!]
+\begin{figure}
 \label{analysis:query}
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{12}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{Query}\mathrel{=}{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{Query}\mathrel{=}\Conid{Word}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{Word}\;\Conid{String}\mid {}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{Phrase}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{Phrase}\;\Conid{String}\mid {}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{CaseWord}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{CaseWord}\;\Conid{String}\mid {}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{CasePhrase}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{CasePhrase}\;\Conid{String}\mid {}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{FuzzyWord}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{FuzzyWord}\;\Conid{String}\mid {}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{Specifier}\;[\mskip1.5mu \Conid{Context}\mskip1.5mu]\;\Conid{Query}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{Specifier}\;[\mskip1.5mu \Conid{Context}\mskip1.5mu]\;\Conid{Query}\mid {}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{Negation}\;\Conid{Query}{}\<[E]%
 \\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{Negation}\;\Conid{Query}\mid {}\<[E]%
-\\
-\>[B]{}\hsindent{14}{}\<[14]%
-\>[14]{}\Conid{BinQuery}\;\Conid{BinOp}\;\Conid{Query}\;\Conid{Query}{}\<[E]%
+\>[B]{}\hsindent{12}{}\<[12]%
+\>[12]{}\mid \Conid{BinQuery}\;\Conid{BinOp}\;\Conid{Query}\;\Conid{Query}{}\<[E]%
 \\
 \>[B]{}\mathbf{data}\;\Conid{BinOp}\mathrel{=}\Conid{And}\mid \Conid{Or}\mid \Conid{But}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\caption{The representation of a query provided by the Holumbus
+\caption{The \ensuremath{\Conid{Query}} data structure provided by the Holumbus
   framework}
 \end{figure}
 
 % And this data structure can be processed by processQuery (Holumbus.Query.Processor).
 As next step, we pass the index, document and query to the function
 \emph{processQuery} that, as the name suggests, processes the
-query. As return value, we get a data structure that consists of the
-matching documents as well as possible word completions. The data
-structure is shown in \hyperref[analysis:result]{Figure
-  \ref{analysis:result}}.
+query. When processing the query, Holumbus only matches for prefixes
+of the given word or phrase in a query, we need to consider this
+restriction when creating our index in
+\hyperref[implementation:index]{Section
+  \ref{implementation:index}}. The data structure we get as return
+value is shown in \hyperref[analysis:result]{Figure
+  \ref{analysis:result}}. Since we make use of this structure in our
+implementation, let's take a closer look of the code. \ensuremath{\Conid{Result}\;\Varid{a}}
+consists of the matching documents with type \ensuremath{\Varid{a}} as well as possible
+word completions. The first is represented by \ensuremath{\Conid{DocHits}\;\Varid{a}} that is a
+mapping of \ensuremath{\Conid{DocInfo}\;\Varid{a}} and the contexts. On the other hand \ensuremath{\Conid{DocInfo}\;\Varid{a}}
+consists of the matching document and a score. By default this score
+is calculated by the number of occurrences of the search query in the
+document. But Holumbus also provides a mechanism to apply a customized
+ranking function to calculate the score. \ensuremath{\Conid{WordHits}} illustrates the
+word completions and is represented by a mapping of the possible completions
+of the given prefix in combination with its score, i.e. \ensuremath{\Conid{WordInfo}}, and the contexts.\\
 % Holumbus also provides a data structure that is returned after a query
 
 \begin{figure}[h!]
@@ -1195,6 +1204,7 @@ structure is shown in \hyperref[analysis:result]{Figure
 \column{16}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{17}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{24}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{28}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{29}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1209,7 +1219,7 @@ structure is shown in \hyperref[analysis:result]{Figure
 \>[17]{},\Varid{wordHits}\mathbin{::}\Conid{WordHits}{}\<[E]%
 \\
 \>[16]{}\hsindent{1}{}\<[17]%
-\>[17]{}\mskip1.5mu\}\;\mathbf{deriving}\;(\Conid{Eq},\Conid{Show}){}\<[E]%
+\>[17]{}\mskip1.5mu\}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\mathbf{data}\;\Conid{DocInfo}\;\Varid{a}\mathrel{=}\Conid{DocInfo}{}\<[E]%
 \\
@@ -1220,7 +1230,7 @@ structure is shown in \hyperref[analysis:result]{Figure
 \>[17]{},\Varid{docScore}\mathbin{::}\Conid{Score}{}\<[E]%
 \\
 \>[B]{}\hsindent{17}{}\<[17]%
-\>[17]{}\mskip1.5mu\}\;\mathbf{deriving}\;(\Conid{Eq},\Conid{Show}){}\<[E]%
+\>[17]{}\mskip1.5mu\}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\mathbf{data}\;\Conid{WordInfo}{}\<[16]%
 \>[16]{}\mathrel{=}\Conid{WordInfo}{}\<[E]%
@@ -1233,24 +1243,25 @@ structure is shown in \hyperref[analysis:result]{Figure
 \>[17]{},\Varid{wordScore}\mathbin{::}\Conid{Score}{}\<[E]%
 \\
 \>[16]{}\hsindent{1}{}\<[17]%
-\>[17]{}\mskip1.5mu\}\;\mathbf{deriving}\;(\Conid{Eq},\Conid{Show}){}\<[E]%
+\>[17]{}\mskip1.5mu\}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{DocHits}\;\Varid{a}{}\<[22]%
-\>[22]{}\mathrel{=}\Conid{DocIdMap}\;(\Conid{DocInfo}\;\Varid{a},\Conid{DocContextHits}){}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{DocHits}\;\Varid{a}{}\<[24]%
+\>[24]{}\mathrel{=}\Conid{DocIdMap}\;(\Conid{DocInfo}\;\Varid{a},\Conid{DocContextHits}){}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{DocContextHits}{}\<[22]%
-\>[22]{}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{DocWordHits}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{DocContextHits}{}\<[24]%
+\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{DocWordHits}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{DocWordHits}{}\<[22]%
-\>[22]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;\Conid{Positions}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{DocWordHits}{}\<[24]%
+\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;\Conid{Positions}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{WordHits}{}\<[22]%
-\>[22]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;(\Conid{WordInfo},\Conid{WordContextHits}){}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{WordHits}{}\<[24]%
+\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;(\Conid{WordInfo},\Conid{WordContextHits}){}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{WordContextHits}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{WordDocHits}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{WordContextHits}{}\<[24]%
+\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{WordDocHits}{}\<[E]%
 \\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{WordDocHits}{}\<[22]%
-\>[22]{}\mathrel{=}\Conid{Occurrences}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{WordDocHits}{}\<[24]%
+\>[24]{}\mathrel{=}\Conid{Occurrences}{}\<[E]%
 \\[\blanklineskip]%
 \>[B]{}\mathbf{type}\;\Conid{Score}{}\<[22]%
 \>[22]{}\mathrel{=}\Conid{Float}{}\<[E]%
@@ -1259,17 +1270,24 @@ structure is shown in \hyperref[analysis:result]{Figure
 \>[22]{}\mathrel{=}[\mskip1.5mu \Conid{String}\mskip1.5mu]{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-\caption{The representation of a query result provided by the Holumbus
+\caption{The \ensuremath{\Conid{Result}} data structure provided by the Holumbus
   framework}
 \label{analysis:result}
 \end{figure}
 
-But first the user input has to be parsed into the query structure to
-start the processing.
+Summing up, we have discussed the mechanism to evaluate a query with
+the Holumbus framework. This includes the data structures to represent a
+query, which can be processed to a data structure consisting of the
+matching documents and possible word completions.
+% But first the user input has to be parsed into the query structure to
+% start the processing.
 
 \subsection{Parsing User-Queries}
-Which criteria do we want to search for? Modules, functions, types,
-signatures, and  det./non-det., flexible/rigid functions. \\
+The next question is how to construct this query for a given
+user-input. 
+
+% Which criteria do we want to search for? Modules, functions, types,
+% signatures, and  det./non-det., flexible/rigid functions. \\
 
 First describe the idea, that the use of a specific language increases
 the usability. But it also restricts the user in her usage of the

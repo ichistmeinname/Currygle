@@ -45,8 +45,7 @@ module. This leads to the idea of generating a new readable data
 structure as an extension to CurryDoc. In the process we take
 advantage of the FlatCurry representation of a Curry module to access
 these information we mentioned above. We discuss the actual
-implementation in \hyperref[implementation:currydoc]{Chapter
-  \ref{implementation} Section \ref{implementation:currydoc}}. But in
+implementation in \hyperref[implementation:currydoc]{Section \ref{implementation:currydoc}}. But in
 preparation of the next chapter, we introduce the data structure
 |TypeExpr| that is provided by the Flat module (see
 \hyperref[fig:typeExpr]{Figure \ref{fig:typeExpr}}).
@@ -176,7 +175,7 @@ association between the information in the index and the corresponding
 document through a mapping. A further structure provided by the
 framework is |HolumbusState a|: a combination of index and document,
 polymorph by the data |HolDocuments a| holds. In
-\hyperref[implementation:index]{Chapter \ref{implementation} Section
+\hyperref[implementation:index]{Section
   \ref{implementation:index}} we illustrate the use of these data
 structures in our implementation.\\
 
@@ -206,41 +205,53 @@ results of the processed query for further use.\\
 
 Thankfully these are all features the Holumbus framework provides. At
 first we take a look at the search mechanism. The data structure
-|Query| allows to search for a word and a phrase, both
-case-insensitive and case-sensitive. Since the search depends on
-user-input, the framework also allows something called \emph{fuzzy
-  search} to scan for results with spelling errors like transposed
-letters. Furthermore the structure provides binary operators like
-|AND|, |OR| and |NOT| to combine multiple
-queries. \hyperref[analysis:query]{Figure \ref{analysis:query}} shows
-the discussed data structure.\\
-
+|Query| (see \hyperref[analysis:query]{Figure \ref{analysis:query}})
+allows to search for a word and a phrase, both case-insensitive and
+case-sensitive. Since the search depends on user-input, the framework
+also allows something called \emph{fuzzy search} to scan for results
+with spelling errors like transposed letters. Since the index data
+structure of Holumbus uses pairs of words and contexts, a special
+mechanism to search for these contexts is given. Furthermore the
+structure provides binary operators like |AND|, |OR| and |NOT| to
+combine multiple queries.
 % Holumbus provides search mechanism with a special syntax.
-\begin{figure}[h!]
+\begin{figure}
 \label{analysis:query}
 \begin{code}
-data Query = 
-             Word String |
-             Phrase String |
-             CaseWord String |
-             CasePhrase String |
-             FuzzyWord String |
-             Specifier [Context] Query |
-             Negation Query |
-             BinQuery BinOp Query Query
+data Query = Word String
+           | Phrase String
+           | CaseWord String
+           | CasePhrase String
+           | FuzzyWord String
+           | Specifier [Context] Query
+           | Negation Query
+           | BinQuery BinOp Query Query
 data BinOp = And | Or | But
 \end{code}
-\caption{The representation of a query provided by the Holumbus
+\caption{The |Query| data structure provided by the Holumbus
   framework}
 \end{figure}
 
 % And this data structure can be processed by processQuery (Holumbus.Query.Processor).
 As next step, we pass the index, document and query to the function
 \emph{processQuery} that, as the name suggests, processes the
-query. As return value, we get the data structure |Result a| that consists of the
-matching documents as well as possible word completions. The data
-structure is shown in \hyperref[analysis:result]{Figure
-  \ref{analysis:result}}.  
+query. When processing the query, Holumbus only matches for prefixes
+of the given word or phrase in a query, we need to consider this
+restriction when creating our index in
+\hyperref[implementation:index]{Section
+  \ref{implementation:index}}. The data structure we get as return
+value is shown in \hyperref[analysis:result]{Figure
+  \ref{analysis:result}}. Since we make use of this structure in our
+implementation, let's take a closer look of the code. |Result a|
+consists of the matching documents with type |a| as well as possible
+word completions. The first is represented by |DocHits a| that is a
+mapping of |DocInfo a| and the contexts. On the other hand |DocInfo a|
+consists of the matching document and a score. By default this score
+is calculated by the number of occurrences of the search query in the
+document. But Holumbus also provides a mechanism to apply a customized
+ranking function to calculate the score. |WordHits| illustrates the
+word completions and is represented by a mapping of the possible completions
+of the given prefix in combination with its score, i.e. |WordInfo|, and the contexts.\\
 % Holumbus also provides a data structure that is returned after a query
 
 \begin{figure}[h!]
@@ -248,44 +259,51 @@ structure is shown in \hyperref[analysis:result]{Figure
 data Result a  = Result        
                 { docHits  :: (DocHits a)
                 , wordHits :: WordHits
-                } deriving (Eq, Show)
+                }
 
 data DocInfo a = DocInfo 
                 { document :: (Document a)
                 , docScore :: Score
-                } deriving (Eq, Show)
+                }
 
 data WordInfo  = WordInfo 
                 { terms     :: Terms
                 , wordScore :: Score                
-                } deriving (Eq, Show)
+                }
 
-type DocHits a       = DocIdMap (DocInfo a, DocContextHits)
+type DocHits a         = DocIdMap (DocInfo a, DocContextHits)
 
-type DocContextHits  = Map Context DocWordHits
+type DocContextHits    = Map Context DocWordHits
 
-type DocWordHits     = Map Word Positions
+type DocWordHits       = Map Word Positions
 
-type WordHits        = Map Word (WordInfo, WordContextHits)
+type WordHits          = Map Word (WordInfo, WordContextHits)
 
-type WordContextHits = Map Context WordDocHits
+type WordContextHits   = Map Context WordDocHits
 
-type WordDocHits     = Occurrences
+type WordDocHits       = Occurrences
 
 type Score           = Float
 type Terms           = [String]
 \end{code}
-\caption{The representation of a query result provided by the Holumbus
+\caption{The |Result| data structure provided by the Holumbus
   framework}
 \label{analysis:result}
 \end{figure}
 
-But first the user input has to be parsed into the query structure to
-start the processing.
+Summing up, we have discussed the mechanism to evaluate a query with
+the Holumbus framework. This includes the data structures to represent a
+query, which can be processed to a data structure consisting of the
+matching documents and possible word completions.
+% But first the user input has to be parsed into the query structure to
+% start the processing.
 
 \subsection{Parsing User-Queries}
-Which criteria do we want to search for? Modules, functions, types,
-signatures, and  det./non-det., flexible/rigid functions. \\
+The next question is how to construct this query for a given
+user-input. 
+
+% Which criteria do we want to search for? Modules, functions, types,
+% signatures, and  det./non-det., flexible/rigid functions. \\
 
 First describe the idea, that the use of a specific language increases
 the usability. But it also restricts the user in her usage of the

@@ -1,7 +1,7 @@
 \chapter{Introduction}
-
+Once upon a time ...
 \section{Motivation}
-
+Curr(y)gle > Hayoo!
 \section{Structure}
 At first \hyperref[preliminaries]{Chapter \ref*{preliminaries}} gives
 the preliminiaries to understand this thesis. This includes basic
