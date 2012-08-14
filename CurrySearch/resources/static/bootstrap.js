@@ -301,7 +301,7 @@
         return i[0]
       })
 
-      items.first().addClass('active')
+      //items.first().addClass('active')
       this.$menu.html(items)
       return this
     }
@@ -353,8 +353,16 @@
         case 13: // enter
         case 39: // right arrow
           if (!this.shown) return
-          this.select()
+          console.log(!this.$menu.find('.active').length)
+          if (!this.$menu.find('.active').length) {
+            this.hide()
+            location.href="/currygle?query="+encodeURIComponent(this.query);
+          } else {
+            this.select()
+          }
+          
           break
+          
         case 37: // left arrow
         case 27: // escape
           if (!this.shown) return
