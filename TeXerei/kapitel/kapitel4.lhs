@@ -94,7 +94,7 @@ type LoadedIndexerState a = (CompactInverted, SmallDocuments a)
 Refer to the appendix, where the usage of the curryIndexer is
 explained.
 
-\section{Parsing user queries}
+\section{Parsing user queries}\label{implementation:parser}
 
 % First describe the idea, that the use of a specific language increases
 % the usability. But it also restricts the user in her usage of the

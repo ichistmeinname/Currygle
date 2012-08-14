@@ -254,7 +254,7 @@ word completions and is represented by a mapping of the possible completions
 of the given prefix in combination with its score, i.e. |WordInfo|, and the contexts.\\
 % Holumbus also provides a data structure that is returned after a query
 
-\begin{figure}[h!]
+\begin{figure}[h]
 \begin{code}
 data Result a  = Result        
                 { docHits  :: (DocHits a)
@@ -298,33 +298,80 @@ matching documents and possible word completions.
 % But first the user input has to be parsed into the query structure to
 % start the processing.
 
-\subsection{Parsing User-Queries}
-The next question is how to construct this query for a given
-user-input. 
-
+\section{Parsing User-Queries}
 % Which criteria do we want to search for? Modules, functions, types,
 % signatures, and  det./non-det., flexible/rigid functions. \\
+The next question is how to construct the query for a given
+user-input. At first we have to decide about the criteria users can
+search for. Since the index provides the pairs of contexts and search
+words, we are able to restrict the search to all these context with
+the help of the |Query| data structure and the |Specifier|
+constructor. This allows us to search for modules, functions,
+types, signatures and all other contexts we use during the creation of
+the index.\\
 
-First describe the idea, that the use of a specific language increases
-the usability. But it also restricts the user in her usage of the
-search engine, if this language gets more complex. So this results in
-a compromise between a simply to use language and a language that can
-be parsed.  Show the example of searching IO, where the restriction to
-modules minimizes the result.\\
+% First describe the idea, that the use of a specific language increases
+% the usability. But it also restricts the user in her usage of the
+% search engine, if this language gets more complex. So this results in
+% a compromise between a simply to use language and a language that can
+% be parsed.  Show the example of searching IO, where the restriction to
+% modules minimizes the result.\\
+The search mechanism as part of the user-experience is supposed to be
+as simple as possible. The use of a specific language increases the
+usability, since an expression has its explicit syntax. A good example
+is the search term \emph{io}, since in Curry \emph{IO} is the name for
+a module, a type and a constructor. Furthermore there are many
+functions in the IO module, that contain the word \emph{io}. That
+means that the search for \emph{io} results in a great amount of
+hits. To reduce the number of hits, we can restrict the search to
+a specific context. Therefor we want to provide specifiers in
+combination with the term you want to search for, for example
+\emph{:function IO} searches for \emph{IO} in the context of function
+names only. But this special syntax restricts the user in the use of
+the search engine, if the language gets more complex. Thus to provide
+a user-friendly search engine, we have to make a compromise between a
+simply to use language and language that can be parsed.\\
 
-% After that list all language components that describe the restriction
-% to contexts (module, function, type, signature and  non-/deterministic,
-% flexible, rigid functions.\\
+% Set the focus on signatures. Because Hayoo! does not find signatures with
+% redundant parentheses, Curr(y)gle supports parenthesized signatures
+% and parenthesized query parts in general. \\
+Besides these specifiers we want to parse type signatures of Curry
+functions and data structures. Since Hayoo! is not able to parse
+redundant parenthesized signatures, we want to address this problem
+with great care. Let's assume a beginner searches for a function with
+the type signature \emph{IO -> (IO Int)}. The type \emph{IO Int} and
+type constructors in general do not need parentheses, but as beginner
+you might think they do. Thus we want to support parenthesized
+signatures and parenthesized query parts in general.\\
 
-Set the focus on signatures. Because Hayoo! does not find signatures with
-redundant parentheses, Curr(y)gle supports parenthesized signatures
-and parenthesized query parts in general. \\
+Last but not we want to provide binary conjunctions like \emph{And},
+\emph{Or} and \emph{Not}. On the one hand a combination of more search
+words is desirable, because popular search engines like
+Google\texttrademark~ use this feature. This increases the probability
+that users assume binary operations are standard features and expect
+search engines to provide the conjunction of several search terms. On
+the other hand if the desired result is still vague, a combination of
+more search words by a disjunction \emph{Or} helps to narrow down the
+search results.\\
+% In addition: binary operations/conjunctions. \\
+% Explain that in most cases, a combination of more search words is
+% desirable, because first popular search engines like Google\texttrademark~use this
+% feature so it's common knowledge (the user expects this features) and
+% second it's easier to search for more search words, if the desired
+% result is still vague.
 
-In addition: binary operations/conjunctions. \\
-Explain that in most cases, a combination of more search words is
-desirable, because first popular search engines like Google\texttrademark~use this
-feature so it's common knowledge (the user expects this features) and
-second it's easier to search for more search words, if the desired
-result is still vague.
+In the end we want to provide an intuitive but powerful search
+engine. With specifiers to restrict the search results to a given
+context and with binary operations to narrow down or extend the
+contexts, we want to provide a simple language for the user
+queries. Additionally type signatures should be recognized, this
+includes function, construction and primitive types as well as
+redundant parenthesized signatures. As the number of the supported
+features increases, the query gets more complex to read. Thus to reach
+this goal, we need to analyse the user input and rebuild it as an
+expression of our |Query| data structure. In
+\hyperref[implementation:parser]{Section \ref{implementation:parser}}
+we discuss how we implement the construction of the |Query| structure
+for a given user-input.
 
-The parser becomes a complex, but very important matter.
+% The parser becomes a complex, but very important matter.
