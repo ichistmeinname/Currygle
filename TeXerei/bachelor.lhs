@@ -1,10 +1,12 @@
 % Header mit Deklarationen
 %include extras/header.lhs
 %include polycode.fmt
+%include greek.fmt
 
 %format == = "=="
-%format ++ = "++"
-
+%format ts2
+%format ts1
+%format <*> = "\circledast"
 
 \begin{document}
 

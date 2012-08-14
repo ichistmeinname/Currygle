@@ -1,12 +1,14 @@
 \chapter{Analysis}\label{analysis}
-This chapter looks into the requirements to build and run Curr(y)gle, an API search
-engine for Curry. The first section deals with the creation of an
-index, whereas the second section addresses the process of searching
-for a query. In this context, we take a closer look of the Holumbus
-framework and its features related to searching and evaluate the criteria
-to accomplish a user-friendly search mechanism. Above all we need a web
-application to handle user queries, which is analyzed in the last
-section.
+This chapter looks into the requirements to build and run Curr(y)gle,
+an API search engine for Curry. The first section deals with the
+creation of an index, whereas the second and third section addresses
+the process of searching for a query. In this context, we take a
+closer look of the Holumbus framework and its features related to
+searching and evaluate the criteria to accomplish a user-friendly
+search mechanism. Furthermore we discuss the features Curr(y)gle
+should provide to specify a search query. % Above all we need a web
+% application to handle user queries, which is analyzed in the last
+% section.
 
 % Give a short summary about the following sections.\\
 
@@ -254,7 +256,7 @@ word completions and is represented by a mapping of the possible completions
 of the given prefix in combination with its score, i.e. |WordInfo|, and the contexts.\\
 % Holumbus also provides a data structure that is returned after a query
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{code}
 data Result a  = Result        
                 { docHits  :: (DocHits a)
@@ -319,18 +321,18 @@ the index.\\
 The search mechanism as part of the user-experience is supposed to be
 as simple as possible. The use of a specific language increases the
 usability, since an expression has its explicit syntax. A good example
-is the search term \emph{io}, since in Curry \emph{IO} is the name for
+is the search term |''io''|, since in Curry \emph{IO} is the name for
 a module, a type and a constructor. Furthermore there are many
-functions in the IO module, that contain the word \emph{io}. That
+functions in the IO module, that contain the word \emph{io}. This
 means that the search for \emph{io} results in a great amount of
 hits. To reduce the number of hits, we can restrict the search to
-a specific context. Therefor we want to provide specifiers in
-combination with the term you want to search for, for example
-\emph{:function IO} searches for \emph{IO} in the context of function
+a specific context. Therefor we want to provide specifiers the user
+combinats with the search term, for example
+|'':function IO''| searches for \emph{IO} in the context of function
 names only. But this special syntax restricts the user in the use of
 the search engine, if the language gets more complex. Thus to provide
 a user-friendly search engine, we have to make a compromise between a
-simply to use language and language that can be parsed.\\
+simply to use language and a language that can be parsed.
 
 % Set the focus on signatures. Because Hayoo! does not find signatures with
 % redundant parentheses, Curr(y)gle supports parenthesized signatures
@@ -339,12 +341,12 @@ Besides these specifiers we want to parse type signatures of Curry
 functions and data structures. Since Hayoo! is not able to parse
 redundant parenthesized signatures, we want to address this problem
 with great care. Let's assume a beginner searches for a function with
-the type signature \emph{IO -> (IO Int)}. The type \emph{IO Int} and
+the type signature |''IO -> (IO Int)''|. The type \emph{IO Int} and
 type constructors in general do not need parentheses, but as beginner
 you might think they do. Thus we want to support parenthesized
-signatures and parenthesized query parts in general.\\
+signatures and parenthesized query parts in general.
 
-Last but not we want to provide binary conjunctions like \emph{And},
+Last but not least we want to provide binary conjunctions like \emph{And},
 \emph{Or} and \emph{Not}. On the one hand a combination of more search
 words is desirable, because popular search engines like
 Google\texttrademark~ use this feature. This increases the probability
@@ -360,9 +362,9 @@ search results.\\
 % second it's easier to search for more search words, if the desired
 % result is still vague.
 
-In the end we want to provide an intuitive but powerful search
-engine. With specifiers to restrict the search results to a given
-context and with binary operations to narrow down or extend the
+In the end we want to provide an intuitive but powerful syntax for the
+search engine. With specifiers to restrict the search results to a
+given context and with binary operations to narrow down or extend the
 contexts, we want to provide a simple language for the user
 queries. Additionally type signatures should be recognized, this
 includes function, construction and primitive types as well as
@@ -371,7 +373,6 @@ features increases, the query gets more complex to read. Thus to reach
 this goal, we need to analyse the user input and rebuild it as an
 expression of our |Query| data structure. In
 \hyperref[implementation:parser]{Section \ref{implementation:parser}}
-we discuss how we implement the construction of the |Query| structure
-for a given user-input.
+we discuss our actual implementation.
 
 % The parser becomes a complex, but very important matter.

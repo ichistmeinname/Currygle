@@ -1,25 +1,22 @@
 \chapter{Implementation}\label{implementation}
-Mention that the implementation is done in Haskell or Curry.\\
+% Mention that the implementation is done in Haskell or Curry.\\
+% Give a short summary of the next sections.
 
-Give a short summary of the next sections.
+This chapter presents the implementation of the search engine on the
+basis of some code examples and the corresponding design ideas and
+decisions. At first we take a look at the extension for the current
+version of CurryDoc. In this context we illustrate the interaction
+between this extension and the index creation. The latter determines
+the topic of the second section. We specify the index and document
+data in more detail and state some difficulties that arose due to the
+usage of the Holumbus framework. The third section addresses the
+implemented parser to convert the user input into a query that can be
+processed by Holumbus. We illustrate the general idea and
+implementation approach of a parser to introduce into the subject. The
+last section covers features and implementations of the web
+application for the search engine.
+
 \section{CurryDoc extension}\label{implementation:currydoc}
-
-% First start with the idea of the extension: instead of generating a
-% document markup language, generate a readable data structure.
-
-% Introduce the TypeExpr data structure that is part of the FlatCurry
-% feature.
-
-% \begin{code}
-% data TypeExpr =
-%      TVar TVarIndex                 -- type variable
-%    | FuncType TypeExpr TypeExpr     -- function type t1->t2
-%    | TCons QName [TypeExpr]         -- type constructor application
-%                                     -- TCons (module, name) typeargs
-
-% type QName = (String, String)
-% type TVarIndex = Int
-% \end{code}
 
 Present the general structure of the |CurryInfo| data and the
 sub-structures |ModuleInfo|, |FunctionInfo| and |TypeInfo|.
@@ -121,7 +118,7 @@ Introduce the parser type that is parametrized with the type to parse and the
 resulting type.
 
 \begin{code}
-type Parser s a = [s] -> [(a, [s])]
+type Parser sigma alpha = [sigma] -> [(alpha, [sigma])]
 \end{code}
 
 Explain the operator |(<||>)| that applies two parsers and concats the
@@ -197,12 +194,12 @@ Give a definition of the language (EBNF(?) / appendix).
 \begin{code} 
  query := expr [ expr ] | expr bool expr | (expr)
  expr := (expr) | specifier | signature | string
- bool := ``AND'' | ``OR'' | ``NOT'' 
- specifier :=  ``: module'' [ alphaNum ] | ``:signature''  [ signature ]
- |  ``:function'' [ alphaNum ] | ``:flexible'' | ``:rigid'' |  ``:nondet'' | ``:det'' 
+ bool := "AND" | "OR" | "NOT" 
+ specifier :=  ":module" [ alphaNum ] | ":signature"  [ signature ]
+ |  ":function" [ alphaNum ] | ":flexible" | ":rigid" |  ":nondet" | ":det" 
  signature := Upper alphaNum | function | constructor 
- function := signature ``-->'' signature  | lower ``-->'' signature |
- signature ``->'' lower
+ function := signature "->" signature  | lower "->" signature |
+ signature "->" lower
  constructor := Upper alphaNum signature | Upper alphaNum lower
 \end{code}
 
@@ -233,3 +230,4 @@ Give a definition of the language (EBNF(?) / appendix).
 % As the number of the supported features increases, the query gets more
 % complex to parse. 
 
+\section{Web application}

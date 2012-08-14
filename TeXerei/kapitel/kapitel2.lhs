@@ -53,7 +53,8 @@ not False = True
 not True = False
 \end{code}
 The first line indicates that the function expects a boolean value as
-argument and yields to a boolean value as well. The following two
+argument and yields to a boolean value as well\footnote{The symbol |->|
+  will be used for \emph{->} throughout this thesis}. The following two
 lines are rules, that describe that |not False| yields |True|, whereas
 |not True| yields |False|. There are no more possible values for the
 argument of the function |not|, since Curry is a strongly-typed

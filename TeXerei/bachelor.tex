@@ -437,7 +437,7 @@
 \makeatother
 \EndFmtInput
 %
-
+%
 
 
 \begin{document}
@@ -628,7 +628,8 @@ value.
 \ColumnHook
 \end{hscode}\resethooks
 The first line indicates that the function expects a boolean value as
-argument and yields to a boolean value as well. The following two
+argument and yields to a boolean value as well\footnote{The symbol \ensuremath{\to }
+  will be used for \emph{->} throughout this thesis}. The following two
 lines are rules, that describe that \ensuremath{\neg \;\Conid{False}} yields \ensuremath{\Conid{True}}, whereas
 \ensuremath{\neg \;\Conid{True}} yields \ensuremath{\Conid{False}}. There are no more possible values for the
 argument of the function \ensuremath{\neg }, since Curry is a strongly-typed
@@ -891,14 +892,16 @@ query. This data structure corresponds to the structure of the
 documents, which simplifies the further processing.\\
 
 \chapter{Analysis}\label{analysis}
-This chapter looks into the requirements to build and run Curr(y)gle, an API search
-engine for Curry. The first section deals with the creation of an
-index, whereas the second section addresses the process of searching
-for a query. In this context, we take a closer look of the Holumbus
-framework and its features related to searching and evaluate the criteria
-to accomplish a user-friendly search mechanism. Above all we need a web
-application to handle user queries, which is analyzed in the last
-section.
+This chapter looks into the requirements to build and run Curr(y)gle,
+an API search engine for Curry. The first section deals with the
+creation of an index, whereas the second and third section addresses
+the process of searching for a query. In this context, we take a
+closer look of the Holumbus framework and its features related to
+searching and evaluate the criteria to accomplish a user-friendly
+search mechanism. Furthermore we discuss the features Curr(y)gle
+should provide to specify a search query. % Above all we need a web
+% application to handle user queries, which is analyzed in the last
+% section.
 
 % Give a short summary about the following sections.\\
 
@@ -1198,7 +1201,7 @@ word completions and is represented by a mapping of the possible completions
 of the given prefix in combination with its score, i.e. \ensuremath{\Conid{WordInfo}}, and the contexts.\\
 % Holumbus also provides a data structure that is returned after a query
 
-\begin{figure}[h]
+\begin{figure}[h!]
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{16}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1303,18 +1306,18 @@ the index.\\
 The search mechanism as part of the user-experience is supposed to be
 as simple as possible. The use of a specific language increases the
 usability, since an expression has its explicit syntax. A good example
-is the search term \emph{io}, since in Curry \emph{IO} is the name for
+is the search term \ensuremath{\text{\tt ''}\;\Varid{io''}}, since in Curry \emph{IO} is the name for
 a module, a type and a constructor. Furthermore there are many
-functions in the IO module, that contain the word \emph{io}. That
+functions in the IO module, that contain the word \emph{io}. This
 means that the search for \emph{io} results in a great amount of
 hits. To reduce the number of hits, we can restrict the search to
-a specific context. Therefor we want to provide specifiers in
-combination with the term you want to search for, for example
-\emph{:function IO} searches for \emph{IO} in the context of function
+a specific context. Therefor we want to provide specifiers the user
+combinats with the search term, for example
+\ensuremath{\text{\tt ''}\mathbin{:}\Varid{function}\;\Conid{IO''}} searches for \emph{IO} in the context of function
 names only. But this special syntax restricts the user in the use of
 the search engine, if the language gets more complex. Thus to provide
 a user-friendly search engine, we have to make a compromise between a
-simply to use language and language that can be parsed.\\
+simply to use language and a language that can be parsed.
 
 % Set the focus on signatures. Because Hayoo! does not find signatures with
 % redundant parentheses, Curr(y)gle supports parenthesized signatures
@@ -1323,12 +1326,12 @@ Besides these specifiers we want to parse type signatures of Curry
 functions and data structures. Since Hayoo! is not able to parse
 redundant parenthesized signatures, we want to address this problem
 with great care. Let's assume a beginner searches for a function with
-the type signature \emph{IO -> (IO Int)}. The type \emph{IO Int} and
+the type signature \ensuremath{\text{\tt ''}\;\Conid{IO}\to (\Conid{IO}\;\Conid{Int})\;\text{\tt ''}}. The type \emph{IO Int} and
 type constructors in general do not need parentheses, but as beginner
 you might think they do. Thus we want to support parenthesized
-signatures and parenthesized query parts in general.\\
+signatures and parenthesized query parts in general.
 
-Last but not we want to provide binary conjunctions like \emph{And},
+Last but not least we want to provide binary conjunctions like \emph{And},
 \emph{Or} and \emph{Not}. On the one hand a combination of more search
 words is desirable, because popular search engines like
 Google\texttrademark~ use this feature. This increases the probability
@@ -1344,9 +1347,9 @@ search results.\\
 % second it's easier to search for more search words, if the desired
 % result is still vague.
 
-In the end we want to provide an intuitive but powerful search
-engine. With specifiers to restrict the search results to a given
-context and with binary operations to narrow down or extend the
+In the end we want to provide an intuitive but powerful syntax for the
+search engine. With specifiers to restrict the search results to a
+given context and with binary operations to narrow down or extend the
 contexts, we want to provide a simple language for the user
 queries. Additionally type signatures should be recognized, this
 includes function, construction and primitive types as well as
@@ -1355,32 +1358,28 @@ features increases, the query gets more complex to read. Thus to reach
 this goal, we need to analyse the user input and rebuild it as an
 expression of our \ensuremath{\Conid{Query}} data structure. In
 \hyperref[implementation:parser]{Section \ref{implementation:parser}}
-we discuss how we implement the construction of the \ensuremath{\Conid{Query}} structure
-for a given user-input.
+we discuss our actual implementation.
 
 % The parser becomes a complex, but very important matter.
 \chapter{Implementation}\label{implementation}
-Mention that the implementation is done in Haskell or Curry.\\
+% Mention that the implementation is done in Haskell or Curry.\\
+% Give a short summary of the next sections.
 
-Give a short summary of the next sections.
+This chapter presents the implementation of the search engine on the
+basis of some code examples and the corresponding design ideas and
+decisions. At first we take a look at the extension for the current
+version of CurryDoc. In this context we illustrate the interaction
+between this extension and the index creation. The latter determines
+the topic of the second section. We specify the index and document
+data in more detail and state some difficulties that arose due to the
+usage of the Holumbus framework. The third section addresses the
+implemented parser to convert the user input into a query that can be
+processed by Holumbus. We illustrate the general idea and
+implementation approach of a parser to introduce into the subject. The
+last section covers features and implementations of the web
+application for the search engine.
+
 \section{CurryDoc extension}\label{implementation:currydoc}
-
-% First start with the idea of the extension: instead of generating a
-% document markup language, generate a readable data structure.
-
-% Introduce the TypeExpr data structure that is part of the FlatCurry
-% feature.
-
-% \begin{code}
-% data TypeExpr =
-%      TVar TVarIndex                 -- type variable
-%    | FuncType TypeExpr TypeExpr     -- function type t1->t2
-%    | TCons QName [TypeExpr]         -- type constructor application
-%                                     -- TCons (module, name) typeargs
-
-% type QName = (String, String)
-% type TVarIndex = Int
-% \end{code}
 
 Present the general structure of the \ensuremath{\Conid{CurryInfo}} data and the
 sub-structures \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}}.
@@ -1515,7 +1514,7 @@ resulting type.
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{type}\;\Conid{Parser}\;\Varid{s}\;\Varid{a}\mathrel{=}[\mskip1.5mu \Varid{s}\mskip1.5mu]\to [\mskip1.5mu (\Varid{a},[\mskip1.5mu \Varid{s}\mskip1.5mu])\mskip1.5mu]{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{Parser}\;\sigma \;\alpha \mathrel{=}[\mskip1.5mu \sigma \mskip1.5mu]\to [\mskip1.5mu (\alpha ,[\mskip1.5mu \sigma \mskip1.5mu])\mskip1.5mu]{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1526,7 +1525,7 @@ parsing results.
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}(\mathbin{<|>})\mathbin{::}\Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{a}{}\<[E]%
 \\
-\>[B]{}\Varid{p}\mathbin{<|>}\Varid{q}\mathrel{=}(\lambda \Varid{ts}\to \Varid{p}\;\Varid{ts}++\Varid{q}\;\Varid{ts}){}\<[E]%
+\>[B]{}\Varid{p}\mathbin{<|>}\Varid{q}\mathrel{=}(\lambda \Varid{ts}\to \Varid{p}\;\Varid{ts}\plus \Varid{q}\;\Varid{ts}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1535,9 +1534,9 @@ bind operator.
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}(\mathbin{<*>})\mathbin{::}\Conid{Parser}\;\Varid{s}\;(\Varid{a}\to \Varid{b})\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{b}{}\<[E]%
+\>[B]{}(\circledast)\mathbin{::}\Conid{Parser}\;\Varid{s}\;(\Varid{a}\to \Varid{b})\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{b}{}\<[E]%
 \\
-\>[B]{}\Varid{p}\mathbin{<*>}\Varid{q}\mathrel{=}\lambda \Varid{ts}\to [\mskip1.5mu (\Varid{f}\;\Varid{x},\Varid{ts2})\mid (\Varid{f},\Varid{ts1})\leftarrow \Varid{p}\;\Varid{ts},(\Varid{x},\Varid{ts2})\leftarrow \Varid{q}\;\Varid{ts1}\mskip1.5mu]{}\<[E]%
+\>[B]{}\Varid{p}\circledast\Varid{q}\mathrel{=}\lambda \Varid{ts}\to [\mskip1.5mu (\Varid{f}\;\Varid{x},\Varid{ts}_{2})\mid (\Varid{f},\Varid{ts}_{1})\leftarrow \Varid{p}\;\Varid{ts},(\Varid{x},\Varid{ts}_{2})\leftarrow \Varid{q}\;\Varid{ts}_{1}\mskip1.5mu]{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1549,7 +1548,7 @@ Now show that a function has to be applied, to use the binding operator.
 \>[B]{}(\mathbin{<\$>})\mathbin{::}(\Varid{a}\to \Varid{b})\to \Conid{Parser}\;\Varid{s}\;\Varid{a}\to \Conid{Parser}\;\Varid{s}\;\Varid{b}{}\<[E]%
 \\
 \>[B]{}\Varid{f}\mathbin{<\$>}\Varid{p}\mathrel{=}{}\<[12]%
-\>[12]{}\lambda \Varid{ts}\to [\mskip1.5mu (\Varid{f}\;\Varid{x},\Varid{ts1})\mid (\Varid{x},\Varid{ts1})\leftarrow \Varid{p}\;\Varid{ts}\mskip1.5mu]{}\<[E]%
+\>[12]{}\lambda \Varid{ts}\to [\mskip1.5mu (\Varid{f}\;\Varid{x},\Varid{ts}_{1})\mid (\Varid{x},\Varid{ts}_{1})\leftarrow \Varid{p}\;\Varid{ts}\mskip1.5mu]{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1575,7 +1574,7 @@ Present a simple example that can parse a given character.
 \end{hscode}\resethooks
 
 Present the concept by writing a parser for expressions with or without
-parentheses using \ensuremath{\mathbin{<|>}} and \ensuremath{\mathbin{<*>}}. 
+parentheses using \ensuremath{\mathbin{<|>}} and \ensuremath{\circledast}. 
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1622,7 +1621,7 @@ parentheses using \ensuremath{\mathbin{<|>}} and \ensuremath{\mathbin{<*>}}.
 \>[5]{}((\mathbin{\char92 \char95 }\Varid{expr}\;\anonymous \to \Varid{expr}){}\<[E]%
 \\
 \>[5]{}\hsindent{2}{}\<[7]%
-\>[7]{}\mathbin{<\$>}\Varid{parseOpenParenthesis}\mathbin{<*>}\Varid{parseExpression}\mathbin{<*>}\Varid{parseCloseParenthesis}){}\<[E]%
+\>[7]{}\mathbin{<\$>}\Varid{parseOpenParenthesis}\circledast\Varid{parseExpression}\circledast\Varid{parseCloseParenthesis}){}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
 \>[5]{}\mathbin{<|>}\Varid{parseExpression}{}\<[E]%
@@ -1645,30 +1644,30 @@ Give a definition of the language (EBNF(?) / appendix).
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{16}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{43}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{60}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{64}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{40}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{55}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{58}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{query}\mathbin{:=}\Varid{expr}\;[\mskip1.5mu \Varid{expr}\mskip1.5mu]\mid \Varid{expr}\;\Varid{bool}\;\Varid{expr}\mid (\Varid{expr}){}\<[E]%
 \\
 \>[B]{}\Varid{expr}\mathbin{:=}(\Varid{expr})\mid \Varid{specifier}\mid \Varid{signature}\mid \Varid{string}{}\<[E]%
 \\
-\>[B]{}\Varid{bool}\mathbin{:=}``\Conid{AND''}\mid ``\Conid{OR''}\mid ``\Conid{NOT''}{}\<[E]%
+\>[B]{}\Varid{bool}\mathbin{:=}\text{\tt \char34 AND\char34}\mid \text{\tt \char34 OR\char34}\mid \text{\tt \char34 NOT\char34}{}\<[E]%
 \\
 \>[B]{}\Varid{specifier}\mathbin{:=}{}\<[16]%
-\>[16]{}``\mathbin{:}\Varid{module''}\;[\mskip1.5mu \Varid{alphaNum}\mskip1.5mu]\mid ``\mathbin{:}\Varid{signature''}\;{}\<[60]%
-\>[60]{}[\mskip1.5mu \Varid{signature}\mskip1.5mu]{}\<[E]%
+\>[16]{}\text{\tt \char34 :module\char34}\;[\mskip1.5mu \Varid{alphaNum}\mskip1.5mu]\mid \text{\tt \char34 :signature\char34}\;{}\<[55]%
+\>[55]{}[\mskip1.5mu \Varid{signature}\mskip1.5mu]{}\<[E]%
 \\
 \>[B]{}\mid {}\<[5]%
-\>[5]{}``\mathbin{:}\Varid{function''}\;[\mskip1.5mu \Varid{alphaNum}\mskip1.5mu]\mid ``\mathbin{:}\Varid{flexible''}\mid ``\mathbin{:}\Varid{rigid''}\mid {}\<[64]%
-\>[64]{}``\mathbin{:}\Varid{nondet''}\mid ``\mathbin{:}\Varid{det''}{}\<[E]%
+\>[5]{}\text{\tt \char34 :function\char34}\;[\mskip1.5mu \Varid{alphaNum}\mskip1.5mu]\mid \text{\tt \char34 :flexible\char34}\mid \text{\tt \char34 :rigid\char34}\mid {}\<[58]%
+\>[58]{}\text{\tt \char34 :nondet\char34}\mid \text{\tt \char34 :det\char34}{}\<[E]%
 \\
 \>[B]{}\Varid{signature}\mathbin{:=}\Conid{Upper}\;\Varid{alphaNum}\mid \Varid{function}\mid \Varid{constructor}{}\<[E]%
 \\
-\>[B]{}\Varid{function}\mathbin{:=}\Varid{signature}``\mathbin{-->}\text{\tt ''}\;\Varid{signature}{}\<[43]%
-\>[43]{}\mid \Varid{lower}``\mathbin{-->}\text{\tt ''}\;\Varid{signature}\mid {}\<[E]%
+\>[B]{}\Varid{function}\mathbin{:=}\Varid{signature}\;\text{\tt \char34 ->\char34}\;\Varid{signature}{}\<[40]%
+\>[40]{}\mid \Varid{lower}\;\text{\tt \char34 ->\char34}\;\Varid{signature}\mid {}\<[E]%
 \\
-\>[B]{}\Varid{signature}``\to \text{\tt ''}\;\Varid{lower}{}\<[E]%
+\>[B]{}\Varid{signature}\;\text{\tt \char34 ->\char34}\;\Varid{lower}{}\<[E]%
 \\
 \>[B]{}\Varid{constructor}\mathbin{:=}\Conid{Upper}\;\Varid{alphaNum}\;\Varid{signature}\mid \Conid{Upper}\;\Varid{alphaNum}\;\Varid{lower}{}\<[E]%
 \ColumnHook
@@ -1701,6 +1700,7 @@ Give a definition of the language (EBNF(?) / appendix).
 % As the number of the supported features increases, the query gets more
 % complex to parse. 
 
+\section{Web application}
 \chapter{Conclusion}\label{conclusion}
 \section{Summary and Results}
 \section{Outlook}
