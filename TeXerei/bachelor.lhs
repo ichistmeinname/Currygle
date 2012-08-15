@@ -7,6 +7,11 @@
 %format ts2
 %format ts1
 %format <*> = "\circledast"
+%format <|> = "\rotatebox[origin=c]{90}{$\ominus$}"
+%format ~<|>~ = "~\rotatebox[origin=c]{90}{$\ominus$}~"
+%format <$> = "\circledS"
+%format ~<$>~ = "~\circledS~"
+%format %//% = "\newline"
 
 \begin{document}
 
@@ -42,16 +47,16 @@
 
 % Setze Numerierung wieder auf römisch zurück und setzte von oben fort
 % Wert ist demnach der von 'roemisch'
-% \newpage
-% \pagenumbering{Roman}
-% \setcounter{page}{\value{roemisch}}
+\newpage
+\pagenumbering{Roman}
+\setcounter{page}{\value{roemisch}}
+
+% Appendix, falls vorhanden
+\appendix
+%include extras/anhang.lhs
 
 % Literaturverzeichnis
 \bibliography{literatur/bib}
-
-% Appendix, falls vorhanden
-% \appendix
-% \input{extras/anhang}
 
 % Eidesstattliche Erklärung
 % \input{extras/eidesstattliche}

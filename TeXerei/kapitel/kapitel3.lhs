@@ -81,72 +81,21 @@ structure.
 TCons (Prelude, Maybe) [(TCons (Prelude, Int) []), 
             (TCons (Prelude, [ ]) [(TCons (Prelude, Char))])]
 \end{code}
-\caption{The representation of \emph{Maybe Int String} as |TypeExpr|}
+\caption{The representation of |Maybe Int String| as |TypeExpr|}
 \end{figure}
 \begin{figure}[h!]
 \begin{code}
 FuncType (TCons (Prelude, IO) [TVar 97]) (TCons (Prelude, IO)
 \end{code}
-\caption{The representation of \emph{IO a -> IO a} as |TypeExpr|}
+\caption{The representation of |IO a -> IO a| as |TypeExpr|}
 \end{figure}
 \begin{figure}[h!]
 \begin{code}
 FuncType (TCons (Prelude, Bool) []) (FuncType (TCons (Prelude, Int) []) 
   (TCons (Prelude, Int) []))
 \end{code}
-\caption{The representation of \emph{Bool -> Int -> Int} as |TypeExpr|}
+\caption{The representation of |Bool -> Int -> Int| as |TypeExpr|}
 \end{figure}
-
-% CurryDoc uses the meta-programming language FlatCurry to gain an
-% intermediate data structure. We can use this data structure for our
-% purposes. But at first, we have to discuss the which information to
-% provide in our data structures. We already introduced \emph{CurryInfo}
-% as structure for a Curry module in the
-% \hyperref[preliminaries:currydoc:curryInfo]{previous chapter}.
-% As next step we want to describe the information this data
-% structure holds. The information about a module covers its name,
-% author and description.
-
-% Thanks to FlatCurry, we get quite more details about functions and
-% types. Besides basic information like the name, description and the
-% corresponding module, we have access to function characteristics like
-% its flexible or rigid status and non- or deterministic property. In addition
-% FlatCurry provides a data structure |TypeExpr| to describe type
-% signatures (see \hyperref[fig:typeExpr]{Figure \ref{fig:typeExpr}}),
-% which we use in both data structures. All described data structures to
-% provide a representation for a Curry module can be seen in
-% \hyperref[fig:curryInfo]{Figure \ref{fig:curryInfo}}.
-
-% \begin{figure}[h]
-% \begin{code}
-% -- || The CurryInfo data holds information about the module, and
-% --  corresponding  functions, data and type declaration of a given 
-% --  Curry module.
-% data CurryInfo = 
-%   CurryInfo ModuleInfo [FunctionInfo] [TypeInfo]
-
-
-% -- || ModuleInfo holds information about the name, author,
-% --    and the description of a given module.
-% data ModuleInfo = 
-%   ModuleInfo String String String
-
-% -- || FunctionInfo holds information about the name, signature, corresponding 
-% -- module, description and flexible/rigid status of a function and 
-% -- its non-/deterministic behaviour.
-% data FunctionInfo = 
-%   FunctionInfo String (QName, TypeExpr) String String Bool
-%   FlexRigidResult
-
-% -- || TypeInfo holds information about the name, signature, type variables,
-% -- corresponding module, and description of a given type.
-% data TypeInfo = 
-%   TypeInfo String [(QName, [TypeExpr])] [Int] String String
-% \end{code}
-% \caption{The data structures for a Curry module}
-% \label{fig:curryInfo}
-% \end{figure}
-
 
 % What do we need to create an index that can be used for the Curry
 % search engine?\\

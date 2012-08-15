@@ -18,38 +18,113 @@ application for the search engine.
 
 \section{CurryDoc extension}\label{implementation:currydoc}
 
-Present the general structure of the |CurryInfo| data and the
-sub-structures |ModuleInfo|, |FunctionInfo| and |TypeInfo|.
+In the previous chapter we discussed the general idea of an extension
+of CurryDoc to generate a data structure. Later this data structure serves
+as source for the index creation. In this section we take a look at
+the implementation of this extension.\\
 
+% Present the general structure of the |CurryInfo| data and the
+% sub-structures |ModuleInfo|, |FunctionInfo| and |TypeInfo|.
+Since CurryDoc is written in Curry, we implemented our extension in
+Curry as well. With this decision we stand to benefit from already implemented
+functionalities and on the other hand, this simplifies the integration of our
+implementation with the current CurryDoc version.\\
+
+CurryDoc uses the meta-programming language FlatCurry to gain an
+intermediate data structure. We can use this data structure for our
+purposes. Additionally, we can use other functions provided by
+CurryDoc, that are already implemented. For example, CurryDoc supports
+a special comment syntax to annotate the author and version of a
+module. Furthermore the arguments and the return value of a function
+can be described as well as general descriptions.
+
+But at first, we discuss which information we want to provide in our
+data structures. We already introduced \emph{CurryInfo} as structure
+for a Curry program in the
+\hyperref[preliminaries:currydoc:curryInfo]{second chapter}.  As next
+step we want to describe |ModuleInfo|, |FunctionInfo| and |TypeInfo|,
+since they are a part of the |CurryInfo| data structure. You can take
+a look at these data structures and their definitions in advance in
+\hyperref[fig:curryInfo]{Figure \ref{fig:curryInfo}}.
+
+\begin{figure}[h]
 \begin{code}
-data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo]
+-- || The CurryInfo data holds information about the module, and
+--  corresponding  functions, data and type declaration of a given 
+--  Curry module.
+data CurryInfo = 
+  CurryInfo ModuleInfo [FunctionInfo] [TypeInfo]
+%//%
+-- || ModuleInfo holds information about the name, author,
+--    and the description of a given module.
+data ModuleInfo = 
+  ModuleInfo String String String
+%//%
+-- || FunctionInfo holds information about the name, signature, corresponding 
+-- module, description and flexible/rigid status of a function and 
+-- its non-/deterministic behaviour.
+data FunctionInfo = 
+  FunctionInfo String (QName, TypeExpr) String String Bool
+  FlexRigidResult
+%//%
+-- || TypeInfo holds information about the name, signature, type variables,
+-- corresponding module, and description of a given type.
+data TypeInfo = 
+  TypeInfo String [(QName, [TypeExpr])] [Int] String String
 \end{code}
+\caption{The data structures for a Curry module}
+\label{fig:curryInfo}
+\end{figure}
 
-The name, author and description is the interesting information that
-is exported. 
-\begin{code}
-data ModuleInfo = ModuleInfo String String String [String] String
-\end{code}
+Like the name suggests, |ModuleInfo| represents the data corresponding
+to a Curry module. The main information about a module consists of its
+name, author and description. We can also provide the version number
+of the implementation or the imported modules, but we decided against
+it. The latter seems to be useless information for the search engine,
+since the Curry modules are highly interrelated. This results in a
+great number of hits, when searching for a module, since every
+correlating module will be shown as well. Furthermore we think the
+version number is not a significant characteristic for a
+module. Therefor we decided to focus on the three mentioned proporties
+only.
 
-The model contains the name, signature, module, and description of a function
-and extra information about the non-/determinism and flexible/rigid status.
+|FunctionInfo| consists of characteristics for a given function. It
+holds the function's name and description. Additionally we decide to
+add the corresponding module to provide a connection between the
+function and its module. This decision is based on the cause that we
+do not keep the |CurryInfo| data structure as whole for the index
+construction, but the three arguments consisting of the list of
+functions, the list of types and the module information. Thanks to
+FlatCurry we can access function characteristics like nondeterminism
+and determinism, along with the information if a given function is
+rigid or flexible. Since these are important characteristics to differ
+between Curry functions, |FunctionInfo| stores these information as
+property. In addition FlatCurry provides a data structure |TypeExpr|
+to describe type signatures (see \hyperref[fig:typeExpr]{last
+  chapter}). We use this signatures as part of the |FunctionInfo| data
+structure. 
 
-\begin{code} 
-data FunctionInfo = FunctionInfo String (QName, TypeExpr) String 
-  String Bool FlexRigidResult
-\end{code}
+The data structure for types looks quite similar to
+|FunctionInfo|. |TypeInfo| consists of a type's name, description and
+corresponding module. FlatCurry provides us with information about the
+type constructors and their type signature. Therefor we store a list
+of |TypeExpr| in our structure. Additionally |TypeInfo| holds a list
+of integer to represent possible type variables. This corresponds to
+the definition of|TypeExpr|, where type variables are represented as
+integer as well. \\
 
-The TypeInfo includes the name, signature, list of type variables,
-module, and description.
-\begin{code}
-data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [TVarIndex]
-  String String
-\end{code}
+In the end, we feed the |CurryInfo| data structure with the specific
+module, function and type information of a given Curry program and our
+CurryDoc extension writes the data structure into a
+\emph{.cdoc}-file. The final CurryDoc version allows to mechanism to
+generate the |CurryInfo| structure. You can generate the
+\emph{.cdoc}-file only or you initiate the HTML generation, where the
+\emph{.cdoc}-file is also part of the output. In
+\hyperref[a:currydoc]{Appendix \ref{a:currydoc}} we provide further
+instruction for the usage of CurryDoc.
 
-Explain how this extension is used in the CurryDoc tool. 
-
-The same data structure is used on the Haskell side that implements
-the search engine.
+% The same data structure is used on the Haskell side that implements
+% the search engine.
 
 \section{Indexing}\label{implementation:index}
 
@@ -125,7 +200,7 @@ Explain the operator |(<||>)| that applies two parsers and concats the
 parsing results.  
 \begin{code}
 (<|>) :: Parser s a -> Parser s a -> Parser s a 
-p <|> q = (\ts -> p ts ++ q ts)
+p ~<|>~ q = (\ts -> p ts ++ q ts)
 \end{code}
 
 Introduce the combination of two parsers that is similar to a monadic
@@ -138,7 +213,7 @@ p <*> q = \ts -> [ (f x, ts2) | (f, ts1) <- p ts, (x, ts2) <- q ts1 ]
 Now show that a function has to be applied, to use the binding operator.
 \begin{code}
 (<$>) :: (a -> b) -> Parser s a -> Parser s b
-f <$> p =  \ts -> [ (f x, ts1) | (x, ts1) <- p ts]
+f ~<$>~ p =  \ts -> [ (f x, ts1) | (x, ts1) <- p ts]
 \end{code}
 
 Present a simple example that can parse a given character.
@@ -174,20 +249,9 @@ parseExpression [] = []
 parenthesizedExpression :: Parser Char String
 parenthesizedExpression = 
     ((\_ expr _ -> expr) 
-      <$> parseOpenParenthesis <*> parseExpression <*> parseCloseParenthesis)
-    <|> parseExpression
+      ~<$>~ parseOpenParenthesis <*> parseExpression <*> parseCloseParenthesis)
+    ~<|>~ parseExpression
 \end{code}
-
-Mention that the used type in the implementation correlates to |Parser
-String TypeExpr| (which is already used for the data exchange) for
-signatures and |Parser String Query| (which is provided by the Holumbus framework) for the end
-result. 
-
-% Explain that in most cases, a combination of more search words is
-% desirable, because first popular search engines like Google\texttrademark~use this
-% feature so it's common knowledge (the user expects this features) and
-% second it's easier to search for more search words, if the desired
-% result is still vague.
 
 Give a definition of the language (EBNF(?) / appendix). 
 
@@ -202,32 +266,5 @@ Give a definition of the language (EBNF(?) / appendix).
  signature "->" lower
  constructor := Upper alphaNum signature | Upper alphaNum lower
 \end{code}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% The actual use case of the search engine is to search for a given query.
-
-% For the user, it's important that the search engine understands her
-% query. For this cause, the user is obliged to use a specific language
-% that can be interpreted unambiguously.
-
-% To simplify the usage of the search engine, Curr(y)gle\texttrademark
-% provides a language to restrict the search to a specific
-% context. This feature not only simplifies the use, but results in a better
-% user-experience.
-
-% (Example) Let's assume you want to search for the module Map. Without
-% the restriction to modules, there are numerous results, because map is
-% a very common name (as it is associated with higher-order functions)
-% in functional languages. Thanks to the feature to search for specific
-% contexts, you can search for the query \emph{:module map} instead,
-% where \emph{:module} indicates the context of modules.
-
-% Curr(y)gle \texttrademark supports to search explicitly for modules,
-% functions, types and signatures. In addition to that, it allows
-% to search for functions with a given characteristic, like
-% non-deterministic, flexible and rigid functions.
-
-% As the number of the supported features increases, the query gets more
-% complex to parse. 
 
 \section{Web application}

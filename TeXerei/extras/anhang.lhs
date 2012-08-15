@@ -1,5 +1,3 @@
-% Anhänge, beliebig, kein Zwang
-\chapter{Anhang Eins}
+\chapter{CurryDoc Instruction}\label{a:currydoc}
 
-\chapter{Anhang Zwei}
-% usw ...
+\chapter{User-Query Syntax}\label{a:syntax}
