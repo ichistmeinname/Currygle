@@ -260,7 +260,7 @@ are provided by the user, to gain information about the function or
 data structure. It also provides the type signatures of functions,
 since Curry uses a type inferencer algorithm. In addition the CurryDoc tool
 analyzes the program's structure and approximates the run-time
-behavior to gain further information\cite{currydoc2}. This includes information about
+behavior to gain further information\cite{currydoc2}. This analysis includes information about
 in-/completeness, overlapping pattern matches and non-/deterministic
 functions.
 

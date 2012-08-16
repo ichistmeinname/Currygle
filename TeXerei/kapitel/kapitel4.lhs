@@ -14,20 +14,24 @@ implemented parser to convert the user input into a query that can be
 processed by Holumbus. We illustrate the general idea and
 implementation approach of a parser to introduce into the subject. The
 last section covers features and implementations of the web
-application for the search engine.
+application for the search engine.  The implementations are mostly
+done(written?) in the functional programming language Haskell; we use the
+functional logic programming language Curry for the CurryDoc
+extension only.
 
 \section{CurryDoc extension}\label{implementation:currydoc}
 
 In the previous chapter we discussed the general idea of an extension
-of CurryDoc to generate a data structure. Later this data structure serves
+for CurryDoc to generate a data structure. Later this data structure serves
 as source for the index creation. In this section we take a look at
-the implementation of this extension.\\
+the implementation of this extension.
 
 % Present the general structure of the |CurryInfo| data and the
 % sub-structures |ModuleInfo|, |FunctionInfo| and |TypeInfo|.
 Since CurryDoc is written in Curry, we implemented our extension in
-Curry as well. With this decision we stand to benefit from already implemented
-functionalities and on the other hand, this simplifies the integration of our
+Curry as well. With this decision we stand to benefit from already
+implemented functionalities and on the other hand, using the same
+programming language simplifies the integration of our
 implementation with the current CurryDoc version.\\
 
 CurryDoc uses the meta-programming language FlatCurry to gain an
@@ -72,7 +76,7 @@ data FunctionInfo =
 data TypeInfo = 
   TypeInfo String [(QName, [TypeExpr])] [Int] String String
 \end{code}
-\caption{The data structures for a Curry module}
+\caption{The data structures representing a Curry program}
 \label{fig:curryInfo}
 \end{figure}
 
@@ -81,64 +85,75 @@ to a Curry module. The main information about a module consists of its
 name, author and description. We can also provide the version number
 of the implementation or the imported modules, but we decided against
 it. The latter seems to be useless information for the search engine,
-since the Curry modules are highly interrelated. This results in a
-great number of hits, when searching for a module, since every
-correlating module will be shown as well. Furthermore we think the
-version number is not a significant characteristic for a
-module. Therefor we decided to focus on the three mentioned proporties
-only.
+since the Curry modules are highly interrelated. Thus, searching for a
+module results in a great amount of hits, since every correlating
+module will be shown as well. Furthermore we think the version number
+is not a significant characteristic for a module. Therefore we decided
+to focus on the three mentioned proporties only.
 
-|FunctionInfo| consists of characteristics for a given function. It
-holds the function's name and description. Additionally we decide to
-add the corresponding module to provide a connection between the
-function and its module. This decision is based on the cause that we
-do not keep the |CurryInfo| data structure as whole for the index
-construction, but the three arguments consisting of the list of
-functions, the list of types and the module information. Thanks to
-FlatCurry we can access function characteristics like nondeterminism
-and determinism, along with the information if a given function is
-rigid or flexible. Since these are important characteristics to differ
-between Curry functions, |FunctionInfo| stores these information as
+|FunctionInfo| consists of characteristics for a given function like
+the function's name and description. Additionally we decide to add the
+corresponding module to provide a connection between the function and
+its module. This decision is based on the cause that we do not keep
+the |CurryInfo| data structure as whole for the index construction,
+but the three arguments consisting of the list of functions, the list
+of types and the module information. Thanks to FlatCurry, we can also
+access function characteristics like nondeterminism and determinism,
+along with the information if a given function is rigid or
+flexible. Since these are important characteristics to differ between
+Curry functions, |FunctionInfo| stores these information as
 property. In addition FlatCurry provides a data structure |TypeExpr|
 to describe type signatures (see \hyperref[fig:typeExpr]{last
-  chapter}). We use this signatures as part of the |FunctionInfo| data
-structure. 
+  chapter}), furthermore we get the actual definition of a
+function. We use a function's type signature as part of the
+|FunctionInfo| data structure, but decided against the usage of a
+function's definition since we could not think of a relevant use-case
+for our search engine.
 
 The data structure for types looks quite similar to
 |FunctionInfo|. |TypeInfo| consists of a type's name, description and
-corresponding module. FlatCurry provides us with information about the
-type constructors and their type signature. Therefor we store a list
-of |TypeExpr| in our structure. Additionally |TypeInfo| holds a list
-of integer to represent possible type variables. This corresponds to
-the definition of|TypeExpr|, where type variables are represented as
+corresponding module. Since FlatCurry provides type signatures for
+functions, we also get information about constructors for a given
+type. Therefore we store a list of |TypeExpr| representing the type's
+constructors. Additionally |TypeInfo| holds a list of integer to
+represent possible type variables. The decision to use integer corresponds to
+the definition of |TypeExpr|, where type variables are represented as
 integer as well. \\
 
 In the end, we feed the |CurryInfo| data structure with the specific
 module, function and type information of a given Curry program and our
 CurryDoc extension writes the data structure into a
-\emph{.cdoc}-file. The final CurryDoc version allows to mechanism to
+\emph{.cdoc}-file. The final CurryDoc version allows two mechanisms to
 generate the |CurryInfo| structure. You can generate the
 \emph{.cdoc}-file only or you initiate the HTML generation, where the
 \emph{.cdoc}-file is also part of the output. In
 \hyperref[a:currydoc]{Appendix \ref{a:currydoc}} we provide further
 instruction for the usage of CurryDoc.
 
+Due to the similar syntax, we can use the same data structures in
+Haskell as in Curry to exchange those structures. More precisely, we
+can read the \emph{.cdoc}-file within our Haskell implementation and
+work with the data structure. In order to do that, we need a Haskell
+program that defines all the data structures used in |CurryInfo|
+including the nested structures. Thus, we generate |CurryInfo| to use
+it as data structure in the process of the index creation.
 % The same data structure is used on the Haskell side that implements
 % the search engine.
 
 \section{Indexing}\label{implementation:index}
 
-First mention that the interessting parts (that we want to add to the
+First mention that the interesting parts (that we want to add to the
 index) are already filtered by the CurryDoc part. So the indexer only
 processes the information to the structure provided by the Holumbus
-framework (HolumbusState).
+framework (HolumbusState). First the .cdoc file is read and resolved
+into the structure.
 
-Present the output (files) the indexer produces. After that introduce
-the concept of documents and index. In addition to that, say something
+Present the output (files) the indexer produces.In addition to that, say something
 about refreshing and checking the list of modules.
 
-Mention the three different kinds of documents for the three
-structures: module, function, type.
+After that introduce the concept of documents and index. Mention the
+three different kinds of documents for the three structures: module,
+function, type.
 \begin{code}
 -- || Pair of index and documents of the type ModuleInfo
 type CurryModIndexerState         = HolumbusState ModuleInfo
@@ -150,18 +165,25 @@ type CurryFctIndexerState         = HolumbusState FunctionInfo
 type CurryTypeIndexerState        = HolumbusState TypeInfo
 \end{code}
 
-Explain how each kind of information (description, module name,
-function signature etc) is combined with its context, and that these
-are stored in the index. Note that information can be extracted by the
-context again.
+\begin{code}
+ Document {title  = fiName info,
+                                            uri    = uriP,
+                                            custom = Just info}
+\end{code}
+                                        
 
 Note the difficulties of updating the index, because the data
 structure of the loaded pair of index and document differs from
-HolumbusState a. Conversion of |Inverted| to |CompactInverted| and
+]HolumbusState a. Conversion of |Inverted| to |CompactInverted| and
 |Documents a| to |SmallDocuments a|.
 \begin{code}
 type LoadedIndexerState a = (CompactInverted, SmallDocuments a)
 \end{code}
+
+Explain how each kind of information (description, module name,
+function signature etc) is combined with its context, and that these
+are stored in the index. Note that these information can be extracted by the
+context again. Focus on signatures and the problem of prefix search.
 
 Refer to the appendix, where the usage of the curryIndexer is
 explained.
@@ -187,7 +209,7 @@ Explain the general idea of parsers: a parser is used to analyze the
 user query with these different kinds of information. While parsing
 the string, a new data structure is composed for further use. This
 data structure is provided by the Holumbus framework and is used to
-starte the processs that returns the search results.
+start the process that returns the search results.
 
 Introduce the parser type that is parametrized with the type to parse and the
 resulting type.

@@ -43,7 +43,7 @@ and if a given function is flexible or rigid.
 CurryDoc processes Curry modules and generates documentation as HTML
 or \LaTeX{} output. For our index, we are not interested in any
 document markup language, but the pure information about the Curry
-module. This leads to the idea of generating a new readable data
+module. This observation leads to the idea of generating a new readable data
 structure as an extension to CurryDoc. In the process we take
 advantage of the FlatCurry representation of a Curry module to access
 these information we mentioned above. We discuss the actual
@@ -243,7 +243,7 @@ type Terms           = [String]
 \end{figure}
 
 Summing up, we have discussed the mechanism to evaluate a query with
-the Holumbus framework. This includes the data structures to represent a
+the Holumbus framework. The provided mechanism includes the data structures to represent a
 query, which can be processed to a data structure consisting of the
 matching documents and possible word completions.
 % But first the user input has to be parsed into the query structure to
@@ -257,7 +257,7 @@ user-input. At first we have to decide about the criteria users can
 search for. Since the index provides the pairs of contexts and search
 words, we are able to restrict the search to all these context with
 the help of the |Query| data structure and the |Specifier|
-constructor. This allows us to search for modules, functions,
+constructor. This structure of the index allows us to search for modules, functions,
 types, signatures and all other contexts we use during the creation of
 the index.\\
 
@@ -272,16 +272,16 @@ as simple as possible. The use of a specific language increases the
 usability, since an expression has its explicit syntax. A good example
 is the search term |''io''|, since in Curry \emph{IO} is the name for
 a module, a type and a constructor. Furthermore there are many
-functions in the IO module, that contain the word \emph{io}. This
-means that the search for \emph{io} results in a great amount of
-hits. To reduce the number of hits, we can restrict the search to
-a specific context. Therefor we want to provide specifiers the user
-combinats with the search term, for example
-|'':function IO''| searches for \emph{IO} in the context of function
-names only. But this special syntax restricts the user in the use of
-the search engine, if the language gets more complex. Thus to provide
-a user-friendly search engine, we have to make a compromise between a
-simply to use language and a language that can be parsed.
+functions in the IO module, that contain the word \emph{io}. Thus, the
+search for \emph{io} results in a great amount of hits. We can
+restrict the search to a specific context to reduce the number of
+hits. Therefore we want to provide specifiers the user combinats with
+the search term, for example |'':function IO''| searches for \emph{IO}
+in the context of function names only. But this special syntax
+restricts the user in the use of the search engine, if the language
+gets more complex. Thus to provide a user-friendly search engine, we
+have to make a compromise between a simply to use language and a
+language that can be parsed.
 
 % Set the focus on signatures. Because Hayoo! does not find signatures with
 % redundant parentheses, Curr(y)gle supports parenthesized signatures
@@ -295,14 +295,15 @@ type constructors in general do not need parentheses, but as beginner
 you might think they do. Thus we want to support parenthesized
 signatures and parenthesized query parts in general.
 
-Last but not least we want to provide binary conjunctions like \emph{And},
-\emph{Or} and \emph{Not}. On the one hand a combination of more search
-words is desirable, because popular search engines like
-Google\texttrademark~ use this feature. This increases the probability
-that users assume binary operations are standard features and expect
-search engines to provide the conjunction of several search terms. On
-the other hand if the desired result is still vague, a combination of
-more search words by a disjunction \emph{Or} helps to narrow down the
+Last but not least we want to provide binary conjunctions like
+\emph{And}, \emph{Or} and \emph{Not}. On the one hand a combination of
+more search words is desirable, because popular search engines like
+Google\texttrademark~ support binary operations as feature. The popularity increases the
+probability that users assume binary operations are standard features
+and expect search engines to provide the conjunction of several search
+terms. On the other hand if the desired result is still vague, a
+combination of more search words by a disjunction \emph{Or} helps to
+narrow down the
 search results.\\
 % In addition: binary operations/conjunctions. \\
 % Explain that in most cases, a combination of more search words is
@@ -315,11 +316,11 @@ In the end we want to provide an intuitive but powerful syntax for the
 search engine. With specifiers to restrict the search results to a
 given context and with binary operations to narrow down or extend the
 contexts, we want to provide a simple language for the user
-queries. Additionally type signatures should be recognized, this
-includes function, construction and primitive types as well as
-redundant parenthesized signatures. As the number of the supported
-features increases, the query gets more complex to read. Thus to reach
-this goal, we need to analyse the user input and rebuild it as an
+queries. Additionally type signatures should be recognized, including
+function, construction and primitive types as well as redundant
+parenthesized signatures. As the number of the supported features
+increases, the query gets more complex to read. Thus to reach this
+goal, we need to analyse the user input and rebuild it as an
 expression of our |Query| data structure. In
 \hyperref[implementation:parser]{Section \ref{implementation:parser}}
 we discuss our actual implementation.
