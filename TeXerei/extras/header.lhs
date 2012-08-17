@@ -13,6 +13,8 @@
 %
 % \usepackage[french,ngerman]{babel}
 
+\usepackage{todonotes}
+
 %
 % Pakete um Latin1 Zeichnensätze verwenden zu können und die dazu
 % passenden Schriften.

@@ -14,6 +14,8 @@
 %
 % \usepackage[french,ngerman]{babel}
 
+\usepackage{todonotes}
+
 %
 % Pakete um Latin1 Zeichnensätze verwenden zu können und die dazu
 % passenden Schriften.
@@ -438,6 +440,7 @@
 \EndFmtInput
 %
 %
+\arrayhs
 
 
 \begin{document}
@@ -857,7 +860,7 @@ are provided by the user, to gain information about the function or
 data structure. It also provides the type signatures of functions,
 since Curry uses a type inferencer algorithm. In addition the CurryDoc tool
 analyzes the program's structure and approximates the run-time
-behavior to gain further information\cite{currydoc2}. This includes information about
+behavior to gain further information\cite{currydoc2}. This analysis includes information about
 in-/completeness, overlapping pattern matches and non-/deterministic
 functions.
 
@@ -875,8 +878,9 @@ list of types and information about the module itself.
 \section{The Holumbus Framework}\label{preliminaries:holumbus}
 The Holumbus Framework is a Haskell library created by students of FH
 Wedel in connection with three master's theses\footnote{references
-  here?}. The main idea of the framework is to collect data with a
-specific structure, like an API of a programming language, and to take
+  here?}. Holumbus is a library to build and configure a search engine. The
+main idea of the framework is to collect data with a specific
+structure, like an API of a programming language, and to take
 advantage of this structure to improve the search results. In addition
 to the framework, they also build an example application named
 \emph{Hayoo!}\cite{hayoo}, an API search engine for the functional
@@ -889,7 +893,11 @@ indexer preprocesses the documents to create the characteristical data
 structure that is used to process a search query. Furthermore Holumbus
 provides a data structure that represents the results of a search
 query. This data structure corresponds to the structure of the
-documents, which simplifies the further processing.\\
+documents, which simplifies further processing.\\
+
+\missingfigure{Holumbus structure}
+\todo[noline]{ info about this structure in
+  more detail}
 
 \chapter{Analysis}\label{analysis}
 This chapter looks into the requirements to build and run Curr(y)gle,
@@ -936,7 +944,7 @@ and if a given function is flexible or rigid.
 CurryDoc processes Curry modules and generates documentation as HTML
 or \LaTeX{} output. For our index, we are not interested in any
 document markup language, but the pure information about the Curry
-module. This leads to the idea of generating a new readable data
+module. This observation leads to the idea of generating a new readable data
 structure as an extension to CurryDoc. In the process we take
 advantage of the FlatCurry representation of a Curry module to access
 these information we mentioned above. We discuss the actual
@@ -1039,21 +1047,21 @@ structure.
 After we decide about the contents of the index, we need to discuss
 the storage of these information. We make use of the Holumbus
 framework that provides data structures to manage the collected
-data. The main idea is to use two structures to score the data.
-\ensuremath{\Conid{HolDocuments}\;\Varid{a}} stores the collected data, where \ensuremath{\Varid{a}} is the type of
-the document. Secondly the framework provides a data structure
-\ensuremath{\Conid{HolIndex}} for the actual index that is traversed in the search
-process. Simply put, the \ensuremath{\Conid{HolIndex}} stores pairs \ensuremath{(\Conid{String},\Conid{String})},
-where the second entry is the word that can be searched and the first
-entry is the context of this word. An example for our API search
-engine is a context \emph{description}, whose corresponding \ensuremath{\Conid{String}}
-is the description text of a Curry module. This design allows the
-association between the information in the index and the corresponding
-document through a mapping. A further structure provided by the
-framework is \ensuremath{\Conid{HolumbusState}\;\Varid{a}}: a combination of index and document,
-polymorph by the data \ensuremath{\Conid{HolDocuments}\;\Varid{a}} holds. In
-\hyperref[implementation:index]{Section
-  \ref{implementation:index}} we illustrate the use of these data
+data. The main idea is to use two structures to store the data.
+\ensuremath{\Conid{Documents}\;\Varid{a}} is a data structures to store the collected data, where
+\ensuremath{\Varid{a}} is the type of the document. Secondly the framework provides a
+structure \ensuremath{\Conid{Inverted}} for the actual index data structure that is
+traversed in the search process. Simply put, the index stores pairs
+\ensuremath{(\Conid{String},\Conid{String})}, where the second entry is the word that can be
+searched and the first entry is the context of this word. An example
+for our API search engine is a context \emph{description}, whose
+corresponding \ensuremath{\Conid{String}} is the description text of a Curry module. This
+design allows the association between the information in the index and
+the corresponding document through a mapping. Another type provided by
+the framework is \ensuremath{\Conid{HolumbusState}\;\Varid{a}}: a combination of index and
+document, polymorph by the data the document holds. In
+\hyperref[implementation:index]{Section \ref{implementation:index}} we
+illustrate the use of these data
 structures in our implementation.\\
 
 To sum up, we want to extend the current CurryDoc implementation to
@@ -1138,7 +1146,7 @@ restriction when creating our index in
   \ref{implementation:index}}. The data structure we get as return
 value is shown in \hyperref[analysis:result]{Figure
   \ref{analysis:result}}. Since we make use of this structure in our
-implementation, let's take a closer look of the code. \ensuremath{\Conid{Result}\;\Varid{a}}
+implementation, let's take a closer look at the code. \ensuremath{\Conid{Result}\;\Varid{a}}
 consists of the matching documents with type \ensuremath{\Varid{a}} as well as possible
 word completions. The first is represented by \ensuremath{\Conid{DocHits}\;\Varid{a}} that is a
 mapping of \ensuremath{\Conid{DocInfo}\;\Varid{a}} and the contexts. On the other hand \ensuremath{\Conid{DocInfo}\;\Varid{a}}
@@ -1228,7 +1236,7 @@ of the given prefix in combination with its score, i.e. \ensuremath{\Conid{WordI
 \end{figure}
 
 Summing up, we have discussed the mechanism to evaluate a query with
-the Holumbus framework. This includes the data structures to represent a
+the Holumbus framework. The provided mechanism includes the data structures to represent a
 query, which can be processed to a data structure consisting of the
 matching documents and possible word completions.
 % But first the user input has to be parsed into the query structure to
@@ -1242,7 +1250,7 @@ user-input. At first we have to decide about the criteria users can
 search for. Since the index provides the pairs of contexts and search
 words, we are able to restrict the search to all these context with
 the help of the \ensuremath{\Conid{Query}} data structure and the \ensuremath{\Conid{Specifier}}
-constructor. This allows us to search for modules, functions,
+constructor. This structure of the index allows us to search for modules, functions,
 types, signatures and all other contexts we use during the creation of
 the index.\\
 
@@ -1257,16 +1265,16 @@ as simple as possible. The use of a specific language increases the
 usability, since an expression has its explicit syntax. A good example
 is the search term \ensuremath{\text{\tt ''}\;\Varid{io''}}, since in Curry \emph{IO} is the name for
 a module, a type and a constructor. Furthermore there are many
-functions in the IO module, that contain the word \emph{io}. This
-means that the search for \emph{io} results in a great amount of
-hits. To reduce the number of hits, we can restrict the search to
-a specific context. Therefore we want to provide specifiers the user
-combinats with the search term, for example
-\ensuremath{\text{\tt ''}\mathbin{:}\Varid{function}\;\Conid{IO''}} searches for \emph{IO} in the context of function
-names only. But this special syntax restricts the user in the use of
-the search engine, if the language gets more complex. Thus to provide
-a user-friendly search engine, we have to make a compromise between a
-simply to use language and a language that can be parsed.
+functions in the IO module, that contain the word \emph{io}. Thus, the
+search for \emph{io} results in a great amount of hits. We can
+restrict the search to a specific context to reduce the number of
+hits. Therefore we want to provide specifiers the user combinats with
+the search term, for example \ensuremath{\text{\tt ''}\mathbin{:}\Varid{function}\;\Conid{IO''}} searches for \emph{IO}
+in the context of function names only. But this special syntax
+restricts the user in the use of the search engine, if the language
+gets more complex. Thus to provide a user-friendly search engine, we
+have to make a compromise between a simply to use language and a
+language that can be parsed.
 
 % Set the focus on signatures. Because Hayoo! does not find signatures with
 % redundant parentheses, Curr(y)gle supports parenthesized signatures
@@ -1280,14 +1288,15 @@ type constructors in general do not need parentheses, but as beginner
 you might think they do. Thus we want to support parenthesized
 signatures and parenthesized query parts in general.
 
-Last but not least we want to provide binary conjunctions like \emph{And},
-\emph{Or} and \emph{Not}. On the one hand a combination of more search
-words is desirable, because popular search engines like
-Google\texttrademark~ use this feature. This increases the probability
-that users assume binary operations are standard features and expect
-search engines to provide the conjunction of several search terms. On
-the other hand if the desired result is still vague, a combination of
-more search words by a disjunction \emph{Or} helps to narrow down the
+Last but not least we want to provide binary conjunctions like
+\emph{And}, \emph{Or} and \emph{Not}. On the one hand a combination of
+more search words is desirable, because popular search engines like
+Google\texttrademark~ support binary operations as feature. The popularity increases the
+probability that users assume binary operations are standard features
+and expect search engines to provide the conjunction of several search
+terms. On the other hand if the desired result is still vague, a
+combination of more search words by a disjunction \emph{Or} helps to
+narrow down the
 search results.\\
 % In addition: binary operations/conjunctions. \\
 % Explain that in most cases, a combination of more search words is
@@ -1300,11 +1309,11 @@ In the end we want to provide an intuitive but powerful syntax for the
 search engine. With specifiers to restrict the search results to a
 given context and with binary operations to narrow down or extend the
 contexts, we want to provide a simple language for the user
-queries. Additionally type signatures should be recognized, this
-includes function, construction and primitive types as well as
-redundant parenthesized signatures. As the number of the supported
-features increases, the query gets more complex to read. Thus to reach
-this goal, we need to analyse the user input and rebuild it as an
+queries. Additionally type signatures should be recognized, including
+function, construction and primitive types as well as redundant
+parenthesized signatures. As the number of the supported features
+increases, the query gets more complex to read. Thus to reach this
+goal, we need to analyse the user input and rebuild it as an
 expression of our \ensuremath{\Conid{Query}} data structure. In
 \hyperref[implementation:parser]{Section \ref{implementation:parser}}
 we discuss our actual implementation.
@@ -1327,9 +1336,11 @@ processed by Holumbus. We illustrate the general idea and
 implementation approach of a parser to introduce into the subject. The
 last section covers features and implementations of the web
 application for the search engine.  The implementations are mostly
-done(written?) in the functional programming language Haskell; we use the
+written in the functional programming language Haskell; we use the
 functional logic programming language Curry for the CurryDoc
-extension only.
+extension only.\\
+
+\todo[inline]{general section about the underlying environment?}
 
 \section{CurryDoc extension}\label{implementation:currydoc}
 
@@ -1357,7 +1368,7 @@ can be described as well as general descriptions.
 But at first, we discuss which information we want to provide in our
 data structures. We already introduced \emph{CurryInfo} as structure
 for a Curry program in the
-\hyperref[preliminaries:currydoc:curryInfo]{second chapter}.  As next
+\hyperref[preliminaries:currydoc:curryInfo]{second chapter}. As next
 step we want to describe \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}},
 since they are a part of the \ensuremath{\Conid{CurryInfo}} data structure. You can take
 a look at these data structures and their definitions in advance in
@@ -1482,59 +1493,228 @@ it as data structure in the process of the index creation.
 % The same data structure is used on the Haskell side that implements
 % the search engine.
 
-\section{Indexing}\label{implementation:index}
+\section{Indexer}\label{implementation:index}
 
-First mention that the interesting parts (that we want to add to the
-index) are already filtered by the CurryDoc part. So the indexer only
-processes the information to the structure provided by the Holumbus
-framework (HolumbusState). First the .cdoc file is read and resolved
-into the structure.
+This section illustrates how to create the index for our search
+engine. In our analysis, we discussed some data structures to handle
+the index creation and the information we want to store. In the
+following, we talk the advantages and disadvantages of using the
+Holumbus framework and describe our implementation of the index
+creation in more detail.
+The following implementation is done in the functional logic
+programming language Haskell. This decision allows us to use the
+Holumbus framework for our purpose and a good number of functional,
+pure and strict features.\\
 
-Present the output (files) the indexer produces.In addition to that, say something
-about refreshing and checking the list of modules.
+In the previous section we already mentioned the required preparation
+to create the index. On the Haskell side, we need to define the data
+structures we use to build the \ensuremath{\Conid{CurryInfo}} structure. Then we can read
+the file produced by the CurryDoc extension for further usage. Since
+\ensuremath{\Conid{CurryInfo}} and its substructures \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}} and
+\ensuremath{\Conid{TypeInfo}} already provide the information we want to store in our
+index, it is not necessary to filter these structures. Instead, we
+only have to process these data to fit the data structures provided by
+Holumbus. In the end we can either create a new index by writing each
+structure to a file to store our information or update an existing
+index with additional Curry modules. In order to do that, we load the
+index and document files and merge them with new data. Due to lazy
+evaluation, we cannot read and write to the same file; it is
+not assured that we finish reading before we start to rewrite the
+file. Therefore we have to write temporary files and rename these
+files afterwards to guarantee a clean outcome.
 
-After that introduce the concept of documents and index. Mention the
-three different kinds of documents for the three structures: module,
-function, type.
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{35}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mbox{\onelinecomment  | Pair of index and documents of the type ModuleInfo}{}\<[E]%
-\\
-\>[B]{}\mathbf{type}\;\Conid{CurryModIndexerState}{}\<[35]%
-\>[35]{}\mathrel{=}\Conid{HolumbusState}\;\Conid{ModuleInfo}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mbox{\onelinecomment  | Pair of index and documents of the type FunctionInfo}{}\<[E]%
-\\
-\>[B]{}\mathbf{type}\;\Conid{CurryFctIndexerState}{}\<[35]%
-\>[35]{}\mathrel{=}\Conid{HolumbusState}\;\Conid{FunctionInfo}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mbox{\onelinecomment  | Pair of index and documents of the type TypeInfo}{}\<[E]%
-\\
-\>[B]{}\mathbf{type}\;\Conid{CurryTypeIndexerState}{}\<[35]%
-\>[35]{}\mathrel{=}\Conid{HolumbusState}\;\Conid{TypeInfo}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
+During the testing phase of the indexer, we noticed problems regarding
+duplicate data. In particular, when we add a Curry module to the
+index twice, there is no mechanism to detect the duplicated data. For
+that reason only we added a list of the modules that are stored in the
+index as output file. So every time we update the index with a given
+module, we check if it already exists in the saved list. We only start
+the processing of the data, if the module does not occur in our list
+and on the other hand, we add the module's name to the list.\\
 
+In the previous chapter, we introduced the idea of storing two
+structures: an index \ensuremath{\Conid{Inverted}} and a document \ensuremath{\Conid{Documents}\;\Varid{a}}. \todo{index would be better} In the following, we present this
+idea in more detail, beginning with the document. At first, we take
+closer look at the data structure itself. Holumbus provides us with
+\ensuremath{\Conid{Documents}\;\Varid{a}} can be described as mapping of yet another data
+structure \ensuremath{\Conid{Document}\;\Varid{a}} and an unique identifier (see
+\hyperref[fig:documents]{Figure \ref{fig:documents}}). Each \ensuremath{\Conid{Document}\;\Varid{a}} consists of a title, an URI and customizable information. The
+latter has the type \ensuremath{\Varid{a}} and determines the type for document. In order
+to have a faster access to a specific document, \ensuremath{\Conid{Documents}\;\Varid{a}} also
+stores the highest document id used in the mapping as well as a
+mapping from the document's uri to the document's identifier.\\
+
+\begin{figure}[h]
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{19}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{45}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{52}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{28}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{32}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{Document}\;\{\mskip1.5mu \Varid{title}{}\<[19]%
-\>[19]{}\mathrel{=}\Varid{fiName}\;\Varid{info},{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{Document}\;\Varid{a}\mathrel{=}\Conid{Document}{}\<[E]%
 \\
-\>[19]{}\hsindent{26}{}\<[45]%
-\>[45]{}\Varid{uri}{}\<[52]%
-\>[52]{}\mathrel{=}\Varid{uriP},{}\<[E]%
+\>[B]{}\hsindent{19}{}\<[19]%
+\>[19]{}\{\mskip1.5mu \Varid{title}{}\<[28]%
+\>[28]{}\mathbin{::}\Conid{Title}{}\<[E]%
 \\
-\>[19]{}\hsindent{26}{}\<[45]%
-\>[45]{}\Varid{custom}\mathrel{=}\Conid{Just}\;\Varid{info}\mskip1.5mu\}{}\<[E]%
+\>[B]{}\hsindent{19}{}\<[19]%
+\>[19]{},\Varid{uri}{}\<[28]%
+\>[28]{}\mathbin{::}\Conid{URI}{}\<[E]%
+\\
+\>[B]{}\hsindent{19}{}\<[19]%
+\>[19]{},\Varid{custom}\mathbin{::}(\Conid{Maybe}\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\hsindent{19}{}\<[19]%
+\>[19]{}\mskip1.5mu\}{}\<[E]%
+\\
+\>[B]{}\newline{}\<[E]%
+\\
+\>[B]{}\mathbf{data}\;\Conid{Documents}\;\Varid{a}\mathrel{=}\Conid{Documents}{}\<[E]%
+\\
+\>[B]{}\hsindent{20}{}\<[20]%
+\>[20]{}\{\mskip1.5mu \Varid{idToDoc}{}\<[32]%
+\>[32]{}\mathbin{::}(\Conid{DocMap}\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\hsindent{20}{}\<[20]%
+\>[20]{},\Varid{docToId}{}\<[32]%
+\>[32]{}\mathbin{::}\Conid{URIMap}{}\<[E]%
+\\
+\>[B]{}\hsindent{20}{}\<[20]%
+\>[20]{},\Varid{lastDocId}\mathbin{::}\Conid{DocId}{}\<[E]%
+\\
+\>[B]{}\hsindent{20}{}\<[20]%
+\>[20]{}\mskip1.5mu\}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-                                        
+\caption{Holumbus' data structure for a document and a collection of documents}
+\label{fig:documents}
+\end{figure}
+
+For the creation of the index, we have to feed \ensuremath{\Conid{Documents}\;\Varid{a}} with
+actual data. As mentioned before, we can read the \ensuremath{\Conid{CurryInfo}}
+structure and use it in the process. The first idea is to construct a
+document with \ensuremath{\Conid{CurryInfo}} as data structure for the custom
+information. This idea is easy to implement since we just use the
+unmodified data structure that CurryDoc produces. As consequence, all
+the information in the corresponding index map to this one
+document. When we search our index for an information, we can relate a
+given search result only to the corresponding \ensuremath{\Conid{CurryInfo}}; we cannot
+distinguish if the search result is associated to the module, function
+or type information of the given \ensuremath{\Conid{CurryInfo}} structure. In order to
+provide a more differentiated representation of a Curry module in the
+index, we choose not to use \ensuremath{\Conid{CurryInfo}} but its substructures
+\ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}} as document types,
+i.e. the custom information. However, if we want to distinguish
+between these three sources of information, we need to store three
+types of documents. Nevertheless this decision allows us to relate the
+information of a Curry module to its functions, types or information
+about the module itself.\todo{Not specific enough: each function and
+  data structure of the module has a document, all functions are
+  collected in documents as well as types} This design already determines the decision
+regarding the title and the uri. The title corresponds to the name of
+the function, type or module. The value of the URI is an argument to
+fill by the user when generating the index; the URI can point to a
+local or online source for documentation. We designed the URI
+representation for the HTML-documentation provided by CurryDoc, since
+the current main source for Curry documentation, that can be accessed
+online\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC}},
+is generated via CurryDoc. Since this HTML-structure of a Curry module
+documentation provides anchors to the module's defined functions and
+data structures, we use this link mechanism for our URIs as well. In
+\hyperref[fig:uri]{Figure \ref{fig:uri}} you can see that modules use
+the base URI given by the user, whereas functions and data structures
+are build by combining the base URI, an anchor symbol and the
+function's or data structure's name.\\
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{6}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{12}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mbox{\onelinecomment  Function to build a document.}{}\<[E]%
+\\
+\>[B]{}\Varid{doc}\mathbin{::}\Conid{String}\to (\Varid{a}\to \Conid{String})\to \Conid{Uri}\;\Varid{a}\to \Varid{a}\to \Conid{Document}\;\Varid{a}{}\<[E]%
+\\
+\>[B]{}\Varid{doc}\;\Varid{uriPath}\;\Varid{fiName}\;\Varid{uriType}\;\Varid{info}\mathrel{=}\Conid{Document}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\{\mskip1.5mu \Varid{title}{}\<[12]%
+\>[12]{}\mathrel{=}\Varid{fiName}\;\Varid{info}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{},\Varid{uri}{}\<[12]%
+\>[12]{}\mathrel{=}\Varid{uriP}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{},\Varid{custom}\mathrel{=}\Conid{Just}\;\Varid{info}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\\
+\>[B]{}\mathbf{where}\;\Varid{uriP}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{4}{}\<[4]%
+\>[4]{}\mathbf{case}\;\Varid{uriType}\;\mathbf{of}{}\<[E]%
+\\
+\>[4]{}\hsindent{2}{}\<[6]%
+\>[6]{}\Conid{ModuleUri}\;\Varid{baseUri}\to {}\<[E]%
+\\
+\>[6]{}\hsindent{2}{}\<[8]%
+\>[8]{}\Varid{uriPath}\plus \Varid{baseUri}\;\Varid{info}\plus \text{\tt \char34 .html\char34}{}\<[E]%
+\\
+\>[4]{}\hsindent{2}{}\<[6]%
+\>[6]{}\Conid{FctOrTypeUri}\;\Varid{baseUri}\;\Varid{name}\to {}\<[E]%
+\\
+\>[6]{}\hsindent{2}{}\<[8]%
+\>[8]{}\Varid{uriPath}\plus \Varid{baseUri}\;\Varid{info}\plus \text{\tt \char34 .html\char34}\plus \text{\tt \char34 \#\char34}\plus \Varid{name}\;\Varid{info}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\newline{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment  Data to represent uri,}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment  functions and types use anchors, i.e. moduleName.html$$functionName.}{}\<[E]%
+\\
+\>[B]{}\mathbf{data}\;\Conid{Uri}\;\Varid{a}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{ModuleUri}\;(\Varid{a}\to \Conid{String})\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{FctOrTypeUri}\;(\Varid{a}\to \Conid{String})\;(\Varid{a}\to \Conid{String}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{Function to build \ensuremath{\Conid{Document}\;\Varid{a}} and data structure to
+  distinguish between an URI with or without anchors}
+\label{fig:uri}
+\end{figure}
+
+% First mention that the interesting parts (that we want to add to the
+% index) are already filtered by the CurryDoc part. So the indexer only
+% processes the information to the structure provided by the Holumbus
+% framework (HolumbusState). First the .cdoc file is read and resolved
+% into the index and document structure.
+
+% Present the output (files) the indexer produces. In addition to that, say something
+% about refreshing and checking the list of modules.
+
+% After that introduce the concept of documents and index. Mention the
+% three different kinds of documents for the three structures: module,
+% function, type.
+% \begin{code}
+% -- || Pair of index and documents of the type ModuleInfo
+% type CurryModIndexerState         = HolumbusState ModuleInfo
+
+% -- || Pair of index and documents of the type FunctionInfo
+% type CurryFctIndexerState         = HolumbusState FunctionInfo
+
+% -- || Pair of index and documents of the type TypeInfo
+% type CurryTypeIndexerState        = HolumbusState TypeInfo
+% \end{code}
 
 Note the difficulties of updating the index, because the data
 structure of the loaded pair of index and document differs from
@@ -1555,7 +1735,7 @@ context again. Focus on signatures and the problem of prefix search.
 Refer to the appendix, where the usage of the curryIndexer is
 explained.
 
-\section{Parsing user queries}\label{implementation:parser}
+\section{Parser}\label{implementation:parser}
 
 % First describe the idea, that the use of a specific language increases
 % the usability. But it also restricts the user in her usage of the

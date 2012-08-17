@@ -113,21 +113,21 @@ FuncType (TCons (Prelude, Bool) []) (FuncType (TCons (Prelude, Int) [])
 After we decide about the contents of the index, we need to discuss
 the storage of these information. We make use of the Holumbus
 framework that provides data structures to manage the collected
-data. The main idea is to use two structures to score the data.
-|HolDocuments a| stores the collected data, where |a| is the type of
-the document. Secondly the framework provides a data structure
-|HolIndex| for the actual index that is traversed in the search
-process. Simply put, the |HolIndex| stores pairs |(String, String)|,
-where the second entry is the word that can be searched and the first
-entry is the context of this word. An example for our API search
-engine is a context \emph{description}, whose corresponding |String|
-is the description text of a Curry module. This design allows the
-association between the information in the index and the corresponding
-document through a mapping. A further structure provided by the
-framework is |HolumbusState a|: a combination of index and document,
-polymorph by the data |HolDocuments a| holds. In
-\hyperref[implementation:index]{Section
-  \ref{implementation:index}} we illustrate the use of these data
+data. The main idea is to use two structures to store the data.
+|Documents a| is a data structures to store the collected data, where
+|a| is the type of the document. Secondly the framework provides a
+structure |Inverted| for the actual index data structure that is
+traversed in the search process. Simply put, the index stores pairs
+|(String, String)|, where the second entry is the word that can be
+searched and the first entry is the context of this word. An example
+for our API search engine is a context \emph{description}, whose
+corresponding |String| is the description text of a Curry module. This
+design allows the association between the information in the index and
+the corresponding document through a mapping. Another type provided by
+the framework is |HolumbusState a|: a combination of index and
+document, polymorph by the data the document holds. In
+\hyperref[implementation:index]{Section \ref{implementation:index}} we
+illustrate the use of these data
 structures in our implementation.\\
 
 To sum up, we want to extend the current CurryDoc implementation to
@@ -193,7 +193,7 @@ restriction when creating our index in
   \ref{implementation:index}}. The data structure we get as return
 value is shown in \hyperref[analysis:result]{Figure
   \ref{analysis:result}}. Since we make use of this structure in our
-implementation, let's take a closer look of the code. |Result a|
+implementation, let's take a closer look at the code. |Result a|
 consists of the matching documents with type |a| as well as possible
 word completions. The first is represented by |DocHits a| that is a
 mapping of |DocInfo a| and the contexts. On the other hand |DocInfo a|

@@ -2,6 +2,7 @@
 %include extras/header.lhs
 %include polycode.fmt
 %include greek.fmt
+\arrayhs
 
 %format == = "=="
 %format ts2
@@ -12,6 +13,7 @@
 %format <$> = "\circledS"
 %format ~<$>~ = "~\circledS~"
 %format %//% = "\newline"
+%format $$ = "#"
 
 \begin{document}
 

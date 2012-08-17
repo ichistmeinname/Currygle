@@ -278,8 +278,9 @@ list of types and information about the module itself.
 \section{The Holumbus Framework}\label{preliminaries:holumbus}
 The Holumbus Framework is a Haskell library created by students of FH
 Wedel in connection with three master's theses\footnote{references
-  here?}. The main idea of the framework is to collect data with a
-specific structure, like an API of a programming language, and to take
+  here?}. Holumbus is a library to build and configure a search engine. The
+main idea of the framework is to collect data with a specific
+structure, like an API of a programming language, and to take
 advantage of this structure to improve the search results. In addition
 to the framework, they also build an example application named
 \emph{Hayoo!}\cite{hayoo}, an API search engine for the functional
@@ -292,5 +293,9 @@ indexer preprocesses the documents to create the characteristical data
 structure that is used to process a search query. Furthermore Holumbus
 provides a data structure that represents the results of a search
 query. This data structure corresponds to the structure of the
-documents, which simplifies the further processing.\\
+documents, which simplifies further processing.\\
+
+\missingfigure{Holumbus structure}
+\todo[noline]{ info about this structure in
+  more detail}
 
