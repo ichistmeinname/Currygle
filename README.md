@@ -1,8 +1,6 @@
 Curr(y)gle
 ===========
 
-Contact : sad@informatik.uni-kiel.de
-
 About
 ------
 
@@ -26,7 +24,9 @@ Installation
 This directory contains cabal-file, for the installation you simply
 have to run cabal.
 
-    $ cabal configure cabal build cabal install
+    $ cabal configure 
+    $ cabal build 
+    $ cabal install
 
 Alternatively you can use the provided *Setup.hs*.
     $ runhaskell Setup.hs configure
@@ -62,7 +62,7 @@ uri to generate the index.
 
     $ curryIndexer ./example/test.txt --n
 
-With a generated index, you can run the web application on your
+If you have generated an index, you can run the web application on your
 localhost on a given port with the curryServer.
 
     $ curryServer -p 1337
@@ -78,6 +78,7 @@ restrict your search.
 * __:inModule io__ - restricts the search to the module _io_, but searches for all contexts (also __:in io__)
 * __:function map__ - searches for functions starting with _map_ (also __:f map__), without a following name, it searches for all functions
 * __:type either__ - searches for types starting with either (also __:t either__), without a following name, it searches for all types
+* __:author donald__ - searches for modules with _donald_ as author (also: __:a dona
 * __:nondet [name]__ - searches for non-deterministic functions (also __:nd__), a following name is optional
 * __:det [name]__ - searches for deterministic functions (also __:d__), a following name is optional
 * __:flexible [name]__ - searches for flexible functions (also __:fl__), a following name is optional
@@ -88,6 +89,12 @@ restrict your search.
 * __:type either OR :function either__ - OR can be used as binary operator
 * __io NOT :module io__ - searches for io in all contexts except for modules
 * upper character, _->_, tuples, lists are all identifiers to search for signatures
+
+
+Contact 
+--------
+
+sad@informatik.uni-kiel.de
 
 
 Have fun searching, but remember: keep calm and curry on!
