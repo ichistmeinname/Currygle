@@ -20,7 +20,7 @@ import Data.Text.IO as TIO      (readFile)
 
 import System.Environment       (getArgs)
 import System.Directory         (renameFile, getDirectoryContents)
-import System.FilePath.Posix    (addTrailingPathSeparator, dropExtension, takeExtension)
+import System.FilePath.Posix    (addTrailingPathSeparator, dropExtension, takeExtension, takeBaseName)
 
 import CurryInfo
 import FilesAndLoading
@@ -53,15 +53,16 @@ addOcc occurrence (a,b) = (a,b,occurrence)
 
 -- Adds description context to a string
 description :: String -> [(String,String)]
-description s = map (addContext ":description") $ filter (not . biasedWord) $ splitOnWhitespace s
+description s = 
+  map (addContext "description") $ filter (not . biasedWord) $ splitOnWhitespace s
 
 -- Adds signature context to a signature string and all its suffixes
 signature :: [String] -> [(String,String)]
-signature = map (addContext ":signature")
+signature = map (addContext "signature")
 
 -- Adds author context to a string
 author :: String -> [(String, String)]
-author a = map (addContext ":author") $ splitOnWhitespace a
+author a = map (addContext "author") $ splitOnWhitespace a
 
 -- Returns tupel of two strings
 addContext :: String -> String -> (String, String)
@@ -77,9 +78,10 @@ writeOrPass moduleName ioAction = do
 -- Checks, if the module exists in the index
 occurenceCheck :: Bool -> FilePath -> FilePath -> IO CurryIndexerStates -> IO CurryIndexerStates
 occurenceCheck new uriPath cdocPath states = 
-  if new then prepareIndex uriPath cdocPath states 
-         else writeOrPass name $ prepareIndex uriPath cdocPath states
- where name = dropExtension $ last $ splitStringOn "/" cdocPath
+  if new then index
+         else writeOrPass name index
+ where name  = takeBaseName cdocPath
+       index = prepareIndex uriPath cdocPath states
 
 
 -- Helper function for writing index
@@ -91,18 +93,23 @@ prepareIndex uriPath cdocPath states = do
   return $ indexAndDocuments curryDoc uriPath (cMod, cFct, cTyp)
 
 -- | Function to build a document.
-doc :: Binary a => String -> (a -> String) -> Uri a -> a -> Document a
-doc uriPath fiName uriType info = Document {title  = fiName info,
-                                            uri    = uriP,
-                                            custom = Just info}
+doc :: Binary a => String -> (a -> String) -> URI a -> a -> Document a
+doc uriPath fiName uriType info = 
+  Document { title  = fiName info
+           , uri    = uriP
+           , custom = Just info
+           }
  where uriP = case uriType of
-              ModuleUri fiUri                    -> uriPath ++ fiUri info ++ ".html"
-              FctOrTypeUri fiUriModule fiUriName -> uriPath ++ fiUriModule info ++ ".html"
-                                                             ++ "#" ++ fiUriName info
+                ModuleURI baseUri -> 
+                  uriPath ++ baseUri info ++ ".html"
+                FctOrTypeURI baseUri name -> 
+                  uriPath ++ baseUri info ++ ".html" ++ "#" ++ name info
 
 -- | Data to represent uri,
 -- functions and types use anchors, i.e. moduleName.html#functionName.
-data Uri a = ModuleUri (a -> String) | FctOrTypeUri (a -> String) (a -> String)
+data URI a = 
+  ModuleURI (a -> String) | 
+  FctOrTypeURI (a -> String) (a -> String)
 
 -- | Function to build index.
 idx :: (a -> DocId -> [(String, String, Occurrences)]) -> a -> DocId -> Inverted
@@ -112,9 +119,9 @@ idx contextList info i = fromList emptyInverted $ contextList info i
 ixDoc :: Binary a => (a -> DocId -> [(String, String, Occurrences)]) -> 
                        [a] -> [Document a] -> HolumbusState a -> HolumbusState a
 ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) = 
-    let (docId, docs') = insertDoc dc doc1
-        idx'           = mergeIndexes ix $ idx contextList info docId
-    in ixDoc contextList infos docs (makeIndexerState idx' docs')
+  let (docId, docs') = insertDoc dc doc1
+      idx'           = mergeIndexes ix $ idx contextList info docId    
+  in ixDoc contextList infos docs (makeIndexerState idx' docs')
 ixDoc _ _ _ is = is
 
 -- Calls ixDoc to create index and documents for the module, functions and types
@@ -123,18 +130,18 @@ indexAndDocuments curryDoc uriPath (cMod, cFct, cTyp) =
   let cModState  = ixDoc 
                    contextsMod 
                    [moduleInfo curryDoc] 
-                   [doc uriPath mName (ModuleUri mName) (moduleInfo curryDoc)]
+                   [doc uriPath mName (ModuleURI mName) (moduleInfo curryDoc)]
                    cMod
       cFctState  = ixDoc 
                    contextsF                     
                    (functionInfos curryDoc) 
-                   (map (doc uriPath fName (FctOrTypeUri fModule fName)) 
+                   (map (doc uriPath fName (FctOrTypeURI fModule fName)) 
                         $ functionInfos curryDoc)
                    cFct
       cTypeState = ixDoc 
                    contextsT 
                    (typeInfos curryDoc) 
-                   (map (doc uriPath tName (FctOrTypeUri tModule tName)) 
+                   (map (doc uriPath tName (FctOrTypeURI tModule tName)) 
                         $ typeInfos curryDoc) 
                    cTyp
   in (cModState, cFctState, cTypeState)
@@ -142,32 +149,33 @@ indexAndDocuments curryDoc uriPath (cMod, cFct, cTyp) =
 -- | Generates the context information for a module.
 contextsMod :: ModuleInfo -> DocId -> [(String, String, Occurrences)]
 contextsMod moduleI i = 
-  map (addOcc  (occ i 1)) $ [(":module", mName moduleI)] 
+  map (addOcc  (occ i 1)) $ [("module", mName moduleI)] 
    ++ (author $ mAuthor moduleI)
    ++ (description $ mDescription moduleI)
 
 -- | Generates the context information for a function.
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
-  map (addOcc  (occ i 2)) $ [(":function", fName functionI)] 
-   ++ [(":inModule", fModule functionI)]
+  map (addOcc  (occ i 2)) $ [("function", fName functionI)] 
+   ++ [("inModule", fModule functionI)]
    ++ (signature $ signatureComponents $ fSignature functionI)
    ++ (flexRigid $ fFlexRigid functionI)
    ++ (nonDet $ fNonDet functionI)
    ++ (description $ fDescription functionI) 
  where flexRigid fr = case fr of
-                      KnownFlex  -> [(":flexible", "")]     
-                      KnownRigid -> [(":rigid", "")]
-                      ConflictFR -> [(":flexible", ""), (":rigid", "")]
+                      KnownFlex  -> [("flexible", "")]     
+                      KnownRigid -> [("rigid", "")]
+                      ConflictFR -> [("flexible", ""), ("rigid", "")]
                       _          -> []
-       nonDet nd    = if nd then [(":nondet", "")] else [(":det", "")]
+       nonDet nd    = if nd then [("nondet", "")] else [("det", "")]
 
 -- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
   let sigPair = map (showTypeList (tName typeI ++ (varIndex $ tVarIndex typeI))) 
                  $ tSignature typeI
-  in map (addOcc  (occ i 1)) $ [(":type", tName typeI)] ++ [(":inModule", tModule typeI)]
+  in map (addOcc  (occ i 3)) $ [("type", tName typeI)] 
+      ++ [("inModule", tModule typeI)]
       ++ (concatMap signature $ map fst sigPair)
       ++ (signature $ map snd sigPair)
       ++ (description $ tDescription typeI)   
@@ -217,9 +225,9 @@ reorganizeFiles = do
 -- When updating an index, temporary files have to be written
 writeDocIndex :: Binary a => FilePath -> SmallDocuments a -> CompactInverted -> IO ()
 writeDocIndex path cDoc cIndex = do
-    putStr "."
-    writeBin (indexExtension (path++_tempFile)) cIndex
-    writeBin (documentExtension (path++_tempFile)) cDoc
+  putStr "."
+  writeBin (indexExtension (path++_tempFile)) cIndex
+  writeBin (documentExtension (path++_tempFile)) cDoc
 
 -- | Writes and merges an existing pair of index and documents with a new one.
 mergeIdxDoc :: [String] -> IO LoadedIndexerStates -> CurryIndexerStates -> IO ()
@@ -253,9 +261,9 @@ loadIndexerStates = do
 -- Loads the list of modules that exist in the index
 loadModuleList :: IO [String]
 loadModuleList = do --loadFromBinFile moduleListPath
- text <- Prelude.readFile (listExtension _moduleListPath)
- list <- readIO text 
- return list
+  text <- Prelude.readFile (listExtension _moduleListPath)
+  list <- readIO text 
+  return list
 
 -- Writes index and documents with a function that converts the types automatically 
 -- (Inverted to CompactInverted, Documents a to SmallDocuments a)
@@ -296,8 +304,8 @@ startIndexer new cdocP uriP = do
   files <- getDirectoryContents cdocP >>= return . filter (\c -> takeExtension c == ".cdoc")
   writeIndex new uriPath $ map (cdocPath ++) files
   putStr "done!\n"
- where uriPath        = addTrailingPathSeparator uriP
-       cdocPath       = addTrailingPathSeparator cdocP
+ where uriPath  = addTrailingPathSeparator uriP
+       cdocPath = addTrailingPathSeparator cdocP
 
 -- Recursive function to start indexing,
 -- either a new index is created or the existing index is updated (new flag)
@@ -311,11 +319,11 @@ prepareFilePaths _ _    = putStr _howToUseMessage
 processArgs :: [String] -> IO ()
 processArgs args =
   case args of 
-   [fPath,"--n"]             -> readFilePaths True fPath
-   [fPath,"--u"]             -> readFilePaths False fPath
-   [cdocPath,uriPath,"--n"]  -> startIndexer True cdocPath uriPath
-   [cdocPath,uriPath,"--u"]  -> startIndexer False cdocPath uriPath    
-   _                         -> putStr _howToUseMessage
+   [fPath,"--n"]            -> readFilePaths True fPath
+   [fPath,"--u"]            -> readFilePaths False fPath
+   [cdocPath,uriPath,"--n"] -> startIndexer True cdocPath uriPath
+   [cdocPath,uriPath,"--u"] -> startIndexer False cdocPath uriPath    
+   _                        -> putStr _howToUseMessage
 
 main :: IO ()
 main = getArgs >>= processArgs

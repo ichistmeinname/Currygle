@@ -17,32 +17,25 @@ generateCDoc :: String  -> String -> [(SourceLine,String)] -> AnaInfo -> IO Stri
 generateCDoc progName modCmts progCmts anaInfo = do
     Prog modName _ types functions _ <- readFlatCurryFile fcyName
     let modInfo = ModuleInfo modName (author avCmts) mCmts 
-	funcInfo (Func (mName, fName) _ _ tExpr (Rule _ expr)) = 
+	funcInfo (Func qName@(mName, fName) _ _ tExpr rule) = 
             FunctionInfo fName 
-	    ((mName, fName), tExpr) 
+	    (qName, tExpr) 
 	    mName 
 	    (funcComment fName progCmts)
-	    (getOverlappingInfo anaInfo (modName, fName)) 
-	    (getFlexRigid expr)
-	funcInfo (Func (mName, fName) _ _ tExpr (External _)) = 
-            FunctionInfo fName 
-	    ((mName, fName), tExpr)
-	    mName 
-	    (funcComment fName progCmts)
-	    (getOverlappingInfo anaInfo (modName, fName)) 
-	    UnknownFR 
+	    (getOverlappingInfo anaInfo qName) 
+	    (flexRigid rule)
 	typeInfo (Type (mName, tName) _ vars consDecl) = 
-		       	       	   TypeInfo tName
-	       	       	      	   (map consSignature (filter (\(Cons _ _ vis _) -> vis == Public) consDecl))
-				   vars
-				   mName
-				   (dataComment tName progCmts)
+	    TypeInfo tName
+	    (map consSignature (filter (\(Cons _ _ vis _) -> vis == Public) consDecl))
+	    vars
+	    mName
+	    (dataComment tName progCmts)
         typeInfo (TypeSyn (mName, tName) _ vars tExpr) =
-		 	  	  TypeInfo tName
-				  [((mName, tName), [tExpr])]
-				  vars
-				  mName
-				  (dataComment tName progCmts)
+ 	    TypeInfo tName
+	    [((mName, tName), [tExpr])]
+	    vars
+	    mName
+	    (dataComment tName progCmts)
         (mCmts, avCmts) = splitComment modCmts
 	funcInfos = map funcInfo (filter (\(Func _ _ vis _ _) -> vis == Public) functions)
 	typeInfos = map typeInfo (concatMap filterT types)
@@ -57,6 +50,10 @@ funcComment str = fst . splitComment . getFuncComment str
 
 dataComment :: String -> [(SourceLine,String)] -> String
 dataComment str = fst . splitComment . getDataComment str
+
+flexRigid :: Rule -> FlexRigidResult
+flexRigid (Rule _ expr) = getFlexRigid expr
+flexRigid (External _)  = UnknownFR
 
 -- the name
 -- the author

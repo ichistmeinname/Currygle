@@ -35,66 +35,73 @@ infixr 4 -->
 
 -- Name for the specifier to restrict the search to module names.
 _moduleSpecifierName :: String
-_moduleSpecifierName = ":module"
+_moduleSpecifierName = "module"
 
 -- Name for the specifier to restrict the search to function names.
 _functionSpecifierName :: String
-_functionSpecifierName = ":function"
+_functionSpecifierName = "function"
 
 -- Name for the specifier to restrict the search to type names.
 _typeSpecifierName :: String
-_typeSpecifierName = ":type"
+_typeSpecifierName = "type"
 
 -- Name for the specifier to restrict the search to signatures.
 _signatureSpecifierName :: String
-_signatureSpecifierName = ":signature"
+_signatureSpecifierName = "signature"
 
--- Name for the specifier to only search for information in the given module.
+-- Name for the specifier to search for information in the given module only.
 _inModuleSpecifierName :: String
-_inModuleSpecifierName = ":inModule"
+_inModuleSpecifierName = "inModule"
+
+-- Name for the specifier to restrict the search to a module coded by a given author.
+_authorSpecifierName :: String
+_authorSpecifierName = "author"
 
 -- Name for the specifier to restrict the search to non-deterministic functions
 _nondetSpecifierName :: String
-_nondetSpecifierName = ":nondet"
+_nondetSpecifierName = "nondet"
 
--- Name for the specifier to restrict the search to deterministic functions
+-- Name for the specifier to restrict the search to deterministic functions.
 _detSpecifierName :: String
-_detSpecifierName = ":det"
+_detSpecifierName = "det"
 
--- Name for the specifier to restrict the search to flexible functions
+-- Name for the specifier to restrict the search to flexible functions.
 _flexibleSpecifierName :: String
-_flexibleSpecifierName = ":flexible"
+_flexibleSpecifierName = "flexible"
 
--- Name for the specifier to restrict the search to rigid functions
+-- Name for the specifier to restrict the search to rigid functions.
 _rigidSpecifierName :: String
-_rigidSpecifierName = ":rigid"
+_rigidSpecifierName = "rigid"
 
 _moduleSpecifierNameShort :: String
-_moduleSpecifierNameShort = ":m"
+_moduleSpecifierNameShort = "m"
 
 _functionSpecifierNameShort :: String
-_functionSpecifierNameShort = ":f"
+_functionSpecifierNameShort = "f"
 
 _typeSpecifierNameShort :: String
-_typeSpecifierNameShort = ":t"
+_typeSpecifierNameShort = "t"
 
 _signatureSpecifierNameShort :: String
-_signatureSpecifierNameShort = ":s"
+_signatureSpecifierNameShort = "s"
 
 _inModuleSpecifierNameShort :: String
-_inModuleSpecifierNameShort = ":in"
+_inModuleSpecifierNameShort = "in"
+
+_authorSpecifierNameShort :: String
+_authorSpecifierNameShort = "a"
 
 _nondetSpecifierNameShort :: String
-_nondetSpecifierNameShort = ":nd"
+_nondetSpecifierNameShort = "nd"
 
 _detSpecifierNameShort :: String
-_detSpecifierNameShort = ":d"
+_detSpecifierNameShort = "d"
 
 _flexibleSpecifierNameShort :: String
-_flexibleSpecifierNameShort = ":fl"
+_flexibleSpecifierNameShort = "fl"
 
 _rigidSpecifierNameShort :: String
-_rigidSpecifierNameShort = ":ri"
+_rigidSpecifierNameShort = "ri"
 
 --------------------------
 -- the signature parser --
@@ -173,9 +180,9 @@ signatureParser inAListOrTuple =
 
 -- Helper function to build a parser that parses a given specifier name (or its short name) an returns a query as specifier (i.e. Specifier [spec] identifier). The boolean value indicates if a following identifier is allowed.
 aSpecifierParser :: Bool -> String -> String -> Parsec String String String -> QueryParser
-aSpecifierParser optionalIdent spec short parser=
-  build [spec] spec
-  <|> build [spec] short
+aSpecifierParser optionalIdent spec short parser =
+  build [spec] (":"++spec)
+  <|> build [spec] (":"++short)
  where build specList str = 
         specify specList <$> (reservedOp specifierTokenParser str *>
          if optionalIdent then option ("") parser
@@ -203,11 +210,17 @@ typeSpecifier =
   aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort
    (identifier specifierTokenParser <|> string ":" <|> string "[]")
 
--- | Parser a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
+-- | Parses a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
 inModuleSpecifier :: QueryParser
 inModuleSpecifier =
   aSpecifierParser True _inModuleSpecifierName _inModuleSpecifierNameShort
    (identifier specifierTokenParser)
+
+-- | Parses a authorSpecifierName followed by an identifier (i.e. ":author frank").
+authorSpecifier :: QueryParser
+authorSpecifier =
+  aSpecifierParser True _authorSpecifierName _authorSpecifierNameShort 
+    (identifier specifierTokenParser)
 
 -- | Parses a nondetSpecifierName.
 nondeterminismSpecifier :: QueryParser
@@ -239,7 +252,7 @@ signatureSpecifier =
   signatureSpecifier' _signatureSpecifierName <|> signatureSpecifier' _signatureSpecifierNameShort
  where signatureSpecifier' name =
         (\sig -> specify [_signatureSpecifierName] (testShow sig))
-        <$> (reservedOp specifierTokenParser name *> signatureParser False)
+        <$> (reservedOp specifierTokenParser (":"++name) *> signatureParser False)
 
 -- | Parses all possible forms of specifiers.
 specifierParser :: QueryParser
@@ -266,7 +279,7 @@ binOpTerm =
    many (specifierParser 
          <|> (Word <$> identifier binaryTokenParser)
          <|> (Word <$> operator binaryTokenParser)
-         <|> ((\word -> specify [":signature"] (testShow word)) 
+         <|> ((\word -> specify ["signature"] (testShow word)) 
                          <$> signatureParser False)))
   <|> parens binaryTokenParser binOpParser
   <|> parens specifierTokenParser specifierParser
