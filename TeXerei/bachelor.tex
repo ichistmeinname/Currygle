@@ -1111,9 +1111,46 @@ the \ensuremath{\Conid{TypeExpr}} data structure. %
 After we decide about the contents of the index, we need to discuss
 the storage of these information. %
 We make use of the Holumbus framework that provides data structures to
-manage the collected data. %
-The main idea is to use two structures to store the data.  \ensuremath{\Conid{Documents}\;\Varid{a}} is a data structures to store the collected data, where \ensuremath{\Varid{a}} is the
-type of the document. %
+manage the collected data and interfaces to operate on these
+structures. %
+The main idea is to use two structures to store the data, one for the
+document we are indexing and the other one stores the actual data we
+traverse when a search is performed (see \hyperref[fig:indexer]{Figure
+  \ref{fig:indexer}}). %
+At first, we introduce the data structures we use in our
+implementation, that are provided by the framework. %
+Secondly, we discuss the functionality of the interfaces.
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{25}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{39}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{IndexerState}\;\Varid{i}\;\Varid{d}\;\Varid{a}\mathrel{=}\Conid{IndexerState}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\{\mskip1.5mu \Varid{ixs\char95 index}{}\<[25]%
+\>[25]{}\mathbin{::}\Varid{i}{}\<[39]%
+\>[39]{}\mbox{\onelinecomment  the index type}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{},\Varid{ixs\char95 documents}{}\<[25]%
+\>[25]{}\mathbin{::}(\Varid{d}\;\Varid{a}){}\<[39]%
+\>[39]{}\mbox{\onelinecomment  the document type}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{The main index structure that stores two substructures}
+\label{fig:indexer}
+\end{figure}
+
+In our implementation, we use \ensuremath{\Conid{Documents}\;\Varid{a}} as a data structures to
+store the collected data, where \ensuremath{\Varid{a}} is the type of the document. %
+Each document of a collection has its unique identifier. %
 Secondly the framework provides a structure \ensuremath{\Conid{Inverted}} for the actual
 index data structure that is traversed in the search process. %
 Simply put, the index stores pairs \ensuremath{(\Conid{String},\Conid{String})}, where the
@@ -1122,13 +1159,30 @@ the context of this word. %
 An example for our API search engine is a context \emph{description},
 whose corresponding \ensuremath{\Conid{String}} is the description text of a Curry
 module. %
-This design allows the association between the information in the
-index and the corresponding document through a mapping. %
+As addition to the design, the identifier of the document is stored in
+the index data structure as well to provide an association between the
+index and the document the data was indexed from. %
 Another type provided by the framework is \ensuremath{\Conid{HolumbusState}\;\Varid{a}}: a
 combination of index and document, polymorph by the data the document
 holds. %
 In \hyperref[implementation:index]{Section \ref{implementation:index}}
-we illustrate the use of these data structures in our implementation.\\
+we illustrate the use of these data structures in our
+implementation.
+
+Holumbus provides more than these two explicit data structures to
+handle the storage, it rather has multiple implementations to choose
+from. %
+All these implementations of the document and index data structure are
+instances of the provided interfaces. %
+Therefore we introduce the main functionalities of the interfaces we
+use in our implementation. %
+\ensuremath{\Conid{HolIndex}} is the name of the interface for the \emph{actual index}
+and the main functionalities we are interested in, are the provided
+methods to create a new index and merge two existing indexes. %
+We need the same functionality for \ensuremath{\Conid{HolDocuments}}, the interface for
+document data structures. %
+Besides methods to merge two \ensuremath{\Conid{Documents}\;\Varid{a}} and create a new \ensuremath{\Conid{Documents}\;\Varid{a}}, a function to change the identifier of a document in \ensuremath{\Conid{Documents}\;\Varid{a}}
+and to insert a document into \ensuremath{\Conid{Documents}} is provided as well.\\
 
 To sum up, we want to extend the current CurryDoc implementation to
 generate a new readable data structure about a given Curry module. %
@@ -1590,15 +1644,15 @@ process of the index creation.
 % The same data structure is used on the Haskell side that implements
 % the search engine.
 
-\section{Indexer}\label{implementation:index}
+\section{CurryIndexer implementation}\label{implementation:index}
 
 This section illustrates how to create the index for our search
-engine. In the following we refer to this process as indexer. %
+engine. % In the following we refer to this process as indexer. %
 In our analysis, we discussed some data structures to handle the index
 creation and the information we want to store. %
-In the following, we talk the advantages and disadvantages of using
-the Holumbus framework and describe our implementation of the index
-creation in more detail. %
+In the following, we talk about the advantages and disadvantages of
+using the Holumbus framework and describe our implementation of the
+index creation in more detail. %
 The following implementation is done in the functional logic
 programming language Haskell. %
 This decision allows us to use the Holumbus framework for our purpose
@@ -1643,17 +1697,64 @@ structures: an index \ensuremath{\Conid{Inverted}} and a document \ensuremath{\C
 In the following, we present this idea in more detail, beginning with
 the index. %
 
+\subsection{Index construction}
 As mentioned before, the main idea behind the index data structure is
 to manage pairs of \ensuremath{\Conid{String}}. %
 The first entry describes the context and the second entry stands for
 the actual word, we want to store in the index. %
 In the background, Holumbus data structure \ensuremath{\Conid{Inverted}} maps the words
 to their location, i.e. the document. %
+More precisely, \ensuremath{\Conid{Inverted}} maps the word and its context to an
+\ensuremath{\Conid{Occurrence}}, which on the other hand maps a reference to a document
+(\ensuremath{\Conid{DocId}}) and its \ensuremath{\Conid{Positions}}. %
+With these \ensuremath{\Conid{Positions}} that consist of a set of \ensuremath{\Conid{Int}}, we can
+reconstruct a phrase of document. %
+However, we only need these \ensuremath{\Conid{Positions}}, if we want to provide phrase
+queries. %
+Since our main goal is to provide the search signature or function,
+module and types name, we decided against the support of phrase
+queries. %
+Therefore, we do not use the \ensuremath{\Conid{Position}} when indexing our data. %
+In \hyperref[fig:inverted]{Figure \ref{fig:inverted}} we provide a
+sketch of the idea behind the \ensuremath{\Conid{Inverted}} structure, the actual
+implementation does not matter for our implementation, since we mostly
+use the provided interface. %
 Furthermore the words are stores in prefix tree, which only allows
 prefix search like we mentioned before. %
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{type}\;\Conid{Inverted}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{Map}\;\Conid{Pair}\;\Conid{Occurrence}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Occurrence}\mathrel{=}\Conid{Map}\;\Conid{DocId}\;\Conid{Positions}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Positions}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{IntSet}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{DocId}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{Int}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Pair}{}\<[17]%
+\>[17]{}\mathrel{=}(\Conid{Context},\Conid{Word}){}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Word}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{String}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Context}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{String}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{Sketch for \ensuremath{\Conid{Inverted}} in Haskell syntax}
+\label{fig:inverted}
+\end{figure}
+
 Due to the prefix search, we came across some difficulties which we
 discuss later. %
-Thus, when we implement the indexing, we can make use of a function
+Nevertheless, when we implement the indexing, we can make use of a function
 provided by Holumbus that allows to create the index structure from a
 list. %
 Simply put, this list consists of a triple: the pair of \ensuremath{\Conid{String}}s and
@@ -1665,14 +1766,16 @@ In this process, all information are paired with a context and the
 contexts' names correspond to the information in these
 substructures. %
 For instance, in \ensuremath{\Conid{ModuleInfo}} we keep the module's name, author and
-description; therefore we have our first contexts, named \emph{\textss{module}} for
-the name, \emph{\textss{author}} and \emph{\textss{description}} (see
-\hyperref[t:modcontext]{Table \ref{t:modcontext}}). %
+description; therefore we have our first contexts, named
+\emph{\textss{module}} for the name, \emph{\textss{author}} and
+\emph{\textss{description}} (see \hyperref[t:modcontext]{Table
+  \ref{t:modcontext}}). %
 We do not have much to do for a module's name, but since a module can
 be written by several authors, we have to add a context for each
 author stored in \ensuremath{\Conid{ModuleInfo}}. %
 
 \begin{table}[h]
+\centering{
 \begin{tabular}{|l|l|l|}
 \hline \multicolumn{2}{|c|}{ModuleInfo} \\
 \hline property & context name \\
@@ -1681,6 +1784,7 @@ author & "author''\\
 description & "description"\\
 \hline
 \end{tabular}
+}
 \caption{The contexts for a \ensuremath{\Conid{ModuleInfo}} data structure}
 \label{t:modcontext}
 \end{table}
@@ -1740,9 +1844,30 @@ search for type signatures with at least one function arrow. %
 Thus, we decided not to convert the \ensuremath{\Conid{TypeExpr}} to the corresponding
 \ensuremath{\Conid{String}}, but to decompose the signature into all its valid suffixes
 first.%
-In this way,\todo{listToSignature?} each suffix is paired with the
-context \emph{\textss{signature}}, converted into a type signature
-represented as \ensuremath{\Conid{String}} and added to the index. %
+In this way, each suffix is paired with the context
+\emph{\textss{signature}}, converted into a type signature represented
+as \ensuremath{\Conid{String}} and added to the index. The conversion function takes a
+list of types represented as \ensuremath{\Conid{String}}s, concatenate this list with the
+function arrow \ensuremath{\to } between each element of the list and yields a
+\ensuremath{\Conid{String}} (see
+\hyperref[fig:listToSignature]{Figure \ref{fig:listToSignature}}). %
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mbox{\onelinecomment  Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")}{}\<[E]%
+\\
+\>[B]{}\Varid{listToSignature}\mathbin{::}[\mskip1.5mu \Conid{String}\mskip1.5mu]\to \Conid{String}{}\<[E]%
+\\
+\>[B]{}\Varid{listToSignature}\;\Varid{listOfTypes}\mathrel{=}\Varid{intercalate}\;\text{\tt \char34 ~->~\char34}\;\Varid{listOfTypes}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{Function to convert a list of \textss{types} into a valid
+  type signature}
+\label{fig:listToSignature}
+\end{figure}
+
 Since \ensuremath{\Conid{TypeInfo}} stores a list of \ensuremath{\Conid{TypeExpr}} representing its
 constructors' type signatures, we have to apply the mentioned
 mechanism to all \ensuremath{\Conid{TypeExpr}}. %
@@ -1752,14 +1877,34 @@ more similar to a function than to a type. %
 \hyperref[t:typcontext]{Table \ref{t:typcontext}} summarizes the
 contexts of \ensuremath{\Conid{TypeInfo}}, whereas there a still contexts of
 \ensuremath{\Conid{FunctionInfo}} left to be discussed. %
+
+\begin{table}[h]
+\centering{
+\begin{tabular}{|l|l|}
+\hline \multicolumn{2}{|c|}{TypeInfo} \\
+\hline property & context name \\
+\hline name & "type''\\
+ corres. module & "inModule''\\
+ signature & "signature"\\
+ description & "description"\\
+\hline
+\end{tabular}
+}
+\caption{The contexts for a \ensuremath{\Conid{TypeInfo}} data structure}
+\label{t:typcontext}
+\end{table}
+
 We distinguish between non/-deterministic and flexible or rigid
 functions. %
 For each characteristic that applies to a function, we add the given
 context to the index. %
-For example, in case of a nondeterministic and flexible function, we
-add \ensuremath{(\text{\tt \char34 nondeterminstic\char34},\text{\tt \char34 ~\char34})} and \ensuremath{\text{\tt \char34 (flexbile\char34},\text{\tt \char34 \char34})}.
+In case of a nondeterministic and flexible function, we
+add \ensuremath{(\text{\tt \char34 nondet\char34},\text{\tt \char34 ~\char34})} and \ensuremath{\text{\tt \char34 (flexible\char34},\text{\tt \char34 \char34})}. %
+The summary of all contexts concerning a function is shown in
+\hyperref[t:funcontext]{Table \ref{t:funcontext}}.
 
 \begin{table}[h]
+\centering{
 \begin{tabular}{|l|l|}
 \hline \multicolumn{2}{|c|}{FunctionInfo} \\
 \hline  property & context name \\
@@ -1771,23 +1916,21 @@ add \ensuremath{(\text{\tt \char34 nondeterminstic\char34},\text{\tt \char34 ~\c
 \multirow{2}{*}{non/-deterministic} &  "nondet'' \\ & "det'' \\
 \hline
 \end{tabular}
+}
 \caption{The contexts for a \ensuremath{\Conid{FunctionInfo}} data structure}
 \label{t:funcontext}
 \end{table}
 
-\begin{table}[h]
-\begin{tabular}{|l|l|}
-\hline \multicolumn{2}{|c|}{TypeInfo} \\
-\hline property & context name \\
-\hline name & "type''\\
- corres. module & "inModule''\\
- signature & "signature"\\
- description & "description"\\
-\hline
-\end{tabular}
-\caption{The contexts for a \ensuremath{\Conid{TypeInfo}} data structure}
-\label{t:typcontext}
-\end{table}
+Summing up, we process \ensuremath{\Conid{CurryInfo}}'s substructures \ensuremath{\Conid{ModuleInfo}},
+\ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}} to pair their information with a
+context. %
+The last \emph{unknown value} of the indexing process is the third
+entry of the triple: the reference to the document. %
+Thus, as next step we examine the design of a document and in this
+context, we discuss the document's role and value as part of the
+triple.
+
+\subsection{Document construction}
 
 % \begin{figure}[h]
 % \begin{code}
@@ -1835,14 +1978,13 @@ add \ensuremath{(\text{\tt \char34 nondeterminstic\char34},\text{\tt \char34 ~\c
 % \caption{Function to create the context list for a type}
 % \end{figure}
   
-Furthermore we examine the design of a document. %
 At first, we take closer look at the data structure itself. %
 Holumbus provides us with \ensuremath{\Conid{Documents}\;\Varid{a}} can be described as mapping of
 yet another data structure \ensuremath{\Conid{Document}\;\Varid{a}} and an unique identifier (see
 \hyperref[fig:documents]{Figure \ref{fig:documents}}). %
 Each \ensuremath{\Conid{Document}\;\Varid{a}} consists of a title, an URI and customizable
 information. %
-The latter has the type \ensuremath{\Varid{a}} and determines the type for document. %
+The latter has the type \ensuremath{\Varid{a}} and determines the type for a document. %
 In order to have a faster access to a specific document, \ensuremath{\Conid{Documents}\;\Varid{a}}
 also stores the highest document id used in the mapping as well as a
 mapping from the document's uri to the document's identifier.
@@ -1943,7 +2085,7 @@ this link mechanism for our URIs as well. %
 In \hyperref[fig:uri]{Figure \ref{fig:uri}} you can see that modules
 use the base URI given by the user, whereas functions and data
 structures are build by combining the base URI, an anchor symbol and
-the function's or data structure's name.\\
+the function's or data structure's name.
 
 \begin{figure}[h]
 \begin{hscode}\SaveRestoreHook
@@ -2005,6 +2147,196 @@ the function's or data structure's name.\\
 \label{fig:uri}
 \end{figure}
 
+
+\subsection{Conclusion and example}
+All in all, we have a mechanism to create an index data structure that
+is traversed, when we perform a search query and one mechanism to
+store the corresponding document, that is linked to the index
+structure again. %
+We create these structures for the three substructures of \ensuremath{\Conid{CurryInfo}}
+and combine them into a \ensuremath{\Conid{HolumbusState}\;\Varid{a}}, where \ensuremath{\Varid{a}} defines the type
+of the document. %
+In the end, each of the three \ensuremath{\Conid{HolumbusState}\;\Varid{a}} data structures are
+written into a two files (separating index and document structure
+again); these files serve aus our index. \\
+
+Since we do not want or search engine to be build on just one Curry
+program, we update the index with new data. %
+We already adressed the problem concerning lazy evaluation, but we ran
+into another problems as well. %
+When we write the \ensuremath{\Conid{HolumbusState}\;\Varid{a}} structure into a file, the data is
+compressed into structures named \ensuremath{\Conid{CompactInverted}} and \ensuremath{\Conid{SmallDocuments}\;\Varid{a}}. %
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{27}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{type}\;\Conid{LoadedIndexerState}\;\Varid{a}\mathrel{=}(\Conid{CompactInverted},\Conid{SmallDocuments}\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\newline{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{HolumbusState}\;\Varid{a}{}\<[27]%
+\>[27]{}\mathrel{=}\Conid{IndexerState}\;\Conid{Inverted}\;\Conid{Documents}\;\Varid{a}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{The data structure of a new and a loaded index}
+\end{figure}
+
+This means, when we load our files again, the index as well as the
+document structures does not harmonize with \ensuremath{\Conid{Inverted}} and \ensuremath{\Conid{Documents}\;\Varid{a}} anymore. %
+We solve this problem by creating the \ensuremath{\Conid{Inverted}} and \ensuremath{\Conid{Documents}\;\Varid{a}} as
+usually and as second step, we convert \ensuremath{\Conid{Inverted}} into
+\ensuremath{\Conid{CompactInverted}} and \ensuremath{\Conid{Documents}\;\Varid{a}} into \ensuremath{\Conid{SmallDocuments}\;\Varid{a}}. %
+We cannot merge the structs just yet, since we created new documents
+with identifiers starting with \ensuremath{\mathrm{1}}. %
+We need to adapt the \ensuremath{\Conid{DocId}}s such that the minimum of the new
+structure is the maximum of the old one. %
+After that, we can merge the documents and index structure and write
+the new file.
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{16}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{21}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{23}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{34}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{contextsF}\mathbin{::}\Conid{FunctionInfo}\to \Conid{DocId}\to [\mskip1.5mu (\Conid{String},\Conid{String},\Conid{Occurrences})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\Varid{contextsF}\;\Varid{functionI}\;\Varid{i}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{map}\;(\Varid{addOcc}\;{}\<[16]%
+\>[16]{}(\Varid{occ}\;\Varid{i}\;\mathrm{2}))\mathbin{\$}[\mskip1.5mu (\text{\tt \char34 :function\char34},\Varid{fName}\;\Varid{functionI})\mskip1.5mu]{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\plus [\mskip1.5mu (\text{\tt \char34 :inModule\char34},\Varid{fModule}\;\Varid{functionI})\mskip1.5mu]{}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\plus (\Varid{signature}\mathbin{\$}\Varid{signatureComponents}\mathbin{\$}\Varid{fSignature}\;\Varid{functionI}){}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\plus (\Varid{flexRigid}\mathbin{\$}\Varid{fFlexRigid}\;\Varid{functionI}){}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\plus (\Varid{nonDet}\mathbin{\$}\Varid{fNonDet}\;\Varid{functionI}){}\<[E]%
+\\
+\>[3]{}\hsindent{1}{}\<[4]%
+\>[4]{}\plus (\Varid{description}\mathbin{\$}\Varid{fDescription}\;\Varid{functionI}){}\<[E]%
+\\
+\>[B]{}\mathbf{where}\;\Varid{flexRigid}\;\Varid{fr}\mathrel{=}\mathbf{case}\;\Varid{fr}\;\mathbf{of}{}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\Conid{KnownFlex}{}\<[34]%
+\>[34]{}\to [\mskip1.5mu (\text{\tt \char34 :flexible\char34},\text{\tt \char34 \char34})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\Conid{KnownRigid}\to [\mskip1.5mu (\text{\tt \char34 :rigid\char34},\text{\tt \char34 \char34})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\Conid{ConflictFR}\to [\mskip1.5mu (\text{\tt \char34 :flexible\char34},\text{\tt \char34 \char34}),(\text{\tt \char34 :rigid\char34},\text{\tt \char34 \char34})\mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\hsindent{23}{}\<[23]%
+\>[23]{}\anonymous {}\<[34]%
+\>[34]{}\to [\mskip1.5mu \mskip1.5mu]{}\<[E]%
+\\
+\>[B]{}\hsindent{8}{}\<[8]%
+\>[8]{}\Varid{nonDet}\;\Varid{nd}{}\<[21]%
+\>[21]{}\mathrel{=}\mathbf{if}\;\Varid{nd}\;\mathbf{then}\;[\mskip1.5mu (\text{\tt \char34 :nondet\char34},\text{\tt \char34 \char34})\mskip1.5mu]\;\mathbf{else}\;[\mskip1.5mu (\text{\tt \char34 :det\char34},\text{\tt \char34 \char34})\mskip1.5mu]{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{Function to create the context list for a function}
+\label{fig:contextf}
+\end{figure}
+
+The following code and the code above serve as showcase for an index construction with
+the information of a function. %
+Thus, we have \ensuremath{\Conid{CurryInfo}} and extract the \ensuremath{\Conid{FunctionInfo}} structure. %
+Then we build an document of the type \ensuremath{\Conid{FunctionInfo}} with the aid of
+\ensuremath{\Varid{doc}} (see \hyperref[fig:uri]{Figure \ref{fig:uri}} again). %
+The URI is given by the user, whereas the title correlates to the
+functions name and the custom information is the \ensuremath{\Conid{FunctionInfo}} data
+itself. %
+As next step, we need to process \ensuremath{\Conid{FunctionInfo}} into the list of
+contexts. %
+We show the corresponding function in \hyperref[fig:contextf]{Figure
+  \ref{fig:contextf}}: %
+functions like \ensuremath{\Varid{description}}, \ensuremath{\Varid{flexRigid}} and \ensuremath{\Varid{nonDet}} just pair the
+context with the given the data of \ensuremath{\Conid{FunctionInfo}}; %
+\ensuremath{\Varid{signatureComponents}} is the function that deconstructs a type
+signature into valid suffixes and \ensuremath{\Varid{signature}} pairs all these suffixes
+with the context. %
+
+Since we are building tuples, the reference to the document has to be
+added as \ensuremath{\Conid{DocId}}. %
+We gain the \ensuremath{\Conid{DocId}} when we insert \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}} into a new
+\ensuremath{\Conid{Documents}\;\Varid{a}} structure. %
+This leads to code provided in \hyperref[fig:ixdoc]{Figure
+  \ref{fig:ixdoc}}. %
+In our example, we replace the parameter \ensuremath{\Varid{contextsList}} with
+\ensuremath{\Varid{contextsF}}, \ensuremath{\Varid{info}} with the given \ensuremath{\Conid{FunctionInfo}} structure, \ensuremath{\Varid{doc1}} is
+the new document and \ensuremath{\Conid{IndexerState}\;\Varid{ix}\;\Varid{dc}} is an empty \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}}. %
+And as last step, we merge an empty \ensuremath{\Conid{Inverted}} with our new created
+index.
+
+\begin{figure}[h]
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{7}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{24}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mbox{\onelinecomment  Main indexer method to build indexes and documents.}{}\<[E]%
+\\
+\>[B]{}\Varid{ixDoc}\mathbin{::}\Conid{Binary}\;\Varid{a}\Rightarrow (\Varid{a}\to \Conid{DocId}\to [\mskip1.5mu (\Conid{String},\Conid{String},\Conid{Occurrences})\mskip1.5mu])\to {}\<[E]%
+\\
+\>[B]{}\hsindent{24}{}\<[24]%
+\>[24]{}[\mskip1.5mu \Varid{a}\mskip1.5mu]\to [\mskip1.5mu \Conid{Document}\;\Varid{a}\mskip1.5mu]\to \Conid{HolumbusState}\;\Varid{a}\to \Conid{HolumbusState}\;\Varid{a}{}\<[E]%
+\\
+\>[B]{}\Varid{ixDoc}\;\Varid{contextList}\;(\Varid{info}\mathbin{:}\Varid{infos})\;(\Varid{doc1}\mathbin{:}\Varid{docs})\;(\Conid{IndexerState}\;\Varid{ix}\;\Varid{dc})\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathbf{let}\;(\Varid{docId},\Varid{docs'})\mathrel{=}\Varid{insertDoc}\;\Varid{dc}\;\Varid{doc1}{}\<[E]%
+\\
+\>[3]{}\hsindent{4}{}\<[7]%
+\>[7]{}\Varid{idx'}{}\<[22]%
+\>[22]{}\mathrel{=}\Varid{mergeIndexes}\;\Varid{ix}\mathbin{\$}\Varid{idx}\;\Varid{contextList}\;\Varid{info}\;\Varid{docId}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathbf{in}\;\Varid{ixDoc}\;\Varid{contextList}\;\Varid{infos}\;\Varid{docs}\;(\Varid{makeIndexerState}\;\Varid{idx'}\;\Varid{docs'}){}\<[E]%
+\\
+\>[B]{}\Varid{ixDoc}\;\anonymous \;\anonymous \;\anonymous \;\Varid{is}\mathrel{=}\Varid{is}{}\<[E]%
+\\
+\>[B]{}\newline{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment  Function to build index.}{}\<[E]%
+\\
+\>[B]{}\Varid{idx}\mathbin{::}(\Varid{a}\to \Conid{DocId}\to [\mskip1.5mu (\Conid{String},\Conid{String},\Conid{Occurrences})\mskip1.5mu])\to \Varid{a}\to \Conid{DocId}\to \Conid{Inverted}{}\<[E]%
+\\
+\>[B]{}\Varid{idx}\;\Varid{contextList}\;\Varid{info}\;\Varid{i}\mathrel{=}\Varid{fromList}\;\Varid{emptyInverted}\mathbin{\$}\Varid{contextList}\;\Varid{info}\;\Varid{i}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+\caption{Method to create the \ensuremath{\Conid{HolumbusState}\;\Varid{a}} data strucutre}
+\label{fig:ixdoc}
+\end{figure}
+
+In the end there are one requirement and two ways to build an index. %
+The requirement is the generation of a \emph{.cdoc}-file for at least
+one Curry program. %
+Then you can start the indexing for the given file and the URI to the
+corresponding documentation to either create a new index or to update
+an existing one. %
+We also provide a mechanism to read out a \emph{.txt}-file consisting
+of pairs of paths to \emph{.cdoc}-files and the corresponding URI. %
+Further information about the usage is provided in
+\hyperref[a:curryindexer]{Appendix \ref{a:currysearch}}.
+
 % First mention that the interesting parts (that we want to add to the
 % index) are already filtered by the CurryDoc part. So the indexer only
 % processes the information to the structure provided by the Holumbus
@@ -2028,25 +2360,9 @@ the function's or data structure's name.\\
 % type CurryTypeIndexerState        = HolumbusState TypeInfo
 % \end{code}
 
-Note the difficulties of updating the index, because the data
-structure of the loaded pair of index and document differs from
-\ensuremath{\Conid{HolumbusState}\;\Varid{a}}. Conversion of \ensuremath{\Conid{Inverted}} to \ensuremath{\Conid{CompactInverted}} and
-\ensuremath{\Conid{Documents}\;\Varid{a}} to \ensuremath{\Conid{SmallDocuments}\;\Varid{a}}.
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{type}\;\Conid{LoadedIndexerState}\;\Varid{a}\mathrel{=}(\Conid{CompactInverted},\Conid{SmallDocuments}\;\Varid{a}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-Explain how each kind of information (description, module name,
-function signature etc) is combined with its context, and that these
-are stored in the index. Note that these information can be extracted by the
-context again. Focus on signatures and the problem of prefix search.
-
-Refer to the appendix, where the usage of the curryIndexer is
-explained.
-
+% Refer to the appendix, where the usage of the curryIndexer is
+% explained.
+ 
 \section{Parser}\label{implementation:parser}
 
 % First describe the idea, that the use of a specific language increases
@@ -2239,6 +2555,68 @@ Give a definition of the language (EBNF(?) / appendix).
 % Appendix, falls vorhanden
 \appendix
 \chapter{CurryDoc Instruction}\label{a:currydoc}
+
+\chapter{Installation and usage}\label{a:currysearch}
+
+\section{Installation}
+
+This directory contains cabal-file, for the installation you simply
+have to run cabal.
+
+\begin{tabbing}\tt
+~\char36{}~cabal~configure~\\
+\tt ~\char36{}~cabal~build~\\
+\tt ~\char36{}~cabal~install
+\end{tabbing}
+
+Alternatively you can use the provided \emph{Setup.hs}.
+\begin{tabbing}\tt
+~\char36{}~runhaskell~Setup\char46{}hs~configure\\
+\tt ~\char36{}~runhaskell~Setup\char46{}hs~build\\
+\tt ~\char36{}~runhaskell~Setup\char46{}hs~install
+\end{tabbing}
+
+\section{How-to-use}
+
+The installation process creates to binaries: *curryIndexer* and
+*curryServer*. %
+The first creates the index for a given directory that contains at
+least one \emph{.cdoc}-file and a corresponding URI. %
+The \emph{.cdoc}-file can be generated with the extended CurryDoc for
+a given Curry module, the URI is the corresponding HTML documentation
+that also can be generated with CurryDoc. %
+This package provides an example-directory with three Curry modules
+generated with CurryDoc that provide some \emph{.cdoc}-files. %
+So you can generate an index with these examples and the documentation
+provided by PAKCS. %
+The curryIndexer can either generate a new index or update the
+existing one, to distinguish between these options, you can use the
+flag \emph{- -n} for generating a new index and \emph{- -u} for
+updating the index.
+
+\begin{tabbing}\tt
+~\char36{}~curryIndexer~\char46{}\char47{}example\char47{}CDOC\char95{}HTML~\\
+\tt ~~~~http\char58{}\char47{}\char47{}www\char46{}informatik\char46{}uni\char45{}kiel\char46{}de\char47{}\char126{}pakcs\char47{}lib\char47{}CDOC\char47{}~\char45{}\char45{}n\\
+\tt ~\char36{}~curryIndexer~\char46{}\char47{}example\char47{}CDOC\char95{}URL~\\
+\tt ~~~~http\char58{}\char47{}\char47{}www\char46{}informatik\char46{}uni\char45{}kiel\char46{}de\char47{}\char126{}pakcs\char47{}lib\char47{}CDOC\char47{}~\char45{}\char45{}u\\
+\tt ~\char36{}~curryIndexer~\char46{}\char47{}example\char47{}CDOC\char95{}XML~\\
+\tt ~~~~http\char58{}\char47{}\char47{}www\char46{}informatik\char46{}uni\char45{}kiel\char46{}de\char47{}\char126{}pakcs\char47{}lib\char47{}CDOC\char47{}~\char45{}\char45{}u
+\end{tabbing}
+
+Since it can take a very long time to add each single module, you can
+pass a \emph{.txt}-file as argument that consists of pairs of \emph{.cdoc-file} and
+URI to generate the index.
+
+\begin{tabbing}\tt
+~\char36{}~curryIndexer~\char46{}\char47{}example\char47{}test\char46{}txt~\char45{}\char45{}n
+\end{tabbing}
+
+If you have generated an index, you can run the web application on your
+localhost on a given port with the curryServer.
+
+\begin{tabbing}\tt
+~\char36{}~curryServer~\char45{}p~1337
+\end{tabbing}
 
 \chapter{User-Query Syntax}\label{a:syntax}
 

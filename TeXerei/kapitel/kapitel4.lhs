@@ -158,10 +158,10 @@ process of the index creation.
 % The same data structure is used on the Haskell side that implements
 % the search engine.
 
-\section{Indexer}\label{implementation:index}
+\section{CurryIndexer implementation}\label{implementation:index}
 
 This section illustrates how to create the index for our search
-engine. In the following we refer to this process as indexer. %
+engine. % In the following we refer to this process as indexer. %
 In our analysis, we discussed some data structures to handle the index
 creation and the information we want to store. %
 In the following, we talk about the advantages and disadvantages of
@@ -211,17 +211,48 @@ structures: an index |Inverted| and a document |Documents a|. %
 In the following, we present this idea in more detail, beginning with
 the index. %
 
+\subsection{Index construction}
 As mentioned before, the main idea behind the index data structure is
 to manage pairs of |String|. %
 The first entry describes the context and the second entry stands for
 the actual word, we want to store in the index. %
 In the background, Holumbus data structure |Inverted| maps the words
 to their location, i.e. the document. %
+More precisely, |Inverted| maps the word and its context to an
+|Occurrence|, which on the other hand maps a reference to a document
+(|DocId|) and its |Positions|. %
+With these |Positions| that consist of a set of |Int|, we can
+reconstruct a phrase of document. %
+However, we only need these |Positions|, if we want to provide phrase
+queries. %
+Since our main goal is to provide the search signature or function,
+module and types name, we decided against the support of phrase
+queries. %
+Therefore, we do not use the |Position| when indexing our data. %
+In \hyperref[fig:inverted]{Figure \ref{fig:inverted}} we provide a
+sketch of the idea behind the |Inverted| structure, the actual
+implementation does not matter for our implementation, since we mostly
+use the provided interface. %
 Furthermore the words are stores in prefix tree, which only allows
 prefix search like we mentioned before. %
+
+\begin{figure}[h]
+\begin{code}
+type Inverted   = Map Pair Occurrence
+type Occurrence = Map DocId Positions
+type Positions  = IntSet
+type DocId      = Int
+type Pair       = (Context, Word)
+type Word       = String
+type Context    = String
+\end{code}
+\caption{Sketch for |Inverted| in Haskell syntax}
+\label{fig:inverted}
+\end{figure}
+
 Due to the prefix search, we came across some difficulties which we
 discuss later. %
-Thus, when we implement the indexing, we can make use of a function
+Nevertheless, when we implement the indexing, we can make use of a function
 provided by Holumbus that allows to create the index structure from a
 list. %
 Simply put, this list consists of a triple: the pair of |String|s and
@@ -233,14 +264,16 @@ In this process, all information are paired with a context and the
 contexts' names correspond to the information in these
 substructures. %
 For instance, in |ModuleInfo| we keep the module's name, author and
-description; therefore we have our first contexts, named \emph{\textss{module}} for
-the name, \emph{\textss{author}} and \emph{\textss{description}} (see
-\hyperref[t:modcontext]{Table \ref{t:modcontext}}). %
+description; therefore we have our first contexts, named
+\emph{\textss{module}} for the name, \emph{\textss{author}} and
+\emph{\textss{description}} (see \hyperref[t:modcontext]{Table
+  \ref{t:modcontext}}). %
 We do not have much to do for a module's name, but since a module can
 be written by several authors, we have to add a context for each
 author stored in |ModuleInfo|. %
 
 \begin{table}[h]
+\centering{
 \begin{tabular}{||l||l||l||}
 \hline \multicolumn{2}{||c||}{ModuleInfo} \\
 \hline property & context name \\
@@ -249,6 +282,7 @@ author & "author''\\
 description & "description"\\
 \hline
 \end{tabular}
+}
 \caption{The contexts for a |ModuleInfo| data structure}
 \label{t:modcontext}
 \end{table}
@@ -311,9 +345,25 @@ search for type signatures with at least one function arrow. %
 Thus, we decided not to convert the |TypeExpr| to the corresponding
 |String|, but to decompose the signature into all its valid suffixes
 first.%
-In this way,\todo{listToSignature?} each suffix is paired with the
-context \emph{\textss{signature}}, converted into a type signature
-represented as |String| and added to the index. %
+In this way, each suffix is paired with the context
+\emph{\textss{signature}}, converted into a type signature represented
+as |String| and added to the index. The conversion function takes a
+list of types represented as |String|s, concatenate this list with the
+function arrow |->| between each element of the list and yields a
+|String| (see
+\hyperref[fig:listToSignature]{Figure \ref{fig:listToSignature}}). %
+
+\begin{figure}[h]
+\begin{code}
+-- Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")
+listToSignature :: [String] -> String
+listToSignature listOfTypes = intercalate " -> " listOfTypes
+\end{code}
+\caption{Function to convert a list of \textss{types} into a valid
+  type signature}
+\label{fig:listToSignature}
+\end{figure}
+
 Since |TypeInfo| stores a list of |TypeExpr| representing its
 constructors' type signatures, we have to apply the mentioned
 mechanism to all |TypeExpr|. %
@@ -323,16 +373,34 @@ more similar to a function than to a type. %
 \hyperref[t:typcontext]{Table \ref{t:typcontext}} summarizes the
 contexts of |TypeInfo|, whereas there a still contexts of
 |FunctionInfo| left to be discussed. %
+
+\begin{table}[h]
+\centering{
+\begin{tabular}{||l||l||}
+\hline \multicolumn{2}{||c||}{TypeInfo} \\
+\hline property & context name \\
+\hline name & "type''\\
+ corres. module & "inModule''\\
+ signature & "signature"\\
+ description & "description"\\
+\hline
+\end{tabular}
+}
+\caption{The contexts for a |TypeInfo| data structure}
+\label{t:typcontext}
+\end{table}
+
 We distinguish between non/-deterministic and flexible or rigid
 functions. %
 For each characteristic that applies to a function, we add the given
 context to the index. %
-For example, in case of a nondeterministic and flexible function, we
+In case of a nondeterministic and flexible function, we
 add |("nondet"," ")| and |"(flexible","")|. %
-The summary of all contexts
-
+The summary of all contexts concerning a function is shown in
+\hyperref[t:funcontext]{Table \ref{t:funcontext}}.
 
 \begin{table}[h]
+\centering{
 \begin{tabular}{||l||l||}
 \hline \multicolumn{2}{||c||}{FunctionInfo} \\
 \hline  property & context name \\
@@ -344,23 +412,21 @@ The summary of all contexts
 \multirow{2}{*}{non/-deterministic} &  "nondet'' \\ & "det'' \\
 \hline
 \end{tabular}
+}
 \caption{The contexts for a |FunctionInfo| data structure}
 \label{t:funcontext}
 \end{table}
 
-\begin{table}[h]
-\begin{tabular}{||l||l||}
-\hline \multicolumn{2}{||c||}{TypeInfo} \\
-\hline property & context name \\
-\hline name & "type''\\
- corres. module & "inModule''\\
- signature & "signature"\\
- description & "description"\\
-\hline
-\end{tabular}
-\caption{The contexts for a |TypeInfo| data structure}
-\label{t:typcontext}
-\end{table}
+Summing up, we process |CurryInfo|'s substructures |ModuleInfo|,
+|FunctionInfo| and |TypeInfo| to pair their information with a
+context. %
+The last \emph{unknown value} of the indexing process is the third
+entry of the triple: the reference to the document. %
+Thus, as next step we examine the design of a document and in this
+context, we discuss the document's role and value as part of the
+triple.
+
+\subsection{Document construction}
 
 % \begin{figure}[h]
 % \begin{code}
@@ -408,14 +474,13 @@ The summary of all contexts
 % \caption{Function to create the context list for a type}
 % \end{figure}
   
-Furthermore we examine the design of a document. %
 At first, we take closer look at the data structure itself. %
 Holumbus provides us with |Documents a| can be described as mapping of
 yet another data structure |Document a| and an unique identifier (see
 \hyperref[fig:documents]{Figure \ref{fig:documents}}). %
 Each |Document a| consists of a title, an URI and customizable
 information. %
-The latter has the type |a| and determines the type for document. %
+The latter has the type |a| and determines the type for a document. %
 In order to have a faster access to a specific document, |Documents a|
 also stores the highest document id used in the mapping as well as a
 mapping from the document's uri to the document's identifier.
@@ -487,7 +552,7 @@ this link mechanism for our URIs as well. %
 In \hyperref[fig:uri]{Figure \ref{fig:uri}} you can see that modules
 use the base URI given by the user, whereas functions and data
 structures are build by combining the base URI, an anchor symbol and
-the function's or data structure's name.\\
+the function's or data structure's name.
 
 \begin{figure}[h]
 \begin{code}
@@ -514,6 +579,131 @@ data URI a =
 \label{fig:uri}
 \end{figure}
 
+
+\subsection{Conclusion and example}
+All in all, we have a mechanism to create an index data structure that
+is traversed, when we perform a search query and one mechanism to
+store the corresponding document, that is linked to the index
+structure again. %
+We create these structures for the three substructures of |CurryInfo|
+and combine them into a |HolumbusState a|, where |a| defines the type
+of the document. %
+In the end, each of the three |HolumbusState a| data structures are
+written into a two files (separating index and document structure
+again); these files serve aus our index. \\
+
+Since we do not want or search engine to be build on just one Curry
+program, we update the index with new data. %
+We already adressed the problem concerning lazy evaluation, but we ran
+into another problems as well. %
+When we write the |HolumbusState a| structure into a file, the data is
+compressed into structures named |CompactInverted| and |SmallDocuments
+a|. %
+
+\begin{figure}[h]
+\begin{code}
+type LoadedIndexerState a = (CompactInverted, SmallDocuments a)
+%//%
+type HolumbusState a      = IndexerState Inverted Documents a
+\end{code}
+\caption{The data structure of a new and a loaded index}
+\end{figure}
+
+This means, when we load our files again, the index as well as the
+document structures does not harmonize with |Inverted| and |Documents
+a| anymore. %
+We solve this problem by creating the |Inverted| and |Documents a| as
+usually and as second step, we convert |Inverted| into
+|CompactInverted| and |Documents a| into |SmallDocuments a|. %
+We cannot merge the structs just yet, since we created new documents
+with identifiers starting with |1|. %
+We need to adapt the |DocId|s such that the minimum of the new
+structure is the maximum of the old one. %
+After that, we can merge the documents and index structure and write
+the new file.
+
+\begin{figure}[h]
+\begin{code}
+contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
+contextsF functionI i =
+  map (addOcc  (occ i 2)) $ [(":function", fName functionI)] 
+   ++ [(":inModule", fModule functionI)]
+   ++ (signature $ signatureComponents $ fSignature functionI)
+   ++ (flexRigid $ fFlexRigid functionI)
+   ++ (nonDet $ fNonDet functionI)
+   ++ (description $ fDescription functionI)
+ where flexRigid fr = case fr of
+                      KnownFlex  -> [(":flexible", "")]     
+                      KnownRigid -> [(":rigid", "")]
+                      ConflictFR -> [(":flexible", ""), (":rigid", "")]
+                      _          -> []
+       nonDet nd    = if nd then [(":nondet", "")] else [(":det", "")]
+\end{code}
+\caption{Function to create the context list for a function}
+\label{fig:contextf}
+\end{figure}
+
+The following code and the code above serve as showcase for an index construction with
+the information of a function. %
+Thus, we have |CurryInfo| and extract the |FunctionInfo| structure. %
+Then we build an document of the type |FunctionInfo| with the aid of
+|doc| (see \hyperref[fig:uri]{Figure \ref{fig:uri}} again). %
+The URI is given by the user, whereas the title correlates to the
+functions name and the custom information is the |FunctionInfo| data
+itself. %
+As next step, we need to process |FunctionInfo| into the list of
+contexts. %
+We show the corresponding function in \hyperref[fig:contextf]{Figure
+  \ref{fig:contextf}}: %
+functions like |description|, |flexRigid| and |nonDet| just pair the
+context with the given the data of |FunctionInfo|; %
+|signatureComponents| is the function that deconstructs a type
+signature into valid suffixes and |signature| pairs all these suffixes
+with the context. %
+
+Since we are building tuples, the reference to the document has to be
+added as |DocId|. %
+We gain the |DocId| when we insert |Document FunctionInfo| into a new
+|Documents a| structure. %
+This leads to code provided in \hyperref[fig:ixdoc]{Figure
+  \ref{fig:ixdoc}}. %
+In our example, we replace the parameter |contextsList| with
+|contextsF|, |info| with the given |FunctionInfo| structure, |doc1| is
+the new document and |IndexerState ix dc| is an empty |HolumbusState
+FunctionInfo|. %
+And as last step, we merge an empty |Inverted| with our new created
+index.
+
+\begin{figure}[h]
+\begin{code}
+-- Main indexer method to build indexes and documents.
+ixDoc :: Binary a => (a -> DocId -> [(String, String, Occurrences)]) -> 
+                       [a] -> [Document a] -> HolumbusState a -> HolumbusState a
+ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) = 
+  let (docId, docs') = insertDoc dc doc1
+      idx'           = mergeIndexes ix $ idx contextList info docId    
+  in ixDoc contextList infos docs (makeIndexerState idx' docs')
+ixDoc _ _ _ is = is
+%//%
+-- Function to build index.
+idx :: (a -> DocId -> [(String, String, Occurrences)]) -> a -> DocId -> Inverted
+idx contextList info i = fromList emptyInverted $ contextList info i
+\end{code}
+\caption{Method to create the |HolumbusState a| data strucutre}
+\label{fig:ixdoc}
+\end{figure}
+
+In the end there are one requirement and two ways to build an index. %
+The requirement is the generation of a \emph{.cdoc}-file for at least
+one Curry program. %
+Then you can start the indexing for the given file and the URI to the
+corresponding documentation to either create a new index or to update
+an existing one. %
+We also provide a mechanism to read out a \emph{.txt}-file consisting
+of pairs of paths to \emph{.cdoc}-files and the corresponding URI. %
+Further information about the usage is provided in
+\hyperref[a:curryindexer]{Appendix \ref{a:currysearch}}.
+
 % First mention that the interesting parts (that we want to add to the
 % index) are already filtered by the CurryDoc part. So the indexer only
 % processes the information to the structure provided by the Holumbus
@@ -537,22 +727,9 @@ data URI a =
 % type CurryTypeIndexerState        = HolumbusState TypeInfo
 % \end{code}
 
-Note the difficulties of updating the index, because the data
-structure of the loaded pair of index and document differs from
-|HolumbusState a|. Conversion of |Inverted| to |CompactInverted| and
-|Documents a| to |SmallDocuments a|.
-\begin{code}
-type LoadedIndexerState a = (CompactInverted, SmallDocuments a)
-\end{code}
-
-Explain how each kind of information (description, module name,
-function signature etc) is combined with its context, and that these
-are stored in the index. Note that these information can be extracted by the
-context again. Focus on signatures and the problem of prefix search.
-
-Refer to the appendix, where the usage of the curryIndexer is
-explained.
-
+% Refer to the appendix, where the usage of the curryIndexer is
+% explained.
+ 
 \section{Parser}\label{implementation:parser}
 
 % First describe the idea, that the use of a specific language increases

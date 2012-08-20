@@ -122,10 +122,30 @@ FuncType (TCons (Prelude, Bool) []) (FuncType (TCons (Prelude, Int) [])
 After we decide about the contents of the index, we need to discuss
 the storage of these information. %
 We make use of the Holumbus framework that provides data structures to
-manage the collected data. %
-The main idea is to use two structures to store the data.  |Documents
-a| is a data structures to store the collected data, where |a| is the
-type of the document. %
+manage the collected data and interfaces to operate on these
+structures. %
+The main idea is to use two structures to store the data, one for the
+document we are indexing and the other one stores the actual data we
+traverse when a search is performed (see \hyperref[fig:indexer]{Figure
+  \ref{fig:indexer}}). %
+At first, we introduce the data structures we use in our
+implementation, that are provided by the framework. %
+Secondly, we discuss the functionality of the interfaces.
+
+\begin{figure}[h]
+\begin{code}
+data IndexerState i d a = IndexerState
+  { ixs_index           :: i          -- the index type
+  , ixs_documents       :: (d a)      -- the document type
+  } 
+\end{code}
+\caption{The main index structure that stores two substructures}
+\label{fig:indexer}
+\end{figure}
+
+In our implementation, we use |Documents a| as a data structures to
+store the collected data, where |a| is the type of the document. %
+Each document of a collection has its unique identifier. %
 Secondly the framework provides a structure |Inverted| for the actual
 index data structure that is traversed in the search process. %
 Simply put, the index stores pairs |(String, String)|, where the
@@ -134,13 +154,31 @@ the context of this word. %
 An example for our API search engine is a context \emph{description},
 whose corresponding |String| is the description text of a Curry
 module. %
-This design allows the association between the information in the
-index and the corresponding document through a mapping. %
+As addition to the design, the identifier of the document is stored in
+the index data structure as well to provide an association between the
+index and the document the data was indexed from. %
 Another type provided by the framework is |HolumbusState a|: a
 combination of index and document, polymorph by the data the document
 holds. %
 In \hyperref[implementation:index]{Section \ref{implementation:index}}
-we illustrate the use of these data structures in our implementation.\\
+we illustrate the use of these data structures in our
+implementation.
+
+Holumbus provides more than these two explicit data structures to
+handle the storage, it rather has multiple implementations to choose
+from. %
+All these implementations of the document and index data structure are
+instances of the provided interfaces. %
+Therefore we introduce the main functionalities of the interfaces we
+use in our implementation. %
+|HolIndex| is the name of the interface for the \emph{actual index}
+and the main functionalities we are interested in, are the provided
+methods to create a new index and merge two existing indexes. %
+We need the same functionality for |HolDocuments|, the interface for
+document data structures. %
+Besides methods to merge two |Documents a| and create a new |Documents
+a|, a function to change the identifier of a document in |Documents a|
+and to insert a document into |Documents| is provided as well.\\
 
 To sum up, we want to extend the current CurryDoc implementation to
 generate a new readable data structure about a given Curry module. %
