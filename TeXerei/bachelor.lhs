@@ -10,10 +10,10 @@
 %format <*> = "\circledast"
 %format <|> = "\rotatebox[origin=c]{90}{$\ominus$}"
 %format ~<|>~ = "~\rotatebox[origin=c]{90}{$\ominus$}~"
-%format <$> = "\circledS"
-%format ~<$>~ = "~\circledS~"
+%format <$$> = "\circledS"
+%format ~<$$>~ = "~\circledS~"
 %format %//% = "\newline"
-%format $$ = "#"
+
 
 \begin{document}
 

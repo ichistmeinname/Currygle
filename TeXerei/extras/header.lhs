@@ -14,6 +14,7 @@
 % \usepackage[french,ngerman]{babel}
 
 \usepackage{todonotes}
+\usepackage{multirow}
 
 %
 % Pakete um Latin1 Zeichnensätze verwenden zu können und die dazu
@@ -163,7 +164,7 @@
 %
 % Anführungsstriche mithilfe von \textss{-anzufuehrendes-}
 %
-\newcommand{\textss}[1]{"`#1"'}
+\newcommand{\textss}[1]{"#1"}
 
 %
 % Strukturiertiefe bis subsubsection{} möglich
