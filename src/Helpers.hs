@@ -127,8 +127,8 @@ example =
 -- <li class="active"><a href=$link>$pageNumber</a></li>
 pageLinks :: String -> Int -> Int -> X.Node
 pageLinks query actPage pageNumber =
-  htmlLiClass cssStyle [htmlHref (paginationLink query pageNumber) "" [htmlTextNode $ show pageNumber]]
- where cssStyle = if actPage == pageNumber then "active" else ""
+  htmlLiClass cssStyle [htmlHref (if cssStyle == "active" then "" else paginationLink query pageNumber) "" [htmlTextNode $ show pageNumber]]
+ where cssStyle = if actPage == pageNumber then "active" else "display"
        
 -- Concats the link for the pagination for a given query and page
 paginationLink :: String -> Int -> String
@@ -138,20 +138,20 @@ paginationLink query nr = "/currygle?query=" ++ query ++ "&page=" ++ show nr
 pagination :: String -> Int -> Int -> [X.Node]
 pagination query actPage numberOfPages = 
   previous ++ firstPage ++ map (pageLinks query actPage) pageNumbers ++ lastPage ++ next
- where previous = if actPage > 1 then page _previousPage "" 
+ where previous = if actPage > 1 then page _previousPage "display" 
                                  else page _previousPage "disabled"
-       next     = if actPage < numberOfPages then page _nextPage "" 
+       next     = if actPage < numberOfPages then page _nextPage "display" 
                                              else page _nextPage "disabled"
        pageNumber name
-         | name ==  _previousPage = actPage - 1 
+         | name == _previousPage = actPage - 1 
          | name == _nextPage      = actPage + 1
          | otherwise              = strToInt 0 name
        firstPage = -- add first page if it's out of range
          if head pageNumbers < 2 then []
-            else page "1" "" ++ page "..." "disabled"
+            else page "1" "display" ++ page "..." "disabled"
        lastPage  = -- add last page if it's out of range
          if last pageNumbers > (numberOfPages-1)  then []
-            else page "..." "disabled" ++ page (show numberOfPages) ""
+            else page "..." "disabled" ++ page (show numberOfPages) "display"
        link name = paginationLink query (pageNumber name)
        pageNumbers -- just show a range of 9 pages
          | numberOfPages < 10 = [1..numberOfPages]
@@ -160,7 +160,7 @@ pagination query actPage numberOfPages =
          | otherwise   = [(max (actPage-4) 1)..(min (actPage+4) numberOfPages)]
        start = 2 * numberOfPages - actPage - 10
        page name cssClass = 
-         [htmlLiClass cssClass [htmlHref (link name) "" [htmlTextNode name]]]
+         [htmlLiClass cssClass [htmlHref (if cssClass == "display" then link name else "") "" [htmlTextNode name]]]
 
 -- Returns the pagination as HTML node that is used in the pager splice.
 mkPagerLink :: String -> Int -> Int -> [X.Node]
@@ -196,9 +196,9 @@ showType modName nested (FuncType t1 t2) =
     (showType modName (isFunctionType t1) t1 ++ " -> " ++ showType modName False t2)
 showType modName nested (TCons tc ts)
  | null ts = showTypeCons modName tc
- | (tc == ("Prelude","[]") || tc == ("","[]")) && (isString $ head ts) = 
+ | isString tc $ head ts= 
      "String"
- | tc == ("Prelude","[]") || tc == ("","[]") =
+ | isList tc =
      "[" ++ showType modName False (head ts) ++ "]" -- list type
  | take 2 (snd tc) == "(," =                        -- tuple type
      "(" ++ intercalate "," (map (showType modName False) ts) ++ ")"
@@ -219,9 +219,9 @@ splitType modName nested (FuncType t1 t2) =
     (showType modName (isFunctionType t1) t1) : (splitType modName False t2)
 splitType modName nested (TCons tc ts)
  | null ts = [showTypeCons modName tc]
- | tc==("Prelude","[]") && (isString $ head ts) = 
+ | isString tc $ head ts = 
      ["String"]
- | tc==("Prelude","[]") =
+ | isList tc =
      ["[" ++ showType modName False (head ts) ++ "]"] -- list type
  | take 2 (snd tc) == "(," =                        -- tuple type
      ["(" ++ intercalate "," (map (showType modName False) ts) ++ ")"]
@@ -258,10 +258,12 @@ signatureComponents ((modName, _), expr) = map listToSignature (partA ++ partB)
             then redundantParens [removeEmptyStrings $ tail $ concatMap searchForParens $ map splitOnWhitespace $ last partA] 
             else []
 
-isString :: TypeExpr -> Bool
-isString (TCons ("Prelude","Char") []) = True
-isString (TCons ("","Char")        []) = True 
-isString _                             = False
+-- isString :: TypeExpr -> Bool
+isString qName (TCons ("Prelude","Char") []) = isList qName
+isString qName (TCons ("","Char")        []) = isList qName
+isString _ _                                 = False
+
+isList qName = (qName == ("Prelude","[]") || qName == ("","[]"))
 
 isFunctionType :: TypeExpr -> Bool
 isFunctionType (FuncType _ _) = True
@@ -278,7 +280,7 @@ consToList :: String -> (QName, [TypeExpr]) -> ([String], String)
 consToList typeName ((modName, consName), tExprList) = 
   ((consSignature modName tExprList) ++ [typeName], consName)
 
--- -- Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")
+-- Pretty printing for signatures (i.e. ["Int", "Int"] -> "Int->Int")
 listToSignature :: [String] -> String
 listToSignature = intercalate " -> "
 

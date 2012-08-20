@@ -107,7 +107,7 @@ sortedWords h =
 
 -- When processing word completions consider only the function, module and type contexts.
 wordCompletionSpecifier :: String -> Query
-wordCompletionSpecifier = Specifier [":function",":module",":type"] . Word
+wordCompletionSpecifier = Specifier ["function","module","type"] . Word
 
 -- Removes context specifiers (substrings starting with '"') from the string.
 prepareWordCompletionQuery :: String -> String
