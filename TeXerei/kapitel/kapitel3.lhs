@@ -57,28 +57,26 @@ We discuss the actual implementation in
 \hyperref[implementation:currydoc]{Section
   \ref{implementation:currydoc}}. %
 But in preparation of the next chapter, we introduce the data
-structure |TypeExpr| that is provided by the Flat module (see
-\hyperref[fig:typeExpr]{Figure \ref{fig:typeExpr}}). %
+structure |TypeExpr| that is provided by the Flat module. %
 
-\begin{figure}[h!]
 \begin{code}
 data TypeExpr =
-     TVar TVarIndex                 -- type variable
-   | FuncType TypeExpr TypeExpr     -- function type t1->t2
-   | TCons QName [TypeExpr]         -- type constructor application
-                                    -- TCons (module, name) typeargs
-
-type QName = (String, String)     -- (module, type or constructor  name)
-type TVarIndex = Int
+     TVar TVarIndex
+   | FuncType TypeExpr TypeExpr
+   | TCons QName [TypeExpr] 
 \end{code}
-\caption{FlatCurry data structure for type signatures}
-\label{fig:typeExpr}
-\end{figure}
+
 
 |TypeExpr| represents type and function signatures. It consists of
 three constructors to distinguish between a function type (|FuncType
 TypeExpr TypeExpr|), a type variable (|TVar TVarIndex|), and a type
 constructor application (|TCons QName [TypeExpr]|). %
+For the latter, the list of |TypeExpr| stand for the type
+arguments. %
+Furthermore, |TVarIndex| is just a type synonym for |Int| and |QName|
+represents a qualified name consisting of the module's name and the
+function's or type constructor's name. %
+|QName| is a type synonym for a tuple |(String,String)|. %
 An unary type like |Bool| is represented as a type constructor with an
 empty list, i.e. without an application to type arguments. %
 The following code shows some signatures and their representation in
@@ -99,7 +97,7 @@ FuncType (TCons (Prelude, IO) [TVar 97]) (TCons (Prelude, IO)
 \end{figure}
 \begin{figure}[h!]
 \begin{code}
-FuncType (TCons (Prelude, Bool) []) (FuncType (TCons (Prelude, Int) []) 
+FuncType (TCons (Prelude, Bool) []) (FuncType (TCons (Prelude, Int) [])) 
   (TCons (Prelude, Int) []))
 \end{code}
 \caption{The representation of |Bool -> Int -> Int| as |TypeExpr|}
@@ -126,22 +124,18 @@ manage the collected data and interfaces to operate on these
 structures. %
 The main idea is to use two structures to store the data, one for the
 document we are indexing and the other one stores the actual data we
-traverse when a search is performed (see \hyperref[fig:indexer]{Figure
-  \ref{fig:indexer}}). %
-At first, we introduce the data structures we use in our
-implementation, that are provided by the framework. %
-Secondly, we discuss the functionality of the interfaces.
+traverse when a search is performed. %
 
-\begin{figure}[h]
 \begin{code}
 data IndexerState i d a = IndexerState
   { ixs_index           :: i          -- the index type
   , ixs_documents       :: (d a)      -- the document type
   } 
 \end{code}
-\caption{The main index structure that stores two substructures}
-\label{fig:indexer}
-\end{figure}
+
+At first, we introduce the data structures we use in our
+implementation, that are provided by the framework. %
+Secondly, we discuss the functionality of the interfaces. \\
 
 In our implementation, we use |Documents a| as a data structures to
 store the collected data, where |a| is the type of the document. %
@@ -206,34 +200,28 @@ the results of the processed query for further use.\\
 
 Thankfully these are all features the Holumbus framework provides. At
 first we take a look at the search mechanism. %
-The data structure |Query| (see \hyperref[analysis:query]{Figure
-  \ref{analysis:query}}) allows to search for a word and a phrase,
+The data structure |Query| allows to search for a word and a phrase,
 both case-insensitive and case-sensitive. %
+
+\begin{code}
+Word String :: Query 
+Phrase String :: Query
+CaseWord String :: Query
+CasePhrase String :: Query
+\end{code}
+
 Since the search depends on user-input, the framework also allows
-something called \emph{fuzzy search} to scan for results with spelling
+something called |FuzzyWord String| to scan for results with spelling
 errors like transposed letters. %
 Since the index data structure of Holumbus uses pairs of words and
 contexts, a special mechanism to search for these contexts is given. %
-Furthermore the structure provides binary operators like |AND|, |OR|
-and |NOT| to combine multiple queries. %
+Furthermore the structure provides binary operators of the form |BinQuery BinOp
+Query Query| to combine multiple queries, where |BinOp| can be a
+conjunction, disjunction or negation. %
 
-% Holumbus provides search mechanism with a special syntax.
-\begin{figure}
-\label{analysis:query}
 \begin{code}
-data Query = Word String
-           | Phrase String
-           | CaseWord String
-           | CasePhrase String
-           | FuzzyWord String
-           | Specifier [Context] Query
-           | Negation Query
-           | BinQuery BinOp Query Query
 data BinOp = And | Or | But
 \end{code}
-\caption{The |Query| data structure provided by the Holumbus
-  framework}
-\end{figure}
 
 % And this data structure can be processed by processQuery (Holumbus.Query.Processor).
 As next step, we pass the index, document and query to the function
@@ -242,18 +230,36 @@ When processing the query, Holumbus only matches for prefixes of the
 given word or phrase in a query, we need to consider this restriction
 when creating our index in \hyperref[implementation:index]{Section
   \ref{implementation:index}}. %
-The data structure we get as return value is shown in
-\hyperref[analysis:result]{Figure \ref{analysis:result}}. %
-Since we make use of this structure in our implementation, let's take
-a closer look at the code. %
-|Result a| consists of the matching documents with type |a| as well as
-possible word completions. %
+
+\begin{code}
+data Result a  = Result        
+  { docHits  :: (DocHits a)
+ , wordHits  :: WordHits
+ }
+\end{code}
+
+As return value, we get the data structure |Result a|, that consists
+of the matching documents with type |a| as well as possible word
+completions. %
 The first is represented by |DocHits a| that is a mapping of |DocInfo
-a| and the contexts. %
+a|, the contexts and the document's unique identifier. %
 On the other hand |DocInfo a| consists of the matching document and a
 score. %
+
+\begin{code} 
+data DocInfo a = DocInfo 
+  { document :: (Document a)
+  , docScore  :: Score
+ }
+type DocContextHits    = Map Context DocWordHits
+
+type DocWordHits       = Map Word Positions
+
+type DocHits a  = DocIdMap (DocInfo a, DocContextHits)
+\end{code}
+
 By default this score is calculated by the number of occurrences of
-the search query in the document. %
+the search query in the document and represented as |Float|. %
 But Holumbus also provides a mechanism to apply a customized ranking
 function to calculate the score. %
 |WordHits| illustrates the word completions and is represented by a
@@ -261,42 +267,19 @@ mapping of the possible completions of the given prefix in combination
 with its score, i.e. |WordInfo|, and the contexts.\\
 % Holumbus also provides a data structure that is returned after a query
 
-\begin{figure}[h!]
 \begin{code}
-data Result a  = Result        
-                { docHits  :: (DocHits a)
-                , wordHits :: WordHits
-                }
-
-data DocInfo a = DocInfo 
-                { document :: (Document a)
-                , docScore :: Score
-                }
-
 data WordInfo  = WordInfo 
                 { terms     :: Terms
                 , wordScore :: Score                
                 }
-
-type DocHits a         = DocIdMap (DocInfo a, DocContextHits)
-
-type DocContextHits    = Map Context DocWordHits
-
-type DocWordHits       = Map Word Positions
 
 type WordHits          = Map Word (WordInfo, WordContextHits)
 
 type WordContextHits   = Map Context WordDocHits
 
 type WordDocHits       = Occurrences
-
-type Score           = Float
-type Terms           = [String]
 \end{code}
-\caption{The |Result| data structure provided by the Holumbus
-  framework}
-\label{analysis:result}
-\end{figure}
+
 
 Summing up, we have discussed the mechanism to evaluate a query with
 the Holumbus framework. %
@@ -306,7 +289,7 @@ matching documents and possible word completions. %
 % But first the user input has to be parsed into the query structure to
 % start the processing.
 
-\section{Parsing User-Queries}
+\section{Parsing User-Queries}\ref{analysis:parser}
 % Which criteria do we want to search for? Modules, functions, types,
 % signatures, and  det./non-det., flexible/rigid functions. \\
 The next question is how to construct the query for a given

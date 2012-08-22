@@ -179,4 +179,4 @@
 %
 % Zeilenabstand wird um den Faktor 1.5 verändert
 %
-%\renewcommand{\baselinestretch}{1.5}
+%\renewcommand{\baselinestretch}{1.25}

@@ -27,7 +27,7 @@ by two subsections that cover functional and logical concepts of
 Curry. %
 
 % Start with the structure of a curry program. \\
-\subsection{General overview}
+\subsection{General Overview}
 Like in Haskell, a program consists of function definitions and data
 structures. %
 A Curry module \emph{Test} is a program that is saved as
@@ -124,7 +124,7 @@ The next section covers functional characteristics of Curry.
 % \item statically scoped (depends on layout - also: layout/off-side
 %   rule), local scope with where and let
 % \end{itemize}
-\subsection{Functional features}\label{preliminaries:curryInfo}
+\subsection{Functional Features}\label{preliminaries:curryInfo}
 % Begin with data structures that als can be defined by the user. Use
 % CurryInfo as example.\\
 The boolean values mentioned in the previous section are part of the
@@ -213,7 +213,7 @@ strategy. %
 Since the logic characteristics of Curry induce that there is another
 strategy besides lazy evaluation, we will go one to the next section
 and take a closer look into these characteristics. %
-\subsection{Logic features}
+\subsection{Logic Features}
 % Start with the connection between functional and logical programming:
 % introduce the logical feature of non-deterministic functions. Therefor
 % give an example for a rule and later a non-deterministic function.\\

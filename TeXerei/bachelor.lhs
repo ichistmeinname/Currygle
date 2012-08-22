@@ -13,6 +13,12 @@
 %format <$$> = "\circledS"
 %format ~<$$>~ = "~\circledS~"
 %format %//% = "\newline"
+%format $@$ = "#"
+%format *> = "*\!\!\!>"
+%format <* = "<\!\!\!*"
+%format ~*>~ = "~*\!\!\!>"
+%format ~<*~ = "<\!\!\!*~"
+
 
 
 \begin{document}
