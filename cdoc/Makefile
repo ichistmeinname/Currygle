@@ -25,7 +25,7 @@ CurryDoc.state: CurryDoc.curry CurryDocRead.curry CurryDocHtml.curry \
 	 echo ":save main" ) | /Users/ichistmeinname/Downloads/pakcs/bin/pakcs
 # the path above must link to your curry implementation 
 	(cd /Users/ichistmeinname/Dropbox/Uni/6/Bachelorarbeit/2012-sad-ba/cdoc ; \
-# the path above must link to the current director 
+# the path above must link to the current directory
 	 rm -f currydoc ; \
 		ln -s ./CurryDoc.state currydoc)
 
