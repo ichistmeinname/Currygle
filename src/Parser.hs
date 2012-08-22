@@ -108,52 +108,52 @@ _rigidSpecifierNameShort = "ri"
 --------------------------
 
 -- | Parses type varibales (i.e. a character) and following whitespaces due to lexeme.
+--   If a type variable appears in a list or tuple, it is at least followed by closing parentheses,
+--   hence, for this case, we need to modify the parser.
 varParser :: Bool -> TypeExprParser
 varParser inAListOrTuple = 
   var <$> (guard inAListOrTuple >> 
-   (lexeme signatureTokenParser lower 
-    <* notFollowedBy (identifier signatureTokenParser)))
-  <|> var <$> lexeme signatureTokenParser lower <* notFollowedBy anyChar
+   (lexemer lower 
+    <* notFollowedBy sigIdentifier))
+  <|> var <$> lexemer lower <* notFollowedBy anyChar
 
 -- | Parses primitive (unary) types (i.e. Int, Float, Bool ...) and following whitespaces due to identifier that is provided by signatureParser.
 primParser :: TypeExprParser
-primParser = 
-  prim <$> identifier signatureTokenParser
+primParser = prim <$> sigIdentifier
 
 -- | Parses a list.
 listParser :: TypeExprParser
 listParser = 
-  try ((\texpr -> cons "[]" [texpr]) <$> brackets signatureTokenParser (signatureParser True))
-  -- <|> (\_ -> cons "[]" []) <$> string "[]"
+  (\texpr -> cons "[]" [texpr]) <$> bracket (signatureParser True)
 
 -- | Parses a tuple.
 tupleParser :: TypeExprParser
 tupleParser =
   try ((\tuple -> cons (tupleCons tuple) tuple) 
-       <$> parens signatureTokenParser parseTuple)
-  -- <|> (\_ -> cons "()" []) <$> string "()"
+       <$> paren parseTuple)
   where tupleCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
         parseTuple = (\item _ itemList -> item:itemList) <$> 
-                     (signatureParser True) <*> symbol signatureTokenParser "," 
-                     <*> sepBy1 (signatureParser True) (symbol signatureTokenParser ",")
+                     (signatureParser True) <*> string "," 
+                     <*> sepBy1 (signatureParser True) (string ",")
 
 -- | Parses a type constructor. 
 --   A whitespace is used as identicator, if it is followed by another successfull call of the signatureParser.
 consParser :: TypeExprParser
 consParser = 
   ((\constr _ expr -> cons constr expr) 
-   <$> (identifier signatureTokenParser)
-   <*> whiteSpace signatureTokenParser 
-   <*> sepBy1 (signatureTerm False False) (whiteSpace signatureTokenParser))
+   <$> sigIdentifier
+   <*> whitespace 
+   <*> sepBy1 (signatureTerm False False) whitespace)
   <|> (\constr -> cons constr []) <$> (string ":" <|> string "[]" <|> string "()")
 
--- | All possible forms of signatures. The boolean value indicates, if a type constructor may appear without parentheses.
+-- | All possible forms of signatures. The first boolean value indicates, if a type constructor may appear without parentheses,
+--   the second boolean value triggers special handling for type variables.
 signatureTerm :: Bool -> Bool -> TypeExprParser
 signatureTerm allowConsParser inAListOrTuple = 
   (guard allowConsParser >> try consParser)
   <|> try tupleParser 
-  <|> parens signatureTokenParser (signatureParser False)
-  <|> listParser
+  <|> paren (signatureParser False)
+  <|> try listParser
   <|> primParser
   <|> (varParser inAListOrTuple)
 
@@ -161,8 +161,7 @@ signatureTerm allowConsParser inAListOrTuple =
 binary :: GenTokenParser s u m -> String -> (a -> a -> a)
           -> Assoc -> Operator s u m a
 binary parser name fun = 
-  Infix ((\_ -> fun) <$> lexeme parser 
-                                (reservedOp parser name))
+  Infix ((\_ -> fun) <$> lexeme parser (reservedOp parser name))
 
 -- Defines the binary "->"-operator used in the signature parser. 
 -- It has a right associativity and returns the partial application "FuncType".
@@ -184,67 +183,60 @@ aSpecifierParser optionalIdent spec short parser =
   build [spec] (":"++spec)
   <|> build [spec] (":"++short)
  where build specList str = 
-        specify specList <$> (reservedOp specifierTokenParser str *>
+        specify specList <$> (specReservedOp str *>
          if optionalIdent then option ("") parser
                           else parserReturn "")
 
 -- | Parses a moduleSpecifierName followed by an identifier (i.e. ":module Prelude").
 moduleSpecifier :: QueryParser
 moduleSpecifier = 
-  aSpecifierParser True _moduleSpecifierName _moduleSpecifierNameShort 
-   (identifier specifierTokenParser)
+  aSpecifierParser True _moduleSpecifierName _moduleSpecifierNameShort specIdentifier
 
 -- | Parses a functionSpecifierName followed by an identifier (i.e. ":function map").
 --   It can also parse operators and parenthesized operators (i.e. (+) or +).
 functionSpecifier :: QueryParser
 functionSpecifier = 
   aSpecifierParser True _functionSpecifierName _functionSpecifierNameShort
-   (identifier specifierTokenParser 
-    <|> operator binaryTokenParser 
-    <|> parens specifierTokenParser (operator binaryTokenParser))
+   (specIdentifier 
+    <|> binOperator 
+    <|> paren binOperator)
 
 -- | Parses a typeSpecifierName followed by an identifier (i.e. ":type Either").
 --   It can also parse ":" and "[]" as they are special constructors.
 typeSpecifier :: QueryParser
 typeSpecifier = 
   aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort
-   (identifier specifierTokenParser <|> string ":" <|> string "[]")
+   (specIdentifier <|> string ":" <|> string "[]")
 
 -- | Parses a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
 inModuleSpecifier :: QueryParser
 inModuleSpecifier =
-  aSpecifierParser True _inModuleSpecifierName _inModuleSpecifierNameShort
-   (identifier specifierTokenParser)
+  aSpecifierParser True _inModuleSpecifierName _inModuleSpecifierNameShort specIdentifier
 
 -- | Parses a authorSpecifierName followed by an identifier (i.e. ":author frank").
 authorSpecifier :: QueryParser
 authorSpecifier =
-  aSpecifierParser True _authorSpecifierName _authorSpecifierNameShort 
-    (identifier specifierTokenParser)
+  aSpecifierParser True _authorSpecifierName _authorSpecifierNameShort specIdentifier
 
 -- | Parses a nondetSpecifierName.
 nondeterminismSpecifier :: QueryParser
 nondeterminismSpecifier = 
-  aSpecifierParser False _nondetSpecifierName _nondetSpecifierNameShort
-   (identifier specifierTokenParser)
+  aSpecifierParser False _nondetSpecifierName _nondetSpecifierNameShort specIdentifier
 
 -- | Parses a detSpecifierName.
 determinismSpecifier :: QueryParser
 determinismSpecifier = 
-  aSpecifierParser False _detSpecifierName _detSpecifierNameShort
-   (identifier specifierTokenParser)
+  aSpecifierParser False _detSpecifierName _detSpecifierNameShort specIdentifier
 
 -- | Parses a flexibleSpecifierName.
 flexibleSpecifier :: QueryParser
 flexibleSpecifier = 
-  aSpecifierParser False _flexibleSpecifierName _flexibleSpecifierNameShort
-   (identifier specifierTokenParser)
+  aSpecifierParser False _flexibleSpecifierName _flexibleSpecifierNameShort specIdentifier
 
 -- | Parses a rigidSpecifierName.
 rigidSpecifier :: QueryParser
 rigidSpecifier = 
-  aSpecifierParser False _rigidSpecifierName _rigidSpecifierNameShort
-   (identifier specifierTokenParser)
+  aSpecifierParser False _rigidSpecifierName _rigidSpecifierNameShort specIdentifier
 
 -- | Parses a signatureSpecifier followed by a valid signature (i.e. ":signature Int->Int).
 signatureSpecifier :: QueryParser
@@ -252,15 +244,16 @@ signatureSpecifier =
   signatureSpecifier' _signatureSpecifierName <|> signatureSpecifier' _signatureSpecifierNameShort
  where signatureSpecifier' name =
         (\sig -> specify [_signatureSpecifierName] (testShow sig))
-        <$> (reservedOp specifierTokenParser (":"++name) *> signatureParser False)
+        <$> (specReservedOp (":"++name) *> signatureParser False)
 
 -- | Parses all possible forms of specifiers.
 specifierParser :: QueryParser
 specifierParser =
-  try $ parens specifierTokenParser specifierParser
+  try $ paren specifierParser
   <|> moduleSpecifier
   <|> typeSpecifier
   <|> inModuleSpecifier
+  <|> authorSpecifier
   <|> nondeterminismSpecifier
   <|> determinismSpecifier
   <|> flexibleSpecifier
@@ -277,12 +270,12 @@ binOpTerm :: QueryParser
 binOpTerm =
   try ((\a -> binQuery a) <$> 
    many (specifierParser 
-         <|> (Word <$> identifier binaryTokenParser)
-         <|> (Word <$> operator binaryTokenParser)
+         <|> (Word <$> binIdentifier)
+         <|> (Word <$> binOperator)
          <|> ((\word -> specify ["signature"] (testShow word)) 
                          <$> signatureParser False)))
-  <|> parens binaryTokenParser binOpParser
-  <|> parens specifierTokenParser specifierParser
+  <|> paren binOpParser
+  <|> paren specifierParser
 
 -- | Defines the binary operators "AND", "OR", and "NOT". The order in the table represents the precendens (first = highest). When parsing a operator, it returns the partial application of "BinQuery" (and the given operator).
 binOpTable = [[binary binaryTokenParser "AND" (BinQuery And) AssocLeft], 
@@ -295,7 +288,7 @@ binOpParser = buildExpressionParser binOpTable binOpTerm
 
 -- |  Top-level parser that is used to parse the query the user is searching for. 
 queryParser :: QueryParser
-queryParser = whiteSpace binaryTokenParser *> binOpParser
+queryParser = whitespace *> binOpParser
 
 -- | Runs the parser, the only exported function.
 parse :: String -> Either String Query
@@ -304,7 +297,10 @@ parse = result . runP queryParser "" "curr(y)gle"
        result (Right q)  = Right q
 
 ---------------------------------------------------------------------------------------
-{- The expression makeTokenParser language creates a GenTokenParser record that contains lexical parsers that are defined using the definitions in the language record (i.e. identifier, which also fails on reserved names). -}
+{- The expression makeTokenParser language creates a GenTokenParser record that contains 
+    lexical parsers that are defined using the definitions in the language record 
+    (i.e. identifier, which also fails on reserved names). 
+-}
 ---------------------------------------------------------------------------------------
 
 signatureDef :: LanguageDef String
@@ -312,16 +308,15 @@ signatureDef =
   emptyDef 
   { identStart      = upper,
     identLetter     = alphaNum,
-    -- opStart         = opLetter signatureDef,
-    -- opLetter        = oneOf ":[]()",
-    -- reservedOpNames = [":", "[]", "()"],
     reservedNames   = 
-     ["AND", "NOT", "OR", ":signature", ":module", ":function",":type", 
-      ":nondet", ":det", ":flexible", ":rigid", ":in"]
+     ["AND", "NOT", "OR"]
    }
 
 signatureTokenParser :: TokenParser String
 signatureTokenParser = makeTokenParser signatureDef
+
+sigIdentifier = identifier signatureTokenParser
+sigReservedOp = reservedOp signatureTokenParser
 
 specifierDef :: LanguageDef String
 specifierDef = 
@@ -333,6 +328,9 @@ specifierDef =
 
 specifierTokenParser :: TokenParser String
 specifierTokenParser = makeTokenParser specifierDef
+
+specIdentifier = identifier specifierTokenParser
+specReservedOp = reservedOp specifierTokenParser
 
 binOpDef :: LanguageDef String
 binOpDef = 
@@ -349,6 +347,13 @@ binOpDef =
 
 binaryTokenParser :: TokenParser String
 binaryTokenParser = makeTokenParser binOpDef
+
+whitespace    = whiteSpace binaryTokenParser
+bracket       = brackets binaryTokenParser
+paren         = parens binaryTokenParser
+lexemer       = lexeme binaryTokenParser
+binOperator   = operator binaryTokenParser
+binIdentifier = identifier binaryTokenParser
 
 ----------------------------------
 --  some shortcut constructors  --
