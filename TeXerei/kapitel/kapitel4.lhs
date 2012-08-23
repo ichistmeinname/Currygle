@@ -1048,7 +1048,7 @@ If we are more precisly, the parser above does not parse an expression
 with \emph{or} without parentheses like we promised before. %
 In order to fix the parser, we need to add the choice combinator. %
 Additionally, we want to present the second implementation to discard
-the read parenthesis. % 
+the read parentheses. % 
 
 \begin{code}
 parseParenExpression2 :: Parser String
@@ -1062,7 +1062,7 @@ small parser that can read an expression with or without parentheses. %
 In the following, we have to keep in mind that we build a strong parser
 by combining several parses that parse substructures. %
 
-\subsection{Query Parser}
+\subsection{Singature Parser}
 
 In our implementation we use the Haskell library Parsec to
 build the parser to read and analyze the user queries. %
@@ -1140,7 +1140,7 @@ If you take a closer look at the our list of type expression, you see
 that all identifiers that we have to parse, start with an upper-case
 letter, except for type variables. %
 Thus, at first, we need a parser that reads all valid identifiers. %
-Luckily, Parsec provides a feature to define the tokens that are used
+Luckily, Parsec provides a feature to define tokens that are used
 by the language and compose a parser for these tokens. %
 Tokens are constructs like white space, comments, identifiers,
 reserved words, numbers or strings. %
@@ -1148,8 +1148,8 @@ reserved words, numbers or strings. %
 The module |ParsecToken| exports a function |makeTokenParser| that
 takes such an language definition as returns a record with a set of
 lexical parsers. %
-Every lexical parser already considers surrounding white spaces, hence
-we do not need to consider white spaces when we use a field of the
+Every lexical parser already considers trailing white spaces, hence
+we do not need to consider white spaces when we use a parser of the
 language record. %
 The following code shows our language definition for type signatures:
 
@@ -1170,8 +1170,31 @@ an type expression. %
 Our parser also knows the binary operations |AND|, |NOT| and |OR| and
 since they are starting with an upper character, they are potential
 type expressions. %
-Therefore we need the parser to fail on these reserved operations when
+Therefore we need the parser to fail on these reserved names when
 parsing type signatures. %
+
+\begin{code}
+specifierTokenParser = makeTokenParser specifierDef
+\end{code}
+
+All parser the definitions generates are lexical parser, which means
+they handle surrounding white spaces. % 
+Hence, we do not need to consider white spaces, if we use one the
+these parsers. %
+As example, we get the parser that handles identifiers according to the defined
+language and another one that parses  %
+
+\begin{code}
+sigIdentifier = identifier signatureTokenParser
+sigReservedOp = reservedOp signatureTokenParser
+\end{code}
+
+Other lexical parser we will use in our code includes |whitespace|,
+|aSymbol| and |lexemer|, where the latter takes a parser as argument
+and parses surrounding white spaces; |aSymbol| does the same, but
+takes a character as argument.%
+Additionally, we have parsers |paren| and |bracket| for parentheses
+and brackets. %
 
 Before we examine the first substructure, we need to consider the type
 of our parser. %
@@ -1187,14 +1210,21 @@ The first substructure we want to parse is a primitive type.
 
 \begin{code}
 primParser :: TypeExprParser
-primParser = prim ~<$$>~ sigIdentifier
+primParser = 
+  prim ~<$$>~ (sigIdentifier 
+           ~<|>~ aSymbol "()")
 \end{code}
 
-For primitive types we only need to consider one identifier and |prim|
-wraps this identifier into a |TCons|-structure with no type
+For primitive types we need to parse one identifier and |prim| wraps
+this identifier into a |TCons|-structure with no type
 arguments\footnote{A little reminder: |Int| => |TCons ("Prelude",
   "Int") []|}. %
-In case of an n-ary type constructor, we parse at least one identifier
+In addition, we need to consider the unit type |()| as special
+constructor. %
+Otherwise we have to allow the search for functions with unvalid
+special characters. %
+
+In case of a n-ary type constructor, we parse at least one identifier
 a white space and another type expression. %
 
 \begin{code}
@@ -1204,9 +1234,6 @@ consParser =
    ~<$$>~ sigIdentifier
    <*> whitespace 
    <*> sepBy1 (signatureTerm False False) whitespace)
-  ~<|>~ specialConstructors
- where specialConstructors =
-  (\constr -> cons constr []) ~<$$>~ (string ":" <|> string "[]" <|> string "()")
 \end{code}
 
 At first, we parse an identifier like we do for primitive types and
@@ -1218,18 +1245,168 @@ kind. %
 At least one type signature (but no white space) needs to occur,
 otherwise the parser |sepBy1| fails and altogether |consParser|
 fails. %
-Thus, In our case we parse at least two type expression separated by a
+Thus, in our case we parse at least two type expressions separated by a
 white space or just one type expression. %
 The parser |signatureTerm| handles all the substructures we listed
-above. %
+above, except for function types, but we discuss this later. %
 The first boolean value indicates, if a constructor type may occur
 without parentheses; the second |Bool| is |True|, if we are in the
 process of parsing a list or tuple and |False| otherwise. %
-At last, we need to consider special constructors like the list
-constructors |:| and |[]| that are defined in the Prelude as well as
-the unit type |()|. %
+In the defintion above, further constructor types are only allowed to
+occur with parentheses. % 
+As example to assure the accuracy of this idea: |IO a| and |Maybe a| are type
+constructors with one type argument. If we combine these type
+constructors to one expression, we get |Maybe (IO a)| or |IO (Maybe
+a)|. %
+We have to parenthesize the inner type constructor, because otherwise
+|IO Maybe a| and |Maybe IO a| suggest that both constructors take two
+type arguments instead of one. %
 
+The latter boolean value takes an important role in the parser for type variables,
+which we present next. %
 
+\begin{code}
+varParser :: Bool -> TypeExprParser
+varParser inAListOrTuple = 
+  var ~<$$>~ ((guard inAListOrTuple >> 
+   (lexemer lower ~<*~ notFollowedBy sigIdentifier))
+   ~<|>~ lexemer lower ~<*~ notFollowedBy anyChar)
+\end{code}
+
+In the common case, a type variables is one lower-case character. %
+Thus, we do not allow type variables like |IO abc|, the variable
+parser fails on |abc| and our signature parser only reads |IO| as
+primitive type. %
+After parsing, the function |var| converts the character into a
+|TypeExpr|\footnote{|a| => |TVar 97|}. %
+If we parse type variables as part of a list or tuple, we need a
+slight change in our definition. %
+We still parse one lower-case character, but a type variable can
+appear in the middle of a tuple like |(Int, a, Int)| and hence, the
+type variables is followed by a semicolon. %
+The same reason applies for a type variable at the of a tuple or in a
+list, since we have to parse the closing bracket and parenthesis
+respectively. %
+Therefore, we only forbid another identifier to appear after a type
+variable in a list or tuple. %
+
+Speaking of lists and tuples, let's take a look at the parsers for
+these two type expressions. %
+
+\begin{code}
+listParser :: TypeExprParser
+listParser = 
+  (\texpr -> cons "[]" [texpr]) ~<$$>~ bracket (signatureParser True)
+\end{code}
+
+The parser for lists is pretty simple, since a list can be any valid
+type signature wrapped in brackets. %
+In the end, we wrap the result in a type constructor with |[]| as
+constructor and the type signature as type arguments. %
+Whereas |signatureTerm| is the parser for any type expression besides
+function types, |signatureParser| parses the type signatures
+altogether. %
+The boolean value indicates again, if a constructor type may appear
+without surrounding parentheses. %
+
+Next, we present the parser for tuples in three steps.
+\begin{code}
+parseTuple  = 
+  (\item _ itemList -> item:itemList) ~<$$>~ 
+   (signatureParser True) 
+   <*> aSymbol "," 
+   <*> sepBy1 (signatureParser True) (string ",")
+\end{code}
+
+The first (and main) part looks similiar to the constructor parser. %
+Only this time we parse any kind of type expressions seperated by a
+comma instead of a white space. %
+We combine the first type expressions and the list of following type
+expression to a list. %
+This list represents the type arguments for the tuple constructor. %
+Next, we need to build the tuple constructor, because it depends on
+the number of arguments: |(,)| is a tuple constructor for a pair,
+whereas for a triple we need |(,,,)|. %
+
+\begin{code}
+tupleCons list  = "(" ++ replicate (length list - 1) ',' ++ ")"
+\end{code}
+
+Thus, depending on the list of type arguments, we construct the tuple
+constructor. %
+And in the end, we combine these functions to gain a parser for
+tuples: %
+
+\begin{code}
+tupleParser :: TypeExprParser
+tupleParser =
+  ((\tuple -> cons (tupleCons tuple) tuple)
+    ~<$$>~ paren parseTuple)
+\end{code}
+     
+The last parser we need to discuss handles function types like |Int ->
+Int|. %
+For an infix operator, we always need to look ahead after parsing an
+identifier, if we come across the |->|-operator next. %
+Luckily, the Parsec library provides a mechanism to relieve us of
+parsing operators. %
+
+At first, we define the affix and associativity of the operator and
+assign a function that determines the result of the parsing. %
+
+\begin{code}
+signatureTable = 
+[[Infix ((\_ -> FuncType) <$$> lexemer (string "->")) AssocRight]]
+\end{code}
+
+Thus, when parsing a |->| in an infix position, we return the partial
+application of |FuncType|, because the two arguments of this
+constructor are the type expression to the left and right of the
+operator\footnote{|Int -> Int| => |FuncType Int Int|}. %
+
+In order to use this parser, we use Parsec's function
+|buildExpressionParser| that takes such an definition table and
+another parser to combine the two oft them. %
+
+\begin{code}
+signatureParser :: Bool -> TypeExprParser
+signatureParser inAListOrTuple = 
+  buildExpressionParser signatureTable (signatureTerm True inAListOrTuple)
+\end{code}
+
+The other parse that we assign is |signatureTerm|. %
+We need to parametrize |signatureParser| as well to indicate if we are
+in the process of parsing a tuple or list. %
+A list or a tuple can consist of function types without parentheses,
+whereas for a valid constructor type, a function type as arguments
+needs to be parenthesized. %
+Additionally, we want to parse redundant parenthesized signatures as
+well. %
+We can offer this functionality with the following definition of
+signatureTerm:
+
+\begin{code}
+signatureTerm :: Bool -> Bool -> TypeExprParser
+signatureTerm allowConsParser inAListOrTuple = 
+  (guard allowConsParser >> try consParser)
+  ~<|>~ try tupleParser 
+  ~<|>~ paren (signatureParser False)
+  ~<|>~ listParser
+  ~<|>~ primParser
+  ~<|>~ (varParser inAListOrTuple)
+\end{code}
+
+In order to guarantee that we can parse tuples, parenthesized function
+types and redundant parentheses, we cannot parse any characters in
+case |tupleParser|fails, otherwise the parser for parenthesized
+expressions fails too. % 
+Therefore, we have to try |tuplesParser| first, thus, if it fails, the
+result is discarded and we can try for parenthesized expressions
+next. %
+
+\subsection{Query Parser}
+
+  
 % the parser does not check if the whole string was parsed -> better user-experience
 
 % Give a definition of the language (EBNF(?) / appendix). 

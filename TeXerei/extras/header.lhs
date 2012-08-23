@@ -24,11 +24,6 @@
 \usepackage[T1]{fontenc}
 
 %
-% Paket für Quotes
-%
-% \usepackage[babel,french=guillemets,german=swiss]{csquotes}
-
-%
 % Paket zum Erweitern der Tabelleneigenschaften
 %
 \usepackage{array}
