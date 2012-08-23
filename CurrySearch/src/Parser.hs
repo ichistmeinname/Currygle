@@ -30,6 +30,7 @@ import Holumbus.Query.Language.Grammar
 
 import CurryInfo
 import Helpers (showType)
+import Debug.Trace (trace)
 
 infixr 4 -->
 
@@ -113,13 +114,14 @@ _rigidSpecifierNameShort = "ri"
 varParser :: Bool -> TypeExprParser
 varParser inAListOrTuple = 
   var <$> (guard inAListOrTuple >> 
-   (lexemer lower 
-    <* notFollowedBy sigIdentifier))
+   (lexemer lower <* notFollowedBy sigIdentifier))
   <|> var <$> lexemer lower <* notFollowedBy anyChar
 
 -- | Parses primitive (unary) types (i.e. Int, Float, Bool ...) and following whitespaces due to identifier that is provided by signatureParser.
 primParser :: TypeExprParser
-primParser = prim <$> sigIdentifier
+primParser = 
+  prim <$> (sigIdentifier 
+           <|> lexemer (string "()"))
 
 -- | Parses a list.
 listParser :: TypeExprParser
@@ -129,22 +131,23 @@ listParser =
 -- | Parses a tuple.
 tupleParser :: TypeExprParser
 tupleParser =
-  try ((\tuple -> cons (tupleCons tuple) tuple) 
+  try ((\tuple -> cons "()" []) <$> lexemer (string "()"))
+  <|> ((\tuple -> cons (tupleCons tuple) tuple) 
        <$> paren parseTuple)
-  where tupleCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
-        parseTuple = (\item _ itemList -> item:itemList) <$> 
-                     (signatureParser True) <*> string "," 
-                     <*> sepBy1 (signatureParser True) (string ",")
+ where tupleCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
+       parseTuple = (\item _ itemList -> item:itemList) <$> 
+                     (signatureParser True) 
+                     <*> lexemer (string ",")
+                     <*> sepBy1 (signatureParser True) (lexemer (string ","))
 
 -- | Parses a type constructor. 
 --   A whitespace is used as identicator, if it is followed by another successfull call of the signatureParser.
 consParser :: TypeExprParser
 consParser = 
-  ((\constr _ expr -> cons constr expr) 
+  (\constr _ expr -> cons constr expr) 
    <$> sigIdentifier
    <*> whitespace 
-   <*> sepBy1 (signatureTerm False False) whitespace)
-  <|> (\constr -> cons constr []) <$> (string ":" <|> string "[]" <|> string "()")
+   <*> sepBy1 (signatureTerm False False) whitespace
 
 -- | All possible forms of signatures. The first boolean value indicates, if a type constructor may appear without parentheses,
 --   the second boolean value triggers special handling for type variables.
@@ -153,9 +156,10 @@ signatureTerm allowConsParser inAListOrTuple =
   (guard allowConsParser >> try consParser)
   <|> try tupleParser 
   <|> paren (signatureParser False)
-  <|> try listParser
+  <|> listParser
   <|> primParser
   <|> (varParser inAListOrTuple)
+
 
 -- helper function to define a general way for handling binary operators
 binary :: GenTokenParser s u m -> String -> (a -> a -> a)
@@ -168,7 +172,7 @@ binary parser name fun =
 -- signatureTable :: [[OperatorTable TypeExpr]]
 signatureTable = [[binary signatureTokenParser "->" (-->) AssocRight]]
 
--- | Buils an expression parser for signatures with the given term (signatureTerm) and table (signatureTable). 
+-- | Builds an expression parser for signatures with the given term (signatureTerm) and table (signatureTable). 
 signatureParser :: Bool -> TypeExprParser
 signatureParser inAListOrTuple = 
   buildExpressionParser signatureTable (signatureTerm True inAListOrTuple)
@@ -206,7 +210,7 @@ functionSpecifier =
 typeSpecifier :: QueryParser
 typeSpecifier = 
   aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort
-   (specIdentifier <|> string ":" <|> string "[]")
+   (specIdentifier <|> lexemer (string ":") <|> lexemer (string "[]"))
 
 -- | Parses a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
 inModuleSpecifier :: QueryParser
@@ -339,7 +343,7 @@ binOpDef =
     identLetter     = alphaNum,
     opStart         = opLetter binOpDef,
     opLetter        = oneOf ":!#$%&*+./<=>?@\\^|-~_",
-    reservedOpNames = ["->",":"],
+    reservedOpNames = ["->"],
     reservedNames   = 
      ["AND", "NOT", "OR", ":signature", ":module", ":function",":type", 
       ":nondet", ":det", ":flexible", ":rigid", ":in"]
