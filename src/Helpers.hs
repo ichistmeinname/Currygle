@@ -175,12 +175,12 @@ mkPagerLink query actPage number =
 -- When types are used in the module where they're defined, a qualified name is not necessary,
 -- same holds for types of the prelude.
 isQualifiedName :: String -> String -> Bool
-isQualifiedName moduleName fModuleName = moduleName == fModuleName || fModuleName == "Prelude"
+isQualifiedName moduleName fModuleName = moduleName == fModuleName || fModuleName == "Prelude" || moduleName == ""
 
 -- Returns a given function with its qualfied name, if necessary
 qualifiedName :: String -> String -> String -> String
 qualifiedName moduleName fModuleName funcName = 
-  if isQualifiedName moduleName fModuleName then funcName else moduleName ++ "." ++ funcName
+  if isQualifiedName moduleName fModuleName then funcName else fModuleName ++ "." ++ funcName
 
 -- Parens a given string when flag is true
 paren :: Bool -> String -> String
@@ -212,24 +212,24 @@ showTypeList :: String -> (QName, [TypeExpr]) -> ([String], String)
 showTypeList typeName ((modName, consName), tExprList) =
   ( map (\expr -> (showType modName False expr) ++ (" -> " ++ typeName)) tExprList, consName)
 
-splitType :: String -> Bool -> TypeExpr -> [String]
-splitType _ _ (TVar i) = [[chr (97+i)]]
-splitType modName nested (FuncType t1 t2) =
+splitType :: Bool -> TypeExpr -> [String]
+splitType _ (TVar i) = [[chr (97+i)]]
+splitType nested (FuncType t1 t2) =
    paren nested
-    (showType modName (isFunctionType t1) t1) : (splitType modName False t2)
-splitType modName nested (TCons tc ts)
- | null ts = [showTypeCons modName tc]
+    (showType "" (isFunctionType t1) t1) : (splitType False t2)
+splitType nested (TCons tc ts)
+ | null ts = [showTypeCons "" tc]
  | isString tc $ head ts = 
      ["String"]
  | isList tc =
-     ["[" ++ showType modName False (head ts) ++ "]"] -- list type
+     ["[" ++ showType "" False (head ts) ++ "]"] -- list type
  | take 2 (snd tc) == "(," =                        -- tuple type
-     ["(" ++ intercalate "," (map (showType modName False) ts) ++ ")"]
+     ["(" ++ intercalate "," (map (showType "" False) ts) ++ ")"]
  | otherwise = 
      [paren nested
-      (showTypeCons modName tc ++ " " ++
-       intercalate " " (map (showType modName True) ts))]
-splitType _ _ _ = [""]
+      (showTypeCons "" tc ++ " " ++
+       intercalate " " (map (showType "" True) ts))]
+splitType _ _ = [""]
 
 searchForParens :: [String] -> [String]
 searchForParens (x:xs) = 
@@ -250,8 +250,8 @@ removeEmptyStrings :: [String] -> [String]
 removeEmptyStrings = filter (\x -> not $ x == "")
 
 signatureComponents :: (QName, TypeExpr) -> [String]
-signatureComponents ((modName, _), expr) = map listToSignature (partA ++ partB)
- where partA = map removeEmptyStrings $ init $ tails $ splitType modName False expr
+signatureComponents (_, expr) = map listToSignature (partA ++ partB)
+ where partA = map removeEmptyStrings $ init $ tails $ splitType False expr
        partB = 
          if -- ("(" `isInfixOf` (concat $ last partA) || "[" `isInfixOf` (concat $ last partA)) && 
             not ("()" `isInfixOf` (concat $ last partA))
