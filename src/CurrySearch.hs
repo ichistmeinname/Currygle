@@ -109,7 +109,7 @@ sortedWords h =
 wordCompletionSpecifier :: String -> Query
 wordCompletionSpecifier = Specifier ["function","module","type"] . Word
 
--- Removes context specifiers (substrings starting with '"') from the string.
+-- Removes context specifiers (substrings starting with ':') from the string.
 prepareWordCompletionQuery :: String -> String
 prepareWordCompletionQuery queryString = 
   concat $ filter (not . (":" `L.isPrefixOf`)) $ splitOnWhitespace queryString
