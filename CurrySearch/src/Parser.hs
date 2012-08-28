@@ -24,13 +24,12 @@ import Text.Parsec.Prim  (runP, Parsec, try, many, parserReturn)
 import Text.Parsec.Language (emptyDef)
 import Text.Parsec.Expr (buildExpressionParser, Operator (..), Assoc (..))
 import Text.Parsec.Combinator (sepBy1, notFollowedBy, option)
-import Text.Parsec.Char (upper, alphaNum, lower, anyChar, oneOf, string)
+import Text.Parsec.Char (upper, alphaNum, lower, oneOf, anyChar)
 
 import Holumbus.Query.Language.Grammar
 
 import CurryInfo
 import Helpers (showType)
-import Debug.Trace (trace)
 
 infixr 4 -->
 
@@ -111,17 +110,18 @@ _rigidSpecifierNameShort = "ri"
 -- | Parses type varibales (i.e. a character) and following whitespaces due to lexeme.
 --   If a type variable appears in a list or tuple, it is at least followed by closing parentheses,
 --   hence, for this case, we need to modify the parser.
-varParser :: Bool -> TypeExprParser
-varParser inAListOrTuple = 
-  var <$> (guard inAListOrTuple >> 
-   (lexemer lower <* notFollowedBy sigIdentifier))
-  <|> var <$> lexemer lower <* notFollowedBy anyChar
+varParser :: TypeExprParser
+varParser = 
+  -- var <$> (guard inAListOrTuple >> 
+   -- (lexemer lower <* notFollowedBy sigIdentifier))
+  -- <|> 
+  var <$> lower <* (notFollowedBy alphaNum)
 
 -- | Parses primitive (unary) types (i.e. Int, Float, Bool ...) and following whitespaces due to identifier that is provided by signatureParser.
 primParser :: TypeExprParser
 primParser = 
   prim <$> (sigIdentifier 
-           <|> lexemer (string "()"))
+           <|> lexemer (aSymbol "()"))
 
 -- | Parses a list.
 listParser :: TypeExprParser
@@ -131,14 +131,14 @@ listParser =
 -- | Parses a tuple.
 tupleParser :: TypeExprParser
 tupleParser =
-  try ((\tuple -> cons "()" []) <$> lexemer (string "()"))
+  try ((\_ -> cons "()" []) <$> aSymbol "()")
   <|> ((\tuple -> cons (tupleCons tuple) tuple) 
        <$> paren parseTuple)
  where tupleCons list = "(" ++ replicate (length list - 1) ',' ++ ")"
        parseTuple = (\item _ itemList -> item:itemList) <$> 
                      (signatureParser True) 
-                     <*> lexemer (string ",")
-                     <*> sepBy1 (signatureParser True) (lexemer (string ","))
+                     <*> (aSymbol ",")
+                     <*> sepBy1 (signatureParser True) (aSymbol ",")
 
 -- | Parses a type constructor. 
 --   A whitespace is used as identicator, if it is followed by another successfull call of the signatureParser.
@@ -147,18 +147,18 @@ consParser =
   (\constr _ expr -> cons constr expr) 
    <$> sigIdentifier
    <*> whitespace 
-   <*> sepBy1 (signatureTerm False False) whitespace
+   <*> sepBy1 (signatureTerm False) whitespace
 
 -- | All possible forms of signatures. The first boolean value indicates, if a type constructor may appear without parentheses,
 --   the second boolean value triggers special handling for type variables.
-signatureTerm :: Bool -> Bool -> TypeExprParser
-signatureTerm allowConsParser inAListOrTuple = 
+signatureTerm :: Bool -> TypeExprParser
+signatureTerm allowConsParser = 
   (guard allowConsParser >> try consParser)
   <|> try tupleParser 
   <|> paren (signatureParser False)
   <|> listParser
   <|> primParser
-  <|> (varParser inAListOrTuple)
+  <|> varParser
 
 
 -- helper function to define a general way for handling binary operators
@@ -175,7 +175,7 @@ signatureTable = [[binary signatureTokenParser "->" (-->) AssocRight]]
 -- | Builds an expression parser for signatures with the given term (signatureTerm) and table (signatureTable). 
 signatureParser :: Bool -> TypeExprParser
 signatureParser inAListOrTuple = 
-  buildExpressionParser signatureTable (signatureTerm True inAListOrTuple)
+  buildExpressionParser signatureTable (signatureTerm True)
 
 --------------------------
 -- the specifier parser --
@@ -210,7 +210,7 @@ functionSpecifier =
 typeSpecifier :: QueryParser
 typeSpecifier = 
   aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort
-   (specIdentifier <|> lexemer (string ":") <|> lexemer (string "[]"))
+   (specIdentifier <|> (aSymbol ":") <|> (aSymbol "[]"))
 
 -- | Parses a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
 inModuleSpecifier :: QueryParser
@@ -273,13 +273,16 @@ specifierParser =
 binOpTerm :: QueryParser
 binOpTerm =
   try ((\a -> binQuery a) <$> 
-   many (specifierParser 
-         <|> (Word <$> binIdentifier)
-         <|> (Word <$> binOperator)
+   many (specifierParser    
+         <|> try (Word <$> binIdentifier)
+         <|> try (Word <$> binOperator)
          <|> ((\word -> specify ["signature"] (testShow word)) 
                          <$> signatureParser False)))
-  <|> paren binOpParser
-  <|> paren specifierParser
+  <|> try (paren binOpParser)
+  <|> try (paren specifierParser)
+  <|> ((\_ -> ' ') <$> aSymbol "(") *> binOpParser
+  -- <|> Word <$> (many ( anyChar <|> ((\_ -> ' ') <$> aSymbol "(") 
+  --                              <|> ((\_ -> ' ') <$> aSymbol ")")))
 
 -- | Defines the binary operators "AND", "OR", and "NOT". The order in the table represents the precendens (first = highest). When parsing a operator, it returns the partial application of "BinQuery" (and the given operator).
 binOpTable = [[binary binaryTokenParser "AND" (BinQuery And) AssocLeft], 
@@ -339,14 +342,14 @@ specReservedOp = reservedOp specifierTokenParser
 binOpDef :: LanguageDef String
 binOpDef = 
   emptyDef 
-  { identStart      = lower,
-    identLetter     = alphaNum,
+  { identStart      = lower <|> oneOf "_",
+    identLetter     = alphaNum <|> oneOf "_'",
     opStart         = opLetter binOpDef,
     opLetter        = oneOf ":!#$%&*+./<=>?@\\^|-~_",
     reservedOpNames = ["->"],
     reservedNames   = 
      ["AND", "NOT", "OR", ":signature", ":module", ":function",":type", 
-      ":nondet", ":det", ":flexible", ":rigid", ":in"]
+      ":nondet", ":det", ":flexible", ":rigid", ":in", "->"]
   }
 
 binaryTokenParser :: TokenParser String
@@ -358,6 +361,7 @@ paren         = parens binaryTokenParser
 lexemer       = lexeme binaryTokenParser
 binOperator   = operator binaryTokenParser
 binIdentifier = identifier binaryTokenParser
+aSymbol       = symbol binaryTokenParser
 
 ----------------------------------
 --  some shortcut constructors  --
