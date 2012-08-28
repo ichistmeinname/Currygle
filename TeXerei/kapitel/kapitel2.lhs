@@ -6,10 +6,10 @@ Curry. %
 It outlines main concepts and features of the language and gives short
 explanations for a better understanding. %
 The Curry implementation we refer to in the following sections is
-PAKCS\cite{pakcs}. Furthermore we present CurryDoc\cite{currydoc}, a
+PAKCS \cite{pakcs}. Furthermore, we present CurryDoc \cite{currydoc2}, a
 tool to generate documentation that is distributed with PAKCS, in the
 second section. %
-The last section introduces the Holumbus\cite{holumbus} framework, a
+The last section introduces the Holumbus\footnote{\url{http://holumbus.fh-wedel.de/trac}} framework, a
 library written in Haskell to configure and build search engines. %
 
 \section{The programming language Curry}\label{preliminaries:curry}
@@ -17,20 +17,20 @@ library written in Haskell to configure and build search engines. %
 % Say that curry is a functional logic programming language and what
 % this section is about.\\
 
-Curry is a functional logic programming language, that is an
+Curry is a functional logic programming language that is an
 international development project to provide a platform for research
 and teaching mostly. %
 As the description suggest, it offers features of both programming
 paradigms. %
 The first subsection will start with some general features, followed
-by two subsections that cover functional and logical concepts of
+by two subsections that cover functional and logic concepts of
 Curry. %
 
 % Start with the structure of a curry program. \\
 \subsection{General Overview}
 Like in Haskell, a program consists of function definitions and data
 structures. %
-A Curry module \emph{Test} is a program that is saved as
+A Curry module \emph{Test} is a program that is saved in a file named
 \emph{Test.curry}. %
 % After that explain how a function definition looks like and how
 % pattern matching works (mention left-hand and right-hand
@@ -45,15 +45,18 @@ addTwo x = x + 2
 \end{code}
 
 The left-hand side of this function |addTwo x| is evaluated to the
-right-hand side |x + 2|, i.e. the call |addTwo 3| yields |3 + 3 =
+right-hand side |x + 2|, i.e., the call |addTwo 3| yields |3 + 3 =
 5|. %
 Curry supports function definition with pattern matching, which is
 often used in functional and logical programming languages. %
-That means that instantiated values like |True| and |False| can stand
-on the left-hand side of a definition. %
-The boolean operation \emph{not} is a good example for a definition
-with pattern matching, since the result depends on the input. %
-The definition distinguishes between more than one value , so we have
+Pattern matching means that expressions with variables and data
+constructors, like |True| and |False|, can occur in the arguments on
+the left-hand side of a definition. %
+The boolean operation |not|\footnote{Special characters are not
+  allowed in Curry programs, we only use these symbols for the better
+  understanding.} is a good example for a definition with pattern
+matching. %
+The definition distinguishes between more than one value, so we have
 to write one rule for each possible input value. %
 
 \begin{code}
@@ -63,17 +66,16 @@ not True = False
 \end{code}
 
 The first line indicates that the function expects a boolean value as
-argument and yields to a boolean value as well\footnote{The symbol
-  |->| will be used for \emph{->} throughout this thesis}. %
+argument and yields a boolean value as well\footnote{The symbol |->|
+  will be used for \emph{->} throughout this thesis}. %
 The following two lines are rules, that describe that |not False|
 yields |True|, whereas |not True| yields |False|. %
 There are no more possible values for the argument of the function
 |not|, since Curry is a strongly-typed language and |True| and |False|
 are the only possible values with boolean type. %
-In addition Curry also allows polymorphism. You can use polymorphism
-for functions that work independent of the value's type. %
-For instance the identity function just returns the argument that you
-apply to the function. %
+In addition Curry also allows polymorphic functions. %
+For instance, the identity function returns the argument that you
+apply to the function, regardless of the input value's type. %
 This means you can apply the function to all types of values, because
 the type does not matter. %
 You use a type variable in your type signature to indicate a
@@ -128,13 +130,13 @@ The next section covers functional characteristics of Curry.
 % Begin with data structures that als can be defined by the user. Use
 % CurryInfo as example.\\
 The boolean values mentioned in the previous section are part of the
-predefined data structures. %
+predefined data types. %
 
 \begin{code}
 data Bool = True | False
 \end{code}
 
-This code defines a data structure with the name \emph{Bool} that has
+This code defines a data type with the name \emph{Bool} that has
 to constructors |False| and |True| with the type |Bool|. %
 In this case the constructors are unary. %
 Let's define a data structure that is more interesting and will be
@@ -156,18 +158,18 @@ We define these data structures that hold the information about
 specific proporties of the program in chapter 3. %
 
 % Introduce the idea of higher-order functions.\\
-In Curry functions are first-class citizens. %
+Functions are first-class citizens in Curry. %
 This means that they can appear as argument of an expression or even
 in a data structure. %
 The most popular use-case is the manipulation of all elements of a
 list by a given function. %
-PAKCS provides the function map, which also exists in Haskell, that
+PAKCS provides the function |map|, which also exists in Haskell, that
 takes two arguments, a function and a list and returns a list. %
-The important thing is, that the type of the function matches the
+The important thing is that the type of the function matches the
 elements of the list. %
-For a example a function, that converts an integer to a character can
+For example, a function that converts an integer to a character can
 be applied to a list of integers and yields to list of characters. %
-The following code presents the a definition of the function map. %
+The following code presents the a definition of the function |map|. %
 
 \begin{code}
 map :: (a->b) -> [a] -> [b]
@@ -185,7 +187,7 @@ The function |(a->b)| takes a value of an unspecific type and returns
 another unspecific type. %
 The second argument is a list of elements with the type, that the
 function expects. %
-Furthermore the resulting list contains elements that have the same
+Furthermore, the resulting list contains elements that have the same
 type as the resulting type of the function. %
 The definition of map says that an empty list yields an empty list,
 whereas the function is applied to the elements of a list with at
@@ -198,14 +200,15 @@ In general an expression is evaluated by replacing the left-hand side
 of a definition by the right-hand side. %
 The evaluation proceeds one replacement after another until it yields
 a value. %
-A value is an expression that only consists of built-in data
-structures or literals. %
+A value is an expression that does not consists of any defined
+functions anymore, e.g. literals or data structures. %
 If the last replacement does not result in a value, the evaluation
 fails. %
 If an evaluation has more than one possible replacement step, so
 called subexpression can be evaluated. %
 Lazy evaluation means that such a subexpression is only evaluated, if
-its result is necessary to continue the evaluation. %
+its result is necessary to continue the evaluation and every
+expression is evaluated just once. %
 
 In summary Curry's functional programming features covers data
 structures, higher-order functions and lazy evaluation as evaluation
@@ -248,7 +251,7 @@ those non-deterministic functions. %
 Curry also offers logical variables. %
 A variable is called logical, if it appears on the right-hand side but
 not on the left-hand side of a rule. %
-Free variables are unbound values, that are instantiated to evaluate
+These variables are unbound values, that are instantiated to evaluate
 an expression. %
 It is possible, that it exists more than one binding, since Curry
 computes all possible solutions of an expression. %
@@ -291,7 +294,7 @@ language Prolog. %
 %   \item not in IO!
 %   \end{itemize}
 % \end{itemize}
-\section{Currydoc}\label{preliminaries:currydoc}
+\section{CurryDoc}\label{preliminaries:currydoc}
 % Explain the idea of CurryDoc, mention the similarity to the known
 % javadoc. Current status of the tool (HTML and LaTeX export).\\
 
@@ -300,21 +303,23 @@ Curry. %
 The current version can generate either a HTML or \LaTeX~ file as
 output. %
 CurryDoc works similar to code generating tools like
-javadoc\cite{javadoc} as it uses the comments in the source code,
-which are provided by the user, to gain information about the function
-or data structure. %
+javadoc\footnote{\url{http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html}}
+as it uses the comments in the source code, which are provided by the
+user, to gain information about the function or data structure. %
 It also provides the type signatures of functions, since Curry uses a
 type inferencer algorithm. %
 In addition the CurryDoc tool analyzes the program's structure and
 approximates the run-time behavior to gain further
-information\cite{currydoc2}. %
+information \cite{currydoc2}. %
 This analysis includes information about in-/completeness, overlapping
 pattern matches and non-/deterministic functions. %
 
 Since CurryDoc is implemented in Curry, it uses the meta-programming
-module \emph{Flat}\cite{flat2} that provides an intermediate language
-of the Curry program to analyze the special function proporties. %
-Such a FlatCurry\cite{flat} program consists mainly of a list of
+module
+\emph{Flat}\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/Flat.html}}
+that provides an intermediate language of the Curry program to analyze
+the special function proporties. %
+Such a FlatCurry \cite{flat} program consists mainly of a list of
 functions, a list of types and information about the module itself. %
 % As you may notice, these are the informations we want to provide for
 % the API search engine.
@@ -324,26 +329,25 @@ functions, a list of types and information about the module itself. %
 
 \section{The Holumbus Framework}\label{preliminaries:holumbus}
 The Holumbus Framework is a Haskell library created by students of FH
-Wedel in connection with three master's theses\footnote{references
-  here?}. %
+Wedel in connection with three master's theses \cite{searchingthesis}\cite{indexingthesis}. %
 Holumbus is a library to build and configure a search engine. %
 The main idea of the framework is to collect data with a specific
 structure, like an API of a programming language, and to take
 advantage of this structure to improve the search results. %
 In addition to the framework, they also build an example application
-named \emph{Hayoo!}\cite{hayoo}, an API search engine for the
+named \emph{Hayoo!} \cite{hayoo}, an API search engine for the
 functional programming language Haskell. %
 
 The framework supports three steps to create a search engine: the
 crawling, the indexing and the searching part itself. %
-The search engine produced in connection with this thesis uses the
-latter two steps. %
-The indexer preprocesses the documents to create the
+We focus on the latter two steps, since we use them in our
+implementation. %
+The indexer preprocesses the data to create the
 characteristically data structure that is used to process a search
 query. %
-Furthermore Holumbus provides a data structure that represents the
+Furthermore, Holumbus provides a data structure that represents the
 results of a search query. %
-This data structure corresponds to the structure of the documents,
+This data structure corresponds to the structure of the data,
 which simplifies further processing. %
 
 \missingfigure{Holumbus structure}

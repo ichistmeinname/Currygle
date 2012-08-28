@@ -1,4 +1,4 @@
-\chapter{CurryDoc Instruction}\label{a:currydoc}
+\chapter{CurryDoc Instruction}\label{currydoc}
 \section{Installation}
 
 The installation requires a running Curry and curry2prolog system, we
@@ -38,7 +38,7 @@ $ currydoc [--nomarkdown] --noindexhtml
 $ currydoc --onlyindexhtml <doc directory> <module_names>
 \end{verbatim}
 
-\chapter{Installation and Usage of Curr(y)gle}\label{a:currysearch}
+\chapter{Installation and Usage of Curr(y)gle}\label{currysearch}
 
 \section{Installation}
 
@@ -100,4 +100,4 @@ localhost on a given port with the curryServer.
 $ curryServer -p 1337
 \end{verbatim}
 
-\chapter{User-Query Syntax}\label{a:syntax}
+\chapter{User-Query Syntax}\label{syntax}

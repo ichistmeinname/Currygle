@@ -18,8 +18,7 @@
 %format <* = "<\!\!\!*"
 %format ~*>~ = "~*\!\!\!>"
 %format ~<*~ = "<\!\!\!*~"
-
-
+%format _sm x = "{\small" x"}" 
 
 \begin{document}
 

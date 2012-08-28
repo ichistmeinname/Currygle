@@ -5,7 +5,8 @@
 This chapter presents the implementation of the search engine on the
 basis of some code examples and the corresponding design ideas and
 decisions. %
-At first we take a look at the extension for the current version of
+After we give a short overview of the Curry and Haskell project in
+general, we take a look at the extension for the current version of
 CurryDoc. %
 In this context we illustrate the interaction between this extension
 and the index creation. %
@@ -16,19 +17,82 @@ The third section addresses the implemented parser to convert the user
 input into a query that can be processed by Holumbus. %
 We illustrate the general idea and implementation approach of a parser
 to introduce into the subject. %
-The last section covers features and implementations of the web
-application for the search engine. %
-The implementations are mostly written in the functional programming
+Furthermore, we give an excerpt of the implemented parser. %
+
+The last step to our search engine is the application itself. %
+In order run the search engine as web application, we use the
+\emph{Snap
+  Framework}\footnote{\url{http://snapframework.com/about}}. %
+Snap is a Haskell library to simplify web development on unix
+systems. % 
+We do not go into detail on this topic, albeit, the simple usage to
+run the application is shown in \hyperref[currysearch]{Appendix
+  \ref{currysearch}}. %
+% The last section covers features and implementations of the web
+% application for the search engine. %
+
+\section{Environment}
+
+The underlying environment for the development is a 64-bit Mac OS
+X/Version 10.7.4 system. %
+Further, the implementations are mostly written in the functional programming
 language Haskell; we use the functional logic programming language
 Curry for the CurryDoc extension only.\\
+For the Haskell implementation, we use the Glasgow Haskell Compiler
+7.0.4\footnote{\url{http://www.haskell.org/ghc/}}. %
+As mentioned before, we use the PAKCS implementation of Curry and the
+SICStus-Prolog Version
+4.2.1\footnote{\url{http://www.sics.se/sicstus/docs/4.2.1/html/relnotes/index.html}}. %
+Since we already discussed Curry in a detailed manner in the
+\hyperref[preliminaries:curry]{second section}, we also want to present
+the main features of Haskell. %
+Therefore, we quote the Haskell language report \cite{haskellreport}:
+\begin{quote}
+  Haskell is a general purpose, purely functional programming language
+  incorporating many recent innovations in programming language
+  design. Haskell provides higher-order functions, non-strict
+  semantics, static polymorphic typing, user-defined algebraic
+  datatypes, pattern-matching, list comprehensions, a module system,
+  a monadic I/O system, and a rich set of primitive datatypes,
+  including lists, arrays, arbitrary and fixed precision integers, and
+  floating-point numbers. Haskell is both the culmination and
+  solidification of many years of research on non-strict functional
+  languages.
+\end{quote}
 
-\todo[inline]{general section about the underlying environment?}
+We chose Haskell as programming language because the paradigm of
+declarative and functional languages respectively caught our
+attention. %
+When you start to learn a functional language, you renew your
+knowledge of programming and programming techniques. %
+In the main part of our curriculum in computer science, we learn
+languages like C or Java, in which case you focus on \emph{the
+  problem} you want to solve. %
+Whereas in functional programming you always need to ask yourself
+\emph{how} to solve a problem. %
+Therefore, we wanted to learn more about this different kind of
+approach, and if this idea is well suited to daily use because you
+often read about the lack of functional programming in the industry \cite{noone}. %
+
+% \section{Overview}
+
+% \begin{postscript}
+% \begin{directory}{cdoc}
+%     \file{CurryDoc.curry}
+%     \file{\emph{CurryDocCDoc.curry}}
+%     \file{CurryDocHtml.curry}
+%     \file{CurryDocParams.curry}
+%     \file{CurryDocRead.curry }
+%     \file{CurryDocTeX.curry }
+%     \file{Makefile}
+% \end{directory}
+% \end{postscript}
 
 \section{CurryDoc Extension}\label{implementation:currydoc}
 
 In the previous chapter we discussed the general idea of an extension
 for CurryDoc to generate a data structure. %
-Later this data structure serves as source for the index creation.%
+Later this data structure serves as source for the index creation. %
 In this section we take a look at the implementation of this
 extension.
 
@@ -36,19 +100,19 @@ extension.
 % sub-structures |ModuleInfo|, |FunctionInfo| and |TypeInfo|.
 Since CurryDoc is written in Curry, we implemented our extension in
 Curry as well. %
-With this decision we stand to benefit from already implemented
-functionalities and on the other hand, using the same programming
+With this decision we benefit from already implemented
+functionalities and, on the other hand, using the same programming
 language simplifies the integration of our implementation with the
 current CurryDoc version.\\
 
 CurryDoc uses the meta-programming language FlatCurry to gain an
 intermediate data structure. %
 We can use this data structure for our purposes. %
-Additionally, we can use other functions provided by CurryDoc, that
+Additionally, we can use other functions provided by CurryDoc that
 are already implemented. %
 For example, CurryDoc supports a special comment syntax to annotate
 the author and version of a module. %
-Furthermore the arguments and the return value of a function can be
+Furthermore, the arguments and the return value of a function can be
 described as well as general descriptions.
 
 But at first, we discuss which information we want to provide in our
@@ -97,8 +161,10 @@ As next step we want to describe |ModuleInfo|, |FunctionInfo| and
 % \end{figure}
 
 \begin{code}
-data ModuleInfo = 
-  ModuleInfo String String String
+data ModuleInfo = ModuleInfo 
+  String  -- name
+  String  -- author
+  String  -- description
 \end{code}
 
 Like the name suggests, |ModuleInfo| represents the data corresponding
@@ -111,19 +177,23 @@ The latter seems to be useless information for the search engine,
 since the Curry modules are highly interrelated. %
 Thus, searching for a module results in a great amount of hits, since
 every correlating module will be shown as well. %
-Furthermore we think the version number is not a significant
+Furthermore, we think the version number is not a significant
 characteristic for a module. %
 Therefore we decided to focus on the three mentioned proporties only.
 
 \begin{code}
-data FunctionInfo = 
-  FunctionInfo String (QName, TypeExpr) String String Bool
-  FlexRigidResult
+data FunctionInfo = FunctionInfo 
+  String           -- name
+  TypeExpr         -- type signature
+  String           -- corresponding module
+  String           -- description
+  Bool             -- True if the function is non-deterministic
+  FlexRigidResult  -- flexible/rigid characteristic, conflicted or unknown value 
 \end{code}
 
 |FunctionInfo| consists of characteristics for a given function like
 the function's name and description. %
-Additionally we decide to add the corresponding module to provide a
+Additionally, we decide to add the corresponding module to provide a
 connection between the function and its module. %
 This decision is based on the cause that we do not keep the
 |CurryInfo| data structure as whole for the index construction, but
@@ -136,14 +206,19 @@ Since these are important characteristics to differ between Curry
 functions, |FunctionInfo| stores these information as property. %
 In addition FlatCurry provides a data structure |TypeExpr| to describe
 type signatures (see \hyperref[fig:typeExpr]{last chapter}),
-furthermore we get the actual definition of a function. %
+furthermore, we get the actual definition of a function. %
 We use a function's type signature as part of the |FunctionInfo| data
 structure, but decided against the usage of a function's definition
-since we could not think of a relevant use-case for our search engine.
+since we could not think of a relevant use-case for our search
+engine. %
 
 \begin{code}
-data TypeInfo = 
-  TypeInfo String [(QName, [TypeExpr])] [Int] String String
+data TypeInfo = TypeInfo 
+  String                 -- name
+  [(QName, [TypeExpr])]  -- constructors and their signatures
+  [Int]                  -- type variables
+  String                 -- corresponding module
+  String                 -- description
 \end{code}
 
 The data structure for types looks quite similar to |FunctionInfo|. %
@@ -153,27 +228,28 @@ Since FlatCurry provides type signatures for functions, we also get
 information about constructors for a given type. %
 Therefore we store a list of |TypeExpr| representing the type's
 constructors. %
-Additionally |TypeInfo| holds a list of integer to represent possible
+Additionally, |TypeInfo| holds a list of integer to represent possible
 type variables. %
 The decision to use integer corresponds to the definition of
 |TypeExpr|, where type variables are represented as integer as well.\\
 
 In the end, we feed the |CurryInfo| data structure with the specific
-module, function and type information of a given Curry program and our
-CurryDoc extension writes the data structure into a
-\emph{.cdoc}-file. %
+module, function and type information of a given Curry program, and our
+CurryDoc extension writes the data structure into a file. %
+For example, we want to index the \emph{Prelude}, thus, we get a file named
+\emph{Prelude.cdoc}. %
 The final CurryDoc version allows two mechanisms to generate the
 |CurryInfo| structure. %
 You can generate the \emph{.cdoc}-file only or you initiate the HTML
 generation, where the \emph{.cdoc}-file is also part of the output. %
-In \hyperref[a:currydoc]{Appendix \ref{a:currydoc}} we provide further
+In \hyperref[currydoc]{Appendix \ref{currydoc}} we provide further
 instruction for the usage of CurryDoc.
 
 Due to the similar syntax, we can use the same data structures in
 Haskell as in Curry to exchange those structures. %
 More precisely, we can read the \emph{.cdoc}-file within our Haskell
 implementation and work with the data structure. %
-In order to do that, we need a Haskell program that defines all the
+In order to do work with this structure, we need a Haskell program that defines all the
 data structures used in |CurryInfo| including the nested structures. %
 Thus, we generate |CurryInfo| to use it as data structure in the
 process of the index creation.
@@ -189,7 +265,7 @@ creation and the information we want to store. %
 In the following, we talk about the advantages and disadvantages of
 using the Holumbus framework and describe our implementation of the
 index creation in more detail. %
-The following implementation is done in the functional logic
+The following implementation is done in the functional
 programming language Haskell. %
 This decision allows us to use the Holumbus framework for our purpose
 and a good number of functional, pure and strict features.\\
@@ -208,39 +284,39 @@ provided by Holumbus. %
 In the end we can either create a new index by writing each structure
 to a file to store our information or update an existing index with
 additional Curry modules. %
-In order to do that, we load the index and document files and merge
-them with new data. %
+In order to update an existing index, we load the index and document
+files and merge them with new data. %
 Due to lazy evaluation, we cannot read and write to the same file; it
 is not assured that we finish reading before we start to rewrite the
 file. %
 Therefore we have to write temporary files and rename these files
-afterwards to guarantee a clean outcome.
+afterwards to guarantee a clean outcome. %
 
 During the testing phase of the indexer, we noticed problems regarding
 duplicate data. %
 In particular, when we add a Curry module to the index twice, there is
 no mechanism to detect the duplicated data. %
-For that reason only we added a list of the modules that are stored in
+For this reason only we added a list of the modules that are stored in
 the index as output file. %
 So every time we update the index with a given module, we check if it
 already exists in the saved list. %
 We only start the processing of the data, if the module does not occur
-in our list and on the other hand, we add the module's name to the
-list.\\
+in our list and, on the other hand, we add the module's name to the
+list.\\ %
 
+\subsection{Index Construction}
 In the previous chapter, we introduced the idea of storing two
 structures: an index |Inverted| and a document |Documents a|. %
 In the following, we present this idea in more detail, beginning with
 the index. %
 
-\subsection{Index Construction}
 As mentioned before, the main idea behind the index data structure is
-to manage pairs of |String|. %
+to manage pairs of strings. %
 
 \begin{code}
-type Pair     = (Context, Word)
-type Word     = String
-type Context  = String
+type IndexPair  = (Context, Word)
+type Word       = String
+type Context    = String
 \end{code}
 
 The first entry describes the context and the second entry stands for
@@ -250,49 +326,35 @@ In the background, Holumbus data structure |Inverted| maps the words
 to their location, i.e. the document. %
 
 \begin{code}
-type Inverted    = Map Pair Occurrence
-type Occurrence  = Map DocId Positions
-type Positions   = IntSet
+type Inverted    = Map Pair Occurrences
+type Occurrences  = Map DocId Positions
+type Positions   = [Int]
 type DocId       = Int
 \end{code}
 
-More precisely, |Inverted| maps the word and its context to an
-|Occurrence|, which on the other hand maps a reference to a document
+More precisely, |Inverted| maps the word and its context to
+|Occurrences|, which, on the other hand, maps a reference to a document
 (|DocId|) and its |Positions|. %
 With these |Positions| that consist of a set of |Int|, we can
 reconstruct a phrase of document. %
 However, we only need these |Positions|, if we want to provide phrase
 queries. %
-Since our main goal is to provide the search signature or function,
-module and types name, we decided against the support of phrase
+Since our main goal is to search fore signatures or function,
+module and type name, we decided against the support of phrase
 queries. %
 Therefore, we do not use the |Position| when indexing our data. %
-The code examples just illustrate a sketch of the idea behind the
-|Inverted| structure, the actual implementation does not matter for
-our implementation, since we mostly use the provided interface. %
-Furthermore the words are stores in prefix tree, which only allows
-prefix search like we mentioned before. %
-
-% \begin{figure}[h]
-% \begin{code}
-% type Inverted   = Map Pair Occurrence
-% type Occurrence = Map DocId Positions
-% type Positions  = IntSet
-% type DocId      = Int
-% type Pair       = (Context, Word)
-% type Word       = String
-% type Context    = String
-% \end{code}
-% \caption{Sketch for |Inverted| in Haskell syntax}
-% \label{fig:inverted}
-% \end{figure}
-
+The code examples illustrate a sketch of the idea behind the
+|Inverted| structure; the actual implementation does not matter for
+our implementation since we mostly use the provided interface. %
+Furthermore, the words are stored in prefix trees, which only allows
+prefix search, like we mentioned before. %
 Due to the prefix search, we came across some difficulties which we
 discuss later. %
+
 Nevertheless, when we implement the indexing, we can make use of a function
 provided by Holumbus that allows to create the index structure from a
 list. %
-Simply put, this list consists of a triple: the pair of |String|s and
+Simply put, this list consists of a triple: the pair of strings and
 a reference to the document we are indexing. %
 When we index the |CurryInfo| structure, we examine its substructures
 |ModuleInfo|, |FunctionInfo| and |TypeInfo| to gain the characteristic
@@ -305,16 +367,13 @@ description; therefore we have our first contexts, named
 \emph{\textss{module}} for the name, \emph{\textss{author}} and
 \emph{\textss{description}} (see \hyperref[t:modcontext]{Table
   \ref{t:modcontext}}). %
-We do not have much to do for a module's name, but since a module can
-be written by several authors, we have to add a context for each
-author stored in |ModuleInfo|. %
 
 \begin{table}[h]
 \centering{
 \begin{tabular}{||l||l||l||}
 \hline \multicolumn{2}{||c||}{ModuleInfo} \\
 \hline property & context name \\
-name & "module''\\
+\hline name & "module''\\
 author & "author''\\
 description & "description"\\
 \hline
@@ -324,6 +383,9 @@ description & "description"\\
 \label{t:modcontext}
 \end{table}
 
+We do not have much to do for a module's name, but since a module can
+be written by several authors, we have to add a context for each
+author stored in |ModuleInfo|. %
 Since we only have a representation as |String|, we need to process
 the string containing the author information. %
 In fact, the representation is not the main problem; the prefix search
@@ -331,7 +393,7 @@ frustrates the usage of the whole string as word for our index. %
 If we search for an author named \emph{\textss{Duck}}, we will not
 find \emph{\textss{Donald Duck}} since the search word
 \emph{\textss{Duck}} is not a prefix. %
-Therefore we have to spilt the |String| on whitespace to gain and add
+Therefore we have to spilt the string on whitespace to gain and add
 all parts individually. %
 A similar problem applies to the description, so we split the
 description on whitespace too. %
@@ -371,28 +433,29 @@ the signatures too. %
 Due to the prefix search we can only search type signatures that begin
 with |HTMLExp|, but a function's type signature that yields the type
 |HTMLExp| ends with |HTMLExp|. %
-The first idea is to split a given type string like |String -> String
--> HTMLExp| on |->| add each part to the context. As first
-consequence, we lose function types like in |(Int -> String) -> String
--> HTMLExp|, because we get the partitions |(Int, String), String,
-HTMLExp|. %
+The first idea is to split a given type string, like |"String ->
+String -> HTMLExp"|, on function arrow |->| and add each part to the
+context. %
+As first consequence, we lose function types like in \textss{|(Int -> String)
+-> String -> HTMLExp|} because we get the partitions \textss{|(Int|},
+\textss{|String)|}, \textss{|String|}, \textss{|HTMLExp|}. %
 Secondly, we cannot only add primitive or constructor types (like
 |String| or |Maybe Int|) to the index, if we want to provide the
 search for type signatures with at least one function arrow. %
 Thus, we decided not to convert the |TypeExpr| to the corresponding
-|String|, but to decompose the signature into all its valid suffixes
-first.%
+string, but to decompose the signature into all its valid suffixes
+first. %
 In this way, each suffix is paired with the context
 \emph{\textss{signature}}, converted into a type signature represented
 as |String| and added to the index. The conversion function takes a
-list of types represented as |String|s, concatenate this list with the
+list of types represented as strings, concatenate this list with the
 function arrow |->| between each element of the list and yields a
 |String|. %
 Since |TypeInfo| stores a list of |TypeExpr| representing its
 constructors' type signatures, we have to apply the mentioned
 mechanism to all |TypeExpr|. %
-Additionally we have to add the constructor name to the index
-manually, because it is not part of the |TypeExpr|, since its usage is
+Additionally, we have to add the constructor name to the index
+manually because it is not part of the |TypeExpr|, since its usage is
 more similar to a function than to a type. %
 \hyperref[t:typcontext]{Table \ref{t:typcontext}} summarizes the
 contexts of |TypeInfo|, whereas there a still contexts of
@@ -414,7 +477,7 @@ contexts of |TypeInfo|, whereas there a still contexts of
 \label{t:typcontext}
 \end{table}
 
-We distinguish between non/-deterministic and flexible or rigid
+We distinguish between non-/deterministic and flexible or rigid
 functions. %
 For each characteristic that applies to a function, we add the given
 context to the index. %
@@ -433,7 +496,7 @@ The summary of all contexts concerning a function is shown in
  signature & "signature"\\
  description & "description"\\
  \multirow{2}{*}{flexible/rigid} & "flexible'' \\  & "rigid' \\
-\multirow{2}{*}{non/-deterministic} &  "nondet'' \\ & "det'' \\
+\multirow{2}{*}{non-/deterministic} &  "nondet'' \\ & "det'' \\
 \hline
 \end{tabular}
 }
@@ -446,57 +509,23 @@ Summing up, we process |CurryInfo|'s substructures |ModuleInfo|,
 context. %
 The last \emph{unknown value} of the indexing process is the third
 entry of the triple: the reference to the document. %
-Thus, as next step we examine the design of a document and in this
-context, we discuss the document's role and value as part of the
-triple.
+Thus, we segue from the index data structure into the next section,
+where we discuss the data structure of the documents. %
+
 
 \subsection{Document Construction}
 
-% At first, we take closer look at the data structure itself. %
-% Holumbus provides us with |Documents a| can be described as mapping of
-% yet another data structure |Document a| and an unique identifier (see
-% \hyperref[fig:documents]{Figure \ref{fig:documents}}). %
-% Each |Document a| consists of a title, an URI and customizable
-% information. %
-% The latter has the type |a| and determines the type for a document. %
-% In order to have a faster access to a specific document, |Documents a|
-% also stores the highest document id used in the mapping as well as a
-% mapping from the document's uri to the document's identifier.
+As next step we take a look at the second structure of the index:
+|Documents a|. %
+This data structure is just a collection of |Document a| data types,
+where every document is provided with an unique identifier. %
+In this context, we discuss the document's role and value as part of
+the triple. %
 
-% \begin{figure}[h!]
-% \begin{code}
-% data Document a = Document
-%                   { title  :: Title
-%                   , uri    :: URI
-%                   , custom :: (Maybe a)
-%                   }
-% %//%
-% data Documents a = Documents
-%                    { idToDoc   :: (DocMap a)   
-%                    , docToId   :: URIMap
-%                    , lastDocId :: DocId     
-%                    }
-% \end{code}
-% \caption{Holumbus' data structure for a document and a collection of documents}
-% \label{fig:documents}
-% \end{figure}
-
-At first, we take closer look at the data structure itself. %
-
-\begin{code}
-data Documents a = Documents
-                   { idToDoc   :: (DocMap a)   
-                   , docToId   :: URIMap
-                   , lastDocId :: DocId     
-                   }
-\end{code}
-
-Holumbus provides us with |Documents a| that can be described as
-mapping of yet another data structure |Document a| and an unique
-identifier. %
 Each |Document a| consists of a title, an URI and customizable
 information. %
-The latter has the type |a| and determines the type for a document. %
+The latter has the type |a| and determines the type for a document,
+for example the |CurryInfo| structure. %
 
 \begin{code}
 data Document a = Document
@@ -506,9 +535,9 @@ data Document a = Document
                   }
 \end{code}
                 
-In order to have a faster access to a specific document, |Documents a|
-also stores the highest document id used in the mapping as well as a
-mapping from the document's uri to the document's identifier. %
+% In order to have a faster access to a specific document, |Documents a|
+% also stores the highest document id used in the mapping as well as a
+% mapping from the document's uri to the document's identifier. %
 
 For the creation of the index, we have to feed |Documents a| with
 actual data. %
@@ -519,7 +548,7 @@ structure for the custom information. %
 This idea is easy to implement since we just use the unmodified data
 structure that CurryDoc produces. %
 As consequence, all the information in the corresponding index map to
-this one document. %
+this document only. %
 When we search our index for an information, we can relate a given
 search result only to the corresponding |CurryInfo|; we cannot
 distinguish if the search result is associated to the module, function
@@ -530,7 +559,7 @@ substructures |ModuleInfo|, |FunctionInfo| and |TypeInfo| as document
 types, i.e. the custom information. %
 However, if we want to distinguish between these three sources of
 information, we need to store three types of documents. %
-Nevertheless this decision allows us to relate the information of a
+Nevertheless, this decision allows us to relate the information of a
 Curry module to its functions, types or information about the module
 itself. %
 Furthermore, we decide that a Curry module is converted into more than
@@ -548,48 +577,55 @@ The title corresponds to the name of the function, type or module. %
 The value of the URI is an argument to fill by the user when
 generating the index; the URI can point to a local or online source
 for documentation. %
-We designed the URI representation for the HTML-documentation provided
-by CurryDoc, since the current main source for Curry documentation,
+We designed the URI representation according to the HTML-documentation provided
+by CurryDoc since the current main source for Curry documentation,
 that can be accessed
 online\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC}},
 is generated via CurryDoc. %
 Since this HTML-structure of a Curry module documentation provides
 anchors to the module's defined functions and data structures, we use
 this link mechanism for our URIs as well. %
+Thus, the URIs are build according to the following schema:
 
-\begin{code}
-data URI a = 
-  ModuleURI (a -> String) | 
-  FctOrTypeURI (a -> String) (a -> String)
-\end{code}
+% \begin{code}
+% moduleURI   = baseURL ++ moduleName ++ ".html"
+% functionURI = baseURL ++ moduleName ++ ".html'' ++  ++ funcName 
+% typeURI     = baseURL ++ moduleName ++ ".html" ++  ++ typeName
+% \end{code}
 
-The data structure |URI a| can describe an URI for a module and a type
-or function. %
-The first URI constructor takes a function that yields the module's
-name for a |ModuleInfo| structure. %
-The latter constructor takes two functions, the first to yield the
-name of a function's or type's corresponding module and the second to
-yield the function's or type's name. %
-The function |uriTypeToUriPath :: String -> URI a -> a -> String| distinguishes
-between the two constructors to build the URI and combines it with the URI
-path given by the user.
+% \begin{code}
+% data URI a = 
+%   ModuleURI (a -> String) | 
+%   FctOrTypeURI (a -> String) (a -> String)
+% \end{code}
 
-\begin{code}
-ModuleURI baseURI -> 
-       uriPath ++ baseURI info ++ ".html"
-\end{code}
+% The data structure |URI a| can describe an URI for a module and a type
+% or function. %
+% The first URI constructor takes a function that yields the module's
+% name for a |ModuleInfo| structure. %
+% The latter constructor takes two functions, the first to yield the
+% name of a function's or type's corresponding module and the second to
+% yield the function's or type's name. %
+% The function |uriTypeToUriPath :: String -> URI a -> a -> String| distinguishes
+% between the two constructors to build the URI and combines it with the URI
+% path given by the user.
 
-In the case of an URI for a module, we just combine the URI path with
-the module's name and add the \emph{.html} extension.
+% \begin{code}
+% ModuleURI baseURI -> 
+%        uriPath ++ baseURI info ++ ".html"
+% \end{code}
 
-\begin{code}
-FctOrTypeURI baseURI name -> 
-       uriPath ++ baseURI info ++ ".html" ++ "#" ++ name info
-\end{code}
+% In the case of an URI for a module, we just combine the URI path with
+% the module's name and add the \emph{.html} extension.
 
-On other hand, we construct the URI as above, add the anchor symbol
-and the function's and types' name to generate the URI linking to the
-documentation.
+% \begin{code}
+% FctOrTypeURI baseURI name -> 
+%        uriPath ++ baseURI info ++ ".html" ++ "#" ++ name info
+% \end{code}
+
+% On other hand, we construct the URI as above, add the anchor symbol
+% and the function's and types' name to generate the URI linking to the
+% documentation.
      
 % \begin{figure}[h]
 % \begin{code}
@@ -620,7 +656,7 @@ documentation.
 \subsection{Conclusion and Example}
 All in all, we have a mechanism to create an index data structure that
 is traversed, when we perform a search query and one mechanism to
-store the corresponding document, that is linked to the index
+store the corresponding document that is linked to the index
 structure again. %
 We create these structures for the three substructures of |CurryInfo|
 and combine them into a |HolumbusState a|, where |a| defines the type
@@ -646,129 +682,123 @@ We cannot merge the structs just yet, since we created new documents
 with identifiers starting with |1|. %
 We need to adapt the |DocId|s such that the minimum of the new
 structure is the maximum of the old one. %
-After that, we can merge the documents and index structure and write
+Thereafter, we can merge the documents and index structure and write
 the new file. \\
 
 The following code serves as showcase for an index construction with
 the information of a function. %
-In the end we build a |HolumbusState FunctionInfo| structure. %
+In the end, we build a |HolumbusState FunctionInfo| structure. %
 
+We have a |CurryInfo| structure named |curryDoc| and extract the list
+of |FunctionInfo| structures. %
 
 \begin{code}
-fctState = ixDoc 
-                  contextsF                     
-                  (functionInfos curryDoc) 
-                  (map (doc uriPath fName (FctOrTypeURI fModule fName)) 
-                    $ functionInfos curryDoc)
-                  cFct
+listOfFunctionInfoStructures = functionInfos curryDoc 
 \end{code}
 
-We have a |CurryInfo| structure named |curryDoc| and extract the
-|FunctionInfo| structure through |functionInfos curryDoc|.
-
-Next, we construct the pairs of contexts and words that we need
+Next, for each element of the list, we construct the pairs of contexts and words that we need
 for the |Inverted| index structure; this behaviour is described by the
 function |contextsF|.
 
 \begin{code}
-contextsF functionInfo =
-  [(":function", fName functionInfo)] 
-   ++ [(":inModule", fModule functionInfo)]
-   ++ (signature $ signatureComponents $ fSignature functionInfo)
-   ++ (flexRigid $ fFlexRigid functionInfo)
-   ++ (nonDet $ fNonDet functionInfo)
-   ++ (description $ fDescription functionInfo)
+contextsF aFunctionInfoStructure =
+  [(":function", fName aFunctionInfoStructure)] 
+   ++ [(":inModule", fModule aFunctionInfoStructure)]
+   ++ (signature $ signatureComponents $ fSignature aFunctionInfoStructure)
+   ++ (flexRigid $ fFlexRigid aFunctionInfoStructure)
+   ++ (nonDet $ fNonDet aFunctionInfoStructure)
+   ++ (description $ fDescription aFunctionInfoStructure)
 \end{code}
-
+% $
 The function |description| just pairs the
-context with the given the data of |FunctionInfo|; %
+context, i.e. the string |"description"|, with the given data of
+|aFunctionInfoStructure|, i.e. the description of a function; %
 |flexRigid| and |nonDet| do the same with the addition that they first
 check, which context to apply; %
 |signatureComponents| is the function that deconstructs a type
 signature into valid suffixes and |signature| pairs all these suffixes
 with the context. %
 
-Since we are just building tuples, we add the reference to the
-document as |Occurrences| to construct the required triple. %
+Since we are just building tuples, we need to add the reference to the
+corresponding document as |Occurrences| to construct the required
+triple. %
 We gain the |DocId| to build |Occurrences| when we insert a document
 into a new |Documents a| structure. %
-Therefore, we take a look at the document construction first. %
 
 \begin{code}
-doc uriPath fiName uriType info = 
-  Document 
-  { title  = fiName info
-  , uri    = uriTypeToUriPath uriPath uriType info
-  , custom  = Just 
+insertDoc :: Documents a -> Document a -> (DocId,Documents a)
+\end{code}
+
+Thus, we create a document structure for each |FunctionInfoStructure|
+(i.e. each element in |listOfFunctionInfoStructures|) and insert each
+document to a new collection, i.e. a new |Documents FunctionInfo| structure. %
+
+\begin{code}
+newDocument uriPath aFunctionInfoStructure =
+  Document
+  { title  = fName aFunctionInfoStucture
+  , uri    = uriPath
+  , custom = Just aFunctionInfoStructure
   }
-\end{code}
-
-The URI path is given by the user, the title of the document is the
-function's name, which can be extracted by the provided function and
-the |URI a| data structure determines the final URI. %
-
-\begin{code}
-(map (doc uriPath fName (FctOrTypeURI fModule fName)) 
-  $ functionInfos curryDoc)
-\end{code}
-
-In our code, we create a document structure for all the functions in
-|CurryInfo| and work a list of |Document FunctionInfo| in the further
-process. %
-Now we insert each document to a new |Documents FunctionInfo|
-structure.
-
-\begin{code}
-insertDoc documents document :: (DocId, Documents a)
 \end{code}
 
 We use the |DocId| to add the |Occurrences| to each pair of our
 contexts to gain the list of triples.
 
 \begin{code}
-contexts info docId = map (\(c, w) -> (c, w, occ docId)) (contextsF info)
+-- with FunctionInfo as type for a
+triples :: a -> DocId -> (Context, Word, Occurrences) 
+triples aFunctionInfoStructure docId = 
+  map (\(c, w) -> (c, w, occ docId)) (contextsF aFunctionInfoStructure)
 \end{code}
 
-Luckily, the |HolIndex| interface provides a function to build an
+Fortunately, the |HolIndex| interface provides a function to build an
 |Inverted| structure from a list of these triples. %
 In this example, we create a new index, therefore we provide the empty
 index as basis. %
 
 \begin{code}
-idx = fromList emptyInverted contextsF
+invertedIndex :: Inverted
+invertedIndex contextList = fromList emptyInverted contextList
 \end{code}
 
 In the end, for each function we construct the corresponding |Document
 FunctionInfo|, insert it into a new |Documents Function| structure,
 pair the contexts with the information about the function and add the
 obtained |DocId| to gain the |Inverted| index. %
-Then we merge one index after another and also insert new
-corresponding |Document FunctionInfo| structures to |Documents
-FunctionInfo|. %
+Then we merge one index after another and also collect the
+corresponding |Document FunctionInfo| structures to construct a |Documents
+FunctionInfo| structure. %
 
 \begin{code}
-ixDoc contextList (info:infos) (doc1:docs) (IndexerState ix dc) = 
-  let (docId, docs') = insertDoc dc doc1
-      idx'           = mergeIndexes ix $ idx contextList info docId    
-  in ixDoc contextList infos docs (makeIndexerState idx' docs')
+ixDoc (funtionInfo:infos) (doc1:docs) (IndexerState index doc) = 
+  let (docId, documents) = insertDoc doc doc1
+      newIndex           = mergeIndexes index $ invertedIndex (contextF functionInfo)
+  in ixDoc infos docs (makeIndexerState newIndex documents)
+ixDoc _ _ _ holumbusState = holumbusState
 \end{code}
 
 Since we can also merge the new created |HolumbusState FunctionInfo|
 with existing data, we pass an empty |HolumbusState FunctionInfo| when
 constructing a new index. %
-In our example, we replace the parameter |contextList| with
-|contexts|, |(info:infos)| with the given |FunctionInfo| structures,
-|(doc1:docs)| are the corresponding |Document FunctionInfo| structures
-and |IndexerState ix dc| is an empty |HolumbusState FunctionInfo|. %
 
 \begin{code}
-ixDoc _ _ _ hs = hs
+fctState = ixDoc 
+  contextsF                     
+  (functionInfos curryDoc) 
+  (map (doc uriPath fName) $ functionInfos curryDoc)
+  emptyFunctionInfoState
 \end{code}
+
+In our example, we use the function |contextsF| to generate the list
+of contexts, |(info:infos)| with the given |FunctionInfo| structures,
+|(doc1:docs)| is the list of |Document FunctionInfo| structures
+and |IndexerState ix dc| is an empty |HolumbusState FunctionInfo|. %
 
 If there are no more functions left to process, we return the
 constructed |HolumbusState| structure. \\
 
-In the end there are one requirement and two ways to build an index. %
+In the end, there are one requirement and two ways to build an index. %
 The requirement is the generation of a \emph{.cdoc}-file for at least
 one Curry program. %
 Then you can start the indexing for the given file and the URI to the
@@ -777,7 +807,7 @@ an existing one. %
 We also provide a mechanism to read out a \emph{.txt}-file consisting
 of pairs of paths to \emph{.cdoc}-files and the corresponding URI. %
 Further information about the usage is provided in
-\hyperref[a:currysearch]{Appendix \ref{a:currysearch}}. %
+\hyperref[currysearch]{Appendix \ref{currysearch}}. %
 
 % First mention that the interesting parts (that we want to add to the
 % index) are already filtered by the CurryDoc part. So the indexer only
@@ -811,7 +841,7 @@ In this section we discuss the general idea of a parser, connect this
 idea with our search engine and develop a simple parser as example. %
 The example addresses the problem of parsing expressions that can
 occur with and without parentheses. %
-We choose this example, because we need such a parser for the user
+We choose this example because we need such a parser for the user
 queries in our search engine, too. %
 Furthermore, we introduce
 \emph{Parsec}\footnote{\url{http://hackage.haskell.org/package/parsec}}\footnote{\url{http://legacy.cs.uu.nl/daan/parsec.html}},
@@ -842,7 +872,7 @@ With the type definition above, we can run one parser on a given
 input. %
 The main idea behind parsing is to apply several parsers and combine
 the results. %
-In order to do that, the parser type needs a pair consisting of the
+In order to combine the results, the parser type needs a pair consisting of the
 parsing result and the rest of the input, which was not parsed. %
 Additionally, we need to consider that the parsing of an input is
 ambiguous. %
@@ -852,7 +882,7 @@ Thus, we extend the result type to a be a list of pairs, representing
 the different parsing combinations or the empty list, if the parser
 fails. %
 This approach of lists as success values was introduce by Philip
-Wadler\cite{successlist}.
+Wadler \cite{successlist}.
 
 \begin{code}
 type Parser sigma alpha = [sigma] -> [(alpha, [sigma])]
@@ -1035,9 +1065,9 @@ parser returns the parsed |String|, i.e. the expression. %
 Finally, we want a parser to read a parenthesized expression, but
 discard the parentheses. %
 \begin{code}
-parseParenExpression :: Parser String
-parseParenExpression = 
-  \ts -> (\_ expr _ -> expr) ~<$$>~ (parseOpen <*> parseExpression <*> parseClose) ts
+parseParenWord :: Parser String
+parseParenWord = 
+  \ts -> (\_ expr _ -> expr) ~<$$>~ (parseOpen <*> parseWord <*> parseClose) ts
 \end{code}
 
 With these parser combinators, we read the open parenthesis first,
@@ -1051,18 +1081,18 @@ Additionally, we want to present the second implementation to discard
 the read parentheses. % 
 
 \begin{code}
-parseParenExpression2 :: Parser String
-parseParenExpression2 = 
-  \ts -> (parseOpen ~*>~ parseExpression ~<*~ parseClose)
-   ~<|>~ parseExpression
+parseParenWord2 :: Parser String
+parseParenWord2 = 
+  \ts -> (parseOpen ~*>~ parseWord ~<*~ parseClose)
+   ~<|>~ parseWord
  \end{code}
 
 Summing up, we introduced the basic idea of parsers and implemented a
-small parser that can read an expression with or without parentheses. %
+small parser that can read a word with or without parentheses. %
 In the following, we have to keep in mind that we build a strong parser
 by combining several parses that parse substructures. %
 
-\subsection{Singature Parser}
+\subsection{Parsec library}
 
 In our implementation we use the Haskell library Parsec to
 build the parser to read and analyze the user queries. %
@@ -1078,8 +1108,9 @@ Unfortunately, they do not perform the exact same task. %
 Thus, we take a look at the functionality Parsec provides first. %
 
 The choice combinator follows a deterministic predictive approach with
-limited lookahead \cite{parsec1}, i.e. the parser |p ~<||>~ q| only tries the second
-parser |q|, if the first parser did not consumed any input. %
+limited lookahead \cite{parsec1}, i.e. the parser |p ~<||>~ q| only
+tries the second parser |q|, if the first parser did not consumed any
+input. %
 In order to gain the functionality that both parsers a applied to the
 input, Parsec provides the function |try| that discards the read input
 a parser, if it fails during parsing. %
@@ -1096,7 +1127,7 @@ parser |q| is applied to the unmodified input. %
 The sequence combinators |<*>|, |<*| and |*>| as well as the operator
 |<$$>| are not part of the Parsec library. %
 These functions apply to general concepts of sequening (also:
-application), that are provided by the \emph{Applicative} interface
+application) that are provided by the \emph{Applicative} interface
 \footnote{\url{http://hackage.haskell.org/packages/archive/base/4.5.0.0/doc/html/Control-Applicative.html}}. %
 The concept of applicative programming is an idea introduced by Conor
 McBride and Ross Patterson \cite{applicative}. %
@@ -1111,14 +1142,19 @@ user queries. %
 In the \hyperref[analysis:parser]{previous chapter} we already
 mentioned our requirements on a parser for user queries, therefore we
 do not use Holumbus' parser, but implement our own parser. %
-In \hyperref[a:syntax]{Appendix \ref{a:syntax}} we give an overview of
+In \hyperref[syntax]{Appendix \ref{syntax}} we give an overview of
 the language we provide for the user queries. %
+After this introduction of the basic ideas of a parser and the provided
+Haskell libraries, we want to present an excerpt of our
+implementation. \\ %
 
-The following code presentation focuses on our implementation of the
+\subsection{Signature Parser}
+
+The following code focuses on our implementation of the
 parser for signatures, since the signatures are the main reason we
 decided to build a new parser. %
-Furthermore, the implementation uses some special feature Parsec
-provides that we want to share. \\ %
+Furthermore, the implementation uses some special features Parsec
+provides that we want to introduce. \\ %
 
 At first, we take a look at all kinds of type expression that can
 compose a type signature. %
@@ -1132,12 +1168,13 @@ compose a type signature. %
 \item tuples, i.e. |(String, Int)|
 \end{itemize}
 
-We build our parser for type signatures using these substructures. %
+We use these substructures to build our parser for type signatures. %
 Each item on the list needs to be analyzed by its own parser and step
-by step, we combine all parsers according to valid Curry syntax. \\
+by step, we combine all parsers according to valid Curry syntax for
+type signatures. \\
 
-If you take a closer look at the our list of type expression, you see
-that all identifiers that we have to parse, start with an upper-case
+If you take a closer look at the our list of type expressions, you see
+that all identifiers we have to parse, start with an upper-case
 letter, except for type variables. %
 Thus, at first, we need a parser that reads all valid identifiers. %
 Luckily, Parsec provides a feature to define tokens that are used
@@ -1146,7 +1183,7 @@ Tokens are constructs like white space, comments, identifiers,
 reserved words, numbers or strings. %
 
 The module |ParsecToken| exports a function |makeTokenParser| that
-takes such an language definition as returns a record with a set of
+takes such a language definition as argument and returns a record with a set of
 lexical parsers. %
 Every lexical parser already considers trailing white spaces, hence
 we do not need to consider white spaces when we use a parser of the
@@ -1155,10 +1192,10 @@ The following code shows our language definition for type signatures:
 
 \begin{code}
 signatureDef = emptyDef 
-  { identStart      = upper,
-    identLetter     = alphaNum,
-    reservedNames   =  ["AND", "NOT", "OR"]
-   }
+  { identStart      = upper
+  , identLetter   = alphaNum
+  , reservedNames   =  ["AND", "NOT", "OR"]
+  }
 \end{code}
 
 In order to define such a language, we take an empty definition record
@@ -1191,8 +1228,8 @@ sigReservedOp = reservedOp signatureTokenParser
 
 Other lexical parser we will use in our code includes |whitespace|,
 |aSymbol| and |lexemer|, where the latter takes a parser as argument
-and parses surrounding white spaces; |aSymbol| does the same, but
-takes a character as argument.%
+and parses trailing white spaces; |aSymbol| does the same, but
+takes a string as argument.%
 Additionally, we have parsers |paren| and |bracket| for parentheses
 and brackets. %
 
@@ -1205,14 +1242,50 @@ we used above, the type of our parser corresponds to: %
 TypeExprParser = Parser String TypeExpr
 \end{code}
 
+In contrary to the parser structure we presented above, Parsec does
+not return a list of possible results. % 
+The data structure follows a different approach to determine if the
+parser application was successful or not. % 
+In the end, on success, the parser returns the longest possible
+match. %
 
-The first substructure we want to parse is a primitive type.
+The first substructures we want to parse are type variables and
+primitive types.
+
+\begin{code}
+varParser :: TypeExprParser
+varParser = 
+  var ~<$$>~ lower ~<*~ notFollowedBy alphaNum)
+\end{code}
+
+A type variables is one lower-case character. %
+Thus, we do not allow type variables like |IO abc|, |varParser| fails
+on |abc| and our signature parser only reads |IO| as primitive type. %
+After parsing, the function |var| converts the character into a
+|TypeExpr|\footnote{|a| => |TVar 97|}. %
+At the beginning, we followed the idea to parse one character only and
+discard the rest, i.e. |IO abc| will be parsed as |IO a|, but
+eventually decided against this concept.%
+Later, we discuss this decision in more detail. %
+% Type variables alone will not be parsed without the context of
+% signatures (|":signature"|), because i
+
+% If we parse type variables as part of a list or tuple, we need a
+% slight change in our definition. %
+% We still parse one lower-case character, but a type variable can
+% appear in the middle of a tuple like |(Int, a, Int)| and hence, the
+% type variables is followed by a semicolon. %
+% The same reason applies for a type variable at the of a tuple or in a
+% list, since we have to parse the closing bracket and parenthesis
+% respectively. %
+% Therefore, we only forbid another identifier to appear after a type
+% variable in a list or tuple. %
 
 \begin{code}
 primParser :: TypeExprParser
 primParser = 
   prim ~<$$>~ (sigIdentifier 
-           ~<|>~ aSymbol "()")
+x           ~<|>~ aSymbol "()")
 \end{code}
 
 For primitive types we need to parse one identifier and |prim| wraps
@@ -1221,19 +1294,19 @@ arguments\footnote{A little reminder: |Int| => |TCons ("Prelude",
   "Int") []|}. %
 In addition, we need to consider the unit type |()| as special
 constructor. %
-Otherwise we have to allow the search for functions with unvalid
-special characters. %
+Otherwise we have to allow search terms with unvalid special
+characters. %
 
 In case of a n-ary type constructor, we parse at least one identifier
 a white space and another type expression. %
 
-\begin{code}
+l\begin{code}
 consParser :: TypeExprParser
 consParser = 
-  ((\constr _ expr -> cons constr expr) 
+a  ((\constr _ expr -> cons constr expr) 
    ~<$$>~ sigIdentifier
    <*> whitespace 
-   <*> sepBy1 (signatureTerm False False) whitespace)
+   <*> sepBy1 (signatureTerm False) whitespace)
 \end{code}
 
 At first, we parse an identifier like we do for primitive types and
@@ -1242,56 +1315,26 @@ follow. %
 The function |sebBy1| takes two parsers as arguments, where the second
 parser is a separator that occurs between two tokens of the same
 kind. %
-At least one type signature (but no white space) needs to occur,
+aAt least one type signature (but no white space) needs to occur,
 otherwise the parser |sepBy1| fails and altogether |consParser|
 fails. %
 Thus, in our case we parse at least two type expressions separated by a
 white space or just one type expression. %
 The parser |signatureTerm| handles all the substructures we listed
 above, except for function types, but we discuss this later. %
-The first boolean value indicates, if a constructor type may occur
-without parentheses; the second |Bool| is |True|, if we are in the
-process of parsing a list or tuple and |False| otherwise. %
+The boolean value indicates, if a constructor type may occur
+without parentheses. %
 In the defintion above, further constructor types are only allowed to
 occur with parentheses. % 
 As example to assure the accuracy of this idea: |IO a| and |Maybe a| are type
 constructors with one type argument. If we combine these type
 constructors to one expression, we get |Maybe (IO a)| or |IO (Maybe
 a)|. %
-We have to parenthesize the inner type constructor, because otherwise
+We have to parenthesize the inner type constructor because otherwise
 |IO Maybe a| and |Maybe IO a| suggest that both constructors take two
 type arguments instead of one. %
 
-The latter boolean value takes an important role in the parser for type variables,
-which we present next. %
-
-\begin{code}
-varParser :: Bool -> TypeExprParser
-varParser inAListOrTuple = 
-  var ~<$$>~ ((guard inAListOrTuple >> 
-   (lexemer lower ~<*~ notFollowedBy sigIdentifier))
-   ~<|>~ lexemer lower ~<*~ notFollowedBy anyChar)
-\end{code}
-
-In the common case, a type variables is one lower-case character. %
-Thus, we do not allow type variables like |IO abc|, the variable
-parser fails on |abc| and our signature parser only reads |IO| as
-primitive type. %
-After parsing, the function |var| converts the character into a
-|TypeExpr|\footnote{|a| => |TVar 97|}. %
-If we parse type variables as part of a list or tuple, we need a
-slight change in our definition. %
-We still parse one lower-case character, but a type variable can
-appear in the middle of a tuple like |(Int, a, Int)| and hence, the
-type variables is followed by a semicolon. %
-The same reason applies for a type variable at the of a tuple or in a
-list, since we have to parse the closing bracket and parenthesis
-respectively. %
-Therefore, we only forbid another identifier to appear after a type
-variable in a list or tuple. %
-
-Speaking of lists and tuples, let's take a look at the parsers for
-these two type expressions. %
+Next, let's take a look at the parsers for lists an tuples. %
 
 \begin{code}
 listParser :: TypeExprParser
@@ -1315,7 +1358,7 @@ parseTuple  =
   (\item _ itemList -> item:itemList) ~<$$>~ 
    (signatureParser True) 
    <*> aSymbol "," 
-   <*> sepBy1 (signatureParser True) (string ",")
+   <*> sepBy1 (signatureParser True) (aSymbol ",")
 \end{code}
 
 The first (and main) part looks similiar to the constructor parser. %
@@ -1324,7 +1367,7 @@ comma instead of a white space. %
 We combine the first type expressions and the list of following type
 expression to a list. %
 This list represents the type arguments for the tuple constructor. %
-Next, we need to build the tuple constructor, because it depends on
+Next, we need to build the tuple constructor because it depends on
 the number of arguments: |(,)| is a tuple constructor for a pair,
 whereas for a triple we need |(,,,)|. %
 
@@ -1356,13 +1399,14 @@ assign a function that determines the result of the parsing. %
 
 \begin{code}
 signatureTable = 
-[[Infix ((\_ -> FuncType) <$$> lexemer (string "->")) AssocRight]]
+  [[ Infix ((\ _ -> FuncType) ~<$$>~ (aSymbol "->"x) AssocRight ]]
 \end{code}
 
-Thus, when parsing a |->| in an infix position, we return the partial
-application of |FuncType|, because the two arguments of this
-constructor are the type expression to the left and right of the
-operator\footnote{|Int -> Int| => |FuncType Int Int|}. %
+Thus, when parsing a function arrow |->| in an infix position, we
+return the partial application of |FuncType| because the two
+arguments of this constructor are the type expression to the left and
+right of the operator\footnote{|Int -> Int| => |FuncType (TCons
+  ("","Int") []) (TCons ("","Int") []|}. %
 
 In order to use this parser, we use Parsec's function
 |buildExpressionParser| that takes such an definition table and
@@ -1398,16 +1442,58 @@ signatureTerm allowConsParser inAListOrTuple =
 
 In order to guarantee that we can parse tuples, parenthesized function
 types and redundant parentheses, we cannot parse any characters in
-case |tupleParser|fails, otherwise the parser for parenthesized
-expressions fails too. % 
-Therefore, we have to try |tuplesParser| first, thus, if it fails, the
+case |tupleParser| fails, otherwise the parser for parenthesized
+expressions fails too. %
+Therefore, we have to try |tuplesParser| first; if it fails, the
 result is discarded and we can try for parenthesized expressions
 next. %
+We do not need a try for the parenthesized expression because there
+are no other valid expressions that start with an opening parenthesis,
+since we already ruled out the possibility of tuples. %
+Therefore, the parser |paren (signatureParser False)| either fails on
+the first character of an input or parses a valid parenthesized
+expression.\footnote{Here we only consider well-balanced parentheses
+  and discuss the handling of incorrect user input later.} %
+The same logic holds for the following parsers, since they all expect
+different first characters. %
+For lists, the first input character has to be an open bracket,
+|primParser| only accepts an upper-case character and |varParser| the
+opposite, a lower-case character. \\ %
 
-\subsection{Query Parser}
+In the end, the signature parser joins the group of parses for
+specifiers (\textss{|:module IO|}, \textss{|:function map|} etc.) and
+binary operators (|AND|, |OR|, |NOT|). %
+Since we already parse any trailing white spaces, the actual parser
+for queries we eventually call needs to parse all leading white
+spaces. %
+On the first layer, we apply the parser for the binary operations,
+since we want to combine specifiers, signatures and pure search
+terms. %
+Under specification of several contexts and a pure search term without
+any binary operations, the parser implicitly combines the
+substructures with conjunctions, i.e. \textss{|:function map a->b|}
+searches for a function starting with \emph{map}, which signature
+consists of |a->b|. %
+The parser for signatures applies for the context of signatures, but
+also for any word starting with an upper-case character that forms a
+valid type expression and type signature respectively. %
+This means, the search terms \textss{|:signature io|)} and
+\textss{|IO|} yield the same |Query|-structure, hence the same search
+results. %
+On the contrary, type variables alone are not parsed implicitly
+because we also want to search for words without context, i.e. we
+search without a context for any word starting with a lower-case
+character. %
+Additionally, the parser always tries to parse as much words and
+characters respectively. %
+For example, if a valid expression is followed by nonsense, we parse
+the first part and discard the other, i.e. \textss{|IO 1_!@#^|} yields
+the same results as \textss{|IO|}. %
+And, as a last resort, we parse unbalanced parentheses that occur in the
+beginning or end of the search term. %
+We expect an intuitiv usage of the search engine of this underlying
+parser and all the features the parser provides. %
 
-  
-% the parser does not check if the whole string was parsed -> better user-experience
 
 % Give a definition of the language (EBNF(?) / appendix). 
 
@@ -1422,5 +1508,3 @@ next. %
 %  signature "->" lower
 %  constructor := Upper alphaNum signature | Upper alphaNum lower
 % \end{code}
-
-\section{Web Application}

@@ -1,5 +1,5 @@
 \documentclass[%
-	pdftex,%              PDFTex verwenden
+	latex,%              PDFTex verwenden
 	a4paper,%             A4 Papier
 	oneside,%             Einseitig
 	chapterprefix,%       Kapitel anschreiben als Kapitel
@@ -15,6 +15,21 @@
 
 \usepackage{todonotes}
 \usepackage{multirow}
+
+
+\usepackage{tikz}
+
+\usetikzlibrary{%
+  arrows,%
+  shapes.misc,% wg. rounded rectangle
+  shapes.arrows,%
+  chains,%
+  matrix,%
+  positioning,% wg. " of "
+  scopes,%
+  decorations.pathmorphing,% /pgf/decoration/random steps | erste Graphik
+  shadows%
+}
 
 %
 % Pakete um Latin1 Zeichnensätze verwenden zu können und die dazu
@@ -174,4 +189,4 @@
 %
 % Zeilenabstand wird um den Faktor 1.5 verändert
 %
-%\renewcommand{\baselinestretch}{1.25}
+\renewcommand{\baselinestretch}{1.25}

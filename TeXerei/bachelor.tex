@@ -1,6 +1,6 @@
 % Header mit Deklarationen
 \documentclass[%
-	pdftex,%              PDFTex verwenden
+	latex,%              PDFTex verwenden
 	a4paper,%             A4 Papier
 	oneside,%             Einseitig
 	chapterprefix,%       Kapitel anschreiben als Kapitel
@@ -16,6 +16,71 @@
 
 \usepackage{todonotes}
 \usepackage{multirow}
+
+% % directory trees
+% \usepackage{url}
+% \usepackage{pstricks,pst-node}
+% \usepackage[inactive]{pst-pdf}
+% \usepackage{auto-pst-pdf}
+
+% \newcounter{leaves}
+% \newcounter{directories}
+% \newenvironment{directory}[2][\linewidth]%
+% % Startet neues Verzeichnis 
+% % und produziert eine Minipage der angeg. Breite.
+% % Syntax: \begin{directory}[width]{text}
+% % text muss in eine \parbox der angegebenen Breite passen;
+% % wenn keine Breite angegeben ist, wird \linewidth angenommen.
+% {
+% \setcounter{leaves}{0}%
+% \addtocounter{directories}{1}
+% \edef\directoryname{D\thedirectories}
+% \begin{minipage}[t]{#1}% <-------- !!!
+%   \setlength{\parindent}{\linewidth}
+%   \addtolength{\parindent}{-\dirshrink\parindent}
+%   \parskip0pt%
+%   \noindent
+%   \Rnode[href=-\dirshrink]{\directoryname}{\parbox[t]{#1}{#2}}%
+%   \par
+% }  
+% {\end{minipage}}
+
+% % !!! --> Problem:  
+% % Wegen [t] stimmt der Zeilenabstand _nach_ der minipage nicht.
+% % Der Referenzpunkt eines Knoten muss aber in der _ersten_ Zeile 
+% % liegen, mehrzeilige Knoten, also Unterverzeichnisse, mit ihrer
+% % ersten Zeile im Dateibaum verankert weren.
+
+% \newcommand{\file}[2][]{%
+% % Fuer einen einzelnen Eintrag innerhalb der directory-Umgebung.
+% % Das Argument darf seinerseits eine directory-Umgebung sein.
+%   \addtocounter{leaves}{1}%
+%   \edef\leaflabel{L\theleaves\directoryname}%
+%   \par
+%   \Rnode{\leaflabel}{\parbox[t]{\dirshrink\linewidth}{#2\hfill#1}}%
+%   \ncangle[angleA=270,angleB=180,armB=0,nodesep=1pt]
+%     {\directoryname}{\leaflabel}%
+%   % \typeout{\directoryname,\leaflabel}% Debugging
+% \par}
+
+% \newcommand{\dirshrink}{.95} 
+% % relative Verringerung der Breite der Verzeichniseintraege 
+% % pro Stufe
+
+
+\usepackage{tikz}
+
+\usetikzlibrary{%
+  arrows,%
+  shapes.misc,% wg. rounded rectangle
+  shapes.arrows,%
+  chains,%
+  matrix,%
+  positioning,% wg. " of "
+  scopes,%
+  decorations.pathmorphing,% /pgf/decoration/random steps | erste Graphik
+  shadows%
+}
 
 %
 % Pakete um Latin1 Zeichnensätze verwenden zu können und die dazu
@@ -175,7 +240,7 @@
 %
 % Zeilenabstand wird um den Faktor 1.5 verändert
 %
-%\renewcommand{\baselinestretch}{1.25}
+\renewcommand{\baselinestretch}{1.25}
 %% ODER: format ==         = "\mathrel{==}"
 %% ODER: format /=         = "\neq "
 %
@@ -439,8 +504,6 @@
 \arrayhs
 
 
-
-
 \begin{document}
 
 % Römische Nummerierung für Sonderseiten, wie Verzeichnisse und Anhang
@@ -577,10 +640,10 @@ Curry. %
 It outlines main concepts and features of the language and gives short
 explanations for a better understanding. %
 The Curry implementation we refer to in the following sections is
-PAKCS\cite{pakcs}. Furthermore we present CurryDoc\cite{currydoc}, a
+PAKCS \cite{pakcs}. Furthermore, we present CurryDoc \cite{currydoc2}, a
 tool to generate documentation that is distributed with PAKCS, in the
 second section. %
-The last section introduces the Holumbus\cite{holumbus} framework, a
+The last section introduces the Holumbus\footnote{\url{http://holumbus.fh-wedel.de/trac}} framework, a
 library written in Haskell to configure and build search engines. %
 
 \section{The programming language Curry}\label{preliminaries:curry}
@@ -588,20 +651,20 @@ library written in Haskell to configure and build search engines. %
 % Say that curry is a functional logic programming language and what
 % this section is about.\\
 
-Curry is a functional logic programming language, that is an
+Curry is a functional logic programming language that is an
 international development project to provide a platform for research
 and teaching mostly. %
 As the description suggest, it offers features of both programming
 paradigms. %
 The first subsection will start with some general features, followed
-by two subsections that cover functional and logical concepts of
+by two subsections that cover functional and logic concepts of
 Curry. %
 
 % Start with the structure of a curry program. \\
 \subsection{General Overview}
 Like in Haskell, a program consists of function definitions and data
 structures. %
-A Curry module \emph{Test} is a program that is saved as
+A Curry module \emph{Test} is a program that is saved in a file named
 \emph{Test.curry}. %
 % After that explain how a function definition looks like and how
 % pattern matching works (mention left-hand and right-hand
@@ -619,14 +682,17 @@ application are also written in juxtaposition. %
 \end{hscode}\resethooks
 
 The left-hand side of this function \ensuremath{\Varid{addTwo}\;\Varid{x}} is evaluated to the
-right-hand side \ensuremath{\Varid{x}\mathbin{+}\mathrm{2}}, i.e. the call \ensuremath{\Varid{addTwo}\;\mathrm{3}} yields \ensuremath{\mathrm{3}\mathbin{+}\mathrm{3}\mathrel{=}\mathrm{5}}. %
+right-hand side \ensuremath{\Varid{x}\mathbin{+}\mathrm{2}}, i.e., the call \ensuremath{\Varid{addTwo}\;\mathrm{3}} yields \ensuremath{\mathrm{3}\mathbin{+}\mathrm{3}\mathrel{=}\mathrm{5}}. %
 Curry supports function definition with pattern matching, which is
 often used in functional and logical programming languages. %
-That means that instantiated values like \ensuremath{\Conid{True}} and \ensuremath{\Conid{False}} can stand
-on the left-hand side of a definition. %
-The boolean operation \emph{not} is a good example for a definition
-with pattern matching, since the result depends on the input. %
-The definition distinguishes between more than one value , so we have
+Pattern matching means that expressions with variables and data
+constructors, like \ensuremath{\Conid{True}} and \ensuremath{\Conid{False}}, can occur in the arguments on
+the left-hand side of a definition. %
+The boolean operation \ensuremath{\neg }\footnote{Special characters are not
+  allowed in Curry programs, we only use these symbols for the better
+  understanding.} is a good example for a definition with pattern
+matching. %
+The definition distinguishes between more than one value, so we have
 to write one rule for each possible input value. %
 
 \begin{hscode}\SaveRestoreHook
@@ -641,17 +707,16 @@ to write one rule for each possible input value. %
 \end{hscode}\resethooks
 
 The first line indicates that the function expects a boolean value as
-argument and yields to a boolean value as well\footnote{The symbol
-  \ensuremath{\to } will be used for \emph{->} throughout this thesis}. %
+argument and yields a boolean value as well\footnote{The symbol \ensuremath{\to }
+  will be used for \emph{->} throughout this thesis}. %
 The following two lines are rules, that describe that \ensuremath{\neg \;\Conid{False}}
 yields \ensuremath{\Conid{True}}, whereas \ensuremath{\neg \;\Conid{True}} yields \ensuremath{\Conid{False}}. %
 There are no more possible values for the argument of the function
 \ensuremath{\neg }, since Curry is a strongly-typed language and \ensuremath{\Conid{True}} and \ensuremath{\Conid{False}}
 are the only possible values with boolean type. %
-In addition Curry also allows polymorphism. You can use polymorphism
-for functions that work independent of the value's type. %
-For instance the identity function just returns the argument that you
-apply to the function. %
+In addition Curry also allows polymorphic functions. %
+For instance, the identity function returns the argument that you
+apply to the function, regardless of the input value's type. %
 This means you can apply the function to all types of values, because
 the type does not matter. %
 You use a type variable in your type signature to indicate a
@@ -710,7 +775,7 @@ The next section covers functional characteristics of Curry.
 % Begin with data structures that als can be defined by the user. Use
 % CurryInfo as example.\\
 The boolean values mentioned in the previous section are part of the
-predefined data structures. %
+predefined data types. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -719,7 +784,7 @@ predefined data structures. %
 \ColumnHook
 \end{hscode}\resethooks
 
-This code defines a data structure with the name \emph{Bool} that has
+This code defines a data type with the name \emph{Bool} that has
 to constructors \ensuremath{\Conid{False}} and \ensuremath{\Conid{True}} with the type \ensuremath{\Conid{Bool}}. %
 In this case the constructors are unary. %
 Let's define a data structure that is more interesting and will be
@@ -744,18 +809,18 @@ We define these data structures that hold the information about
 specific proporties of the program in chapter 3. %
 
 % Introduce the idea of higher-order functions.\\
-In Curry functions are first-class citizens. %
+Functions are first-class citizens in Curry. %
 This means that they can appear as argument of an expression or even
 in a data structure. %
 The most popular use-case is the manipulation of all elements of a
 list by a given function. %
-PAKCS provides the function map, which also exists in Haskell, that
+PAKCS provides the function \ensuremath{\Varid{map}}, which also exists in Haskell, that
 takes two arguments, a function and a list and returns a list. %
-The important thing is, that the type of the function matches the
+The important thing is that the type of the function matches the
 elements of the list. %
-For a example a function, that converts an integer to a character can
+For example, a function that converts an integer to a character can
 be applied to a list of integers and yields to list of characters. %
-The following code presents the a definition of the function map. %
+The following code presents the a definition of the function \ensuremath{\Varid{map}}. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -778,7 +843,7 @@ The function \ensuremath{(\Varid{a}\to \Varid{b})} takes a value of an unspecifi
 another unspecific type. %
 The second argument is a list of elements with the type, that the
 function expects. %
-Furthermore the resulting list contains elements that have the same
+Furthermore, the resulting list contains elements that have the same
 type as the resulting type of the function. %
 The definition of map says that an empty list yields an empty list,
 whereas the function is applied to the elements of a list with at
@@ -791,14 +856,15 @@ In general an expression is evaluated by replacing the left-hand side
 of a definition by the right-hand side. %
 The evaluation proceeds one replacement after another until it yields
 a value. %
-A value is an expression that only consists of built-in data
-structures or literals. %
+A value is an expression that does not consists of any defined
+functions anymore, e.g. literals or data structures. %
 If the last replacement does not result in a value, the evaluation
 fails. %
 If an evaluation has more than one possible replacement step, so
 called subexpression can be evaluated. %
 Lazy evaluation means that such a subexpression is only evaluated, if
-its result is necessary to continue the evaluation. %
+its result is necessary to continue the evaluation and every
+expression is evaluated just once. %
 
 In summary Curry's functional programming features covers data
 structures, higher-order functions and lazy evaluation as evaluation
@@ -848,7 +914,7 @@ those non-deterministic functions. %
 Curry also offers logical variables. %
 A variable is called logical, if it appears on the right-hand side but
 not on the left-hand side of a rule. %
-Free variables are unbound values, that are instantiated to evaluate
+These variables are unbound values, that are instantiated to evaluate
 an expression. %
 It is possible, that it exists more than one binding, since Curry
 computes all possible solutions of an expression. %
@@ -891,7 +957,7 @@ language Prolog. %
 %   \item not in IO!
 %   \end{itemize}
 % \end{itemize}
-\section{Currydoc}\label{preliminaries:currydoc}
+\section{CurryDoc}\label{preliminaries:currydoc}
 % Explain the idea of CurryDoc, mention the similarity to the known
 % javadoc. Current status of the tool (HTML and LaTeX export).\\
 
@@ -900,21 +966,23 @@ Curry. %
 The current version can generate either a HTML or \LaTeX~ file as
 output. %
 CurryDoc works similar to code generating tools like
-javadoc\cite{javadoc} as it uses the comments in the source code,
-which are provided by the user, to gain information about the function
-or data structure. %
+javadoc\footnote{\url{http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html}}
+as it uses the comments in the source code, which are provided by the
+user, to gain information about the function or data structure. %
 It also provides the type signatures of functions, since Curry uses a
 type inferencer algorithm. %
 In addition the CurryDoc tool analyzes the program's structure and
 approximates the run-time behavior to gain further
-information\cite{currydoc2}. %
+information \cite{currydoc2}. %
 This analysis includes information about in-/completeness, overlapping
 pattern matches and non-/deterministic functions. %
 
 Since CurryDoc is implemented in Curry, it uses the meta-programming
-module \emph{Flat}\cite{flat2} that provides an intermediate language
-of the Curry program to analyze the special function proporties. %
-Such a FlatCurry\cite{flat} program consists mainly of a list of
+module
+\emph{Flat}\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/Flat.html}}
+that provides an intermediate language of the Curry program to analyze
+the special function proporties. %
+Such a FlatCurry \cite{flat} program consists mainly of a list of
 functions, a list of types and information about the module itself. %
 % As you may notice, these are the informations we want to provide for
 % the API search engine.
@@ -924,26 +992,25 @@ functions, a list of types and information about the module itself. %
 
 \section{The Holumbus Framework}\label{preliminaries:holumbus}
 The Holumbus Framework is a Haskell library created by students of FH
-Wedel in connection with three master's theses\footnote{references
-  here?}. %
+Wedel in connection with three master's theses \cite{searchingthesis}\cite{indexingthesis}. %
 Holumbus is a library to build and configure a search engine. %
 The main idea of the framework is to collect data with a specific
 structure, like an API of a programming language, and to take
 advantage of this structure to improve the search results. %
 In addition to the framework, they also build an example application
-named \emph{Hayoo!}\cite{hayoo}, an API search engine for the
+named \emph{Hayoo!} \cite{hayoo}, an API search engine for the
 functional programming language Haskell. %
 
 The framework supports three steps to create a search engine: the
 crawling, the indexing and the searching part itself. %
-The search engine produced in connection with this thesis uses the
-latter two steps. %
-The indexer preprocesses the documents to create the
+We focus on the latter two steps, since we use them in our
+implementation. %
+The indexer preprocesses the data to create the
 characteristically data structure that is used to process a search
 query. %
-Furthermore Holumbus provides a data structure that represents the
+Furthermore, Holumbus provides a data structure that represents the
 results of a search query. %
-This data structure corresponds to the structure of the documents,
+This data structure corresponds to the structure of the data,
 which simplifies further processing. %
 
 \missingfigure{Holumbus structure}
@@ -959,8 +1026,9 @@ query. %
 In this context, we take a closer look of the Holumbus framework and
 its features related to searching and evaluate the criteria to
 accomplish a user-friendly search mechanism. %
-Furthermore we discuss the features Curr(y)gle should provide to
+Furthermore, we discuss the features Curr(y)gle should provide to
 specify a search query. %
+
 % Above all we need a web application to handle user queries, which is
 % analyzed in the last section.
 
@@ -975,27 +1043,49 @@ specify a search query. %
 % A web application for queries.
 
 % \section{Currydoc}
-\section{Creating the Index}
-At first, we have to decide about the information we want to store in
-the index. %
-Secondly the data structure of the index and documents provided by the
-Holumbus framework, that hold these information, is presented.\\
 
-The data we want to extract from a given Curry module includes at
-least the list of defined functions and data structures. %
-We also want to consider the name, corresponding module and
-description of these functions and data structures. %
-Additionally general information about the module like its name and
-author needs to be stored. %
-Usually a web crawler is applied to browse the world wide web for our
+\section{Creating the Index}
+Search engines look up information, hence, we need to collect data
+that we can search for. %
+This data is called index and stores all the information we want to
+provide. %
+In our case, we want to collect data that relates to the API of
+Curry. %
+Therefore, we need to think what kind of information we can provide
+and decide what we want to search for. %
+Secondly, we introduce the data structure provided by the Holumbus
+framework that holds these information.\\ %
+
+
+% The data we want to extract from a given Curry module includes at
+% least the list of defined functions and data types. %
+% We also want to consider the name, corresponding module and
+% description of these functions and data types. %
+% Additionally, general information about the module like its name and
+% author needs to be stored. %
+
+Usually, a web crawler is applied to browse the world wide web for
 data. %
 But since Curry is currently organized by the module documentation
 generated by CurryDoc, we already have a mechanism to gain these
 information about a Curry module. %
-In fact, we even have more function related information as we stated
-in the \hyperref[preliminaries:curryInfo]{previous chapter}. %
-We know if a function definition is non-deterministic or deterministic
-and if a given function is flexible or rigid. %
+In fact, we even have more function-related information % we stated
+% in the \hyperref[preliminaries:curryInfo]{previous chapter} 
+because we know if a function definition is non-deterministic or
+deterministic and if a given function is flexible or rigid. %
+In the following, we refer to these characteristics as contexts and the
+following listing presents the information or, more precisely, the
+contexts that we want to provide: %
+
+\begin{itemize}
+\item name (for modules, functions and types)
+\item description (for modules, function and types)
+\item type signatures (for functions and types)
+\item corresponding module (for functions and types)
+\item author (module)
+\item rigid and flexible characteristics (function)
+\item non-/deterministic characteristics (function)
+\end{itemize}
 
 CurryDoc processes Curry modules and generates documentation as HTML
 or \LaTeX{} output. %
@@ -1008,8 +1098,8 @@ Curry module to access these information we mentioned above. %
 We discuss the actual implementation in
 \hyperref[implementation:currydoc]{Section
   \ref{implementation:currydoc}}. %
-But in preparation of the next chapter, we introduce the data
-structure \ensuremath{\Conid{TypeExpr}} that is provided by the Flat module. %
+In preparation of the next chapter, we introduce the data
+structure \ensuremath{\Conid{TypeExpr}} that is provided by the FlatCurry module. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -1030,11 +1120,16 @@ structure \ensuremath{\Conid{TypeExpr}} that is provided by the Flat module. %
 \end{hscode}\resethooks
 
 
-\ensuremath{\Conid{TypeExpr}} represents type and function signatures. It consists of
-three constructors to distinguish between a function type (\ensuremath{\Conid{FuncType}\;\Conid{TypeExpr}\;\Conid{TypeExpr}}), a type variable (\ensuremath{\Conid{TVar}\;\Conid{TVarIndex}}), and a type
-constructor application (\ensuremath{\Conid{TCons}\;\Conid{QName}\;[\mskip1.5mu \Conid{TypeExpr}\mskip1.5mu]}). %
-For the latter, the list of \ensuremath{\Conid{TypeExpr}} stand for the type
-arguments. %
+\ensuremath{\Conid{TypeExpr}} represents type expression used in function and data type
+signatures. %
+It consists of three constructors to distinguish between %
+\begin{itemize}
+\item a function type - \ensuremath{\Conid{FuncType}\;\Conid{TypeExpr}\;\Conid{TypeExpr}} 
+\item a type variable  - \ensuremath{\Conid{TVar}\;\Conid{TVarIndex}} and 
+\item a type constructor application - \ensuremath{\Conid{TCons}\;\Conid{QName}\;[\mskip1.5mu \Conid{TypeExpr}\mskip1.5mu]}
+\end{itemize}
+
+For the latter, the list of \ensuremath{\Conid{TypeExpr}} stand for the type arguments. %
 Furthermore, \ensuremath{\Conid{TVarIndex}} is just a type synonym for \ensuremath{\Conid{Int}} and \ensuremath{\Conid{QName}}
 represents a qualified name consisting of the module's name and the
 function's or type constructor's name. %
@@ -1047,12 +1142,15 @@ the \ensuremath{\Conid{TypeExpr}} data structure. %
 \begin{figure}[h!]
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{TCons}\;(\Conid{Prelude},\Conid{Maybe})\;[\mskip1.5mu (\Conid{TCons}\;(\Conid{Prelude},\Conid{Int})\;[\mskip1.5mu \mskip1.5mu]),{}\<[E]%
+\>[B]{}\Conid{TCons}\;(\Conid{Prelude},\Conid{Maybe})\;{}\<[E]%
 \\
-\>[B]{}\hsindent{13}{}\<[13]%
-\>[13]{}(\Conid{TCons}\;(\Conid{Prelude},[\mskip1.5mu \mskip1.5mu])\;[\mskip1.5mu (\Conid{TCons}\;(\Conid{Prelude},\Conid{Char}))\mskip1.5mu])\mskip1.5mu]{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}[\mskip1.5mu (\Conid{TCons}\;(\Conid{Prelude},\Conid{Int})\;[\mskip1.5mu \mskip1.5mu]),{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}(\Conid{TCons}\;(\Conid{Prelude},[\mskip1.5mu \mskip1.5mu])\;[\mskip1.5mu (\Conid{TCons}\;(\Conid{Prelude},\Conid{Char}))\mskip1.5mu])\mskip1.5mu]{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \caption{The representation of \ensuremath{\Conid{Maybe}\;\Conid{Int}\;\Conid{String}} as \ensuremath{\Conid{TypeExpr}}}
@@ -1061,7 +1159,7 @@ the \ensuremath{\Conid{TypeExpr}} data structure. %
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{FuncType}\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{IO})\;[\mskip1.5mu \Conid{TVar}\;\mathrm{97}\mskip1.5mu])\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{IO}){}\<[E]%
+\>[B]{}\Conid{FuncType}\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{IO})\;[\mskip1.5mu \Conid{TVar}\;\mathrm{97}\mskip1.5mu])\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{IO})\;[\mskip1.5mu \Conid{TVar}\;\mathrm{97}\mskip1.5mu]){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \caption{The representation of \ensuremath{\Conid{IO}\;\Varid{a}\to \Conid{IO}\;\Varid{a}} as \ensuremath{\Conid{TypeExpr}}}
@@ -1069,12 +1167,10 @@ the \ensuremath{\Conid{TypeExpr}} data structure. %
 \begin{figure}[h!]
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{FuncType}\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{Bool})\;[\mskip1.5mu \mskip1.5mu])\;(\Conid{FuncType}\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{Int})\;[\mskip1.5mu \mskip1.5mu]))\;{}\<[E]%
+\>[B]{}\Conid{FuncType}\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{Bool})\;[\mskip1.5mu \mskip1.5mu])\;{}\<[E]%
 \\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}(\Conid{TCons}\;(\Conid{Prelude},\Conid{Int})\;[\mskip1.5mu \mskip1.5mu])){}\<[E]%
+\>[B]{}(\Conid{FuncType}\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{Int})\;[\mskip1.5mu \mskip1.5mu]))\;(\Conid{TCons}\;(\Conid{Prelude},\Conid{Int})\;[\mskip1.5mu \mskip1.5mu])){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 \caption{The representation of \ensuremath{\Conid{Bool}\to \Conid{Int}\to \Conid{Int}} as \ensuremath{\Conid{TypeExpr}}}
@@ -1098,73 +1194,122 @@ After we decide about the contents of the index, we need to discuss
 the storage of these information. %
 We make use of the Holumbus framework that provides data structures to
 manage the collected data and interfaces to operate on these
-structures. %
+structures. %a
 The main idea is to use two structures to store the data, one for the
-document we are indexing and the other one stores the actual data we
+documents we are indexing and the other one stores the actual data we
 traverse when a search is performed. %
 
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{25}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{39}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{IndexerState}\;\Varid{i}\;\Varid{d}\;\Varid{a}\mathrel{=}\Conid{IndexerState}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\{\mskip1.5mu \Varid{ixs\char95 index}{}\<[25]%
-\>[25]{}\mathbin{::}\Varid{i}{}\<[39]%
-\>[39]{}\mbox{\onelinecomment  the index type}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{},\Varid{ixs\char95 documents}{}\<[25]%
-\>[25]{}\mathbin{::}(\Varid{d}\;\Varid{a}){}\<[39]%
-\>[39]{}\mbox{\onelinecomment  the document type}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\mskip1.5mu\}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
 At first, we introduce the data structures we use in our
-implementation, that are provided by the framework. %
+implementation, which are provided by the framework. %
 Secondly, we discuss the functionality of the interfaces. \\
 
 In our implementation, we use \ensuremath{\Conid{Documents}\;\Varid{a}} as a data structures to
-store the collected data, where \ensuremath{\Varid{a}} is the type of the document. %
+store the documents we are indexing, where \ensuremath{\Varid{a}} is the type of the
+document. %
 Each document of a collection has its unique identifier. %
+For example, we want to construct the index for the Curry modules
+\ensuremath{\Conid{Prelude}}, \ensuremath{\Conid{IO}} and \ensuremath{\Conid{Maybe}} and modules are represented
+by a data structure \ensuremath{\Conid{ModuleInfo}}. %
+Then these modules are the stored in \ensuremath{\Conid{Documents}\;\Conid{ModuleInfo}}. %
+In order to simplify the idea, we sketch the example in pseudocode,
+where the names of the modules represent values of the \ensuremath{\Conid{ModuleInfo}}
+data structure. %
+
+{\small
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\{\mskip1.5mu (\Conid{Prelude},\mathrm{1}),(\Conid{IO},\mathrm{2}),(\Conid{Maybe},\mathrm{3})\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+}
+Thus, \ensuremath{\Conid{Documents}\;\Varid{a}} can be described as a collection of documents,
+where each document can be determined unambiguously.
+
 Secondly the framework provides a structure \ensuremath{\Conid{Inverted}} for the actual
 index data structure that is traversed in the search process. %
-Simply put, the index stores pairs \ensuremath{(\Conid{String},\Conid{String})}, where the
+Simply put, the index stores pairs strings, where the
 second entry is the word that can be searched and the first entry is
 the context of this word. %
-An example for our API search engine is a context \emph{description},
-whose corresponding \ensuremath{\Conid{String}} is the description text of a Curry
-module. %
+In order to provide another example, let's assume we have a Curry
+module \ensuremath{\Conid{Duck}} and the following information about this module:
+
+{\small
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}c<{\hspost}@{}}%
+\column{BE}{@{}l@{}}%
+\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}({}\<[BE]%
+\>[4]{}\text{\tt \char34 name\char34},\text{\tt \char34 Duck\char34}){}\<[E]%
+\\
+\>[B]{}({}\<[BE]%
+\>[4]{}\text{\tt \char34 author\char34},\text{\tt \char34 Donald\char34}){}\<[E]%
+\\
+\>[B]{}({}\<[BE]%
+\>[4]{}\text{\tt \char34 description\char34},{}\<[E]%
+\\
+\>[4]{}\text{\tt \char34 If~it~quacks~like~a~duck~\&~walks~like~a~duck,~it's~a~duck.\char34}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+}
+% An example for our API search engine is the pair |(\textss{author},
+% \textss{Donald Duck})|, with a context \emph{author},
+% whose corresponding string is the author of a Curry
+% module. %
 As addition to the design, the identifier of the document is stored in
-the index data structure as well to provide an association between the
-index and the document the data was indexed from. %
+the index data structure to provide an association between the index
+and the document the data was indexed from. %
+
+In fact, this concept is called \emph{inverted index} or
+\emph{inverted file}, which explains the name of the data type. %
+Thus, in the end, the index is a collection of triples. %
+
+{\small
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{6}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Conid{Documents}\mathrel{=}\{\mskip1.5mu (\Conid{Prelude},\mathrm{1}),(\Conid{IO},\mathrm{2}),(\Conid{Maybe},\mathrm{3}),(\Conid{Duck},\mathrm{4})\mskip1.5mu\}{}\<[E]%
+\\
+\>[B]{}\Conid{Inverted}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}({}\<[6]%
+\>[6]{}\text{\tt \char34 name\char34},\text{\tt \char34 Duck\char34},\mathrm{4}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}(\text{\tt \char34 author\char34},\text{\tt \char34 Donald\char34},\mathrm{4}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}(\text{\tt \char34 description\char34},\text{\tt \char34 If~it~quacks~[...]~it's~a~duck.\char34},\mathrm{4}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+}
+
 Another type provided by the framework is \ensuremath{\Conid{HolumbusState}\;\Varid{a}}: a
-combination of index and document, polymorph by the data the document
-holds. %
+combination of index and documents, polymorph by the data the documents
+hold. %
+For the examples presented above, we would use \ensuremath{\Conid{HolumbusState}\;\Conid{ModuleInfo}} for the index. %
 In \hyperref[implementation:index]{Section \ref{implementation:index}}
-we illustrate the use of these data structures in our
-implementation.
+we illustrate the use of these data structures in our implementation.
 
 Holumbus provides more than these two explicit data structures to
 handle the storage, it rather has multiple implementations to choose
 from. %
-All these implementations of the document and index data structure are
-instances of the provided interfaces. %
-Therefore we introduce the main functionalities of the interfaces we
+All these implementations of the documents and index data structure
+are instances of the provided interfaces. %
+Therefore, we introduce the main functionalities of the interfaces we
 use in our implementation. %
-\ensuremath{\Conid{HolIndex}} is the name of the interface for the \emph{actual index}
-and the main functionalities we are interested in, are the provided
-methods to create a new index and merge two existing indexes. %
+\ensuremath{\Conid{HolIndex}} is the name of the interface for the indexed data and the
+main functionalities we are interested in, are the provided methods to
+create a new triple and merge two existing structures. %
 We need the same functionality for \ensuremath{\Conid{HolDocuments}}, the interface for
-document data structures. %
-Besides methods to merge two \ensuremath{\Conid{Documents}\;\Varid{a}} and create a new \ensuremath{\Conid{Documents}\;\Varid{a}}, a function to change the identifier of a document in \ensuremath{\Conid{Documents}\;\Varid{a}}
-and to insert a document into \ensuremath{\Conid{Documents}} is provided as well.\\
+the document collection. %
+Besides methods to merge two document collections and create a new one,
+a function to change the identifier of each document in the collection
+and to insert a document is provided as well.\\
 
 To sum up, we want to extend the current CurryDoc implementation to
 generate a new readable data structure about a given Curry module. %
@@ -1173,6 +1318,7 @@ structure definitions, user comments and description in the source
 code, and general information about the module. %
 This new data structure determines the type of \ensuremath{\Conid{HolDocuments}\;\Varid{a}} and
 forms one part of the index-document-duo that Holumbus provides. %
+
 % \begin{itemize}
 % \item HolDocuments - Stores the documents that correspond to the
 %   index. A mapping is provided.
@@ -1186,39 +1332,68 @@ forms one part of the index-document-duo that Holumbus provides. %
 % How do we search for the information in the index?
 After creating the skeleton for the index and its storage, we want to
 actually use these information in a search query. %
-Thus the first step is to think about the structure of a query, in the
+Thus, the first step is to think about the structure of a query, in the
 second step we process the query and last we need a representation of
 the results of the processed query for further use.\\
 
-Thankfully these are all features the Holumbus framework provides. At
-first we take a look at the search mechanism. %
+Fortunately, these are all features the Holumbus framework provides. At
+first, we take a look at the search mechanism and the query representation. %
 The data structure \ensuremath{\Conid{Query}} allows to search for a word and a phrase,
 both case-insensitive and case-sensitive. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{Word}\;\Conid{String}\mathbin{::}\Conid{Query}{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{Query}\mathrel{=}{}\<[E]%
 \\
-\>[B]{}\Conid{Phrase}\;\Conid{String}\mathbin{::}\Conid{Query}{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{Word}\;\Conid{String}\mid {}\<[E]%
 \\
-\>[B]{}\Conid{CaseWord}\;\Conid{String}\mathbin{::}\Conid{Query}{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{Phrase}\;\Conid{String}\mid {}\<[E]%
 \\
-\>[B]{}\Conid{CasePhrase}\;\Conid{String}\mathbin{::}\Conid{Query}{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{CaseWord}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{CasePhrase}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathbin{...}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 Since the search depends on user-input, the framework also allows
-something called \ensuremath{\Conid{FuzzyWord}\;\Conid{String}} to scan for results with spelling
-errors like transposed letters. %
+\emph{fuzzy searching} to scan for results with spelling errors like
+transposed letters. %
 Since the index data structure of Holumbus uses pairs of words and
-contexts, a special mechanism to search for these contexts is given. %
-Furthermore the structure provides binary operators of the form \ensuremath{\Conid{BinQuery}\;\Conid{BinOp}\;\Conid{Query}\;\Conid{Query}} to combine multiple queries, where \ensuremath{\Conid{BinOp}} can be a
-conjunction, disjunction or negation. %
+contexts, a special mechanism to search for one or more contexts is
+given. %
+Furthermore, the structure provides binary operators to combine
+multiple queries; supported operators are conjunctions, disjunctions and
+negations. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mathbf{data}\;\Conid{Query}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mathbin{...}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{FuzzySearch}\;\Conid{String}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{Specifier}\;[\mskip1.5mu \Conid{Context}\mskip1.5mu]\;\Conid{Query}\mid {}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{BinQuery}\;\Conid{BinOp}\;\Conid{Query}\;\Conid{Query}{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\mathbf{type}\;\Conid{Context}\mathrel{=}\Conid{String}{}\<[E]%
+\\
 \>[B]{}\mathbf{data}\;\Conid{BinOp}\mathrel{=}\Conid{And}\mid \Conid{Or}\mid \Conid{But}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
@@ -1227,105 +1402,111 @@ conjunction, disjunction or negation. %
 As next step, we pass the index, document and query to the function
 \emph{processQuery} that, as the name suggests, processes the query. %
 When processing the query, Holumbus only matches for prefixes of the
-given word or phrase in a query, we need to consider this restriction
-when creating our index in \hyperref[implementation:index]{Section
+given word or phrase in a query, we need to keep this restriction in mind
+when we create the index in \hyperref[implementation:index]{Section
   \ref{implementation:index}}. %
+
+
+The return value of the successfully processed query is a data
+structure \ensuremath{\Conid{Result}\;\Varid{a}} that consists of the matching documents with type
+\ensuremath{\Varid{a}} as well as possible word completions. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{16}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{23}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\mbox{\onelinecomment  Pseudocode with Haskell syntax}{}\<[E]%
+\\
 \>[B]{}\mathbf{data}\;\Conid{Result}\;\Varid{a}{}\<[16]%
 \>[16]{}\mathrel{=}\Conid{Result}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\{\mskip1.5mu \Varid{docHits}{}\<[14]%
-\>[14]{}\mathbin{::}(\Conid{DocHits}\;\Varid{a}){}\<[E]%
+\>[3]{}\{\mskip1.5mu \Varid{documents}{}\<[23]%
+\>[23]{}\mathbin{::}(\Conid{Document}\;\Varid{a},\Conid{Score}){}\<[E]%
 \\
-\>[B]{},\Varid{wordHits}{}\<[14]%
-\>[14]{}\mathbin{::}\Conid{WordHits}{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{},\Varid{word}\;\Varid{completions}{}\<[23]%
+\>[23]{}\mathbin{::}(\Conid{String},\Conid{Score}){}\<[E]%
 \\
-\>[B]{}\mskip1.5mu\}{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mskip1.5mu\}{}\<[E]%
+\\
+\>[B]{}\mathbf{type}\;\Conid{Score}\mathrel{=}\Conid{Float}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-As return value, we get the data structure \ensuremath{\Conid{Result}\;\Varid{a}}, that consists
-of the matching documents with type \ensuremath{\Varid{a}} as well as possible word
-completions. %
-The first is represented by \ensuremath{\Conid{DocHits}\;\Varid{a}} that is a mapping of \ensuremath{\Conid{DocInfo}\;\Varid{a}}, the contexts and the document's unique identifier. %
-On the other hand \ensuremath{\Conid{DocInfo}\;\Varid{a}} consists of the matching document and a
-score. %
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{15}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{24}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{DocInfo}\;\Varid{a}\mathrel{=}\Conid{DocInfo}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\{\mskip1.5mu \Varid{document}\mathbin{::}(\Conid{Document}\;\Varid{a}){}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{},\Varid{docScore}{}\<[15]%
-\>[15]{}\mathbin{::}\Conid{Score}{}\<[E]%
-\\
-\>[B]{}\mskip1.5mu\}{}\<[E]%
-\\
-\>[B]{}\mathbf{type}\;\Conid{DocContextHits}{}\<[24]%
-\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{DocWordHits}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{DocWordHits}{}\<[24]%
-\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;\Conid{Positions}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{DocHits}\;\Varid{a}{}\<[17]%
-\>[17]{}\mathrel{=}\Conid{DocIdMap}\;(\Conid{DocInfo}\;\Varid{a},\Conid{DocContextHits}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-By default this score is calculated by the number of occurrences of
-the search query in the document and represented as \ensuremath{\Conid{Float}}. %
+Additionally, each document and word completion has a calculated score between \ensuremath{\mathrm{0}} and \ensuremath{\mathrm{1}} that determines the
+relevance of the result. %
+For documents, this score is calculated by the number of occurrences of
+the search query in the document by default and represented as float. %
 But Holumbus also provides a mechanism to apply a customized ranking
 function to calculate the score. %
-\ensuremath{\Conid{WordHits}} illustrates the word completions and is represented by a
-mapping of the possible completions of the given prefix in combination
-with its score, i.e. \ensuremath{\Conid{WordInfo}}, and the contexts.\\
-% Holumbus also provides a data structure that is returned after a query
+
+If we proceed the examples of the last section, we can construct the
+query
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{16}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{24}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{29}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{WordInfo}{}\<[16]%
-\>[16]{}\mathrel{=}\Conid{WordInfo}{}\<[E]%
-\\
-\>[16]{}\hsindent{1}{}\<[17]%
-\>[17]{}\{\mskip1.5mu \Varid{terms}{}\<[29]%
-\>[29]{}\mathbin{::}\Conid{Terms}{}\<[E]%
-\\
-\>[16]{}\hsindent{1}{}\<[17]%
-\>[17]{},\Varid{wordScore}\mathbin{::}\Conid{Score}{}\<[E]%
-\\
-\>[16]{}\hsindent{1}{}\<[17]%
-\>[17]{}\mskip1.5mu\}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{WordHits}{}\<[24]%
-\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Word}\;(\Conid{WordInfo},\Conid{WordContextHits}){}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{WordContextHits}{}\<[24]%
-\>[24]{}\mathrel{=}\Conid{Map}\;\Conid{Context}\;\Conid{WordDocHits}{}\<[E]%
-\\[\blanklineskip]%
-\>[B]{}\mathbf{type}\;\Conid{WordDocHits}{}\<[24]%
-\>[24]{}\mathrel{=}\Conid{Occurrences}{}\<[E]%
+\>[B]{}\Conid{Specifier}\;[\mskip1.5mu \text{\tt \char34 description\char34}\mskip1.5mu]\;\text{\tt \char34 quack\char34}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+and after processing, we get all modules, i.e. documents, which
+description consists of the word \textss{quack} and all possible word
+completions (the scores a random values to complete the example). %
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Conid{Result}\mathrel{=}{}\<[11]%
+\>[11]{}\{\mskip1.5mu \Varid{documents}\mathbin{:}\{\mskip1.5mu (\text{\tt \char34 Duck\char34},\mathrm{1}),\mathrm{0.75}\mskip1.5mu\}\mskip1.5mu\},{}\<[E]%
+\\
+\>[11]{}\{\mskip1.5mu \Varid{word}\;\Varid{completions}\mathbin{:}\{\mskip1.5mu \text{\tt \char34 quacks\char34},\mathrm{0.8}\mskip1.5mu\}\mskip1.5mu\}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+% The first is represented by |DocHits a| that is a mapping of |DocInfo
+% a|, the contexts and the document's unique identifier. %
+% On the other hand |DocInfo a| consists of the matching document and a
+% score. %
+
+% \begin{code} 
+% data DocInfo a = DocInfo 
+%   { document :: (Document a)
+%   , docScore  :: Score
+%  }
+% type DocContextHits    = Map Context DocWordHits
+
+% type DocWordHits       = Map Word Positions
+
+% type DocHits a  = DocIdMap (DocInfo a, DocContextHits)
+% \end{code}
+
+% By default this score is calculated by the number of occurrences of
+% the search query in the document and represented as |Float|. %
+% But Holumbus also provides a mechanism to apply a customized ranking
+% function to calculate the score. %
+% |WordHits| illustrates the word completions and is represented by a
+% mapping of the possible completions of the given prefix in combination
+% with its score, i.e. |WordInfo|, and the contexts.\\
+% Holumbus also provides a data structure that is returned after a query
+
+% \begin{code}
+% data WordInfo  = WordInfo 
+%                 { terms     :: Terms
+%                 , wordScore :: Score                
+%                 }
+
+% type WordHits          = Map Word (WordInfo, WordContextHits)
+
+% type WordContextHits   = Map Context WordDocHits
+
+% type WordDocHits       = Occurrences
+% \end{code}
 
 
 Summing up, we have discussed the mechanism to evaluate a query with
@@ -1336,14 +1517,14 @@ matching documents and possible word completions. %
 % But first the user input has to be parsed into the query structure to
 % start the processing.
 
-\section{Parsing User-Queries}\ref{analysis:parser}
+\section{Parsing User-Queries}\label{analysis:parser}
 % Which criteria do we want to search for? Modules, functions, types,
 % signatures, and  det./non-det., flexible/rigid functions. \\
 The next question is how to construct the query for a given
 user-input. %
 At first we have to decide about the criteria users can search for. %
 Since the index provides the pairs of contexts and search words, we
-are able to restrict the search to all these context with the help of
+are able to restrict the search to all these contexts with the help of
 the \ensuremath{\Conid{Query}} data structure and the \ensuremath{\Conid{Specifier}} constructor. %
 This structure of the index allows us to search for modules,
 functions, types, signatures and all other contexts we use during the
@@ -1357,46 +1538,51 @@ creation of the index.\\
 % modules minimizes the result.\\
 The search mechanism as part of the user-experience is supposed to be
 as simple as possible. %
-The use of a specific language increases the usability, since an
-expression has its explicit syntax. %
-A good example is the search term \ensuremath{\text{\tt ''}\;\Varid{io''}}, since in Curry \emph{IO}
+The right use of a specific language can increase the usability. %
+A good example is the search term \ensuremath{\text{\tt \char34 io\char34}}, since in Curry \emph{IO}
 is the name for a module, a type and a constructor. %
-Furthermore there are many functions in the IO module, that contain
+Furthermore, there are many functions in the IO module that contain
 the word \emph{io}. Thus, the search for \emph{io} results in a great
 amount of hits. %
 We can restrict the search to a specific context to reduce the number
 of hits. %
-Therefore we want to provide specifiers the user combinats with the
-search term, for example \ensuremath{\text{\tt ''}\mathbin{:}\Varid{function}\;\Conid{IO''}} searches for \emph{IO} in
+Therefore, we want to provide specifiers the user combines with the
+search term, for example \ensuremath{\text{\tt \char34 :function~IO\char34}} searches for \emph{IO} in
 the context of function names only. %
 But this special syntax restricts the user in the use of the search
 engine, if the language gets more complex. %
-Thus to provide a user-friendly search engine, we have to make a
-compromise between a simply to use language and a language that can be
+Thus, in order to provide a user-friendly search engine, we have to make a
+compromise between a simple language and a language that can be
 parsed. %
 
 % Set the focus on signatures. Because Hayoo! does not find signatures with
 % redundant parentheses, Curr(y)gle supports parenthesized signatures
 % and parenthesized query parts in general. \\
 Besides these specifiers we want to parse type signatures of Curry
-functions and data structures. %
-Since Hayoo! is not able to parse redundant parenthesized signatures,
-we want to address this problem with great care. Let's assume a
-beginner searches for a function with the type signature \ensuremath{\text{\tt ''}\;\Conid{IO}\to (\Conid{IO}\;\Conid{Int})\;\text{\tt ''}}. %
+functions and data types. %
+During our test phase, we also studied Hayoo!, the first search engine
+that was build with the Holumbus Framework. %
+We recognized that Hayoo! is not able to parse redundant parenthesized
+signatures.  In our opinion, this parsing behavior can be irritating
+in the usage of the search engine, therefore, we want to address the
+problem of redundant parentheses with great care when we parse
+signatures. %
+For instance, let's assume a beginner searches for a function with the
+type signature \ensuremath{\text{\tt \char34 IO~->~(IO~Int)\char34}}. %
 The type \emph{IO Int} and type constructors in general do not need
 parentheses, but as beginner you might think they do. %
-Thus we want to support parenthesized signatures and parenthesized
+Thus, we want to support parenthesized signatures and parenthesized
 query parts in general. %
 
 Last but not least we want to provide binary conjunctions like
 \emph{And}, \emph{Or} and \emph{Not}. %
-On the one hand a combination of more search words is desirable,
+On the one hand, a combination of more search words is desirable
 because popular search engines like Google\texttrademark~ support
 binary operations as feature. %
 The popularity increases the probability that users assume binary
 operations are standard features and expect search engines to provide
 the conjunction of several search terms. %
-On the other hand if the desired result is still vague, a combination
+On the other hand, if the desired result is still vague, a combination
 of more search words by a disjunction \emph{Or} helps to narrow down
 the search results.\\
 % In addition: binary operations/conjunctions. \\
@@ -1406,22 +1592,28 @@ the search results.\\
 % second it's easier to search for more search words, if the desired
 % result is still vague.
 
-In the end we want to provide an intuitive but powerful syntax for the
-search engine. %
+In the end, we want to provide an intuitive but powerful syntax for
+the search engine. %
 With specifiers to restrict the search results to a given context and
 with binary operations to narrow down or extend the contexts, we want
 to provide a simple language for the user queries. %
-Additionally type signatures should be recognized, including function,
-construction and primitive types as well as redundant parenthesized
-signatures. %
+Additionally, type signatures should be recognized, including
+function, construction and primitive types as well as redundant
+parenthesized signatures. %
 As the number of the supported features increases, the query gets more
 complex to read. %
-Thus to reach this goal, we need to analyse the user input and rebuild
-it as an expression of our \ensuremath{\Conid{Query}} data structure. %
-In \hyperref[implementation:parser]{Section
-  \ref{implementation:parser}} we discuss our actual implementation. %
+Thus, to reach this goal, we need to analyse the user input and
+rebuild it as an expression of our \ensuremath{\Conid{Query}} data structure. %
+The following figures describe the language the parser supports and in
+\hyperref[implementation:parser]{Section \ref{implementation:parser}}
+we discuss our actual implementation. %
 
 % The parser becomes a complex, but very important matter.
+
+% \begin{figure}
+% %include ../extras/parser.lhs
+% \caption{The query language of Curr(y)gle}
+% \end{figure}
 \chapter{Implementation}\label{implementation}
 % Mention that the implementation is done in Haskell or Curry.\\
 % Give a short summary of the next sections.
@@ -1429,7 +1621,8 @@ In \hyperref[implementation:parser]{Section
 This chapter presents the implementation of the search engine on the
 basis of some code examples and the corresponding design ideas and
 decisions. %
-At first we take a look at the extension for the current version of
+After we give a short overview of the Curry and Haskell project in
+general, we take a look at the extension for the current version of
 CurryDoc. %
 In this context we illustrate the interaction between this extension
 and the index creation. %
@@ -1440,19 +1633,82 @@ The third section addresses the implemented parser to convert the user
 input into a query that can be processed by Holumbus. %
 We illustrate the general idea and implementation approach of a parser
 to introduce into the subject. %
-The last section covers features and implementations of the web
-application for the search engine. %
-The implementations are mostly written in the functional programming
+Furthermore, we give an excerpt of the implemented parser. %
+
+The last step to our search engine is the application itself. %
+In order run the search engine as web application, we use the
+\emph{Snap
+  Framework}\footnote{\url{http://snapframework.com/about}}. %
+Snap is a Haskell library to simplify web development on unix
+systems. % 
+We do not go into detail on this topic, albeit, the simple usage to
+run the application is shown in \hyperref[currysearch]{Appendix
+  \ref{currysearch}}. %
+% The last section covers features and implementations of the web
+% application for the search engine. %
+
+\section{Environment}
+
+The underlying environment for the development is a 64-bit Mac OS
+X/Version 10.7.4 system. %
+Further, the implementations are mostly written in the functional programming
 language Haskell; we use the functional logic programming language
 Curry for the CurryDoc extension only.\\
+For the Haskell implementation, we use the Glasgow Haskell Compiler
+7.0.4\footnote{\url{http://www.haskell.org/ghc/}}. %
+As mentioned before, we use the PAKCS implementation of Curry and the
+SICStus-Prolog Version
+4.2.1\footnote{\url{http://www.sics.se/sicstus/docs/4.2.1/html/relnotes/index.html}}. %
+Since we already discussed Curry in a detailed manner in the
+\hyperref[preliminaries:curry]{second section}, we also want to present
+the main features of Haskell. %
+Therefore, we quote the Haskell language report \cite{haskellreport}:
+\begin{quote}
+  Haskell is a general purpose, purely functional programming language
+  incorporating many recent innovations in programming language
+  design. Haskell provides higher-order functions, non-strict
+  semantics, static polymorphic typing, user-defined algebraic
+  datatypes, pattern-matching, list comprehensions, a module system,
+  a monadic I/O system, and a rich set of primitive datatypes,
+  including lists, arrays, arbitrary and fixed precision integers, and
+  floating-point numbers. Haskell is both the culmination and
+  solidification of many years of research on non-strict functional
+  languages.
+\end{quote}
 
-\todo[inline]{general section about the underlying environment?}
+We chose Haskell as programming language because the paradigm of
+declarative and functional languages respectively caught our
+attention. %
+When you start to learn a functional language, you renew your
+knowledge of programming and programming techniques. %
+In the main part of our curriculum in computer science, we learn
+languages like C or Java, in which case you focus on \emph{the
+  problem} you want to solve. %
+Whereas in functional programming you always need to ask yourself
+\emph{how} to solve a problem. %
+Therefore, we wanted to learn more about this different kind of
+approach, and if this idea is well suited to daily use because you
+often read about the lack of functional programming in the industry \cite{noone}. %
+
+% \section{Overview}
+
+% \begin{postscript}
+% \begin{directory}{cdoc}
+%     \file{CurryDoc.curry}
+%     \file{\emph{CurryDocCDoc.curry}}
+%     \file{CurryDocHtml.curry}
+%     \file{CurryDocParams.curry}
+%     \file{CurryDocRead.curry }
+%     \file{CurryDocTeX.curry }
+%     \file{Makefile}
+% \end{directory}
+% \end{postscript}
 
 \section{CurryDoc Extension}\label{implementation:currydoc}
 
 In the previous chapter we discussed the general idea of an extension
 for CurryDoc to generate a data structure. %
-Later this data structure serves as source for the index creation.%
+Later this data structure serves as source for the index creation. %
 In this section we take a look at the implementation of this
 extension.
 
@@ -1460,19 +1716,19 @@ extension.
 % sub-structures |ModuleInfo|, |FunctionInfo| and |TypeInfo|.
 Since CurryDoc is written in Curry, we implemented our extension in
 Curry as well. %
-With this decision we stand to benefit from already implemented
-functionalities and on the other hand, using the same programming
+With this decision we benefit from already implemented
+functionalities and, on the other hand, using the same programming
 language simplifies the integration of our implementation with the
 current CurryDoc version.\\
 
 CurryDoc uses the meta-programming language FlatCurry to gain an
 intermediate data structure. %
 We can use this data structure for our purposes. %
-Additionally, we can use other functions provided by CurryDoc, that
+Additionally, we can use other functions provided by CurryDoc that
 are already implemented. %
 For example, CurryDoc supports a special comment syntax to annotate
 the author and version of a module. %
-Furthermore the arguments and the return value of a function can be
+Furthermore, the arguments and the return value of a function can be
 described as well as general descriptions.
 
 But at first, we discuss which information we want to provide in our
@@ -1529,11 +1785,21 @@ As next step we want to describe \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\C
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{ModuleInfo}\mathrel{=}{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{ModuleInfo}\mathrel{=}\Conid{ModuleInfo}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Conid{ModuleInfo}\;\Conid{String}\;\Conid{String}\;\Conid{String}{}\<[E]%
+\>[3]{}\Conid{String}{}\<[11]%
+\>[11]{}\mbox{\onelinecomment  name}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}{}\<[11]%
+\>[11]{}\mbox{\onelinecomment  author}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}{}\<[11]%
+\>[11]{}\mbox{\onelinecomment  description}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1547,27 +1813,46 @@ The latter seems to be useless information for the search engine,
 since the Curry modules are highly interrelated. %
 Thus, searching for a module results in a great amount of hits, since
 every correlating module will be shown as well. %
-Furthermore we think the version number is not a significant
+Furthermore, we think the version number is not a significant
 characteristic for a module. %
 Therefore we decided to focus on the three mentioned proporties only.
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{FunctionInfo}\mathrel{=}{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{FunctionInfo}\mathrel{=}\Conid{FunctionInfo}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Conid{FunctionInfo}\;\Conid{String}\;(\Conid{QName},\Conid{TypeExpr})\;\Conid{String}\;\Conid{String}\;\Conid{Bool}{}\<[E]%
+\>[3]{}\Conid{String}{}\<[20]%
+\>[20]{}\mbox{\onelinecomment  name}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Conid{FlexRigidResult}{}\<[E]%
+\>[3]{}\Conid{TypeExpr}{}\<[20]%
+\>[20]{}\mbox{\onelinecomment  type signature}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}{}\<[20]%
+\>[20]{}\mbox{\onelinecomment  corresponding module}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}{}\<[20]%
+\>[20]{}\mbox{\onelinecomment  description}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{Bool}{}\<[20]%
+\>[20]{}\mbox{\onelinecomment  True if the function is non-deterministic}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{FlexRigidResult}{}\<[20]%
+\>[20]{}\mbox{\onelinecomment  flexible/rigid characteristic, conflicted or unknown value }{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 \ensuremath{\Conid{FunctionInfo}} consists of characteristics for a given function like
 the function's name and description. %
-Additionally we decide to add the corresponding module to provide a
+Additionally, we decide to add the corresponding module to provide a
 connection between the function and its module. %
 This decision is based on the cause that we do not keep the
 \ensuremath{\Conid{CurryInfo}} data structure as whole for the index construction, but
@@ -1580,19 +1865,38 @@ Since these are important characteristics to differ between Curry
 functions, \ensuremath{\Conid{FunctionInfo}} stores these information as property. %
 In addition FlatCurry provides a data structure \ensuremath{\Conid{TypeExpr}} to describe
 type signatures (see \hyperref[fig:typeExpr]{last chapter}),
-furthermore we get the actual definition of a function. %
+furthermore, we get the actual definition of a function. %
 We use a function's type signature as part of the \ensuremath{\Conid{FunctionInfo}} data
 structure, but decided against the usage of a function's definition
-since we could not think of a relevant use-case for our search engine.
+since we could not think of a relevant use-case for our search
+engine. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{26}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{TypeInfo}\mathrel{=}{}\<[E]%
+\>[B]{}\mathbf{data}\;\Conid{TypeInfo}\mathrel{=}\Conid{TypeInfo}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Conid{TypeInfo}\;\Conid{String}\;[\mskip1.5mu (\Conid{QName},[\mskip1.5mu \Conid{TypeExpr}\mskip1.5mu])\mskip1.5mu]\;[\mskip1.5mu \Conid{Int}\mskip1.5mu]\;\Conid{String}\;\Conid{String}{}\<[E]%
+\>[3]{}\Conid{String}{}\<[26]%
+\>[26]{}\mbox{\onelinecomment  name}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}[\mskip1.5mu (\Conid{QName},[\mskip1.5mu \Conid{TypeExpr}\mskip1.5mu])\mskip1.5mu]{}\<[26]%
+\>[26]{}\mbox{\onelinecomment  constructors and their signatures}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}[\mskip1.5mu \Conid{Int}\mskip1.5mu]{}\<[26]%
+\>[26]{}\mbox{\onelinecomment  type variables}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}{}\<[26]%
+\>[26]{}\mbox{\onelinecomment  corresponding module}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Conid{String}{}\<[26]%
+\>[26]{}\mbox{\onelinecomment  description}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1603,27 +1907,28 @@ Since FlatCurry provides type signatures for functions, we also get
 information about constructors for a given type. %
 Therefore we store a list of \ensuremath{\Conid{TypeExpr}} representing the type's
 constructors. %
-Additionally \ensuremath{\Conid{TypeInfo}} holds a list of integer to represent possible
+Additionally, \ensuremath{\Conid{TypeInfo}} holds a list of integer to represent possible
 type variables. %
 The decision to use integer corresponds to the definition of
 \ensuremath{\Conid{TypeExpr}}, where type variables are represented as integer as well.\\
 
 In the end, we feed the \ensuremath{\Conid{CurryInfo}} data structure with the specific
-module, function and type information of a given Curry program and our
-CurryDoc extension writes the data structure into a
-\emph{.cdoc}-file. %
+module, function and type information of a given Curry program, and our
+CurryDoc extension writes the data structure into a file. %
+For example, we want to index the \emph{Prelude}, thus, we get a file named
+\emph{Prelude.cdoc}. %
 The final CurryDoc version allows two mechanisms to generate the
 \ensuremath{\Conid{CurryInfo}} structure. %
 You can generate the \emph{.cdoc}-file only or you initiate the HTML
 generation, where the \emph{.cdoc}-file is also part of the output. %
-In \hyperref[a:currydoc]{Appendix \ref{a:currydoc}} we provide further
+In \hyperref[currydoc]{Appendix \ref{currydoc}} we provide further
 instruction for the usage of CurryDoc.
 
 Due to the similar syntax, we can use the same data structures in
 Haskell as in Curry to exchange those structures. %
 More precisely, we can read the \emph{.cdoc}-file within our Haskell
 implementation and work with the data structure. %
-In order to do that, we need a Haskell program that defines all the
+In order to do work with this structure, we need a Haskell program that defines all the
 data structures used in \ensuremath{\Conid{CurryInfo}} including the nested structures. %
 Thus, we generate \ensuremath{\Conid{CurryInfo}} to use it as data structure in the
 process of the index creation.
@@ -1639,7 +1944,7 @@ creation and the information we want to store. %
 In the following, we talk about the advantages and disadvantages of
 using the Holumbus framework and describe our implementation of the
 index creation in more detail. %
-The following implementation is done in the functional logic
+The following implementation is done in the functional
 programming language Haskell. %
 This decision allows us to use the Holumbus framework for our purpose
 and a good number of functional, pure and strict features.\\
@@ -1658,47 +1963,47 @@ provided by Holumbus. %
 In the end we can either create a new index by writing each structure
 to a file to store our information or update an existing index with
 additional Curry modules. %
-In order to do that, we load the index and document files and merge
-them with new data. %
+In order to update an existing index, we load the index and document
+files and merge them with new data. %
 Due to lazy evaluation, we cannot read and write to the same file; it
 is not assured that we finish reading before we start to rewrite the
 file. %
 Therefore we have to write temporary files and rename these files
-afterwards to guarantee a clean outcome.
+afterwards to guarantee a clean outcome. %
 
 During the testing phase of the indexer, we noticed problems regarding
 duplicate data. %
 In particular, when we add a Curry module to the index twice, there is
 no mechanism to detect the duplicated data. %
-For that reason only we added a list of the modules that are stored in
+For this reason only we added a list of the modules that are stored in
 the index as output file. %
 So every time we update the index with a given module, we check if it
 already exists in the saved list. %
 We only start the processing of the data, if the module does not occur
-in our list and on the other hand, we add the module's name to the
-list.\\
+in our list and, on the other hand, we add the module's name to the
+list.\\ %
 
+\subsection{Index Construction}
 In the previous chapter, we introduced the idea of storing two
 structures: an index \ensuremath{\Conid{Inverted}} and a document \ensuremath{\Conid{Documents}\;\Varid{a}}. %
 In the following, we present this idea in more detail, beginning with
 the index. %
 
-\subsection{Index Construction}
 As mentioned before, the main idea behind the index data structure is
-to manage pairs of \ensuremath{\Conid{String}}. %
+to manage pairs of strings. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{15}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{17}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{type}\;\Conid{Pair}{}\<[15]%
-\>[15]{}\mathrel{=}(\Conid{Context},\Conid{Word}){}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{IndexPair}{}\<[17]%
+\>[17]{}\mathrel{=}(\Conid{Context},\Conid{Word}){}\<[E]%
 \\
-\>[B]{}\mathbf{type}\;\Conid{Word}{}\<[15]%
-\>[15]{}\mathrel{=}\Conid{String}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{Word}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{String}{}\<[E]%
 \\
-\>[B]{}\mathbf{type}\;\Conid{Context}{}\<[15]%
-\>[15]{}\mathrel{=}\Conid{String}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{Context}{}\<[17]%
+\>[17]{}\mathrel{=}\Conid{String}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -1711,58 +2016,45 @@ to their location, i.e. the document. %
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{18}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{19}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\mathbf{type}\;\Conid{Inverted}{}\<[18]%
-\>[18]{}\mathrel{=}\Conid{Map}\;\Conid{Pair}\;\Conid{Occurrence}{}\<[E]%
+\>[18]{}\mathrel{=}\Conid{Map}\;\Conid{Pair}\;\Conid{Occurrences}{}\<[E]%
 \\
-\>[B]{}\mathbf{type}\;\Conid{Occurrence}{}\<[18]%
-\>[18]{}\mathrel{=}\Conid{Map}\;\Conid{DocId}\;\Conid{Positions}{}\<[E]%
+\>[B]{}\mathbf{type}\;\Conid{Occurrences}{}\<[19]%
+\>[19]{}\mathrel{=}\Conid{Map}\;\Conid{DocId}\;\Conid{Positions}{}\<[E]%
 \\
 \>[B]{}\mathbf{type}\;\Conid{Positions}{}\<[18]%
-\>[18]{}\mathrel{=}\Conid{IntSet}{}\<[E]%
+\>[18]{}\mathrel{=}[\mskip1.5mu \Conid{Int}\mskip1.5mu]{}\<[E]%
 \\
 \>[B]{}\mathbf{type}\;\Conid{DocId}{}\<[18]%
 \>[18]{}\mathrel{=}\Conid{Int}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-More precisely, \ensuremath{\Conid{Inverted}} maps the word and its context to an
-\ensuremath{\Conid{Occurrence}}, which on the other hand maps a reference to a document
+More precisely, \ensuremath{\Conid{Inverted}} maps the word and its context to
+\ensuremath{\Conid{Occurrences}}, which, on the other hand, maps a reference to a document
 (\ensuremath{\Conid{DocId}}) and its \ensuremath{\Conid{Positions}}. %
 With these \ensuremath{\Conid{Positions}} that consist of a set of \ensuremath{\Conid{Int}}, we can
 reconstruct a phrase of document. %
 However, we only need these \ensuremath{\Conid{Positions}}, if we want to provide phrase
 queries. %
-Since our main goal is to provide the search signature or function,
-module and types name, we decided against the support of phrase
+Since our main goal is to search fore signatures or function,
+module and type name, we decided against the support of phrase
 queries. %
 Therefore, we do not use the \ensuremath{\Conid{Position}} when indexing our data. %
-The code examples just illustrate a sketch of the idea behind the
-\ensuremath{\Conid{Inverted}} structure, the actual implementation does not matter for
-our implementation, since we mostly use the provided interface. %
-Furthermore the words are stores in prefix tree, which only allows
-prefix search like we mentioned before. %
-
-% \begin{figure}[h]
-% \begin{code}
-% type Inverted   = Map Pair Occurrence
-% type Occurrence = Map DocId Positions
-% type Positions  = IntSet
-% type DocId      = Int
-% type Pair       = (Context, Word)
-% type Word       = String
-% type Context    = String
-% \end{code}
-% \caption{Sketch for |Inverted| in Haskell syntax}
-% \label{fig:inverted}
-% \end{figure}
-
+The code examples illustrate a sketch of the idea behind the
+\ensuremath{\Conid{Inverted}} structure; the actual implementation does not matter for
+our implementation since we mostly use the provided interface. %
+Furthermore, the words are stored in prefix trees, which only allows
+prefix search, like we mentioned before. %
 Due to the prefix search, we came across some difficulties which we
 discuss later. %
+
 Nevertheless, when we implement the indexing, we can make use of a function
 provided by Holumbus that allows to create the index structure from a
 list. %
-Simply put, this list consists of a triple: the pair of \ensuremath{\Conid{String}}s and
+Simply put, this list consists of a triple: the pair of strings and
 a reference to the document we are indexing. %
 When we index the \ensuremath{\Conid{CurryInfo}} structure, we examine its substructures
 \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}} and \ensuremath{\Conid{TypeInfo}} to gain the characteristic
@@ -1775,16 +2067,13 @@ description; therefore we have our first contexts, named
 \emph{\textss{module}} for the name, \emph{\textss{author}} and
 \emph{\textss{description}} (see \hyperref[t:modcontext]{Table
   \ref{t:modcontext}}). %
-We do not have much to do for a module's name, but since a module can
-be written by several authors, we have to add a context for each
-author stored in \ensuremath{\Conid{ModuleInfo}}. %
 
 \begin{table}[h]
 \centering{
 \begin{tabular}{|l|l|l|}
 \hline \multicolumn{2}{|c|}{ModuleInfo} \\
 \hline property & context name \\
-name & "module''\\
+\hline name & "module''\\
 author & "author''\\
 description & "description"\\
 \hline
@@ -1794,6 +2083,9 @@ description & "description"\\
 \label{t:modcontext}
 \end{table}
 
+We do not have much to do for a module's name, but since a module can
+be written by several authors, we have to add a context for each
+author stored in \ensuremath{\Conid{ModuleInfo}}. %
 Since we only have a representation as \ensuremath{\Conid{String}}, we need to process
 the string containing the author information. %
 In fact, the representation is not the main problem; the prefix search
@@ -1801,7 +2093,7 @@ frustrates the usage of the whole string as word for our index. %
 If we search for an author named \emph{\textss{Duck}}, we will not
 find \emph{\textss{Donald Duck}} since the search word
 \emph{\textss{Duck}} is not a prefix. %
-Therefore we have to spilt the \ensuremath{\Conid{String}} on whitespace to gain and add
+Therefore we have to spilt the string on whitespace to gain and add
 all parts individually. %
 A similar problem applies to the description, so we split the
 description on whitespace too. %
@@ -1841,25 +2133,27 @@ the signatures too. %
 Due to the prefix search we can only search type signatures that begin
 with \ensuremath{\Conid{HTMLExp}}, but a function's type signature that yields the type
 \ensuremath{\Conid{HTMLExp}} ends with \ensuremath{\Conid{HTMLExp}}. %
-The first idea is to split a given type string like \ensuremath{\Conid{String}\to \Conid{String}\to \Conid{HTMLExp}} on \ensuremath{\to } add each part to the context. As first
-consequence, we lose function types like in \ensuremath{(\Conid{Int}\to \Conid{String})\to \Conid{String}\to \Conid{HTMLExp}}, because we get the partitions \ensuremath{(\Conid{Int},\Conid{String}),\Conid{String},\Conid{HTMLExp}}. %
+The first idea is to split a given type string, like \ensuremath{\text{\tt \char34 String~->~String~->~HTMLExp\char34}}, on function arrow \ensuremath{\to } and add each part to the
+context. %
+As first consequence, we lose function types like in \textss{\ensuremath{(\Conid{Int}\to \Conid{String})\to \Conid{String}\to \Conid{HTMLExp}}} because we get the partitions \textss{\ensuremath{(\Conid{Int}}},
+\textss{\ensuremath{\Conid{String})}}, \textss{\ensuremath{\Conid{String}}}, \textss{\ensuremath{\Conid{HTMLExp}}}. %
 Secondly, we cannot only add primitive or constructor types (like
 \ensuremath{\Conid{String}} or \ensuremath{\Conid{Maybe}\;\Conid{Int}}) to the index, if we want to provide the
 search for type signatures with at least one function arrow. %
 Thus, we decided not to convert the \ensuremath{\Conid{TypeExpr}} to the corresponding
-\ensuremath{\Conid{String}}, but to decompose the signature into all its valid suffixes
-first.%
+string, but to decompose the signature into all its valid suffixes
+first. %
 In this way, each suffix is paired with the context
 \emph{\textss{signature}}, converted into a type signature represented
 as \ensuremath{\Conid{String}} and added to the index. The conversion function takes a
-list of types represented as \ensuremath{\Conid{String}}s, concatenate this list with the
+list of types represented as strings, concatenate this list with the
 function arrow \ensuremath{\to } between each element of the list and yields a
 \ensuremath{\Conid{String}}. %
 Since \ensuremath{\Conid{TypeInfo}} stores a list of \ensuremath{\Conid{TypeExpr}} representing its
 constructors' type signatures, we have to apply the mentioned
 mechanism to all \ensuremath{\Conid{TypeExpr}}. %
-Additionally we have to add the constructor name to the index
-manually, because it is not part of the \ensuremath{\Conid{TypeExpr}}, since its usage is
+Additionally, we have to add the constructor name to the index
+manually because it is not part of the \ensuremath{\Conid{TypeExpr}}, since its usage is
 more similar to a function than to a type. %
 \hyperref[t:typcontext]{Table \ref{t:typcontext}} summarizes the
 contexts of \ensuremath{\Conid{TypeInfo}}, whereas there a still contexts of
@@ -1881,7 +2175,7 @@ contexts of \ensuremath{\Conid{TypeInfo}}, whereas there a still contexts of
 \label{t:typcontext}
 \end{table}
 
-We distinguish between non/-deterministic and flexible or rigid
+We distinguish between non-/deterministic and flexible or rigid
 functions. %
 For each characteristic that applies to a function, we add the given
 context to the index. %
@@ -1900,7 +2194,7 @@ The summary of all contexts concerning a function is shown in
  signature & "signature"\\
  description & "description"\\
  \multirow{2}{*}{flexible/rigid} & "flexible'' \\  & "rigid' \\
-\multirow{2}{*}{non/-deterministic} &  "nondet'' \\ & "det'' \\
+\multirow{2}{*}{non-/deterministic} &  "nondet'' \\ & "det'' \\
 \hline
 \end{tabular}
 }
@@ -1913,72 +2207,23 @@ Summing up, we process \ensuremath{\Conid{CurryInfo}}'s substructures \ensuremat
 context. %
 The last \emph{unknown value} of the indexing process is the third
 entry of the triple: the reference to the document. %
-Thus, as next step we examine the design of a document and in this
-context, we discuss the document's role and value as part of the
-triple.
+Thus, we segue from the index data structure into the next section,
+where we discuss the data structure of the documents. %
+
 
 \subsection{Document Construction}
 
-% At first, we take closer look at the data structure itself. %
-% Holumbus provides us with |Documents a| can be described as mapping of
-% yet another data structure |Document a| and an unique identifier (see
-% \hyperref[fig:documents]{Figure \ref{fig:documents}}). %
-% Each |Document a| consists of a title, an URI and customizable
-% information. %
-% The latter has the type |a| and determines the type for a document. %
-% In order to have a faster access to a specific document, |Documents a|
-% also stores the highest document id used in the mapping as well as a
-% mapping from the document's uri to the document's identifier.
+As next step we take a look at the second structure of the index:
+\ensuremath{\Conid{Documents}\;\Varid{a}}. %
+This data structure is just a collection of \ensuremath{\Conid{Document}\;\Varid{a}} data types,
+where every document is provided with an unique identifier. %
+In this context, we discuss the document's role and value as part of
+the triple. %
 
-% \begin{figure}[h!]
-% \begin{code}
-% data Document a = Document
-%                   { title  :: Title
-%                   , uri    :: URI
-%                   , custom :: (Maybe a)
-%                   }
-% %//%
-% data Documents a = Documents
-%                    { idToDoc   :: (DocMap a)   
-%                    , docToId   :: URIMap
-%                    , lastDocId :: DocId     
-%                    }
-% \end{code}
-% \caption{Holumbus' data structure for a document and a collection of documents}
-% \label{fig:documents}
-% \end{figure}
-
-At first, we take closer look at the data structure itself. %
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{32}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{Documents}\;\Varid{a}\mathrel{=}\Conid{Documents}{}\<[E]%
-\\
-\>[B]{}\hsindent{20}{}\<[20]%
-\>[20]{}\{\mskip1.5mu \Varid{idToDoc}{}\<[32]%
-\>[32]{}\mathbin{::}(\Conid{DocMap}\;\Varid{a}){}\<[E]%
-\\
-\>[B]{}\hsindent{20}{}\<[20]%
-\>[20]{},\Varid{docToId}{}\<[32]%
-\>[32]{}\mathbin{::}\Conid{URIMap}{}\<[E]%
-\\
-\>[B]{}\hsindent{20}{}\<[20]%
-\>[20]{},\Varid{lastDocId}\mathbin{::}\Conid{DocId}{}\<[E]%
-\\
-\>[B]{}\hsindent{20}{}\<[20]%
-\>[20]{}\mskip1.5mu\}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-Holumbus provides us with \ensuremath{\Conid{Documents}\;\Varid{a}} that can be described as
-mapping of yet another data structure \ensuremath{\Conid{Document}\;\Varid{a}} and an unique
-identifier. %
 Each \ensuremath{\Conid{Document}\;\Varid{a}} consists of a title, an URI and customizable
 information. %
-The latter has the type \ensuremath{\Varid{a}} and determines the type for a document. %
+The latter has the type \ensuremath{\Varid{a}} and determines the type for a document,
+for example the \ensuremath{\Conid{CurryInfo}} structure. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2003,9 +2248,9 @@ The latter has the type \ensuremath{\Varid{a}} and determines the type for a doc
 \ColumnHook
 \end{hscode}\resethooks
                 
-In order to have a faster access to a specific document, \ensuremath{\Conid{Documents}\;\Varid{a}}
-also stores the highest document id used in the mapping as well as a
-mapping from the document's uri to the document's identifier. %
+% In order to have a faster access to a specific document, |Documents a|
+% also stores the highest document id used in the mapping as well as a
+% mapping from the document's uri to the document's identifier. %
 
 For the creation of the index, we have to feed \ensuremath{\Conid{Documents}\;\Varid{a}} with
 actual data. %
@@ -2016,7 +2261,7 @@ structure for the custom information. %
 This idea is easy to implement since we just use the unmodified data
 structure that CurryDoc produces. %
 As consequence, all the information in the corresponding index map to
-this one document. %
+this document only. %
 When we search our index for an information, we can relate a given
 search result only to the corresponding \ensuremath{\Conid{CurryInfo}}; we cannot
 distinguish if the search result is associated to the module, function
@@ -2027,7 +2272,7 @@ substructures \ensuremath{\Conid{ModuleInfo}}, \ensuremath{\Conid{FunctionInfo}}
 types, i.e. the custom information. %
 However, if we want to distinguish between these three sources of
 information, we need to store three types of documents. %
-Nevertheless this decision allows us to relate the information of a
+Nevertheless, this decision allows us to relate the information of a
 Curry module to its functions, types or information about the module
 itself. %
 Furthermore, we decide that a Curry module is converted into more than
@@ -2045,68 +2290,55 @@ The title corresponds to the name of the function, type or module. %
 The value of the URI is an argument to fill by the user when
 generating the index; the URI can point to a local or online source
 for documentation. %
-We designed the URI representation for the HTML-documentation provided
-by CurryDoc, since the current main source for Curry documentation,
+We designed the URI representation according to the HTML-documentation provided
+by CurryDoc since the current main source for Curry documentation,
 that can be accessed
 online\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC}},
 is generated via CurryDoc. %
 Since this HTML-structure of a Curry module documentation provides
 anchors to the module's defined functions and data structures, we use
 this link mechanism for our URIs as well. %
+Thus, the URIs are build according to the following schema:
 
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\mathbf{data}\;\Conid{URI}\;\Varid{a}\mathrel{=}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Conid{ModuleURI}\;(\Varid{a}\to \Conid{String})\mid {}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Conid{FctOrTypeURI}\;(\Varid{a}\to \Conid{String})\;(\Varid{a}\to \Conid{String}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
+% \begin{code}
+% moduleURI   = baseURL ++ moduleName ++ ".html"
+% functionURI = baseURL ++ moduleName ++ ".html'' ++  ++ funcName 
+% typeURI     = baseURL ++ moduleName ++ ".html" ++  ++ typeName
+% \end{code}
 
-The data structure \ensuremath{\Conid{URI}\;\Varid{a}} can describe an URI for a module and a type
-or function. %
-The first URI constructor takes a function that yields the module's
-name for a \ensuremath{\Conid{ModuleInfo}} structure. %
-The latter constructor takes two functions, the first to yield the
-name of a function's or type's corresponding module and the second to
-yield the function's or type's name. %
-The function \ensuremath{\Varid{uriTypeToUriPath}\mathbin{::}\Conid{String}\to \Conid{URI}\;\Varid{a}\to \Varid{a}\to \Conid{String}} distinguishes
-between the two constructors to build the URI and combines it with the URI
-path given by the user.
+% \begin{code}
+% data URI a = 
+%   ModuleURI (a -> String) | 
+%   FctOrTypeURI (a -> String) (a -> String)
+% \end{code}
 
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{ModuleURI}\;\Varid{baseURI}\to {}\<[E]%
-\\
-\>[B]{}\hsindent{8}{}\<[8]%
-\>[8]{}\Varid{uriPath}\plus \Varid{baseURI}\;\Varid{info}\plus \text{\tt \char34 .html\char34}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
+% The data structure |URI a| can describe an URI for a module and a type
+% or function. %
+% The first URI constructor takes a function that yields the module's
+% name for a |ModuleInfo| structure. %
+% The latter constructor takes two functions, the first to yield the
+% name of a function's or type's corresponding module and the second to
+% yield the function's or type's name. %
+% The function |uriTypeToUriPath :: String -> URI a -> a -> String| distinguishes
+% between the two constructors to build the URI and combines it with the URI
+% path given by the user.
 
-In the case of an URI for a module, we just combine the URI path with
-the module's name and add the \emph{.html} extension.
+% \begin{code}
+% ModuleURI baseURI -> 
+%        uriPath ++ baseURI info ++ ".html"
+% \end{code}
 
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{8}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Conid{FctOrTypeURI}\;\Varid{baseURI}\;\Varid{name}\to {}\<[E]%
-\\
-\>[B]{}\hsindent{8}{}\<[8]%
-\>[8]{}\Varid{uriPath}\plus \Varid{baseURI}\;\Varid{info}\plus \text{\tt \char34 .html\char34}\plus \text{\tt \char34 \#\char34}\plus \Varid{name}\;\Varid{info}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
+% In the case of an URI for a module, we just combine the URI path with
+% the module's name and add the \emph{.html} extension.
 
-On other hand, we construct the URI as above, add the anchor symbol
-and the function's and types' name to generate the URI linking to the
-documentation.
+% \begin{code}
+% FctOrTypeURI baseURI name -> 
+%        uriPath ++ baseURI info ++ ".html" ++ "#" ++ name info
+% \end{code}
+
+% On other hand, we construct the URI as above, add the anchor symbol
+% and the function's and types' name to generate the URI linking to the
+% documentation.
      
 % \begin{figure}[h]
 % \begin{code}
@@ -2137,7 +2369,7 @@ documentation.
 \subsection{Conclusion and Example}
 All in all, we have a mechanism to create an index data structure that
 is traversed, when we perform a search query and one mechanism to
-store the corresponding document, that is linked to the index
+store the corresponding document that is linked to the index
 structure again. %
 We create these structures for the three substructures of \ensuremath{\Conid{CurryInfo}}
 and combine them into a \ensuremath{\Conid{HolumbusState}\;\Varid{a}}, where \ensuremath{\Varid{a}} defines the type
@@ -2161,42 +2393,24 @@ We cannot merge the structs just yet, since we created new documents
 with identifiers starting with \ensuremath{\mathrm{1}}. %
 We need to adapt the \ensuremath{\Conid{DocId}}s such that the minimum of the new
 structure is the maximum of the old one. %
-After that, we can merge the documents and index structure and write
+Thereafter, we can merge the documents and index structure and write
 the new file. \\
 
 The following code serves as showcase for an index construction with
 the information of a function. %
-In the end we build a \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}} structure. %
+In the end, we build a \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}} structure. %
 
+We have a \ensuremath{\Conid{CurryInfo}} structure named \ensuremath{\Varid{curryDoc}} and extract the list
+of \ensuremath{\Conid{FunctionInfo}} structures. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{19}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{21}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{fctState}\mathrel{=}\Varid{ixDoc}\;{}\<[E]%
-\\
-\>[B]{}\hsindent{19}{}\<[19]%
-\>[19]{}\Varid{contextsF}\;{}\<[E]%
-\\
-\>[B]{}\hsindent{19}{}\<[19]%
-\>[19]{}(\Varid{functionInfos}\;\Varid{curryDoc})\;{}\<[E]%
-\\
-\>[B]{}\hsindent{19}{}\<[19]%
-\>[19]{}(\Varid{map}\;(\Varid{doc}\;\Varid{uriPath}\;\Varid{fName}\;(\Conid{FctOrTypeURI}\;\Varid{fModule}\;\Varid{fName})){}\<[E]%
-\\
-\>[19]{}\hsindent{2}{}\<[21]%
-\>[21]{}\mathbin{\$}\Varid{functionInfos}\;\Varid{curryDoc})\;{}\<[E]%
-\\
-\>[B]{}\hsindent{19}{}\<[19]%
-\>[19]{}\Varid{cFct}{}\<[E]%
+\>[B]{}\Varid{listOfFunctionInfoStructures}\mathrel{=}\Varid{functionInfos}\;\Varid{curryDoc}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-We have a \ensuremath{\Conid{CurryInfo}} structure named \ensuremath{\Varid{curryDoc}} and extract the
-\ensuremath{\Conid{FunctionInfo}} structure through \ensuremath{\Varid{functionInfos}\;\Varid{curryDoc}}.
-
-Next, we construct the pairs of contexts and words that we need
+Next, for each element of the list, we construct the pairs of contexts and words that we need
 for the \ensuremath{\Conid{Inverted}} index structure; this behaviour is described by the
 function \ensuremath{\Varid{contextsF}}.
 
@@ -2205,95 +2419,77 @@ function \ensuremath{\Varid{contextsF}}.
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{4}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{contextsF}\;\Varid{functionInfo}\mathrel{=}{}\<[E]%
+\>[B]{}\Varid{contextsF}\;\Varid{aFunctionInfoStructure}\mathrel{=}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}[\mskip1.5mu (\text{\tt \char34 :function\char34},\Varid{fName}\;\Varid{functionInfo})\mskip1.5mu]{}\<[E]%
+\>[3]{}[\mskip1.5mu (\text{\tt \char34 :function\char34},\Varid{fName}\;\Varid{aFunctionInfoStructure})\mskip1.5mu]{}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\plus [\mskip1.5mu (\text{\tt \char34 :inModule\char34},\Varid{fModule}\;\Varid{functionInfo})\mskip1.5mu]{}\<[E]%
+\>[4]{}\plus [\mskip1.5mu (\text{\tt \char34 :inModule\char34},\Varid{fModule}\;\Varid{aFunctionInfoStructure})\mskip1.5mu]{}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\plus (\Varid{signature}\mathbin{\$}\Varid{signatureComponents}\mathbin{\$}\Varid{fSignature}\;\Varid{functionInfo}){}\<[E]%
+\>[4]{}\plus (\Varid{signature}\mathbin{\$}\Varid{signatureComponents}\mathbin{\$}\Varid{fSignature}\;\Varid{aFunctionInfoStructure}){}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\plus (\Varid{flexRigid}\mathbin{\$}\Varid{fFlexRigid}\;\Varid{functionInfo}){}\<[E]%
+\>[4]{}\plus (\Varid{flexRigid}\mathbin{\$}\Varid{fFlexRigid}\;\Varid{aFunctionInfoStructure}){}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\plus (\Varid{nonDet}\mathbin{\$}\Varid{fNonDet}\;\Varid{functionInfo}){}\<[E]%
+\>[4]{}\plus (\Varid{nonDet}\mathbin{\$}\Varid{fNonDet}\;\Varid{aFunctionInfoStructure}){}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\plus (\Varid{description}\mathbin{\$}\Varid{fDescription}\;\Varid{functionInfo}){}\<[E]%
+\>[4]{}\plus (\Varid{description}\mathbin{\$}\Varid{fDescription}\;\Varid{aFunctionInfoStructure}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
-
+% $
 The function \ensuremath{\Varid{description}} just pairs the
-context with the given the data of \ensuremath{\Conid{FunctionInfo}}; %
+context, i.e. the string \ensuremath{\text{\tt \char34 description\char34}}, with the given data of
+\ensuremath{\Varid{aFunctionInfoStructure}}, i.e. the description of a function; %
 \ensuremath{\Varid{flexRigid}} and \ensuremath{\Varid{nonDet}} do the same with the addition that they first
 check, which context to apply; %
 \ensuremath{\Varid{signatureComponents}} is the function that deconstructs a type
 signature into valid suffixes and \ensuremath{\Varid{signature}} pairs all these suffixes
 with the context. %
 
-Since we are just building tuples, we add the reference to the
-document as \ensuremath{\Conid{Occurrences}} to construct the required triple. %
+Since we are just building tuples, we need to add the reference to the
+corresponding document as \ensuremath{\Conid{Occurrences}} to construct the required
+triple. %
 We gain the \ensuremath{\Conid{DocId}} to build \ensuremath{\Conid{Occurrences}} when we insert a document
 into a new \ensuremath{\Conid{Documents}\;\Varid{a}} structure. %
-Therefore, we take a look at the document construction first. %
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{insertDoc}\mathbin{::}\Conid{Documents}\;\Varid{a}\to \Conid{Document}\;\Varid{a}\to (\Conid{DocId},\Conid{Documents}\;\Varid{a}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+Thus, we create a document structure for each \ensuremath{\Conid{FunctionInfoStructure}}
+(i.e. each element in \ensuremath{\Varid{listOfFunctionInfoStructures}}) and insert each
+document to a new collection, i.e. a new \ensuremath{\Conid{Documents}\;\Conid{FunctionInfo}} structure. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{12}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{doc}\;\Varid{uriPath}\;\Varid{fiName}\;\Varid{uriType}\;\Varid{info}\mathrel{=}{}\<[E]%
+\>[B]{}\Varid{newDocument}\;\Varid{uriPath}\;\Varid{aFunctionInfoStructure}\mathrel{=}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
 \>[3]{}\Conid{Document}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
 \>[3]{}\{\mskip1.5mu \Varid{title}{}\<[12]%
-\>[12]{}\mathrel{=}\Varid{fiName}\;\Varid{info}{}\<[E]%
+\>[12]{}\mathrel{=}\Varid{fName}\;\Varid{aFunctionInfoStucture}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
 \>[3]{},\Varid{uri}{}\<[12]%
-\>[12]{}\mathrel{=}\Varid{uriTypeToUriPath}\;\Varid{uriPath}\;\Varid{uriType}\;\Varid{info}{}\<[E]%
+\>[12]{}\mathrel{=}\Varid{uriPath}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{},\Varid{custom}{}\<[13]%
-\>[13]{}\mathrel{=}\Conid{Just}{}\<[E]%
+\>[3]{},\Varid{custom}\mathrel{=}\Conid{Just}\;\Varid{aFunctionInfoStructure}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
 \>[3]{}\mskip1.5mu\}{}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-The URI path is given by the user, the title of the document is the
-function's name, which can be extracted by the provided function and
-the \ensuremath{\Conid{URI}\;\Varid{a}} data structure determines the final URI. %
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}(\Varid{map}\;(\Varid{doc}\;\Varid{uriPath}\;\Varid{fName}\;(\Conid{FctOrTypeURI}\;\Varid{fModule}\;\Varid{fName})){}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\mathbin{\$}\Varid{functionInfos}\;\Varid{curryDoc}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-In our code, we create a document structure for all the functions in
-\ensuremath{\Conid{CurryInfo}} and work a list of \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}} in the further
-process. %
-Now we insert each document to a new \ensuremath{\Conid{Documents}\;\Conid{FunctionInfo}}
-structure.
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{insertDoc}\;\Varid{documents}\;\Varid{document}\mathbin{::}(\Conid{DocId},\Conid{Documents}\;\Varid{a}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2302,12 +2498,20 @@ contexts to gain the list of triples.
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{contexts}\;\Varid{info}\;\Varid{docId}\mathrel{=}\Varid{map}\;(\lambda (\Varid{c},\Varid{w})\to (\Varid{c},\Varid{w},\Varid{occ}\;\Varid{docId}))\;(\Varid{contextsF}\;\Varid{info}){}\<[E]%
+\>[B]{}\mbox{\onelinecomment  with FunctionInfo as type for a}{}\<[E]%
+\\
+\>[B]{}\Varid{triples}\mathbin{::}\Varid{a}\to \Conid{DocId}\to (\Conid{Context},\Conid{Word},\Conid{Occurrences}){}\<[E]%
+\\
+\>[B]{}\Varid{triples}\;\Varid{aFunctionInfoStructure}\;\Varid{docId}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{map}\;(\lambda (\Varid{c},\Varid{w})\to (\Varid{c},\Varid{w},\Varid{occ}\;\Varid{docId}))\;(\Varid{contextsF}\;\Varid{aFunctionInfoStructure}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
-Luckily, the \ensuremath{\Conid{HolIndex}} interface provides a function to build an
+Fortunately, the \ensuremath{\Conid{HolIndex}} interface provides a function to build an
 \ensuremath{\Conid{Inverted}} structure from a list of these triples. %
 In this example, we create a new index, therefore we provide the empty
 index as basis. %
@@ -2315,55 +2519,73 @@ index as basis. %
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{idx}\mathrel{=}\Varid{fromList}\;\Varid{emptyInverted}\;\Varid{contextsF}{}\<[E]%
+\>[B]{}\Varid{invertedIndex}\mathbin{::}\Conid{Inverted}{}\<[E]%
+\\
+\>[B]{}\Varid{invertedIndex}\;\Varid{contextList}\mathrel{=}\Varid{fromList}\;\Varid{emptyInverted}\;\Varid{contextList}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 In the end, for each function we construct the corresponding \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}}, insert it into a new \ensuremath{\Conid{Documents}\;\Conid{Function}} structure,
 pair the contexts with the information about the function and add the
 obtained \ensuremath{\Conid{DocId}} to gain the \ensuremath{\Conid{Inverted}} index. %
-Then we merge one index after another and also insert new
-corresponding \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}} structures to \ensuremath{\Conid{Documents}\;\Conid{FunctionInfo}}. %
+Then we merge one index after another and also collect the
+corresponding \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}} structures to construct a \ensuremath{\Conid{Documents}\;\Conid{FunctionInfo}} structure. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{7}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{22}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{26}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{ixDoc}\;\Varid{contextList}\;(\Varid{info}\mathbin{:}\Varid{infos})\;(\Varid{doc1}\mathbin{:}\Varid{docs})\;(\Conid{IndexerState}\;\Varid{ix}\;\Varid{dc})\mathrel{=}{}\<[E]%
+\>[B]{}\Varid{ixDoc}\;(\Varid{funtionInfo}\mathbin{:}\Varid{infos})\;(\Varid{doc1}\mathbin{:}\Varid{docs})\;(\Conid{IndexerState}\;\Varid{index}\;\Varid{doc})\mathrel{=}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\mathbf{let}\;(\Varid{docId},\Varid{docs'})\mathrel{=}\Varid{insertDoc}\;\Varid{dc}\;\Varid{doc1}{}\<[E]%
+\>[3]{}\mathbf{let}\;(\Varid{docId},\Varid{documents})\mathrel{=}\Varid{insertDoc}\;\Varid{doc}\;\Varid{doc1}{}\<[E]%
 \\
 \>[3]{}\hsindent{4}{}\<[7]%
-\>[7]{}\Varid{idx'}{}\<[22]%
-\>[22]{}\mathrel{=}\Varid{mergeIndexes}\;\Varid{ix}\mathbin{\$}\Varid{idx}\;\Varid{contextList}\;\Varid{info}\;\Varid{docId}{}\<[E]%
+\>[7]{}\Varid{newIndex}{}\<[26]%
+\>[26]{}\mathrel{=}\Varid{mergeIndexes}\;\Varid{index}\mathbin{\$}\Varid{invertedIndex}\;(\Varid{contextF}\;\Varid{functionInfo}){}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\mathbf{in}\;\Varid{ixDoc}\;\Varid{contextList}\;\Varid{infos}\;\Varid{docs}\;(\Varid{makeIndexerState}\;\Varid{idx'}\;\Varid{docs'}){}\<[E]%
+\>[3]{}\mathbf{in}\;\Varid{ixDoc}\;\Varid{infos}\;\Varid{docs}\;(\Varid{makeIndexerState}\;\Varid{newIndex}\;\Varid{documents}){}\<[E]%
+\\
+\>[B]{}\Varid{ixDoc}\;\anonymous \;\anonymous \;\anonymous \;\Varid{holumbusState}\mathrel{=}\Varid{holumbusState}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 Since we can also merge the new created \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}}
 with existing data, we pass an empty \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}} when
 constructing a new index. %
-In our example, we replace the parameter \ensuremath{\Varid{contextList}} with
-\ensuremath{\Varid{contexts}}, \ensuremath{(\Varid{info}\mathbin{:}\Varid{infos})} with the given \ensuremath{\Conid{FunctionInfo}} structures,
-\ensuremath{(\Varid{doc1}\mathbin{:}\Varid{docs})} are the corresponding \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}} structures
-and \ensuremath{\Conid{IndexerState}\;\Varid{ix}\;\Varid{dc}} is an empty \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}}. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{ixDoc}\;\anonymous \;\anonymous \;\anonymous \;\Varid{hs}\mathrel{=}\Varid{hs}{}\<[E]%
+\>[B]{}\Varid{fctState}\mathrel{=}\Varid{ixDoc}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{contextsF}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}(\Varid{functionInfos}\;\Varid{curryDoc}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}(\Varid{map}\;(\Varid{doc}\;\Varid{uriPath}\;\Varid{fName})\mathbin{\$}\Varid{functionInfos}\;\Varid{curryDoc}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{emptyFunctionInfoState}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+In our example, we use the function \ensuremath{\Varid{contextsF}} to generate the list
+of contexts, \ensuremath{(\Varid{info}\mathbin{:}\Varid{infos})} with the given \ensuremath{\Conid{FunctionInfo}} structures,
+\ensuremath{(\Varid{doc1}\mathbin{:}\Varid{docs})} is the list of \ensuremath{\Conid{Document}\;\Conid{FunctionInfo}} structures
+and \ensuremath{\Conid{IndexerState}\;\Varid{ix}\;\Varid{dc}} is an empty \ensuremath{\Conid{HolumbusState}\;\Conid{FunctionInfo}}. %
 
 If there are no more functions left to process, we return the
 constructed \ensuremath{\Conid{HolumbusState}} structure. \\
 
-In the end there are one requirement and two ways to build an index. %
+In the end, there are one requirement and two ways to build an index. %
 The requirement is the generation of a \emph{.cdoc}-file for at least
 one Curry program. %
 Then you can start the indexing for the given file and the URI to the
@@ -2372,7 +2594,7 @@ an existing one. %
 We also provide a mechanism to read out a \emph{.txt}-file consisting
 of pairs of paths to \emph{.cdoc}-files and the corresponding URI. %
 Further information about the usage is provided in
-\hyperref[a:currysearch]{Appendix \ref{a:currysearch}}. %
+\hyperref[currysearch]{Appendix \ref{currysearch}}. %
 
 % First mention that the interesting parts (that we want to add to the
 % index) are already filtered by the CurryDoc part. So the indexer only
@@ -2406,7 +2628,7 @@ In this section we discuss the general idea of a parser, connect this
 idea with our search engine and develop a simple parser as example. %
 The example addresses the problem of parsing expressions that can
 occur with and without parentheses. %
-We choose this example, because we need such a parser for the user
+We choose this example because we need such a parser for the user
 queries in our search engine, too. %
 Furthermore, we introduce
 \emph{Parsec}\footnote{\url{http://hackage.haskell.org/package/parsec}}\footnote{\url{http://legacy.cs.uu.nl/daan/parsec.html}},
@@ -2440,7 +2662,7 @@ With the type definition above, we can run one parser on a given
 input. %
 The main idea behind parsing is to apply several parsers and combine
 the results. %
-In order to do that, the parser type needs a pair consisting of the
+In order to combine the results, the parser type needs a pair consisting of the
 parsing result and the rest of the input, which was not parsed. %
 Additionally, we need to consider that the parsing of an input is
 ambiguous. %
@@ -2450,7 +2672,7 @@ Thus, we extend the result type to a be a list of pairs, representing
 the different parsing combinations or the empty list, if the parser
 fails. %
 This approach of lists as success values was introduce by Philip
-Wadler\cite{successlist}.
+Wadler \cite{successlist}.
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2698,12 +2920,12 @@ discard the parentheses. %
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{parseParenExpression}\mathbin{::}\Conid{Parser}\;\Conid{String}{}\<[E]%
+\>[B]{}\Varid{parseParenWord}\mathbin{::}\Conid{Parser}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\Varid{parseParenExpression}\mathrel{=}{}\<[E]%
+\>[B]{}\Varid{parseParenWord}\mathrel{=}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\lambda \Varid{ts}\to (\mathbin{\char92 \char95 }\Varid{expr}\;\anonymous \to \Varid{expr})~\circledS~(\Varid{parseOpen}\circledast\Varid{parseExpression}\circledast\Varid{parseClose})\;\Varid{ts}{}\<[E]%
+\>[3]{}\lambda \Varid{ts}\to (\mathbin{\char92 \char95 }\Varid{expr}\;\anonymous \to \Varid{expr})~\circledS~(\Varid{parseOpen}\circledast\Varid{parseWord}\circledast\Varid{parseClose})\;\Varid{ts}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2722,24 +2944,24 @@ the read parentheses. %
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{4}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{parseParenExpression2}\mathbin{::}\Conid{Parser}\;\Conid{String}{}\<[E]%
+\>[B]{}\Varid{parseParenWord2}\mathbin{::}\Conid{Parser}\;\Conid{String}{}\<[E]%
 \\
-\>[B]{}\Varid{parseParenExpression2}\mathrel{=}{}\<[E]%
+\>[B]{}\Varid{parseParenWord2}\mathrel{=}{}\<[E]%
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\lambda \Varid{ts}\to (\Varid{parseOpen}~*\!\!\!>\Varid{parseExpression}<\!\!\!*~\Varid{parseClose}){}\<[E]%
+\>[3]{}\lambda \Varid{ts}\to (\Varid{parseOpen}~*\!\!\!>\Varid{parseWord}<\!\!\!*~\Varid{parseClose}){}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{parseExpression}{}\<[E]%
+\>[4]{}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{parseWord}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 Summing up, we introduced the basic idea of parsers and implemented a
-small parser that can read an expression with or without parentheses. %
+small parser that can read a word with or without parentheses. %
 In the following, we have to keep in mind that we build a strong parser
 by combining several parses that parse substructures. %
 
-\subsection{Singature Parser}
+\subsection{Parsec library}
 
 In our implementation we use the Haskell library Parsec to
 build the parser to read and analyze the user queries. %
@@ -2755,8 +2977,9 @@ Unfortunately, they do not perform the exact same task. %
 Thus, we take a look at the functionality Parsec provides first. %
 
 The choice combinator follows a deterministic predictive approach with
-limited lookahead \cite{parsec1}, i.e. the parser \ensuremath{\Varid{p}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{q}} only tries the second
-parser \ensuremath{\Varid{q}}, if the first parser did not consumed any input. %
+limited lookahead \cite{parsec1}, i.e. the parser \ensuremath{\Varid{p}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{q}} only
+tries the second parser \ensuremath{\Varid{q}}, if the first parser did not consumed any
+input. %
 In order to gain the functionality that both parsers a applied to the
 input, Parsec provides the function \ensuremath{\Varid{try}} that discards the read input
 a parser, if it fails during parsing. %
@@ -2777,7 +3000,7 @@ parser \ensuremath{\Varid{q}} is applied to the unmodified input. %
 The sequence combinators \ensuremath{\circledast}, \ensuremath{<\!\!\!*} and \ensuremath{*\!\!\!>} as well as the operator
 \ensuremath{\circledS} are not part of the Parsec library. %
 These functions apply to general concepts of sequening (also:
-application), that are provided by the \emph{Applicative} interface
+application) that are provided by the \emph{Applicative} interface
 \footnote{\url{http://hackage.haskell.org/packages/archive/base/4.5.0.0/doc/html/Control-Applicative.html}}. %
 The concept of applicative programming is an idea introduced by Conor
 McBride and Ross Patterson \cite{applicative}. %
@@ -2792,14 +3015,19 @@ user queries. %
 In the \hyperref[analysis:parser]{previous chapter} we already
 mentioned our requirements on a parser for user queries, therefore we
 do not use Holumbus' parser, but implement our own parser. %
-In \hyperref[a:syntax]{Appendix \ref{a:syntax}} we give an overview of
+In \hyperref[syntax]{Appendix \ref{syntax}} we give an overview of
 the language we provide for the user queries. %
+After this introduction of the basic ideas of a parser and the provided
+Haskell libraries, we want to present an excerpt of our
+implementation. \\ %
 
-The following code presentation focuses on our implementation of the
+\subsection{Signature Parser}
+
+The following code focuses on our implementation of the
 parser for signatures, since the signatures are the main reason we
 decided to build a new parser. %
-Furthermore, the implementation uses some special feature Parsec
-provides that we want to share. \\ %
+Furthermore, the implementation uses some special features Parsec
+provides that we want to introduce. \\ %
 
 At first, we take a look at all kinds of type expression that can
 compose a type signature. %
@@ -2813,12 +3041,13 @@ compose a type signature. %
 \item tuples, i.e. \ensuremath{(\Conid{String},\Conid{Int})}
 \end{itemize}
 
-We build our parser for type signatures using these substructures. %
+We use these substructures to build our parser for type signatures. %
 Each item on the list needs to be analyzed by its own parser and step
-by step, we combine all parsers according to valid Curry syntax. \\
+by step, we combine all parsers according to valid Curry syntax for
+type signatures. \\
 
-If you take a closer look at the our list of type expression, you see
-that all identifiers that we have to parse, start with an upper-case
+If you take a closer look at the our list of type expressions, you see
+that all identifiers we have to parse, start with an upper-case
 letter, except for type variables. %
 Thus, at first, we need a parser that reads all valid identifiers. %
 Luckily, Parsec provides a feature to define tokens that are used
@@ -2827,7 +3056,7 @@ Tokens are constructs like white space, comments, identifiers,
 reserved words, numbers or strings. %
 
 The module \ensuremath{\Conid{ParsecToken}} exports a function \ensuremath{\Varid{makeTokenParser}} that
-takes such an language definition as returns a record with a set of
+takes such a language definition as argument and returns a record with a set of
 lexical parsers. %
 Every lexical parser already considers trailing white spaces, hence
 we do not need to consider white spaces when we use a parser of the
@@ -2837,9 +3066,7 @@ The following code shows our language definition for type signatures:
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{4}{@{}>{\hspre}c<{\hspost}@{}}%
-\column{4E}{@{}l@{}}%
-\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{19}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{21}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{24}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -2847,19 +3074,19 @@ The following code shows our language definition for type signatures:
 \\
 \>[B]{}\hsindent{3}{}\<[3]%
 \>[3]{}\{\mskip1.5mu \Varid{identStart}{}\<[21]%
-\>[21]{}\mathrel{=}\Varid{upper},{}\<[E]%
+\>[21]{}\mathrel{=}\Varid{upper}{}\<[E]%
 \\
-\>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{identLetter}{}\<[21]%
-\>[21]{}\mathrel{=}\Varid{alphaNum},{}\<[E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{},\Varid{identLetter}{}\<[19]%
+\>[19]{}\mathrel{=}\Varid{alphaNum}{}\<[E]%
 \\
-\>[3]{}\hsindent{2}{}\<[5]%
-\>[5]{}\Varid{reservedNames}{}\<[21]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{},\Varid{reservedNames}{}\<[21]%
 \>[21]{}\mathrel{=}{}\<[24]%
 \>[24]{}[\mskip1.5mu \text{\tt \char34 AND\char34},\text{\tt \char34 NOT\char34},\text{\tt \char34 OR\char34}\mskip1.5mu]{}\<[E]%
 \\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\mskip1.5mu\}{}\<[4E]%
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\mskip1.5mu\}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2900,8 +3127,8 @@ language and another one that parses  %
 
 Other lexical parser we will use in our code includes \ensuremath{\Varid{whitespace}},
 \ensuremath{\Varid{aSymbol}} and \ensuremath{\Varid{lexemer}}, where the latter takes a parser as argument
-and parses surrounding white spaces; \ensuremath{\Varid{aSymbol}} does the same, but
-takes a character as argument.%
+and parses trailing white spaces; \ensuremath{\Varid{aSymbol}} does the same, but
+takes a string as argument.%
 Additionally, we have parsers \ensuremath{\Varid{paren}} and \ensuremath{\Varid{bracket}} for parentheses
 and brackets. %
 
@@ -2917,13 +3144,56 @@ we used above, the type of our parser corresponds to: %
 \ColumnHook
 \end{hscode}\resethooks
 
+In contrary to the parser structure we presented above, Parsec does
+not return a list of possible results. % 
+The data structure follows a different approach to determine if the
+parser application was successful or not. % 
+In the end, on success, the parser returns the longest possible
+match. %
 
-The first substructure we want to parse is a primitive type.
+The first substructures we want to parse are type variables and
+primitive types.
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{12}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{varParser}\mathbin{::}\Conid{TypeExprParser}{}\<[E]%
+\\
+\>[B]{}\Varid{varParser}\mathrel{=}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{var}~\circledS~\Varid{lower}<\!\!\!*~\Varid{notFollowedBy}\;\Varid{alphaNum}){}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+A type variables is one lower-case character. %
+Thus, we do not allow type variables like \ensuremath{\Conid{IO}\;\Varid{abc}}, \ensuremath{\Varid{varParser}} fails
+on \ensuremath{\Varid{abc}} and our signature parser only reads \ensuremath{\Conid{IO}} as primitive type. %
+After parsing, the function \ensuremath{\Varid{var}} converts the character into a
+\ensuremath{\Conid{TypeExpr}}\footnote{\ensuremath{\Varid{a}} => \ensuremath{\Conid{TVar}\;\mathrm{97}}}. %
+At the beginning, we followed the idea to parse one character only and
+discard the rest, i.e. \ensuremath{\Conid{IO}\;\Varid{abc}} will be parsed as \ensuremath{\Conid{IO}\;\Varid{a}}, but
+eventually decided against this concept.%
+Later, we discuss this decision in more detail. %
+% Type variables alone will not be parsed without the context of
+% signatures (|":signature"|), because i
+
+% If we parse type variables as part of a list or tuple, we need a
+% slight change in our definition. %
+% We still parse one lower-case character, but a type variable can
+% appear in the middle of a tuple like |(Int, a, Int)| and hence, the
+% type variables is followed by a semicolon. %
+% The same reason applies for a type variable at the of a tuple or in a
+% list, since we have to parse the closing bracket and parenthesis
+% respectively. %
+% Therefore, we only forbid another identifier to appear after a type
+% variable in a list or tuple. %
+
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{13}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{primParser}\mathbin{::}\Conid{TypeExprParser}{}\<[E]%
 \\
@@ -2932,8 +3202,8 @@ The first substructure we want to parse is a primitive type.
 \>[B]{}\hsindent{3}{}\<[3]%
 \>[3]{}\Varid{prim}~\circledS~(\Varid{sigIdentifier}{}\<[E]%
 \\
-\>[3]{}\hsindent{9}{}\<[12]%
-\>[12]{}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{aSymbol}\;\text{\tt \char34 ()\char34}){}\<[E]%
+\>[B]{}\Varid{x}{}\<[13]%
+\>[13]{}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{aSymbol}\;\text{\tt \char34 ()\char34}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2942,32 +3212,28 @@ this identifier into a \ensuremath{\Conid{TCons}}-structure with no type
 arguments\footnote{A little reminder: \ensuremath{\Conid{Int}} => \ensuremath{\Conid{TCons}\;(\text{\tt \char34 Prelude\char34},\text{\tt \char34 Int\char34})\;[\mskip1.5mu \mskip1.5mu]}}. %
 In addition, we need to consider the unit type \ensuremath{()} as special
 constructor. %
-Otherwise we have to allow the search for functions with unvalid
-special characters. %
+Otherwise we have to allow search terms with unvalid special
+characters. %
 
 In case of a n-ary type constructor, we parse at least one identifier
 a white space and another type expression. %
 
-\begin{hscode}\SaveRestoreHook
+l\begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{4}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{consParser}\mathbin{::}\Conid{TypeExprParser}{}\<[E]%
 \\
 \>[B]{}\Varid{consParser}\mathrel{=}{}\<[E]%
 \\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}((\lambda \Varid{constr}\;\anonymous \;\Varid{expr}\to \Varid{cons}\;\Varid{constr}\;\Varid{expr}){}\<[E]%
+\>[B]{}\Varid{a}\;{}\<[4]%
+\>[4]{}((\lambda \Varid{constr}\;\anonymous \;\Varid{expr}\to \Varid{cons}\;\Varid{constr}\;\Varid{expr}){}\<[E]%
 \\
-\>[3]{}\hsindent{1}{}\<[4]%
 \>[4]{}~\circledS~\Varid{sigIdentifier}{}\<[E]%
 \\
-\>[3]{}\hsindent{1}{}\<[4]%
 \>[4]{}\circledast\Varid{whitespace}{}\<[E]%
 \\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\circledast\Varid{sepBy1}\;(\Varid{signatureTerm}\;\Conid{False}\;\Conid{False})\;\Varid{whitespace}){}\<[E]%
+\>[4]{}\circledast\Varid{sepBy1}\;(\Varid{signatureTerm}\;\Conid{False})\;\Varid{whitespace}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -2977,67 +3243,25 @@ follow. %
 The function \ensuremath{\Varid{sebBy1}} takes two parsers as arguments, where the second
 parser is a separator that occurs between two tokens of the same
 kind. %
-At least one type signature (but no white space) needs to occur,
+aAt least one type signature (but no white space) needs to occur,
 otherwise the parser \ensuremath{\Varid{sepBy1}} fails and altogether \ensuremath{\Varid{consParser}}
 fails. %
 Thus, in our case we parse at least two type expressions separated by a
 white space or just one type expression. %
 The parser \ensuremath{\Varid{signatureTerm}} handles all the substructures we listed
 above, except for function types, but we discuss this later. %
-The first boolean value indicates, if a constructor type may occur
-without parentheses; the second \ensuremath{\Conid{Bool}} is \ensuremath{\Conid{True}}, if we are in the
-process of parsing a list or tuple and \ensuremath{\Conid{False}} otherwise. %
+The boolean value indicates, if a constructor type may occur
+without parentheses. %
 In the defintion above, further constructor types are only allowed to
 occur with parentheses. % 
 As example to assure the accuracy of this idea: \ensuremath{\Conid{IO}\;\Varid{a}} and \ensuremath{\Conid{Maybe}\;\Varid{a}} are type
 constructors with one type argument. If we combine these type
 constructors to one expression, we get \ensuremath{\Conid{Maybe}\;(\Conid{IO}\;\Varid{a})} or \ensuremath{\Conid{IO}\;(\Conid{Maybe}\;\Varid{a})}. %
-We have to parenthesize the inner type constructor, because otherwise
+We have to parenthesize the inner type constructor because otherwise
 \ensuremath{\Conid{IO}\;\Conid{Maybe}\;\Varid{a}} and \ensuremath{\Conid{Maybe}\;\Conid{IO}\;\Varid{a}} suggest that both constructors take two
 type arguments instead of one. %
 
-The latter boolean value takes an important role in the parser for type variables,
-which we present next. %
-
-\begin{hscode}\SaveRestoreHook
-\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{4}{@{}>{\hspre}l<{\hspost}@{}}%
-\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{varParser}\mathbin{::}\Conid{Bool}\to \Conid{TypeExprParser}{}\<[E]%
-\\
-\>[B]{}\Varid{varParser}\;\Varid{inAListOrTuple}\mathrel{=}{}\<[E]%
-\\
-\>[B]{}\hsindent{3}{}\<[3]%
-\>[3]{}\Varid{var}~\circledS~((\Varid{guard}\;\Varid{inAListOrTuple}\sequ {}\<[E]%
-\\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}(\Varid{lexemer}\;\Varid{lower}<\!\!\!*~\Varid{notFollowedBy}\;\Varid{sigIdentifier})){}\<[E]%
-\\
-\>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}~\rotatebox[origin=c]{90}{$\ominus$}~\Varid{lexemer}\;\Varid{lower}<\!\!\!*~\Varid{notFollowedBy}\;\Varid{anyChar}){}\<[E]%
-\ColumnHook
-\end{hscode}\resethooks
-
-In the common case, a type variables is one lower-case character. %
-Thus, we do not allow type variables like \ensuremath{\Conid{IO}\;\Varid{abc}}, the variable
-parser fails on \ensuremath{\Varid{abc}} and our signature parser only reads \ensuremath{\Conid{IO}} as
-primitive type. %
-After parsing, the function \ensuremath{\Varid{var}} converts the character into a
-\ensuremath{\Conid{TypeExpr}}\footnote{\ensuremath{\Varid{a}} => \ensuremath{\Conid{TVar}\;\mathrm{97}}}. %
-If we parse type variables as part of a list or tuple, we need a
-slight change in our definition. %
-We still parse one lower-case character, but a type variable can
-appear in the middle of a tuple like \ensuremath{(\Conid{Int},\Varid{a},\Conid{Int})} and hence, the
-type variables is followed by a semicolon. %
-The same reason applies for a type variable at the of a tuple or in a
-list, since we have to parse the closing bracket and parenthesis
-respectively. %
-Therefore, we only forbid another identifier to appear after a type
-variable in a list or tuple. %
-
-Speaking of lists and tuples, let's take a look at the parsers for
-these two type expressions. %
+Next, let's take a look at the parsers for lists an tuples. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
@@ -3083,7 +3307,7 @@ Next, we present the parser for tuples in three steps.
 \>[4]{}\circledast\Varid{aSymbol}\;\text{\tt \char34 ,\char34}{}\<[E]%
 \\
 \>[3]{}\hsindent{1}{}\<[4]%
-\>[4]{}\circledast\Varid{sepBy1}\;(\Varid{signatureParser}\;\Conid{True})\;(\Varid{string}\;\text{\tt \char34 ,\char34}){}\<[E]%
+\>[4]{}\circledast\Varid{sepBy1}\;(\Varid{signatureParser}\;\Conid{True})\;(\Varid{aSymbol}\;\text{\tt \char34 ,\char34}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
@@ -3093,7 +3317,7 @@ comma instead of a white space. %
 We combine the first type expressions and the list of following type
 expression to a list. %
 This list represents the type arguments for the tuple constructor. %
-Next, we need to build the tuple constructor, because it depends on
+Next, we need to build the tuple constructor because it depends on
 the number of arguments: \ensuremath{(,)} is a tuple constructor for a pair,
 whereas for a triple we need \ensuremath{(,,,)}. %
 
@@ -3139,17 +3363,17 @@ assign a function that determines the result of the parsing. %
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{5}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{signatureTable}\mathrel{=}{}\<[E]%
-\\
-\>[B]{}[\mskip1.5mu [\mskip1.5mu \Conid{Infix}\;((\mathbin{\char92 \char95 }\to \Conid{FuncType})\circledS\Varid{lexemer}\;(\Varid{string}\;\text{\tt \char34 ->\char34}))\;\Conid{AssocRight}\mskip1.5mu]\mskip1.5mu]{}\<[E]%
+\\[\blanklineskip]%
 \ColumnHook
 \end{hscode}\resethooks
 
-Thus, when parsing a \ensuremath{\to } in an infix position, we return the partial
-application of \ensuremath{\Conid{FuncType}}, because the two arguments of this
-constructor are the type expression to the left and right of the
-operator\footnote{\ensuremath{\Conid{Int}\to \Conid{Int}} => \ensuremath{\Conid{FuncType}\;\Conid{Int}\;\Conid{Int}}}. %
+Thus, when parsing a function arrow \ensuremath{\to } in an infix position, we
+return the partial application of \ensuremath{\Conid{FuncType}} because the two
+arguments of this constructor are the type expression to the left and
+right of the operator\footnote{\ensuremath{\Conid{Int}\to \Conid{Int}} => \ensuremath{\Conid{FuncType}\;(\Conid{TCons}\;(\text{\tt \char34 \char34},\text{\tt \char34 Int\char34})\;[\mskip1.5mu \mskip1.5mu])\;(\Conid{TCons}\;(\text{\tt \char34 \char34},\text{\tt \char34 Int\char34})\;[\mskip1.5mu \mskip1.5mu]}}. %
 
 In order to use this parser, we use Parsec's function
 \ensuremath{\Varid{buildExpressionParser}} that takes such an definition table and
@@ -3209,16 +3433,58 @@ signatureTerm:
 
 In order to guarantee that we can parse tuples, parenthesized function
 types and redundant parentheses, we cannot parse any characters in
-case \ensuremath{\Varid{tupleParser}}fails, otherwise the parser for parenthesized
-expressions fails too. % 
-Therefore, we have to try \ensuremath{\Varid{tuplesParser}} first, thus, if it fails, the
+case \ensuremath{\Varid{tupleParser}} fails, otherwise the parser for parenthesized
+expressions fails too. %
+Therefore, we have to try \ensuremath{\Varid{tuplesParser}} first; if it fails, the
 result is discarded and we can try for parenthesized expressions
 next. %
+We do not need a try for the parenthesized expression because there
+are no other valid expressions that start with an opening parenthesis,
+since we already ruled out the possibility of tuples. %
+Therefore, the parser \ensuremath{\Varid{paren}\;(\Varid{signatureParser}\;\Conid{False})} either fails on
+the first character of an input or parses a valid parenthesized
+expression.\footnote{Here we only consider well-balanced parentheses
+  and discuss the handling of incorrect user input later.} %
+The same logic holds for the following parsers, since they all expect
+different first characters. %
+For lists, the first input character has to be an open bracket,
+\ensuremath{\Varid{primParser}} only accepts an upper-case character and \ensuremath{\Varid{varParser}} the
+opposite, a lower-case character. \\ %
 
-\subsection{Query Parser}
+In the end, the signature parser joins the group of parses for
+specifiers (\textss{\ensuremath{\mathbin{:}\mathbf{module}\;\Conid{IO}}}, \textss{\ensuremath{\mathbin{:}\Varid{function}\;\Varid{map}}} etc.) and
+binary operators (\ensuremath{\Conid{AND}}, \ensuremath{\Conid{OR}}, \ensuremath{\Conid{NOT}}). %
+Since we already parse any trailing white spaces, the actual parser
+for queries we eventually call needs to parse all leading white
+spaces. %
+On the first layer, we apply the parser for the binary operations,
+since we want to combine specifiers, signatures and pure search
+terms. %
+Under specification of several contexts and a pure search term without
+any binary operations, the parser implicitly combines the
+substructures with conjunctions, i.e. \textss{\ensuremath{\mathbin{:}\Varid{function}\;\Varid{map}\;\Varid{a}\to \Varid{b}}}
+searches for a function starting with \emph{map}, which signature
+consists of \ensuremath{\Varid{a}\to \Varid{b}}. %
+The parser for signatures applies for the context of signatures, but
+also for any word starting with an upper-case character that forms a
+valid type expression and type signature respectively. %
+This means, the search terms \textss{\ensuremath{\mathbin{:}\Varid{signature}\;\Varid{io}})} and
+\textss{\ensuremath{\Conid{IO}}} yield the same \ensuremath{\Conid{Query}}-structure, hence the same search
+results. %
+On the contrary, type variables alone are not parsed implicitly
+because we also want to search for words without context, i.e. we
+search without a context for any word starting with a lower-case
+character. %
+Additionally, the parser always tries to parse as much words and
+characters respectively. %
+For example, if a valid expression is followed by nonsense, we parse
+the first part and discard the other, i.e. \textss{\ensuremath{\Conid{IO}\;\mathrm{1}\;\anonymous \mathbin{!@\#\char94 }}} yields
+the same results as \textss{\ensuremath{\Conid{IO}}}. %
+And, as a last resort, we parse unbalanced parentheses that occur in the
+beginning or end of the search term. %
+We expect an intuitiv usage of the search engine of this underlying
+parser and all the features the parser provides. %
 
-  
-% the parser does not check if the whole string was parsed -> better user-experience
 
 % Give a definition of the language (EBNF(?) / appendix). 
 
@@ -3233,8 +3499,6 @@ next. %
 %  signature "->" lower
 %  constructor := Upper alphaNum signature | Upper alphaNum lower
 % \end{code}
-
-\section{Web Application}
 \chapter{Conclusion}\label{conclusion}
 \section{Summary and Results}
 \section{Outlook}
@@ -3247,7 +3511,7 @@ next. %
 
 % Appendix, falls vorhanden
 \appendix
-\chapter{CurryDoc Instruction}\label{a:currydoc}
+\chapter{CurryDoc Instruction}\label{currydoc}
 \section{Installation}
 
 The installation requires a running Curry and curry2prolog system, we
@@ -3287,7 +3551,7 @@ representation, since the latter generates the \emph{.cdoc}-file as well.
 \tt ~\char36{}~currydoc~\char45{}\char45{}onlyindexhtml~\char60{}doc~directory\char62{}~\char60{}module\char95{}names\char62{}
 \end{tabbing}
 
-\chapter{Installation and Usage of Curr(y)gle}\label{a:currysearch}
+\chapter{Installation and Usage of Curr(y)gle}\label{currysearch}
 
 \section{Installation}
 
@@ -3349,7 +3613,7 @@ localhost on a given port with the curryServer.
 ~\char36{}~curryServer~\char45{}p~1337
 \end{tabbing}
 
-\chapter{User-Query Syntax}\label{a:syntax}
+\chapter{User-Query Syntax}\label{syntax}
 
 % Literaturverzeichnis
 \bibliography{literatur/bib}
