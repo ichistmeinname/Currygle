@@ -95,12 +95,12 @@ instance Binary TypeExpr where
 
 -- | FunctionInfo holds information about the name, signature, corresponding module,
 --   description and flexible/rigid status of a function and its non-/deterministic behaviour.
-data FunctionInfo = FunctionInfo String (QName, TypeExpr) String String Bool FlexRigidResult deriving (Show, Read)
+data FunctionInfo = FunctionInfo String TypeExpr String String Bool FlexRigidResult deriving (Show, Read)
 
 fName :: FunctionInfo -> String
 fName (FunctionInfo n _ _ _ _ _) = n
 
-fSignature :: FunctionInfo -> (QName, TypeExpr)
+fSignature :: FunctionInfo -> TypeExpr
 fSignature (FunctionInfo _ s _ _ _ _) = s
 
 fModule :: FunctionInfo -> String
@@ -196,9 +196,9 @@ mkModuleInfo = ModuleInfo
 
 -- | Empty constructor for FunctionInfo.
 emptyFunctionInfo :: FunctionInfo
-emptyFunctionInfo = mkFunctionInfo "" (emptyQName, Undefined) "" "" False UnknownFR
+emptyFunctionInfo = mkFunctionInfo "" Undefined "" "" False UnknownFR
 
-mkFunctionInfo :: String -> (QName, TypeExpr) -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
+mkFunctionInfo :: String -> TypeExpr -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
 mkFunctionInfo = FunctionInfo
 
 -- | Empty constructor for TypeInfo.
