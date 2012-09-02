@@ -19,7 +19,7 @@ generateCDoc progName modCmts progCmts anaInfo = do
     let modInfo = ModuleInfo modName (author avCmts) mCmts 
 	funcInfo (Func qName@(mName, fName) _ _ tExpr rule) = 
             FunctionInfo fName 
-	    (qName, tExpr) 
+	    tExpr 
 	    mName 
 	    (funcComment fName progCmts)
 	    (getOverlappingInfo anaInfo qName) 
@@ -30,9 +30,9 @@ generateCDoc progName modCmts progCmts anaInfo = do
 	    vars
 	    mName
 	    (dataComment tName progCmts)
-        typeInfo (TypeSyn (mName, tName) _ vars tExpr) =
+        typeInfo (TypeSyn qName@(mName, tName) _ vars tExpr) =
  	    TypeInfo tName
-	    [((mName, tName), [tExpr])]
+	    [(qName, [tExpr])]
 	    vars
 	    mName
 	    (dataComment tName progCmts)
@@ -71,7 +71,7 @@ data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo]
 -- the description
 -- True if property ist defined non-deterministically
 -- the flex/rigid status
-data FunctionInfo = FunctionInfo String (QName, TypeExpr) String String Bool FlexRigidResult
+data FunctionInfo = FunctionInfo String TypeExpr String String Bool FlexRigidResult
 
 -- the name
 -- the signature
