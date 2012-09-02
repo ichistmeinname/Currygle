@@ -25,7 +25,7 @@ specify a search query. %
 
 % \section{Currydoc}
 
-\section{Creating the Index}
+\section{Creating the Index}\label{analysis:indexer}
 Search engines look up information, hence, we need to collect data
 that we can search for. %
 This data is called index and stores all the information we want to
@@ -479,11 +479,5 @@ Thus, to reach this goal, we need to analyse the user input and
 rebuild it as an expression of our |Query| data structure. %
 The following figures describe the language the parser supports and in
 \hyperref[implementation:parser]{Section \ref{implementation:parser}}
-we discuss our actual implementation. %
+we discuss our actual implementation. % 
 
-% The parser becomes a complex, but very important matter.
-
-\begin{figure}
-%include ../extras/parser.lhs
-\caption{The query language of Curr(y)gle}
-\end{figure}

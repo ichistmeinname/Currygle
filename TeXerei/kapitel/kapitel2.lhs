@@ -6,7 +6,7 @@ Curry. %
 It outlines main concepts and features of the language and gives short
 explanations for a better understanding. %
 The Curry implementation we refer to in the following sections is
-PAKCS \cite{pakcs}. Furthermore, we present CurryDoc \cite{currydoc2}, a
+PAKCS~\cite{pakcs}. Furthermore, we present CurryDoc~\cite{currydoc2}, a
 tool to generate documentation that is distributed with PAKCS, in the
 second section. %
 The last section introduces the Holumbus\footnote{\url{http://holumbus.fh-wedel.de/trac}} framework, a
@@ -310,16 +310,16 @@ It also provides the type signatures of functions, since Curry uses a
 type inferencer algorithm. %
 In addition the CurryDoc tool analyzes the program's structure and
 approximates the run-time behavior to gain further
-information \cite{currydoc2}. %
+information~\cite{currydoc2}. %
 This analysis includes information about in-/completeness, overlapping
 pattern matches and non-/deterministic functions. %
 
 Since CurryDoc is implemented in Curry, it uses the meta-programming
 module
-\emph{Flat}\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/Flat.html}}
+\emph{FlatCurry}\footnote{\url{http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/FlatCurry.html}}
 that provides an intermediate language of the Curry program to analyze
 the special function proporties. %
-Such a FlatCurry \cite{flat} program consists mainly of a list of
+Such a FlatCurry~\cite{flat} program consists mainly of a list of
 functions, a list of types and information about the module itself. %
 % As you may notice, these are the informations we want to provide for
 % the API search engine.
@@ -329,28 +329,102 @@ functions, a list of types and information about the module itself. %
 
 \section{The Holumbus Framework}\label{preliminaries:holumbus}
 The Holumbus Framework is a Haskell library created by students of FH
-Wedel in connection with three master's theses \cite{searchingthesis}\cite{indexingthesis}. %
+Wedel in connection with three master's theses~\cite{searchingthesis}\cite{indexingthesis}. %
 Holumbus is a library to build and configure a search engine. %
 The main idea of the framework is to collect data with a specific
 structure, like an API of a programming language, and to take
 advantage of this structure to improve the search results. %
 In addition to the framework, they also build an example application
-named \emph{Hayoo!} \cite{hayoo}, an API search engine for the
+named \emph{Hayoo!}~\cite{hayoo}, an API search engine for the
 functional programming language Haskell. %
 
 The framework supports three steps to create a search engine: the
-crawling, the indexing and the searching part itself. %
+crawling (1), the indexing (2) and the searching part (3) itself. %
+\begin{enumerate} 
+\item In the process of crawling, the World Wide Web is browsed
+  automatically in order to collect all data and information
+  respectively. %  
+  Crawlers mainly copy all the visited pages, which then, are passed
+  to the indexer in order to preprocess the data. %
+\item The indexing describes a process to analyze and store data in
+  order to provide a fast information retrieval. %
+  The indexer preprocess the data in order to filter all relevant
+  search criteria, e.g., an indexer can filter nothing and store each
+  word of the given data. %
+  Additionally, instead of keeping a copy of the original document,
+  e.g., a web page, a characteristically data structure
+  is created. %
+\item Eventually, this fast information retrieval is the heart of the
+  search engine. %
+  One can access the information of the index by phrasing a search
+  query. %
+  Commonly, the search query is compared to the information stored in
+  the index and convenient matches, i.e., documents, are returned as
+  results. %
+\end{enumerate}
 We focus on the latter two steps, since we use them in our
 implementation. %
-The indexer preprocesses the data to create the
-characteristically data structure that is used to process a search
-query. %
-Furthermore, Holumbus provides a data structure that represents the
-results of a search query. %
-This data structure corresponds to the structure of the data,
-which simplifies further processing. %
+Holumbus provides several modules for the indexing process (see
+\hyperref[fig:holumbus]{Figure \ref*{fig:holumbus}}). %
+Common provides interfaces for the data structure; This data structure
+is composed of two parts: the index and documents. %
+Holumbus calls the structure to hold the preprocessed data
+\emph{index} and \emph{documents} is the name for new created data
+structure. %
+Further data structures that are used in the indexing process are
+stores in the folder \emph{Common}, whereas \emph{Inverted} consists
+of the implementation of the actual indexed data. %
+In this case, Holumbus decided on a structure called \emph{inverted
+  filed} or \emph{inverted index}. %
+This structure stores the occurrences of each search criterion and a
+reference to its corresponding document. %
+Furthermore, Holumbus provides the mechanism to form a search request,
+to process this request and a data structure to represent the result;
+additionally, this result can be subjected to a ranking. %
+(see \hyperref[fig:holumbus]{Figure \ref*{fig:holumbus}} again). %
 
-\missingfigure{Holumbus structure}
-\todo[noline]{ info about this structure in
-  more detail}
-
+\tikzstyle{every node}=[draw=black,thick,anchor=west]
+\tikzstyle{selected}=[draw=red,fill=red!30]
+\tikzstyle{optional}=[dashed]
+\tikzstyle{file}=[rounded corners=2mm]
+\begin{figure}[h!]
+\begin{center}
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) ||- (\tikzchildnode.west)}]
+  \node {Holumbus}
+    child { node [optional] {Crawler} }		
+    child { node [optional] {Data} }
+    child { node {Index} }
+    child { node {Query} };
+\end{tikzpicture}
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) ||- (\tikzchildnode.west)}]
+  \node {Query}
+    child { node [optional] {Language} 
+      child {node [file] {Grammar}}
+      child {node [file,optional] {Parser}}}	
+    child [missing] {}
+    child [missing] {}
+    child { node [file] {Processor} }
+    child { node [file] {Ranking} }
+    child { node [file] {Result} };
+\end{tikzpicture}
+\begin{tikzpicture}[%
+  grow via three points={one child at (0.5,-0.7) and
+  two children at (0.5,-0.7) and (0.5,-1.4)},
+  edge from parent path={(\tikzparentnode.south) ||- (\tikzchildnode.west)}]
+  \node {Index}
+    child { node {Common}}
+    child { node [file] {Common}}
+    child { node [file] {CompactDocuments} }
+    child { node [file] {CompactIndex} }
+    child { node {Inverted} };
+\end{tikzpicture}
+\end{center}
+\caption{Directory Structure of the Holumbus Library}
+\label{fig:holumbus}
+\end{figure}

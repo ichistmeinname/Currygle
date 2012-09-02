@@ -33,32 +33,47 @@ run the application is shown in \hyperref[currysearch]{Appendix
 
 \section{Environment}
 
-The underlying environment for the development is a 64-bit Mac OS
+The underlying environment for the development is an Apple 64-bit Mac OS
 X/Version 10.7.4 system. %
-Further, the implementations are mostly written in the functional programming
-language Haskell; we use the functional logic programming language
+Further, the implementations are mostly written in the functional
+programming language Haskell; we use the functional logic programming
+language
 Curry for the CurryDoc extension only.\\
 For the Haskell implementation, we use the Glasgow Haskell Compiler
 7.0.4\footnote{\url{http://www.haskell.org/ghc/}}. %
 As mentioned before, we use the PAKCS implementation of Curry and the
 SICStus-Prolog Version
 4.2.1\footnote{\url{http://www.sics.se/sicstus/docs/4.2.1/html/relnotes/index.html}}. %
-Since we already discussed Curry in a detailed manner in the
-\hyperref[preliminaries:curry]{second section}, we also want to present
-the main features of Haskell. %
-Therefore, we quote the Haskell language report \cite{haskellreport}:
-\begin{quote}
-  Haskell is a general purpose, purely functional programming language
-  incorporating many recent innovations in programming language
-  design. Haskell provides higher-order functions, non-strict
-  semantics, static polymorphic typing, user-defined algebraic
-  datatypes, pattern-matching, list comprehensions, a module system,
-  a monadic I/O system, and a rich set of primitive datatypes,
-  including lists, arrays, arbitrary and fixed precision integers, and
-  floating-point numbers. Haskell is both the culmination and
-  solidification of many years of research on non-strict functional
-  languages.
-\end{quote}
+In the \hyperref[preliminaries:curry]{second section}, we already
+discussed Curry in a detail, next, we also want to present the main
+features of Haskell. %
+Therefore, we summarize the characteristics mentioned in the Haskell
+language report~\cite{haskellreport}:
+
+\begin{itemize}
+\item purely functional programming language
+\item higher-order function
+\item non-strict semantics
+\item static polymorphic types
+\item user-defined data types
+\item pattern-matching
+\item list comprehension
+\item a module system
+\item a monadic I/O system
+\item rich set of primitive data types
+\end{itemize} 
+% \begin{quote}
+%   Haskell is a general purpose, purely functional programming language
+%   incorporating many recent innovations in programming language
+%   design. Haskell provides higher-order functions, non-strict
+%   semantics, static polymorphic typing, user-defined algebraic
+%   datatypes, pattern-matching, list comprehensions, a module system,
+%   a monadic I/O system, and a rich set of primitive datatypes,
+%   including lists, arrays, arbitrary and fixed precision integers, and
+%   floating-point numbers. Haskell is both the culmination and
+%   solidification of many years of research on non-strict functional
+%   languages. 
+% \end{quote}
 
 We chose Haskell as programming language because the paradigm of
 declarative and functional languages respectively caught our
@@ -72,21 +87,7 @@ Whereas in functional programming you always need to ask yourself
 \emph{how} to solve a problem. %
 Therefore, we wanted to learn more about this different kind of
 approach, and if this idea is well suited to daily use because you
-often read about the lack of functional programming in the industry \cite{noone}. %
-
-% \section{Overview}
-
-% \begin{postscript}
-% \begin{directory}{cdoc}
-%     \file{CurryDoc.curry}
-%     \file{\emph{CurryDocCDoc.curry}}
-%     \file{CurryDocHtml.curry}
-%     \file{CurryDocParams.curry}
-%     \file{CurryDocRead.curry }
-%     \file{CurryDocTeX.curry }
-%     \file{Makefile}
-% \end{directory}
-% \end{postscript}
+often read about the lack of functional programming in the industry~\cite{noone}. %
 
 \section{CurryDoc Extension}\label{implementation:currydoc}
 
@@ -126,7 +127,7 @@ data CurryInfo =
 We already introduced \emph{CurryInfo} as structure for a Curry
 program in the \hyperref[preliminaries:currydoc:curryInfo]{second
   chapter}. %
-As next step we want to describe |ModuleInfo|, |FunctionInfo| and
+As next step, we want to describe |ModuleInfo|, |FunctionInfo| and
 |TypeInfo|, since they are a part of the |CurryInfo| data structure. %
 % You can take a look at these data structures and their definitions in
 % advance in \hyperref[fig:curryInfo]{Figure \ref{fig:curryInfo}}.
@@ -179,8 +180,8 @@ Thus, searching for a module results in a great amount of hits, since
 every correlating module will be shown as well. %
 Furthermore, we think the version number is not a significant
 characteristic for a module. %
-Therefore we decided to focus on the three mentioned proporties only.
-
+Therefore, we decided to focus on the three mentioned proporties only.
+{\small
 \begin{code}
 data FunctionInfo = FunctionInfo 
   String           -- name
@@ -189,8 +190,7 @@ data FunctionInfo = FunctionInfo
   String           -- description
   Bool             -- True if the function is non-deterministic
   FlexRigidResult  -- flexible/rigid characteristic, conflicted or unknown value 
-\end{code}
-
+\end{code}}
 |FunctionInfo| consists of characteristics for a given function like
 the function's name and description. %
 Additionally, we decide to add the corresponding module to provide a
@@ -321,15 +321,15 @@ type Context    = String
 
 The first entry describes the context and the second entry stands for
 the actual word, we want to store in the index. %
-Both are represented as |String|.%
+Both are represented as |String|. %
 In the background, Holumbus data structure |Inverted| maps the words
-to their location, i.e. the document. %
+to their location, i.e., the document. %
 
 \begin{code}
-type Inverted    = Map Pair Occurrences
+type Inverted     = Map Pair Occurrences
 type Occurrences  = Map DocId Positions
-type Positions   = [Int]
-type DocId       = Int
+type Positions    = [Int]
+type DocId        = Int
 \end{code}
 
 More precisely, |Inverted| maps the word and its context to
@@ -515,7 +515,7 @@ where we discuss the data structure of the documents. %
 
 \subsection{Document Construction}
 
-As next step we take a look at the second structure of the index:
+As next step, we take a look at the second structure of the index:
 |Documents a|. %
 This data structure is just a collection of |Document a| data types,
 where every document is provided with an unique identifier. %
@@ -556,7 +556,7 @@ or type information of the given |CurryInfo| structure. %
 In order to provide a more differentiated representation of a Curry
 module in the index, we choose not to use |CurryInfo| but its
 substructures |ModuleInfo|, |FunctionInfo| and |TypeInfo| as document
-types, i.e. the custom information. %
+types, i.e., the custom information. %
 However, if we want to distinguish between these three sources of
 information, we need to store three types of documents. %
 Nevertheless, this decision allows us to relate the information of a
@@ -587,11 +587,11 @@ anchors to the module's defined functions and data structures, we use
 this link mechanism for our URIs as well. %
 Thus, the URIs are build according to the following schema:
 
-% \begin{code}
-% moduleURI   = baseURL ++ moduleName ++ ".html"
-% functionURI = baseURL ++ moduleName ++ ".html'' ++  ++ funcName 
-% typeURI     = baseURL ++ moduleName ++ ".html" ++  ++ typeName
-% \end{code}
+\begin{code}
+moduleURI    = baseURL ++ moduleName ++ ".html"
+functionURI  = baseURL ++ moduleName ++ ".html" ++ "#" ++ funcName 
+typeURI      = baseURL ++ moduleName ++ ".html" ++ "#" ++ typeName
+\end{code}
 
 % \begin{code}
 % data URI a = 
@@ -685,6 +685,7 @@ structure is the maximum of the old one. %
 Thereafter, we can merge the documents and index structure and write
 the new file. \\
 
+\todo[inline]{Version A}
 The following code serves as showcase for an index construction with
 the information of a function. %
 In the end, we build a |HolumbusState FunctionInfo| structure. %
@@ -692,9 +693,9 @@ In the end, we build a |HolumbusState FunctionInfo| structure. %
 We have a |CurryInfo| structure named |curryDoc| and extract the list
 of |FunctionInfo| structures. %
 
-\begin{code}
-listOfFunctionInfoStructures = functionInfos curryDoc 
-\end{code}
+% \begin{code}
+% listOfFunctionInfoStructures = functionInfos curryDoc 
+% \end{code}
 
 Next, for each element of the list, we construct the pairs of contexts and words that we need
 for the |Inverted| index structure; this behaviour is described by the
@@ -702,22 +703,22 @@ function |contextsF|.
 
 \begin{code}
 contextsF aFunctionInfoStructure =
-  [(":function", fName aFunctionInfoStructure)] 
-   ++ [(":inModule", fModule aFunctionInfoStructure)]
+  [("function", fName aFunctionInfoStructure)] 
+   ++ [("inModule", fModule aFunctionInfoStructure)]
    ++ (signature $ signatureComponents $ fSignature aFunctionInfoStructure)
    ++ (flexRigid $ fFlexRigid aFunctionInfoStructure)
    ++ (nonDet $ fNonDet aFunctionInfoStructure)
    ++ (description $ fDescription aFunctionInfoStructure)
 \end{code}
 % $
-The function |description| just pairs the
-context, i.e. the string |"description"|, with the given data of
-|aFunctionInfoStructure|, i.e. the description of a function; %
+The function |description| just pairs the context, i.e., the string
+|"description"|, with the given data of |aFunctionInfoStructure|,
+i.e., the description of a function and returns a list of this pair; %
 |flexRigid| and |nonDet| do the same with the addition that they first
 check, which context to apply; %
 |signatureComponents| is the function that deconstructs a type
 signature into valid suffixes and |signature| pairs all these suffixes
-with the context. %
+with the context and returns the list of all these pairs. %
 
 Since we are just building tuples, we need to add the reference to the
 corresponding document as |Occurrences| to construct the required
@@ -730,8 +731,8 @@ insertDoc :: Documents a -> Document a -> (DocId,Documents a)
 \end{code}
 
 Thus, we create a document structure for each |FunctionInfoStructure|
-(i.e. each element in |listOfFunctionInfoStructures|) and insert each
-document to a new collection, i.e. a new |Documents FunctionInfo| structure. %
+(i.e., each element in |listOfFunctionInfoStructures|) and insert each
+document to a new collection, i.e., a new |Documents FunctionInfo| structure. %
 
 \begin{code}
 newDocument uriPath aFunctionInfoStructure =
@@ -798,6 +799,63 @@ and |IndexerState ix dc| is an empty |HolumbusState FunctionInfo|. %
 If there are no more functions left to process, we return the
 constructed |HolumbusState| structure. \\
 
+\todo[inline]{Version B} In the following, we list the steps of an
+example index construction for one Curry program; we only consider the
+function information. %
+Thus, in the end, we build a |HolumbusState FunctionInfo| structure. %
+
+\begin{itemize}
+\item Extract the list of |FunctionInfo| of the given |CurryInfo|
+  structure
+\item For each |FunctionInfo|, we construct the pair of contexts and
+  words and return the list of pairs. %
+\begin{code}
+-- contexts
+[ ("function", functionName),
+  ("inModule", functionModule),
+  ("signature", functionSignature),
+     ("flexible", functionFlexibleRigidStatus) 
+  or ("rigid", functionFlexibleRigidStatus),
+     ("nondet", functionNonDetStatus) 
+  or ("det", functionNonDetStatus),
+  ("description", functionDescription)
+]
+\end{code}
+\item Next, for each |FunctionInfo|, we need to construct the
+  |Document FunctionInfo| structure to store the data structure. %
+
+\begin{code}
+-- new document
+Document 
+  { title  = functionName
+  , uri    = uriPath
+  , custom = Just theFunctionInfoStructure
+  }
+\end{code}
+
+\item We add all documents to construct the collection |Documents
+  FunctionInfo| and the first part of the index is complete. % 
+
+\item When we add each document to the collection, we can access the
+  unique identifiers. %
+  We use these identifiers to add the required document reference for
+  the lists of context-word-pairs. %
+
+\item In order to construct the |Inverted| structure, we use a
+  function Holumbus provides to build this structure from a list of
+  the required triples. %
+
+\item In the end, we merge all |Inverted| structures.
+
+\item In case of (the first module of) a new index construction, the
+  process is complete and we gained a |HolumbusState FunctionInfo|
+  structured that is written into a file. %
+
+\item Otherwise, we need to merge the new constructed |HolumbusState
+  FunctionInfo| structure with an existing index. %
+\end{itemize}
+
+\todo[inline]{}
 In the end, there are one requirement and two ways to build an index. %
 The requirement is the generation of a \emph{.cdoc}-file for at least
 one Curry program. %
@@ -835,30 +893,38 @@ Further information about the usage is provided in
 % Refer to the appendix, where the usage of the curryIndexer is
 % explained.
  
-\section{Parser}\label{implementation:parser}
+\section{Searching}\label{implementation:parser}
 
-In this section we discuss the general idea of a parser, connect this
-idea with our search engine and develop a simple parser as example. %
+In the main part of this section, we discuss the general idea of a
+parser, connect this idea with our search engine and develop a simple
+parser as example. %
 The example addresses the problem of parsing expressions that can
 occur with and without parentheses. %
-We choose this example because we need such a parser for the user
-queries in our search engine, too. %
+We choose this example because we need the same functionality for the
+user queries in our search engine. %
 Furthermore, we introduce
 \emph{Parsec}\footnote{\url{http://hackage.haskell.org/package/parsec}}\footnote{\url{http://legacy.cs.uu.nl/daan/parsec.html}},
 a Haskell library to build a strong and fast parser. %
 In this context, we present some code examples of our implementation
-and outline the advantages of using Parsec as well as some
-problems that occurred during the development. %
+and outline the advantages of using Parsec as well as some problems
+that occurred during the development. %
 
-\subsection{General Idea and Usage}
+The process of searching mainly consists of parsing the query since
+the Holumbus framework already takes care of other requirements and
+tasks, like processing the query and providing the result structure. %
+The only task left is to submit a score calculation and preprocess the
+given result for the web application. %
+Therefore, we only focus on the query parser instead. %
+
+\subsection{General Idea and Usage of Parser}
 
 A parser is used to analyze a given input and compose a new data
 structure depending on the information of the input. %
 Parsing is an important topic among functional programmers and hence
 many papers discuss the development of parsers. %
-The most popular approaches use monadic parsers \cite{monpars} since
+The most popular approaches use monadic parsers~\cite{monpars} since
 they can parse context-sensitive grammers, but there also alternatives
-using higher-order functions \cite{funcpar}. %
+using higher-order functions~\cite{funcpar}. %
 
 In general, we want the parser to take an input value and transform it
 into another structure. Thus, a parser can be described as
@@ -870,10 +936,13 @@ type Parser sigma alpha = sigma -> alpha
 
 With the type definition above, we can run one parser on a given
 input. %
+Commonly, this input is of type |String|, but in order to explain the
+general idea, we consider an abstract input type |sigma| first. %
 The main idea behind parsing is to apply several parsers and combine
 the results. %
-In order to combine the results, the parser type needs a pair consisting of the
-parsing result and the rest of the input, which was not parsed. %
+In order to combine the results, the parser type needs a pair
+consisting of the parsing result and the rest of the input, which was
+not parsed. %
 Additionally, we need to consider that the parsing of an input is
 ambiguous. %
 This means, there can be more than one way to parse the input and it
@@ -882,7 +951,12 @@ Thus, we extend the result type to a be a list of pairs, representing
 the different parsing combinations or the empty list, if the parser
 fails. %
 This approach of lists as success values was introduce by Philip
-Wadler \cite{successlist}.
+Wadler~\cite{successlist}. %
+Additionally, if we think about combining several parsers, we have to
+adjust the applied argument. %
+Instead of just of one \emph{entity} of the input type, we want to
+parse \emph{several} input types with \emph{several} parsers. %
+Therefore, we apply the parser to a list of |sigma|.
 
 \begin{code}
 type Parser sigma alpha = [sigma] -> [(alpha, [sigma])]
@@ -1005,11 +1079,11 @@ parsePredicate _ = \ts -> []
 \end{code}
 
 With this function we can define simple parser like |parseAny| that
-parses any alphanumeric characters, %
+parses any alphanumeric characters %
 
 \begin{code}
-parseDigit :: Parser Char
-parseDigit = parseSymbol isAlphaNum
+parseAny :: Parser Char
+parseAny = parseSymbol isAlphaNum
 \end{code}
 
 or |parseT| that parses the character |t|. %
@@ -1046,7 +1120,7 @@ parseClose =  parsePredicate (')' ==)
 Next, we need to defined a parser for the expressions. %
 Since we already have a parser for characters and we want to parse the
 a |String|, the main idea is to parse a sequence of characters,
-i.e. to combine a sequence of |parsePredicate|. %
+i.e., to combine a sequence of |parsePredicate|. %
 
 \begin{code} 
 parseExpression :: Parser String
@@ -1060,7 +1134,7 @@ Next, |parseExpression| is executed with the remaining input, hence we
 read one character after another until the parsing fails or the input
 is read entirely. %
 The parsed characters are then composed to a list, so all in all, the
-parser returns the parsed |String|, i.e. the expression. %
+parser returns the parsed |String|, i.e., the expression. %
 
 Finally, we want a parser to read a parenthesized expression, but
 discard the parentheses. %
@@ -1108,7 +1182,7 @@ Unfortunately, they do not perform the exact same task. %
 Thus, we take a look at the functionality Parsec provides first. %
 
 The choice combinator follows a deterministic predictive approach with
-limited lookahead \cite{parsec1}, i.e. the parser |p ~<||>~ q| only
+limited lookahead~\cite{parsec1}, i.e., the parser |p ~<||>~ q| only
 tries the second parser |q|, if the first parser did not consumed any
 input. %
 In order to gain the functionality that both parsers a applied to the
@@ -1130,7 +1204,7 @@ These functions apply to general concepts of sequening (also:
 application) that are provided by the \emph{Applicative} interface
 \footnote{\url{http://hackage.haskell.org/packages/archive/base/4.5.0.0/doc/html/Control-Applicative.html}}. %
 The concept of applicative programming is an idea introduced by Conor
-McBride and Ross Patterson \cite{applicative}. %
+McBride and Ross Patterson~\cite{applicative}. %
 However, the parser type that Parsec implements is an instance of
 Applicative, which means, without limitation, we can use these functions in our
 implementation. \\ %
@@ -1160,12 +1234,12 @@ At first, we take a look at all kinds of type expression that can
 compose a type signature. %
 
 \begin{itemize}
-\item type variables, i.e. |a|
-\item primitive types, i.e. |Int|, |Bool|
-\item type constructors, i.e. |Maybe Int|, |IO ()|
-\item function types, i.e. |Int -> Bool|
-\item lists, i.e. |[Int]|
-\item tuples, i.e. |(String, Int)|
+\item type variables -- |a|
+\item primitive types -- |Int|, |Bool|
+\item type constructors, -- |Maybe Int|, |IO ()|
+\item function types -- |Int -> Bool|
+\item lists -- |[Int]|
+\item tuples -- |(String, Int)|
 \end{itemize}
 
 We use these substructures to build our parser for type signatures. %
@@ -1202,6 +1276,13 @@ In order to define such a language, we take an empty definition record
 and rewrite the fields we want to use. %
 Identifier start with an upper case (we handle type variables
 separately) and the consists of alphanumeric characters. %
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{bilder/Identifier}
+\end{center}
+\end{figure}
+
 The reserved names are words that are not allows to occur as name of
 an type expression. %
 Our parser also knows the binary operations |AND|, |NOT| and |OR| and
@@ -1219,11 +1300,10 @@ they handle surrounding white spaces. %
 Hence, we do not need to consider white spaces, if we use one the
 these parsers. %
 As example, we get the parser that handles identifiers according to the defined
-language and another one that parses  %
+language. %
 
 \begin{code}
 sigIdentifier = identifier signatureTokenParser
-sigReservedOp = reservedOp signatureTokenParser
 \end{code}
 
 Other lexical parser we will use in our code includes |whitespace|,
@@ -1250,7 +1330,17 @@ In the end, on success, the parser returns the longest possible
 match. %
 
 The first substructures we want to parse are type variables and
-primitive types.
+primitive types. %
+Therefore, we first take a look at the following rail-road diagram,
+where we illustrate the schema of the parser. %
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{bilder/TypeVariable}
+\end{center}
+\end{figure}
+
+A type variables is one lower-case character. %
 
 \begin{code}
 varParser :: TypeExprParser
@@ -1258,14 +1348,13 @@ varParser =
   var ~<$$>~ lower ~<*~ notFollowedBy alphaNum)
 \end{code}
 
-A type variables is one lower-case character. %
 Thus, we do not allow type variables like |IO abc|, |varParser| fails
 on |abc| and our signature parser only reads |IO| as primitive type. %
 After parsing, the function |var| converts the character into a
 |TypeExpr|\footnote{|a| => |TVar 97|}. %
 At the beginning, we followed the idea to parse one character only and
-discard the rest, i.e. |IO abc| will be parsed as |IO a|, but
-eventually decided against this concept.%
+discard the rest, i.e., |IO abc| will be parsed as |IO a|, but
+eventually decided against this concept. %
 Later, we discuss this decision in more detail. %
 % Type variables alone will not be parsed without the context of
 % signatures (|":signature"|), because i
@@ -1281,6 +1370,18 @@ Later, we discuss this decision in more detail. %
 % Therefore, we only forbid another identifier to appear after a type
 % variable in a list or tuple. %
 
+The next parser handles primitive types like |Int| and |Bool|,
+but also the unit type |()|. 
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{bilder/PrimitiveType}
+\end{center}
+\end{figure}
+
+For primitive types we need to parse one identifier and consider the
+unit type |()| as special constructor. %
+
 \begin{code}
 primParser :: TypeExprParser
 primParser = 
@@ -1288,19 +1389,17 @@ primParser =
 x           ~<|>~ aSymbol "()")
 \end{code}
 
-For primitive types we need to parse one identifier and |prim| wraps
-this identifier into a |TCons|-structure with no type
-arguments\footnote{A little reminder: |Int| => |TCons ("Prelude",
-  "Int") []|}. %
-In addition, we need to consider the unit type |()| as special
-constructor. %
-Otherwise we have to allow search terms with unvalid special
-characters. %
+The function |prim| wraps this identifier into a |TCons|-structure
+with no type arguments\footnote{A little reminder: |Int| => |TCons
+  ("Prelude", "Int") []|}. %
 
 In case of a n-ary type constructor, we parse at least one identifier
 a white space and another type expression. %
+At first, we parse an identifier like we do for primitive types and
+additionally, we need a white space and another type expression to
+follow. %
 
-l\begin{code}
+\begin{code}
 consParser :: TypeExprParser
 consParser = 
 a  ((\constr _ expr -> cons constr expr) 
@@ -1309,32 +1408,49 @@ a  ((\constr _ expr -> cons constr expr)
    <*> sepBy1 (signatureTerm False) whitespace)
 \end{code}
 
-At first, we parse an identifier like we do for primitive types and
-additionally, we need a white space and another type expression to
-follow. %
 The function |sebBy1| takes two parsers as arguments, where the second
 parser is a separator that occurs between two tokens of the same
 kind. %
-aAt least one type signature (but no white space) needs to occur,
+At least one type signature (but no white space) needs to occur,
 otherwise the parser |sepBy1| fails and altogether |consParser|
 fails. %
-Thus, in our case we parse at least two type expressions separated by a
-white space or just one type expression. %
+Thus, in our case we parse at least two type expressions separated by
+a white space or just one type expression. %
 The parser |signatureTerm| handles all the substructures we listed
 above, except for function types, but we discuss this later. %
-The boolean value indicates, if a constructor type may occur
-without parentheses. %
+The boolean value indicates, if a constructor type may occur without
+parentheses. %
 In the defintion above, further constructor types are only allowed to
-occur with parentheses. % 
-As example to assure the accuracy of this idea: |IO a| and |Maybe a| are type
-constructors with one type argument. If we combine these type
+occur with parentheses. %
+As example to assure the accuracy of this idea: |IO a| and |Maybe a|
+are type constructors with one type argument. If we combine these type
 constructors to one expression, we get |Maybe (IO a)| or |IO (Maybe
 a)|. %
 We have to parenthesize the inner type constructor because otherwise
 |IO Maybe a| and |Maybe IO a| suggest that both constructors take two
 type arguments instead of one. %
+For a better unstanding, the following figures illustrate the idea of
+this parser. %
+
+\todo{constructor type does not fit here well}
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{bilder/ConstructorType}
+\includegraphics{bilder/ConsArgumentType}
+\end{center}
+\end{figure}
+
 
 Next, let's take a look at the parsers for lists an tuples. %
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{bilder/ListType}
+\end{center}
+\end{figure}
+
+The parser for lists is pretty simple, since a list can be any valid
+type signature between brackets. %
 
 \begin{code}
 listParser :: TypeExprParser
@@ -1342,8 +1458,6 @@ listParser =
   (\texpr -> cons "[]" [texpr]) ~<$$>~ bracket (signatureParser True)
 \end{code}
 
-The parser for lists is pretty simple, since a list can be any valid
-type signature wrapped in brackets. %
 In the end, we wrap the result in a type constructor with |[]| as
 constructor and the type signature as type arguments. %
 Whereas |signatureTerm| is the parser for any type expression besides
@@ -1353,6 +1467,16 @@ The boolean value indicates again, if a constructor type may appear
 without surrounding parentheses. %
 
 Next, we present the parser for tuples in three steps.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics{bilder/TupleType}
+\end{center}
+\end{figure}
+The first (and main) part looks similiar to the constructor parser. %
+Only this time we parse any kind of type expressions seperated by a
+comma instead of a white space. %
+
 \begin{code}
 parseTuple  = 
   (\item _ itemList -> item:itemList) ~<$$>~ 
@@ -1361,9 +1485,6 @@ parseTuple  =
    <*> sepBy1 (signatureParser True) (aSymbol ",")
 \end{code}
 
-The first (and main) part looks similiar to the constructor parser. %
-Only this time we parse any kind of type expressions seperated by a
-comma instead of a white space. %
 We combine the first type expressions and the list of following type
 expression to a list. %
 This list represents the type arguments for the tuple constructor. %
@@ -1399,7 +1520,7 @@ assign a function that determines the result of the parsing. %
 
 \begin{code}
 signatureTable = 
-  [[ Infix ((\ _ -> FuncType) ~<$$>~ (aSymbol "->"x) AssocRight ]]
+  [[ Infix ((\ _ -> FuncType) ~<$$>~ (aSymbol "->"x)) AssocRight ]]
 \end{code}
 
 Thus, when parsing a function arrow |->| in an infix position, we
@@ -1418,8 +1539,8 @@ signatureParser inAListOrTuple =
   buildExpressionParser signatureTable (signatureTerm True inAListOrTuple)
 \end{code}
 
-The other parse that we assign is |signatureTerm|. %
-We need to parametrize |signatureParser| as well to indicate if we are
+The other parser that we assign is |signatureTerm|. %
+We need to parametrize |signatureParser| as well, in order to indicate if we are
 in the process of parsing a tuple or list. %
 A list or a tuple can consist of function types without parentheses,
 whereas for a valid constructor type, a function type as arguments
@@ -1463,6 +1584,20 @@ opposite, a lower-case character. \\ %
 In the end, the signature parser joins the group of parses for
 specifiers (\textss{|:module IO|}, \textss{|:function map|} etc.) and
 binary operators (|AND|, |OR|, |NOT|). %
+
+\begin{figure}[h!]
+\begin{minipage}{0.85\textwidth}
+\includegraphics{bilder/Query}
+\hspace{0.4cm}
+\includegraphics{bilder/Expr}
+\end{minipage}
+\hspace{-0.5cm}
+\begin{minipage}{0.15\textwidth}
+\vspace{-.7cm}
+\includegraphics{bilder/Bool}
+\end{minipage}
+\end{figure}
+
 Since we already parse any trailing white spaces, the actual parser
 for queries we eventually call needs to parse all leading white
 spaces. %
@@ -1471,7 +1606,7 @@ since we want to combine specifiers, signatures and pure search
 terms. %
 Under specification of several contexts and a pure search term without
 any binary operations, the parser implicitly combines the
-substructures with conjunctions, i.e. \textss{|:function map a->b|}
+substructures with conjunctions, i.e., \textss{|:function map a->b|}
 searches for a function starting with \emph{map}, which signature
 consists of |a->b|. %
 The parser for signatures applies for the context of signatures, but
@@ -1481,30 +1616,34 @@ This means, the search terms \textss{|:signature io|)} and
 \textss{|IO|} yield the same |Query|-structure, hence the same search
 results. %
 On the contrary, type variables alone are not parsed implicitly
-because we also want to search for words without context, i.e. we
+because we also want to search for words without context, i.e., we
 search without a context for any word starting with a lower-case
 character. %
+In addition to the EBNF we already mentioned in
+\hyperref[analysis:parser]{the last chapter}, we also provide the
+summarised figures of this chapter with the additional parsers that
+represent the query parser altogether (see
+\hyperref[a:railroad]{Appendix \ref{a:railroad}}). %
 Additionally, the parser always tries to parse as much words and
 characters respectively. %
 For example, if a valid expression is followed by nonsense, we parse
-the first part and discard the other, i.e. \textss{|IO 1_!@#^|} yields
-the same results as \textss{|IO|}. %
-And, as a last resort, we parse unbalanced parentheses that occur in the
-beginning or end of the search term. %
+the first part and discard the other, i.e., \textss{|IO 1_!@#^|}
+yields the same results as \textss{|IO|}. %
+And, as a last resort, we parse unbalanced parentheses that occur in
+the beginning or end of the search term. %
 We expect an intuitiv usage of the search engine of this underlying
 parser and all the features the parser provides. %
 
 
 % Give a definition of the language (EBNF(?) / appendix). 
 
-% \begin{code} 
-%  query := expr [ expr ] | expr bool expr | (expr)
-%  expr := (expr) | specifier | signature | string
-%  bool := "AND" | "OR" | "NOT" 
-%  specifier :=  ":module" [ alphaNum ] | ":signature"  [ signature ]
+
+%  query ::= expr [ expr ] | expr bool expr | (expr)
+%  expr ::= (expr) | specifier | signature | string
+%  bool ::= "AND" | "OR" | "NOT" 
+%  specifier ::=  ":module" [ alphaNum ] | ":signature"  [ signature ]
 %  |  ":function" [ alphaNum ] | ":flexible" | ":rigid" |  ":nondet" | ":det" 
-%  signature := Upper alphaNum | function | constructor 
-%  function := signature "->" signature  | lower "->" signature |
+%  signature ::= Upper alphaNum | function | constructor 
+%  function ::= signature "->" signature  | lower "->" signature |
 %  signature "->" lower
-%  constructor := Upper alphaNum signature | Upper alphaNum lower
-% \end{code}
+%  constructor ::= Upper alphaNum signature | Upper alphaNum lower

@@ -16,7 +16,6 @@
 \usepackage{todonotes}
 \usepackage{multirow}
 
-
 \usepackage{tikz}
 
 \usetikzlibrary{%
@@ -28,7 +27,8 @@
   positioning,% wg. " of "
   scopes,%
   decorations.pathmorphing,% /pgf/decoration/random steps | erste Graphik
-  shadows%
+  shadows,%
+  trees%
 }
 
 %
@@ -51,8 +51,7 @@
 %
 % Paket um Grafiken einbetten zu können
 %
-\usepackage{graphicx}
-
+\usepackage{graphicx} 
 %
 % Spezielle Schrift im Koma-Script setzen.
 %
@@ -187,6 +186,7 @@
 \setcounter{tocdepth}{3}
 
 %
-% Zeilenabstand wird um den Faktor 1.5 verändert
+% Zeilenabstand wird um den Faktor 1.25 verändert
 %
 \renewcommand{\baselinestretch}{1.25}
+

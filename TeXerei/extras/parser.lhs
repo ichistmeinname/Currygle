@@ -61,7 +61,7 @@
 \begin{tikzpicture}[
     >=latex,thick,
     % minimum size=6mm,line join=round,line cap=round,
-    % terminal/.style={rectangle,draw,fill=white,rounded corners=3mm},
+    terminal/.style={rectangle,draw,fill=white,rounded corners=3mm},
     nonterminal/.style={rectangle,draw,join=by -},
     node distance=10mm,
     support/.style={coordinate,join=by -},
@@ -73,15 +73,15 @@
         \node [support] {};
         \node [support]  (first)  {};
         \node [support]  (start)  {};
-        \node [nonterminal] (and) {|AND|};
+        \node [terminal] (and) {|AND|};
         \node [support] (after term) {};
         \node [support] (before bin) {};
         \node [support] (end) {};
     \end{scope}
-    \node (or)  [nonterminal,above=of and] {|OR|};
-    \node (not) [nonterminal,below=of and] {|NOT|};
+    \node (or)  [terminal,above=of and] {OR};
+    \node (not) [terminal,below=of and] {NOT};
     \node (bottom) [support,below=of not] {};
-    \node (top) [support, above=of or] {};
+    \node (top) [support,above=of or] {};
     \node (below first) [support,below=of first] {};
     \node (above first) [support,above=of first] {};
     \node (below aterm) [support,below=of after term] {};
@@ -100,9 +100,6 @@
       \draw (below start)  ||-  (not);
       \draw (below aterm) ||- (before bin);
       \draw (not)    -|| (below aterm);
-            % repeat spec,sig and simple
-      \draw (after term) -|| (below bbin);
-      \draw (below bbin) ||- (bottom);
-      \draw (bottom) -||  (below first);
-      \draw (below first) ||- (start);    \end{scope}
+  
+     \end{scope}
 \end{tikzpicture}
