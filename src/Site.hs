@@ -101,7 +101,7 @@ funcDocsToListItem :: InfoDoc FunctionInfo -> X.Node
 funcDocsToListItem doc =
   makeResult title (idUri doc) (moduleText $ fModule fInfo) (fDescription fInfo) []
  where title = operatorOrFunction ++ " :: " ++ signature
-       signature = (\((modName,_), expr) -> showType modName False expr) $ fSignature fInfo
+       signature = (\expr -> showType (fModule fInfo) False expr) $ fSignature fInfo
        fInfo = idInfo doc
        operatorOrFunction = paren ((P.head (idTitle doc)) `elem` ":!#$%&*+./<=>?@\\^|-~_") 
                                   (idTitle doc)

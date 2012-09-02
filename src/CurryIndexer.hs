@@ -37,8 +37,9 @@ import Holumbus.Index.Common (HolIndex (..), HolDocuments (..), HolDocIndex (..)
 _howToUseMessage :: String
 _howToUseMessage = 
   "\n"++"No no no, you don't use it the right way. Let me give you a hint. \n"++
-  "Try it like this: curryIndexer <cdoc_directory> <documentation_uri> [--n|--u]\n" ++
-  "Or maybe like this curryIndexer " ++
+  "Try it like this:\n" ++ 
+  "curryIndexer <cdoc_directory> <documentation_uri> [--n|--u]\n" ++
+  "Or maybe like this:\n" ++ "curryIndexer " ++
   "<file_path_with_pairs_of_cdoc_directory_and_documentation_uri_sperated_with_;> [--n|--u]\n" ++
   "Inwhich '--u' updates your current index with the new data and " ++ 
   "'--n' creates a new index with the given data.\n"
@@ -156,9 +157,9 @@ contextsMod moduleI i =
 -- | Generates the context information for a function.
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
-  map (addOcc  (occ i 2)) $ [("function", fName functionI)] 
-   ++ [("inModule", fModule functionI)]
-   ++ (signature $ signatureComponents $ fSignature functionI)
+  map (addOcc  (occ i 2)) $ [("function", snd qName)] 
+   ++ [("inModule", fst qName)]
+   ++ (signature $ signatureComponents $ (qName, fSignature functionI))
    ++ (flexRigid $ fFlexRigid functionI)
    ++ (nonDet $ fNonDet functionI)
    ++ (description $ fDescription functionI) 
@@ -168,6 +169,7 @@ contextsF functionI i =
                       ConflictFR -> [("flexible", ""), ("rigid", "")]
                       _          -> []
        nonDet nd    = if nd then [("nondet", "")] else [("det", "")]
+       qName        = (fModule functionI, fName functionI)
 
 -- | Generates the context information for a type
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
@@ -312,7 +314,7 @@ startIndexer new cdocP uriP = do
 prepareFilePaths :: Bool -> [FilePath] -> IO ()
 prepareFilePaths new (cdocPath:uriPath:xs) = 
   startIndexer new cdocPath uriPath >> prepareFilePaths False xs
-prepareFilePaths _ [""] = return ()
+prepareFilePaths _ path = return ()
 prepareFilePaths _ _    = putStr _howToUseMessage
 
 -- Analyzes arguments of the command line
