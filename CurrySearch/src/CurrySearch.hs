@@ -35,12 +35,12 @@ import           Parser (parse)
 -- The default weights for the contexts.
 _defaultRankTable :: RankTable
 _defaultRankTable = 
-  [(":function", 1.0),
-   (":type", 0.75),
-   (":signature", 0.50),
-   (":module", 0.5),
-   (":author", 0.2),
-   (":description", 0.1)]
+  [("function", 1.0),
+   ("type", 0.75),
+   ("signature", 0.50),
+   ("module", 0.5),
+   ("author", 0.2),
+   ("description", 0.1)]
 
 -- The context weights for a word completion, only function, type, and module names are important.
 _wordCompletionRankTable :: RankTable
@@ -70,8 +70,12 @@ infoDoc emptyInfo (_, (DocInfo (Document title' uri' info') score', contextMap')
 -- and returns a list of these documents as info document data structure.
 sortedInfoDoc :: (Binary a) => a -> DocHits a -> [InfoDoc a]
 sortedInfoDoc emptyInfo info = map (infoDoc emptyInfo) $ docData info
-  where docData = L.reverse . L.sortBy (compare `on` docHitScore) . toListDocIdMap
-        docHitScore = docScore . fst . snd
+  where docData = L.sortBy pred' . toListDocIdMap
+        pred' info1 info2 = 
+          case (compare `on` (docScore . fst . snd)) info1 info2 of
+               EQ -> (compare `on` (title . document . fst . snd)) info1 info2
+               LT -> GT
+               GT -> LT
 
 -- | Converts a triple of curryInfos to a QRDocs data structure.
 --   It sorts the documents by a given rank and counts the total number of matching documents.

@@ -30,12 +30,14 @@ generateCDoc progName modCmts progCmts anaInfo = do
 	    vars
 	    mName
 	    (dataComment tName progCmts)
+	    False
         typeInfo (TypeSyn qName@(mName, tName) _ vars tExpr) =
  	    TypeInfo tName
 	    [(qName, [tExpr])]
 	    vars
 	    mName
 	    (dataComment tName progCmts)
+	    True
         (mCmts, avCmts) = splitComment modCmts
 	funcInfos = map funcInfo (filter (\(Func _ _ vis _ _) -> vis == Public) functions)
 	typeInfos = map typeInfo (concatMap filterT types)
@@ -74,10 +76,10 @@ data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo]
 data FunctionInfo = FunctionInfo String TypeExpr String String Bool FlexRigidResult
 
 -- the name
--- the signature
+-- the signature (true indicates a type synonym, false a data type)
 -- the corresponding module
 -- the description
-data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [TVarIndex] String String
+data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [TVarIndex] String String Bool
 
 -- auxilieres --------------------------------------------------------
 

@@ -4,10 +4,10 @@
     <meta content="text/html; charset=UTF-8"
   http-equiv="content-type">
     <link rel="stylesheet" type="text/css" href="stylesheet.css" />
-    <link rel="stylesheet" type="text/css" href="responsive.css" />
     <script src="jquery-1.7.2.js"></script>
     <script src="searching.js"></script>
     <script src="bootstrap.js"></script>
+
   </head>
   <body>
     <div class="row-fluid">
@@ -22,7 +22,7 @@
       <div class="span9">
 	<form onsubmit="return searchQuery();" class="well">
 	  <input id="query" type="search" value=$(oldquery)
-             provide-data="typeahead" class="search-query"
+             class="search-query"
              onkeyup="getCompletions(event)"> 
 	  <button type="submit" class="btn">Search</button>
 	</form>
@@ -38,8 +38,10 @@
 	<pager/>
       </div>
     </div>
+    <div class="clearfix"/>
     <div class="row-fluid">
-      <div class="span12"><div class="footer">F</div></div>
+      <div class="footer-grass"></div>
+      <div class="footer"></div>
     </div>
     </div>
   </body>

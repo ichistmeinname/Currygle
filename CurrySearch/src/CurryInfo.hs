@@ -130,32 +130,36 @@ instance Binary FunctionInfo where
             r <- liftM6 FunctionInfo get get get get get get
             rnf r `seq` return r
 
--- | TypeInfo holds information about the name, signature, type variables, corresponding module,
+-- | TypeInfo holds information about the name, signature (True indicates a type synonym, false a data type), type variables, corresponding module,
 --   and description of a given type.
-data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [Int] String String deriving (Show, Read)
+data TypeInfo = TypeInfo String [(QName, [TypeExpr])] [Int] String String Bool deriving (Show, Read)
 
 tName :: TypeInfo -> String
-tName (TypeInfo n _ _ _ _) = n
+tName (TypeInfo n _ _ _ _ _) = n
 
 tSignature :: TypeInfo -> [(QName, [TypeExpr])]
-tSignature (TypeInfo _ s _ _ _) = s
+tSignature (TypeInfo _ s _ _ _ _) = s
 
 tVarIndex :: TypeInfo -> [Int]
-tVarIndex (TypeInfo _ _ v _ _) = v
+tVarIndex (TypeInfo _ _ v _ _ _) = v
 
 tModule :: TypeInfo -> String
-tModule (TypeInfo _ _ _ m _) = m
+tModule (TypeInfo _ _ _ m _ _) = m
 
 tDescription :: TypeInfo -> String
-tDescription (TypeInfo _ _ _ _ d) = d
+tDescription (TypeInfo _ _ _ _ d _) = d
+
+tIsTypeSyn :: TypeInfo -> Bool
+tIsTypeSyn (TypeInfo _ _ _ _ _ b) = b
 
 instance NFData TypeInfo where
-    rnf (TypeInfo n s v m d) = rnf n `seq` rnf s `seq` rnf v `seq` rnf m `seq` rnf d
+    rnf (TypeInfo n s v m d b) = rnf n `seq` rnf s 
+        `seq` rnf v `seq` rnf m `seq` rnf d `seq` rnf b
 
 instance Binary TypeInfo where
-    put (TypeInfo n s v m d) = put n >> put s >> put v >> put m >> put d
+    put (TypeInfo n s v m d b) = put n >> put s >> put v >> put m >> put d >> put b
     get = do
-            r <- liftM5 TypeInfo get get get get get
+            r <- liftM6 TypeInfo get get get get get get
             rnf r `seq` return r
           
 -- | The CurryInfo data holds information about the module, and corresponding functions,
@@ -182,28 +186,28 @@ instance Binary CurryInfo where
 
 -- | Empty constructor for CurryInfo.
 emptyCurryInfo   :: CurryInfo
-emptyCurryInfo   = mkCurryInfo emptyModuleInfo [emptyFunctionInfo] [emptyTypeInfo]
+emptyCurryInfo   = CurryInfo emptyModuleInfo [emptyFunctionInfo] [emptyTypeInfo]
 
-mkCurryInfo  :: ModuleInfo -> [FunctionInfo] -> [TypeInfo] -> CurryInfo
-mkCurryInfo  = CurryInfo
+-- mkCurryInfo  :: ModuleInfo -> [FunctionInfo] -> [TypeInfo] -> CurryInfo
+-- mkCurryInfo  = CurryInfo
 
 -- | Empty constructor for ModuleInfo.
 emptyModuleInfo :: ModuleInfo
-emptyModuleInfo = mkModuleInfo "" "" ""
+emptyModuleInfo = ModuleInfo "" "" ""
 
-mkModuleInfo :: String -> String -> String -> ModuleInfo
-mkModuleInfo = ModuleInfo
+-- mkModuleInfo :: String -> String -> String -> ModuleInfo
+-- mkModuleInfo = ModuleInfo
 
 -- | Empty constructor for FunctionInfo.
 emptyFunctionInfo :: FunctionInfo
-emptyFunctionInfo = mkFunctionInfo "" Undefined "" "" False UnknownFR
+emptyFunctionInfo = FunctionInfo "" Undefined "" "" False UnknownFR
 
-mkFunctionInfo :: String -> TypeExpr -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
-mkFunctionInfo = FunctionInfo
+-- mkFunctionInfo :: String -> TypeExpr -> String -> String -> Bool -> FlexRigidResult -> FunctionInfo
+-- mkFunctionInfo = FunctionInfo
 
 -- | Empty constructor for TypeInfo.
 emptyTypeInfo :: TypeInfo
-emptyTypeInfo = mkTypeInfo "" [] [] "" ""
+emptyTypeInfo = TypeInfo "" [] [] "" "" False
 
-mkTypeInfo :: String -> [(QName, [TypeExpr])] -> [Int] -> String -> String -> TypeInfo
-mkTypeInfo = TypeInfo
+-- mkTypeInfo :: String -> [(QName, [TypeExpr])] -> [Int] -> String -> String -> Bool -> TypeInfo
+-- mkTypeInfo = TypeInfo

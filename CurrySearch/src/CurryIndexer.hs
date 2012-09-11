@@ -24,7 +24,7 @@ import System.FilePath.Posix    (addTrailingPathSeparator, dropExtension, takeEx
 
 import CurryInfo
 import FilesAndLoading
-import Helpers (biasedWord, splitStringOn, splitOnWhitespace, showTypeList, 
+import Helpers (biasedWord, splitStringOn, splitOnWhitespace, constrTypeExpr, 
                 signatureComponents, varIndex)
 import IndexTypes
 
@@ -60,6 +60,13 @@ description s =
 -- Adds signature context to a signature string and all its suffixes
 signature :: [String] -> [(String,String)]
 signature = map (addContext "signature")
+
+signatureList :: [[String]] -> [(String, String)]
+signatureList list = concatMap signature list
+
+-- Adds function contexts to a list of given function names
+functionContext :: [String] -> [(String, String)]
+functionContext = map (addContext "function") . (filter (\func -> not (func == "")))
 
 -- Adds author context to a string
 author :: String -> [(String, String)]
@@ -157,9 +164,9 @@ contextsMod moduleI i =
 -- | Generates the context information for a function.
 contextsF :: FunctionInfo -> DocId -> [(String, String, Occurrences)]
 contextsF functionI i =
-  map (addOcc  (occ i 2)) $ [("function", snd qName)] 
-   ++ [("inModule", fst qName)]
-   ++ (signature $ signatureComponents $ (qName, fSignature functionI))
+  map (addOcc  (occ i 2)) $ [("function", fName functionI)] 
+   ++ [("inModule", fModule functionI)]
+   ++ (signature $ signatureComponents $ fSignature functionI)
    ++ (flexRigid $ fFlexRigid functionI)
    ++ (nonDet $ fNonDet functionI)
    ++ (description $ fDescription functionI) 
@@ -169,18 +176,23 @@ contextsF functionI i =
                       ConflictFR -> [("flexible", ""), ("rigid", "")]
                       _          -> []
        nonDet nd    = if nd then [("nondet", "")] else [("det", "")]
-       qName        = (fModule functionI, fName functionI)
 
--- | Generates the context information for a type
+-- | Generates the context information for a type.
 contextsT :: TypeInfo -> DocId -> [(String, String, Occurrences)]
 contextsT typeI i = 
-  let sigPair = map (showTypeList (tName typeI ++ (varIndex $ tVarIndex typeI))) 
-                 $ tSignature typeI
+  let sigPair = constrTypeExpr typeI
   in map (addOcc  (occ i 3)) $ [("type", tName typeI)] 
       ++ [("inModule", tModule typeI)]
-      ++ (concatMap signature $ map fst sigPair)
-      ++ (signature $ map snd sigPair)
+      ++ (signature (concatMap (signatureComponents . snd) (constrTypeExpr typeI)))
+      ++ (functionContext $ map fst sigPair)
       ++ (description $ tDescription typeI)   
+
+-- constrTypeExpr :: TypeInfo -> [(String, TypeExpr)]
+-- constrTypeExpr (TypeInfo typeName constrs typeVars modName _ typSyn) =
+--   map (\((_,cName), argTypes) -> (cName,if typSyn then foldr1 FuncType argTypes 
+--                                             else foldr FuncType resultType argTypes)) constrs
+--  where
+--   resultType = TCons (modName, typeName) (map TVar typeVars)
 
 -- Returns the maxId of a given document
 maxId :: Binary a => SmallDocuments a -> DocId
@@ -314,8 +326,8 @@ startIndexer new cdocP uriP = do
 prepareFilePaths :: Bool -> [FilePath] -> IO ()
 prepareFilePaths new (cdocPath:uriPath:xs) = 
   startIndexer new cdocPath uriPath >> prepareFilePaths False xs
-prepareFilePaths _ path = return ()
-prepareFilePaths _ _    = putStr _howToUseMessage
+prepareFilePaths _ [path] = return ()
+prepareFilePaths _ _      = putStr _howToUseMessage
 
 -- Analyzes arguments of the command line
 processArgs :: [String] -> IO ()
