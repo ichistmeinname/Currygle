@@ -24,7 +24,7 @@ import Text.Parsec.Prim  (runP, Parsec, try, many, parserReturn)
 import Text.Parsec.Language (emptyDef)
 import Text.Parsec.Expr (buildExpressionParser, Operator (..), Assoc (..))
 import Text.Parsec.Combinator (sepBy1, notFollowedBy, option)
-import Text.Parsec.Char (upper, alphaNum, lower, oneOf, anyChar)
+import Text.Parsec.Char (upper, alphaNum, lower, oneOf, anyChar, char)
 
 import Holumbus.Query.Language.Grammar
 
@@ -115,13 +115,12 @@ varParser =
   -- var <$> (guard inAListOrTuple >> 
    -- (lexemer lower <* notFollowedBy sigIdentifier))
   -- <|> 
-  var <$> lower <* (notFollowedBy alphaNum)
+  var <$> lexemer lower <* (notFollowedBy alphaNum)
 
 -- | Parses primitive (unary) types (i.e. Int, Float, Bool ...) and following whitespaces due to identifier that is provided by signatureParser.
 primParser :: TypeExprParser
 primParser = 
-  prim <$> (sigIdentifier 
-           <|> lexemer (aSymbol "()"))
+  prim <$> sigIdentifier
 
 -- | Parses a list.
 listParser :: TypeExprParser
@@ -202,16 +201,17 @@ functionSpecifier :: QueryParser
 functionSpecifier = 
   aSpecifierParser True _functionSpecifierName _functionSpecifierNameShort
    (specIdentifier 
-    <|> binOperator 
-    <|> paren binOperator)
+    <|> binOperator
+    <|> try ((\a b c -> (a ++ b ++ c)) <$> aSymbol "(" <*> many (char ',') <*> aSymbol ")")
+    <|> paren binOperator
+    <|> (aSymbol "[]"))
 
 -- | Parses a typeSpecifierName followed by an identifier (i.e. ":type Either").
 --   It can also parse ":" and "[]" as they are special constructors.
 typeSpecifier :: QueryParser
 typeSpecifier = 
-  aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort
+  aSpecifierParser True _typeSpecifierName  _typeSpecifierNameShort -- specIdentifier
    (specIdentifier <|> (aSymbol ":") <|> (aSymbol "[]"))
-
 -- | Parses a inModuleSpecifierName followed by an identifier (i.e. ":in Prelude").
 inModuleSpecifier :: QueryParser
 inModuleSpecifier =
@@ -273,11 +273,13 @@ specifierParser =
 binOpTerm :: QueryParser
 binOpTerm =
   try ((\a -> binQuery a) <$> 
-   many (specifierParser    
+   many (specifierParser
          <|> try (Word <$> binIdentifier)
+         <|> try (Word <$> lexemer (aSymbol "[]"))
+         <|> try ((\a b c -> Word (a ++ b ++ c)) <$> aSymbol "(" <*> many (char ',') <*> aSymbol ")")
          <|> try (Word <$> binOperator)
          <|> ((\word -> specify ["signature"] (testShow word)) 
-                         <$> signatureParser False)))
+                  <$> signatureParser False)))
   <|> try (paren binOpParser)
   <|> try (paren specifierParser)
   <|> ((\_ -> ' ') <$> aSymbol "(") *> binOpParser
@@ -360,7 +362,9 @@ bracket       = brackets binaryTokenParser
 paren         = parens binaryTokenParser
 lexemer       = lexeme binaryTokenParser
 binOperator   = operator binaryTokenParser
-binIdentifier = identifier binaryTokenParser
+binIdentifier = do
+  ident <- identifier binaryTokenParser
+  guard (length ident > 1) >> return ident
 aSymbol       = symbol binaryTokenParser
 
 ----------------------------------

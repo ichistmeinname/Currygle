@@ -61,11 +61,6 @@ _errorInfo = htmlLiClass "info" [htmlTextNode "Sorry, there are no matching resu
 _hitsPerPage :: Int
 _hitsPerPage = 10
 
--- Function to convert to list to a list of tuples (used for pairs of constructor names and signatures)
-consPairs :: [String] -> [String] -> [(String, String)]
-consPairs (e1:l1) (e2:l2) = (e1, e2) : consPairs l1 l2
-consPairs _ _             = []    
-
 -- Shortcut to build a tuples (used for the HTML node (css class, moduleName))
 moduleText :: String -> (String, String)
 moduleText text = ("module", text)
@@ -105,20 +100,33 @@ funcDocsToListItem doc =
        fInfo = idInfo doc
        operatorOrFunction = paren ((P.head (idTitle doc)) `elem` ":!#$%&*+./<=>?@\\^|-~_") 
                                   (idTitle doc)
+
 -- Returns the HTML node for a result that is a type/data structure.
 -- The description and module name are treated normally.
 -- special title: data NAME = CONSTR1 | CONSTR2
 typeDocsToListItem :: InfoDoc TypeInfo -> X.Node
-typeDocsToListItem doc =
+typeDocsToListItem doc 
+ | tIsTypeSyn tInfo = 
+    makeResult typeSynTitle (idUri doc) (moduleText $ tModule tInfo) 
+     (tDescription tInfo) []
+ | otherwise       = 
   makeResult title (idUri doc) (moduleText $ tModule tInfo) 
-             (tDescription tInfo) (consPairs consName consSig)
- where consPair = map (showTypeList (tName tInfo ++ (varIndex $ tVarIndex tInfo))) 
-                      $ tSignature tInfo
-       consSig  = P.concatMap fst consPair
-       consName = map snd consPair
-       title = "data " ++ idTitle doc ++ constructors 
-       constructors = ifNotEmpty consName $ " = " ++  L.intercalate " | " consName     
+             (tDescription tInfo) []
+ where consNames = constrTypeExpr tInfo
+       typeSynTitle = "type " ++ tName tInfo ++ " = " ++ showType "" False (snd (P.head consNames))
+       title = "data " ++ showType "" False (resultType tInfo) ++ if P.null consNames then "" else constructors
+       constructors = " = " ++  L.intercalate " | " (showConstrs tInfo)
        tInfo = idInfo doc
+
+showConstrs :: TypeInfo -> [String]
+showConstrs tInfo = map showConstr (tSignature tInfo)
+ where showConstr (("Prelude",":"), [tExpr1,tExpr2]) =
+         showType "" False tExpr1 ++ " : " ++ showType "" False tExpr2
+       showConstr ((modName, typeName), tExprList)
+         | modName == "Prelude" && "(," `L.isPrefixOf` typeName =
+           "(" ++ L.intercalate ", " (map (showType "" True) tExprList) ++ ")"
+         | otherwise                                       =
+           typeName ++ " " ++ L.intercalate " " (map (showType "" True) tExprList)
             
 -- | Generates the HTML node of the search results.
 resultSplice :: Int -> QRDocs -> Splice Application

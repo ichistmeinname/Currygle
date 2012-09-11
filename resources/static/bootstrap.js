@@ -221,6 +221,7 @@
     }
 
   , show: function () {
+    
       var pos = $.extend({}, this.$element.offset(), {
         height: this.$element[0].offsetHeight
       })
@@ -353,7 +354,7 @@
         case 13: // enter
         case 39: // right arrow
           if (!this.shown) return
-          console.log(!this.$menu.find('.active').length)
+          
           if (!this.$menu.find('.active').length) {
             this.hide()
             location.href="/currygle?query="+encodeURIComponent(this.query);
@@ -363,10 +364,12 @@
           
           break
           
+        case 32: // space bar
         case 37: // left arrow
-        case 27: // escape
+        case 27: // escape    
           if (!this.shown) return
           this.hide()
+
           break
 
         default:
@@ -384,6 +387,7 @@
         case 9: // tab
         case 13: // enter
         case 27: // escape
+
           e.preventDefault()
           break
 

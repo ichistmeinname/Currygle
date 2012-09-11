@@ -58,18 +58,20 @@ runBinTests :: IO Counts
 runBinTests = runTestTT binTests
 
 binTests :: Test
-binTests = test [andTest, orTest, notTest, multipleBins, nestedBinsAndSigs]
+binTests = test [andTest, orTest, notTest, multipleBins, nestedBinsAndSigs, varTest]
 
 andTest =
-  BinQuery And (Word "a") (Word "b") ~=? unRight (parse "a AND b")
+  BinQuery And (Word "abc") (Word "bcd") ~=? unRight (parse "abc AND bcd")
 orTest =
-  BinQuery Or (Word "a") (Word "b") ~=? unRight (parse "a OR b")
+  BinQuery Or (Word "abc") (Word "bbc") ~=? unRight (parse "abc OR bbc")
 notTest =
-  BinQuery But (Word "a") (Word "b") ~=? unRight (parse "a NOT b")
+  BinQuery But (Word "abc") (Word "bbc") ~=? unRight (parse "abc NOT bbc")
 multipleBins =
-  BinQuery But (BinQuery Or (BinQuery Or (BinQuery And (Word "a") (Word "b")) (Word "c")) (Word "d")) (Word "e") ~=? unRight (parse "a AND b OR c OR d NOT e")
+  BinQuery But (BinQuery Or (BinQuery Or (BinQuery And (Word "ab") (Word "bb")) (Word "cb")) (Word "db")) (Word "eb") ~=? unRight (parse "ab AND bb OR cb OR db NOT eb")
 nestedBinsAndSigs =
   BinQuery And ((Specifier ["signature"] $ Word $ testShow (prim "Int" --> prim "Int"))) ((Specifier ["signature"] $ Word "Float")) ~=? unRight (parse "Int -> Int AND Float")
+varTest =
+  Specifier ["signature"] (Word "a -> b") ~=? unRight (parse "a -> b") 
 
 runSpecTests = runTestTT specTests
 

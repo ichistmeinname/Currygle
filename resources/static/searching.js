@@ -11,7 +11,7 @@ function createRequestObject() {
   return ro;
 }
   
-var http=createRequestObject();
+// var http=createRequestObject();
 
 function searchQuery() { 
   location.href="/currygle?query="
@@ -31,6 +31,8 @@ function getCompletions(e) {
     case 27: // escape
         //autocomplete.data('typeahead').hide();
     return;
+    
+    case 32: // space bar
     case 37: // arrows
     case 38:
     case 39:
@@ -44,10 +46,16 @@ function getCompletions(e) {
       query=query.substring(lastBlankPos);
     }
   if (query.length>0) {
-      http.open('get', 'completions?query='+query);
-      http.onreadystatechange=getHTTPResponse;
-      http.send(null);
-  }
+     $.get('completions?query='+query, function(data){
+        autocomplete.data('typeahead').source=eval(data);
+        autocomplete.data('typeahead').lookup();
+        });
+      //http.open('get', 'completions?query='+query);
+      //http.onreadystatechange=getHTTPResponse;
+      //http.send(null);
+  } else {
+    autocomplete.data('typeahead').source = [];
+    }
 }
 
 function getHTTPResponse() {
