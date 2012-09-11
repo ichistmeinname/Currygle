@@ -77,17 +77,17 @@ restrict your search.
 * __:module io__ - searches for modules starting with _io_ (also __:m io__), without a following name, it searches for all modules
 * __:inModule io__ - restricts the search to the module _io_, but searches for all contexts (also __:in io__)
 * __:function map__ - searches for functions starting with _map_ (also __:f map__), without a following name, it searches for all functions
-* __:type either__ - searches for types starting with either (also __:t either__), without a following name, it searches for all types
-* __:author donald__ - searches for modules with _donald_ as author (also: __:a dona
+* __:type either__ - searches for types starting with _either_ (also __:t either__), without a following name, it searches for all types
+* __:author donald__ - searches for modules with _donald_ as author (also: __:a donald)
 * __:nondet [name]__ - searches for non-deterministic functions (also __:nd__), a following name is optional
 * __:det [name]__ - searches for deterministic functions (also __:d__), a following name is optional
 * __:flexible [name]__ - searches for flexible functions (also __:fl__), a following name is optional
 * __:rigid [name]__ - searches for rigid functions (also __:ri__), a following name is optional
 * __:signature a__ - searches for signature starting with _a_ (also __:s a__)
 * __:function map AND maybe__ - searches for a function starting with map and searches for maybe in all contexts (like description or signature)
-* __:function map maybe__ - does the same thing, because all parts of an query are applied by AND
-* __:type either OR :function either__ - OR can be used as binary operator
-* __io NOT :module io__ - searches for io in all contexts except for modules
+* __:function map maybe__ - does the same thing, because all parts of an query are applied by __AND__
+* __:type either OR :function either__ - __OR__ can be used as binary operator
+* __io NOT :module io__ - searches for _io_ in all contexts except for modules
 * upper character, _->_, tuples, lists are all identifiers to search for signatures
 
 
