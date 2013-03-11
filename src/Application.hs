@@ -12,11 +12,8 @@ Defines the application's monad, provides HasState instances and an initializer 
 -}
 
 
-module Application
-  ( Application
-  , appInitializer
-  )
-where
+module Application ( Application, appInitializer ) where
+
 import Snap.Extension
 import Snap.Extension.Heist.Impl
 import CurryState
@@ -24,7 +21,7 @@ import CurryState
 -- | Constructs an ApplicationState.
 appInitializer :: Initializer ApplicationState
 appInitializer = do
-  heistS <- heistInitializer "resources/templates"
+  heistS <- heistInitializer "resources/templates" id
   curryS <- curryInitializer
   return $ ApplicationState heistS curryS
 
