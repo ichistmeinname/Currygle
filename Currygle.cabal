@@ -8,9 +8,9 @@ category:      Text, Data
 synopsis:      Curr(y)gle
 homepage:      tba
 description:   Curr(y)gle - An API search engine for Curry
-cabal-version: >=1.6
+cabal-version: >= 1.6
 build-type:    Simple
-tested-with:   GHC==7.0.4
+tested-with:   GHC == 7.0.4
 
 executable curryIndexer
   main-is:        CurryIndexer.hs
@@ -25,6 +25,7 @@ executable curryIndexer
                 , deepseq
                 , xmlhtml                == 0.1.*
                 , text
+                , transformers
 
   ghc-options:  -threaded
                 -rtsopts
@@ -38,24 +39,25 @@ executable curryServer
   other-modules:  CurryInfo, FilesAndLoading, Helpers, IndexTypes
                 , CoreData, CurryState, CurrySearch, Parser, Application, Site
 
-  build-depends: base                   >= 4     && < 5
-               , xmlhtml                == 0.1.*
-               , heist                  >= 0.5   && < 0.6
-               , json                   >= 0.4   && < 1
-               , snap-core              >= 0.4   && < 0.6
-               , snap                   >= 0.4   && < 0.6
-               , Holumbus-Searchengine  >= 1.2
-               , text
-               , mtl
-               , binary                 >= 0.5
-               , deepseq
-               , parsec
-               , containers
+  build-depends:  base                   >= 4     && < 5
+                , xmlhtml                == 0.1.*
+                , heist                  >= 0.5   && < 0.6
+                , json                   >= 0.4   && < 1
+                , snap-core              >= 0.4   && < 0.6
+                , snap                   >= 0.4   && < 0.6
+                , Holumbus-Searchengine  >= 1.2
+                , text
+                , mtl
+                , binary                 >= 0.5
+                , deepseq
+                , parsec
+                , containers
+                , transformers
 
-  extensions:  TypeSynonymInstances MultiParamTypeClasses FlexibleInstances
+  extensions:   TypeSynonymInstances MultiParamTypeClasses FlexibleInstances
 
-  ghc-options: -threaded
-               -O2
-               -Wall
-               -fwarn-tabs
-               -funbox-strict-fields
+  ghc-options:  -threaded
+                -O2
+                -Wall
+                -fwarn-tabs
+                -funbox-strict-fields

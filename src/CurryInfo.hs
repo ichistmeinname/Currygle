@@ -14,7 +14,7 @@ Module for the information associated with a curry module, function and type.
 module CurryInfo where
 
 import Control.DeepSeq
-import Control.Monad                  ( liftM5, liftM3, liftM2, liftM )
+import Control.Monad                  ( liftM3, liftM2, liftM )
 
 import Data.Binary                    ( Binary(..), putWord8, getWord8 )
 
@@ -42,7 +42,7 @@ instance Binary ModuleInfo where
 -- | Data to represent the flexible and rigid attribute of a function.
 data FlexRigidResult = UnknownFR | ConflictFR | KnownFlex | KnownRigid deriving (Show, Read)
 
-instance NFData FlexRigidResult 
+instance NFData FlexRigidResult
 
 instance Binary FlexRigidResult where
       put UnknownFR = putWord8 0
@@ -68,11 +68,11 @@ emptyQName = ("","")
 --   a function type constructed with two type expressions or a type constructor with a qualified
 --   and a list of type expressions.
 data TypeExpr =
-    TVar Int              
-  | FuncType TypeExpr TypeExpr     
-  | TCons QName [TypeExpr]  
-  | Undefined   
-  deriving (Read, Show)   
+    TVar Int
+  | FuncType TypeExpr TypeExpr
+  | TCons QName [TypeExpr]
+  | Undefined
+  deriving (Read, Show)
 
 instance NFData TypeExpr where
     rnf (TVar i) = rnf i
@@ -85,7 +85,7 @@ instance Binary TypeExpr where
     put (FuncType t1 t2) = putWord8 1 >> put t1 >> put t2
     put (TCons name tList) = putWord8 2 >> put name >> put tList
     put Undefined = putWord8 3
-    get = do 
+    get = do
           tag <- getWord8
           case tag of
             0 -> liftM TVar get
@@ -113,12 +113,12 @@ fNonDet :: FunctionInfo -> Bool
 fNonDet (FunctionInfo _ _ _ _ nd _) = nd
 
 fFlexRigid :: FunctionInfo -> FlexRigidResult
-fFlexRigid (FunctionInfo _ _ _ _ _ fr) = fr  
+fFlexRigid (FunctionInfo _ _ _ _ _ fr) = fr
 
 -- lifts six arguments
-liftM6 :: Monad m => (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> r) 
+liftM6 :: Monad m => (a1 -> a2 -> a3 -> a4 -> a5 -> a6 -> r)
                   -> m a1 -> m a2 -> m a3 -> m a4 -> m a5 -> m a6 -> m r
-liftM6 f m1 m2 m3 m4 m5 m6 = 
+liftM6 f m1 m2 m3 m4 m5 m6 =
   do {x1 <- m1; x2 <- m2; x3 <- m3; x4 <- m4; x5 <- m5; x6 <- m6; return (f x1 x2 x3 x4 x5 x6)}
 
 instance NFData FunctionInfo where
@@ -153,7 +153,7 @@ tIsTypeSyn :: TypeInfo -> Bool
 tIsTypeSyn (TypeInfo _ _ _ _ _ b) = b
 
 instance NFData TypeInfo where
-    rnf (TypeInfo n s v m d b) = rnf n `seq` rnf s 
+    rnf (TypeInfo n s v m d b) = rnf n `seq` rnf s
         `seq` rnf v `seq` rnf m `seq` rnf d `seq` rnf b
 
 instance Binary TypeInfo where
@@ -161,7 +161,7 @@ instance Binary TypeInfo where
     get = do
             r <- liftM6 TypeInfo get get get get get get
             rnf r `seq` return r
-          
+
 -- | The CurryInfo data holds information about the module, and corresponding functions,
 --   data and type declaration of a given 'curry file'.
 data CurryInfo = CurryInfo ModuleInfo [FunctionInfo] [TypeInfo] deriving (Show, Read)
