@@ -15,13 +15,11 @@ module Main where
 
 import System.Posix.Process (getProcessID)
 
-import Snap.Extension.Server
+import Snap.Extension.Server (quickHttpServe)
 
-import Application
-import Site
-
-pidFile :: String
-pidFile = "server.pid"
+import Application     (appInitializer)
+import FilesAndLoading (pidFile)
+import Site            (site)
 
 main :: IO ()
 main = do

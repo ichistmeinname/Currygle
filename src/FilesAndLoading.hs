@@ -51,23 +51,28 @@ _moduleListPath = "./index/module"
 -- paths to load index and document files
 _curryModIndex :: FilePath
 _curryModIndex  = "./index/ix-mod.bin.idx"
-_curryModDocs :: FilePath 
+
+_curryModDocs :: FilePath
 _curryModDocs   = "./index/ix-mod.bin.doc"
+
 _curryFctIndex :: FilePath
 _curryFctIndex  = "./index/ix-fct.bin.idx"
+
 _curryFctDocs :: FilePath
 _curryFctDocs   = "./index/ix-fct.bin.doc"
+
 _curryTypeIndex :: FilePath
 _curryTypeIndex = "./index/ix-type.bin.idx"
+
 _curryTypeDocs :: FilePath
 _curryTypeDocs  = "./index/ix-type.bin.doc"
 
+pidFile :: String
+pidFile = "server.pid"
+
 -- Alias to read a given CurryInfo data file
 loadFromCurryFile :: FilePath -> IO CurryInfo
-loadFromCurryFile path = do
-       text <- readFile path
-       CurryInfo m f t <- readIO text 
-       return $ (CurryInfo m f t)
+loadFromCurryFile path = readFile path >>= readIO
 
 -- Alias to load index with explicit type
 loadIndex :: FilePath -> IO CompactInverted
@@ -82,7 +87,7 @@ addFileExtension :: String -> FilePath -> FilePath
 addFileExtension extension fileName = fileName ++ extension
 
 -- Shortcut for index file extension
-indexExtension :: FilePath -> FilePath 
+indexExtension :: FilePath -> FilePath
 indexExtension = addFileExtension _indexFileExtension
 
 -- Shortcut for document file extension
