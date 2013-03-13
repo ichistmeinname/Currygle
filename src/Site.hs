@@ -17,12 +17,13 @@ and gathered by the function site, which is exported.
 
 module Site ( site ) where
 
-import Application
-import Helpers
+import Application (Application, HasCurryState (..))
+import Helpers (showType, paren, constrTypeExpr, resultType)
 import IndexTypes
 import CurrySearch
 import CurryState
 import CurryInfo
+import XmlHelper
 
 import Control.Applicative
 import Control.Monad.Reader

@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 {- |
 Module      :  CurryState
 Description :  Defines a custom state
@@ -13,17 +11,10 @@ Portability :  portable
 This module defines a custom state to store the index and documents.
 
 -}
-module CurryState
-  ( CurryState (..)
-  , HasCurryState (..)
-  , curryInitializer
-  ) where
+module CurryState ( CurryState (..), loadCurryState ) where
 
-import Control.Monad.Trans   (liftIO)
 import System.IO             (stderr, hPutStrLn)
 import Holumbus.Index.Common (sizeWords, sizeDocs)
-
-import Snap.Extension (Initializer, InitializerState (..), mkInitializer)
 
 import FilesAndLoading
 import IndexTypes
@@ -37,23 +28,10 @@ data CurryState = CurryState
   , typeDocuments :: ! (SmallDocuments TypeInfo)
   }
 
-instance InitializerState CurryState where
-  extensionId = const "Curry/CurryState"
-  mkCleanup   = const $ return ()
-  mkReload    = const $ return ()
-
-class HasCurryState s where
-  getCurryState :: s -> CurryState
-  setCurryState :: CurryState -> s -> s
-
--- | Initializes the 'CurryState'.
-curryInitializer :: Initializer CurryState
-curryInitializer = liftIO curryInitState >>= mkInitializer
-
 -- Helper function to load the three pairs of index and documents
 -- and return it as Core data.
-curryInitState :: IO CurryState
-curryInitState = do
+loadCurryState :: IO CurryState
+loadCurryState = do
   (idxMod, docMod) <- loadIndexDocs _curryModIndex  _curryModDocs
   (idxFct, docFct) <- loadIndexDocs _curryFctIndex  _curryFctDocs
   (idxTyp, docTyp) <- loadIndexDocs _curryTypeIndex _curryTypeDocs

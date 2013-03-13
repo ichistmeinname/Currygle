@@ -23,7 +23,6 @@ executable curryIndexer
                 , Holumbus-Searchengine  >= 1.2.3
                 , binary                 >= 0.5  && < 1
                 , deepseq
-                , xmlhtml                == 0.1.*
                 , text
                 , transformers
 

@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 {- |
 Module      :  Application
 Description :  Defines the application's monad and related informations
@@ -8,15 +9,17 @@ Maintainer  :  sad@informatik.uni-kiel.de
 Stability   :  experimental
 Portability :  portable
 
-Defines the application's monad, provides HasState instances and an initializer function to construct the AppState.
+Defines the application's monad, provides HasState instances
+and an initializer function to construct the AppState.
 -}
+module Application ( Application, appInitializer, HasCurryState (..) ) where
 
-
-module Application ( Application, appInitializer ) where
+import Control.Monad.Trans   (liftIO)
 
 import Snap.Extension
 import Snap.Extension.Heist.Impl
-import CurryState
+
+import CurryState ( CurryState (..), loadCurryState )
 
 type Application = SnapExtend ApplicationState
 
@@ -33,6 +36,19 @@ appInitializer = do
   heistS <- heistInitializer "resources/templates" id
   curryS <- curryInitializer
   return $ ApplicationState heistS curryS
+
+-- | Initializes the 'CurryState'.
+curryInitializer :: Initializer CurryState
+curryInitializer = liftIO loadCurryState >>= mkInitializer
+
+instance InitializerState CurryState where
+  extensionId = const "Curry/CurryState"
+  mkCleanup   = const $ return ()
+  mkReload    = const $ return ()
+
+class HasCurryState s where
+  getCurryState :: s -> CurryState
+  setCurryState :: CurryState -> s -> s
 
 -- | Instance to find the heist state.
 instance HasHeistState Application ApplicationState where
