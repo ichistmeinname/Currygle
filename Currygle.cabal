@@ -20,7 +20,7 @@ executable curryIndexer
   build-depends:  base                   >= 4    && < 5
                 , filepath               >= 1    && < 2
                 , directory
-                , Holumbus-Searchengine  >= 1.2
+                , Holumbus-Searchengine  >= 1.2.3
                 , binary                 >= 0.5  && < 1
                 , deepseq
                 , xmlhtml                == 0.1.*
@@ -45,7 +45,7 @@ executable curryServer
                 , json                   >= 0.4   && < 1
                 , snap-core              >= 0.4   && < 0.6
                 , snap                   >= 0.4   && < 0.6
-                , Holumbus-Searchengine  >= 1.2
+                , Holumbus-Searchengine  >= 1.2.3
                 , text
                 , mtl
                 , binary                 >= 0.5
@@ -53,6 +53,7 @@ executable curryServer
                 , parsec
                 , containers
                 , transformers
+                , unix
 
   extensions:   TypeSynonymInstances MultiParamTypeClasses FlexibleInstances
 
