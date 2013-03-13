@@ -8,7 +8,9 @@ Maintainer  :  sad@informatik.uni-kiel.de
 Stability   :  experimental
 Portability :  portable
 
-The module holds the functionalty for parsing the search string to a query. To narrow down the search, a special syntax can be used (i.e. ":function map" searches only for functions with the name "map").
+The module holds the functionalty for parsing the search string to a query.
+To narrow down the search, a special syntax can be used
+(i.e. ":function map" searches only for functions with the name "map").
 -}
 
 module Parser (parse) where
