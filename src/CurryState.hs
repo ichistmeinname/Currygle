@@ -14,71 +14,60 @@ This module defines a custom state to store the index and documents.
 
 -}
 module CurryState
-  ( CurryState(..)
-  , HasCurryState(..)
-  , MonadCurry(..)
+  ( CurryState (..)
+  , HasCurryState (..)
   , curryInitializer
   ) where
 
-import Control.Monad.Reader
-import Holumbus.Index.Common
+import Control.Monad.Trans   (liftIO)
+import System.IO             (stderr, hPutStrLn)
+import Holumbus.Index.Common (sizeWords, sizeDocs)
 
-import Snap.Extension
-import Snap.Types
+import Snap.Extension (Initializer, InitializerState (..), mkInitializer)
 
-import System.IO (stderr, hPutStrLn)
-
-import CoreData
 import FilesAndLoading
+import IndexTypes
 
-newtype CurryState = CurryState { core :: Core }
+data CurryState = CurryState
+  { modIndex      :: ! CompactInverted
+  , modDocuments  :: ! (SmallDocuments ModuleInfo)
+  , fctIndex      :: ! CompactInverted
+  , fctDocuments  :: ! (SmallDocuments FunctionInfo)
+  , typeIndex     :: ! CompactInverted
+  , typeDocuments :: ! (SmallDocuments TypeInfo)
+  }
 
 instance InitializerState CurryState where
-    extensionId = const "Curry/CurryState"
-    mkCleanup   = const $ return ()
-    mkReload    = const $ return ()
+  extensionId = const "Curry/CurryState"
+  mkCleanup   = const $ return ()
+  mkReload    = const $ return ()
 
 class HasCurryState s where
-    getCurryState :: s -> CurryState
-    setCurryState :: CurryState -> s -> s
-
-instance HasCurryState s => MonadCurry (SnapExtend s) where
-    curryCore = fmap core $ asks getCurryState
-
-instance (MonadSnap m, HasCurryState s) => MonadCurry (ReaderT s m) where
-    curryCore = fmap core $ asks getCurryState
-
-class MonadSnap m => MonadCurry m where
-    curryCore :: m Core
+  getCurryState :: s -> CurryState
+  setCurryState :: CurryState -> s -> s
 
 -- | Initializes the 'CurryState'.
 curryInitializer :: Initializer CurryState
-curryInitializer = liftIO curryInitState  >>= mkInitializer . CurryState
+curryInitializer = liftIO curryInitState >>= mkInitializer
 
 -- Helper function to load the three pairs of index and documents
 -- and return it as Core data.
-curryInitState :: IO Core
+curryInitState :: IO CurryState
 curryInitState = do
-  idxMod  <- loadIndex _curryModIndex
-  infoMsg "index" (sizeWords idxMod) "words"
-  docMod  <- loadDocuments _curryModDocs
-  infoMsg "documents" (sizeDocs docMod) "entries"
-  idxFct  <- loadIndex _curryFctIndex
-  infoMsg "index" (sizeWords idxFct) "words"
-  docFct  <- loadDocuments _curryFctDocs
-  infoMsg "documents" (sizeDocs docFct) "entries"
-  idxType <- loadIndex _curryTypeIndex
-  infoMsg "index" (sizeWords idxType) "words"
-  docType <- loadDocuments _curryTypeDocs
-  infoMsg "documents" (sizeDocs docType) "entries"
-  return Core { modIndex      = idxMod,
-                modDocuments  = docMod,
-                fctIndex      = idxFct,
-                fctDocuments  = docFct,
-                typeIndex     = idxType,
-                typeDocuments = docType
-              }
- where infoMsg str1 fIdxOrDoc str2 =
-         hPutStrLn stderr $ "Init process: Curry "
-                          ++ str1 ++ " was loaded successfully and contains "
-                          ++ show fIdxOrDoc ++ " " ++ str2
+  (idxMod, docMod) <- loadIndexDocs _curryModIndex  _curryModDocs
+  (idxFct, docFct) <- loadIndexDocs _curryFctIndex  _curryFctDocs
+  (idxTyp, docTyp) <- loadIndexDocs _curryTypeIndex _curryTypeDocs
+  return CurryState
+    { modIndex  = idxMod, modDocuments  = docMod
+    , fctIndex  = idxFct, fctDocuments  = docFct
+    , typeIndex = idxTyp, typeDocuments = docTyp
+    }
+  where
+  loadIndexDocs i d = do
+    idx <- loadIndex i
+    info "index" (sizeWords idx) "words"
+    doc <- loadDocuments d
+    info "documents" (sizeDocs doc) "entries"
+    return (idx, doc)
+  info what count cntnt = hPutStrLn stderr $ unwords
+    ["Init process: Curry", what, "was loaded", '(':show count, cntnt ++ ")"]

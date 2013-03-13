@@ -18,7 +18,6 @@ and gathered by the function site, which is exported.
 module Site ( site ) where
 
 import Application
-import CoreData
 import Helpers
 import IndexTypes
 import CurrySearch
@@ -26,7 +25,7 @@ import CurryState
 import CurryInfo
 
 import Control.Applicative
-import Control.Monad.Trans
+import Control.Monad.Reader
 
 import Data.List                as L
 import Data.Maybe
@@ -115,7 +114,7 @@ coreIdx :: Application (CompactInverted,
                         CompactInverted,
                         CompactInverted)
 coreIdx = do
-  cCore <- curryCore
+  cCore <- asks getCurryState
   return (modIndex cCore,fctIndex cCore, typeIndex cCore)
 
 -- | Document data consisting of module, function and type information as triple.
@@ -123,7 +122,7 @@ coreDoc :: Application (SmallDocuments ModuleInfo,
                         SmallDocuments FunctionInfo,
                         SmallDocuments TypeInfo)
 coreDoc = do
-  cCore <- curryCore
+  cCore <- asks getCurryState
   return (modDocuments cCore, fctDocuments cCore, typeDocuments cCore)
 
 -- Returns the HTML node for a result that is a module.
