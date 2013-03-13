@@ -18,6 +18,15 @@ import Snap.Extension
 import Snap.Extension.Heist.Impl
 import CurryState
 
+type Application = SnapExtend ApplicationState
+
+-- | Record type for holding application's state,
+-- this includes the state needed by the used extensions.
+data ApplicationState = ApplicationState
+  { heistState :: HeistState Application
+  , curryState :: CurryState
+  }
+
 -- | Constructs an ApplicationState.
 appInitializer :: Initializer ApplicationState
 appInitializer = do
@@ -34,13 +43,3 @@ instance HasHeistState Application ApplicationState where
 instance HasCurryState ApplicationState where
   getCurryState     = curryState
   setCurryState s a = a { curryState = s }
-
--- | Record type for holding application's state,
--- this includes the state needed by the used extensions.
-data ApplicationState = ApplicationState
-  {
-    heistState :: HeistState Application,
-    curryState :: CurryState
-  }
-
-type Application = SnapExtend ApplicationState
