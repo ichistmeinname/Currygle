@@ -2,3 +2,5 @@ cabal-dev/
 dist/
 index/
 log/
+nohup.out
+server.pid
