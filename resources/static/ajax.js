@@ -2,7 +2,7 @@
 function createRequestObject(request)
 {
   var browser=navigator.appName;
- 
+
   if(browser=="Microsoft Internet Explorer")
   {
     request=new ActiveXObject("Microsoft.XMLHTTP");
@@ -23,7 +23,7 @@ function handleResponseAutoCompleter(data)
 //  if(http.readyState==4)
   //{
     var sugg = [];
-    sugg = data;	
+    sugg = data;
     var i = 0;
 
     var query=document.getElementById("query").value;
@@ -38,11 +38,11 @@ function handleResponseAutoCompleter(data)
     }
 
     output += '<ul class="typeahead dropdown-menu">';
-    
+
     console.log(sugg.map(prepareItem));
     /*for(var suggestion in suggestions)
     {
-      var sugg = suggestions[suggestion]; 
+      var sugg = suggestions[suggestion];
       if(sugg != "")
       {
         output  += '<li><a href="#">'
@@ -50,7 +50,7 @@ function handleResponseAutoCompleter(data)
                 + '</a></li>';
       }
       i++;*/
-      
+
    // }
     output += '</ul>';
     selectedSuggestion = '';
@@ -73,7 +73,7 @@ function prepareItem(item) {
     return item;
 }
 
-  
+
 
 var selectedSuggestion = '';
 var numSuggestions = 0;
@@ -130,7 +130,7 @@ function keyUpHandler(e)
     }
     if(query.length>0)
     {
-        $.get('completions?query='+query, function(data){
+        $.get('./completions?query='+query, function(data){
         handleResponseAutoCompleter(data);
         });
       // http.open('get', 'completions?query='+query, true);
@@ -148,9 +148,9 @@ function setSuggestion(suggestion)
 {
   document.getElementById("query").value=suggestion;
   hide();
-  location.href="querypage?query=" + suggestion;
+  location.href="./results?query=" + suggestion;
 }
- 
+
 // Hide Suggestion List.
 function hide()
 {
@@ -159,8 +159,8 @@ function hide()
   {
     while ( sugg.childNodes.length >= 1 )
     {
-      sugg.removeChild( sugg.firstChild );       
-    } 
+      sugg.removeChild( sugg.firstChild );
+    }
   }
   document.getElementById("suggestion").style.visibility="hidden";
 }

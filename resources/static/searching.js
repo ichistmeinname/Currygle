@@ -2,7 +2,7 @@
 function createRequestObject() {
   var ro;
   var browser=navigator.appName;
- 
+
   if(browser=="Microsoft Internet Explorer") {
     ro=new ActiveXObject("Microsoft.XMLHTTP");
   } else {
@@ -10,11 +10,11 @@ function createRequestObject() {
   }
   return ro;
 }
-  
+
 // var http=createRequestObject();
 
-function searchQuery() { 
-  location.href="/currygle?query="
+function searchQuery() {
+  location.href="./results?query="
    +encodeURIComponent(document.getElementById("query").value);
   return false;
 }
@@ -27,16 +27,16 @@ function getCompletions(e) {
     case 13: // enter
 
     return;
-     
+
     case 27: // escape
         //autocomplete.data('typeahead').hide();
     return;
-    
+
     case 32: // space bar
     case 37: // arrows
     case 38:
     case 39:
-    case 40:    
+    case 40:
     e.preventDefault()
         //autocomplete.data('typeahead').keyup(e)
     return;
@@ -46,7 +46,7 @@ function getCompletions(e) {
       query=query.substring(lastBlankPos);
     }
   if (query.length>0) {
-     $.get('completions?query='+query, function(data){
+     $.get('./completions?query='+query, function(data){
         autocomplete.data('typeahead').source=eval(data);
         autocomplete.data('typeahead').lookup();
         });
