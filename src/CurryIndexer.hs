@@ -77,7 +77,7 @@ addContext context s = (context, s)
 writeOrPass :: String -> IO CurryIndexerStates -> IO CurryIndexerStates
 writeOrPass moduleName ioAction = do
   mList <- loadModuleList
-  if moduleName `elem` mList then return (emptyCurryModState, emptyCurryFctState, emptyCurryTypeState)
+  if moduleName `elem` mList then return emptyCurryIndexerStates
                              else ioAction
 
 -- Checks, if the module exists in the index
@@ -87,7 +87,6 @@ occurenceCheck new uriPath cdocPath states =
          else writeOrPass name index
  where name  = takeBaseName cdocPath
        index = prepareIndex uriPath cdocPath states
-
 
 -- Helper function for writing index
 prepareIndex :: FilePath -> FilePath -> IO CurryIndexerStates -> IO CurryIndexerStates
@@ -112,9 +111,9 @@ doc uriPath fiName uriType info =
 
 -- | Data to represent uri,
 -- functions and types use anchors, i.e. moduleName.html#functionName.
-data URI a =
-  ModuleURI (a -> String) |
-  FctOrTypeURI (a -> String) (a -> String)
+data URI a
+  = ModuleURI (a -> String)
+  | FctOrTypeURI (a -> String) (a -> String)
 
 -- | Function to build index.
 idx :: (a -> DocId -> [(String, String, Occurrences)]) -> a -> DocId -> Inverted
@@ -183,13 +182,6 @@ contextsT typeI i =
       ++ (signature (concatMap (signatureComponents . snd) (constrTypeExpr typeI)))
       ++ (functionContext $ map fst sigPair)
       ++ (description $ tDescription typeI)
-
--- constrTypeExpr :: TypeInfo -> [(String, TypeExpr)]
--- constrTypeExpr (TypeInfo typeName constrs typeVars modName _ typSyn) =
---   map (\((_,cName), argTypes) -> (cName,if typSyn then foldr1 FuncType argTypes
---                                             else foldr FuncType resultType argTypes)) constrs
---  where
---   resultType = TCons (modName, typeName) (map TVar typeVars)
 
 -- Returns the maxId of a given document
 maxId :: Binary a => SmallDocuments a -> DocId
@@ -278,7 +270,7 @@ loadModuleList = do --loadFromBinFile moduleListPath
 
 -- Writes index and documents with a function that converts the types automatically
 -- (Inverted to CompactInverted, Documents a to SmallDocuments a)
-writeIndex' :: [String] -> (CurryModIndexerState, CurryFctIndexerState, CurryTypeIndexerState) -> IO ()
+writeIndex' :: [String] -> CurryIndexerStates -> IO ()
 writeIndex' moduleList (curryModState, curryFctState, curryTypeState) = do
   putStr "."
   writeSearchBin _moduleIndexPath curryModState
@@ -296,7 +288,7 @@ writeIndex new uriPath files = do
   (nM,nF,nT) <- foldr (occurenceCheck new uriPath) emptyStates files
   if new then writeIndex' moduleNames (nM,nF,nT)
          else mergeIdxDoc moduleNames loadIndexerStates (nM, nF, nT)
- where emptyStates = return (emptyCurryModState, emptyCurryFctState, emptyCurryTypeState)
+ where emptyStates = return emptyCurryIndexerStates
        moduleNames = map (dropExtension . last . splitStringOn "/") files
 
 -- Reads txt-file with pairs of cdoc and uri paths that are seperated by ';'
@@ -328,13 +320,12 @@ prepareFilePaths _ _   = putStr _howToUseMessage
 
 -- Analyzes arguments of the command line
 processArgs :: [String] -> IO ()
-processArgs args =
-  case args of
-   [fPath,"--n"]            -> readFilePaths True fPath
-   [fPath,"--u"]            -> readFilePaths False fPath
-   [cdocPath,uriPath,"--n"] -> startIndexer True cdocPath uriPath
-   [cdocPath,uriPath,"--u"] -> startIndexer False cdocPath uriPath
-   _                        -> putStr _howToUseMessage
+processArgs args = case args of
+  [fPath,"--n"]            -> readFilePaths True fPath
+  [fPath,"--u"]            -> readFilePaths False fPath
+  [cdocPath,uriPath,"--n"] -> startIndexer True cdocPath uriPath
+  [cdocPath,uriPath,"--u"] -> startIndexer False cdocPath uriPath
+  _                        -> putStr _howToUseMessage
 
 main :: IO ()
 main = getArgs >>= processArgs

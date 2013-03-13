@@ -10,59 +10,44 @@ Portability :  portable
 
 This module define the indexer types that are used by the search engine.
 -}
-
 module IndexTypes
- ( module IndexTypes,
-   module Holumbus.Index.CompactIndex,
-   IndexerState (..),
-   ModuleInfo,
-   FunctionInfo,
-   TypeInfo
- )
-where
+  ( module IndexTypes
+  , module Holumbus.Index.CompactIndex
+  , IndexerState (..)
+  , ModuleInfo
+  , FunctionInfo
+  , TypeInfo
+ ) where
 
 import CurryInfo
 
 import Holumbus.Index.CompactIndex
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
 
-emptyCurryModState :: CurryModIndexerState
-emptyCurryModState = emptyIndexerState emptyInverted emptyDocuments
+-- | Triple of the index-documents-pairs
+type CurryIndexerStates =
+  ( -- | Pair of index and documents of the type ModuleInfo
+    HolumbusState ModuleInfo
+  , -- | Pair of index and documents of the type FunctionInfo
+    HolumbusState FunctionInfo
+  , -- | Pair of index and documents of the type TypeInfo
+    HolumbusState TypeInfo
+  )
 
-emptyCurryFctState :: CurryFctIndexerState
-emptyCurryFctState = emptyIndexerState emptyInverted emptyDocuments
-
-emptyCurryTypeState :: CurryTypeIndexerState
-emptyCurryTypeState = emptyIndexerState emptyInverted emptyDocuments
-
-emptyCurryState :: HolumbusState a
-emptyCurryState = emptyIndexerState emptyInverted emptyDocuments
+emptyCurryIndexerStates :: CurryIndexerStates
+emptyCurryIndexerStates = (emptyState, emptyState, emptyState)
+  where emptyState = emptyIndexerState emptyInverted emptyDocuments
 
 makeIndexerState :: Inverted -> Documents a -> HolumbusState a
 makeIndexerState = IndexerState
+
 -- ------------------------------------------------------------
 
--- | Pair of index and documents of the type ModuleInfo
-type CurryModIndexerState         = HolumbusState ModuleInfo
-
--- | Pair of index and documents of the type FunctionInfo
-type CurryFctIndexerState         = HolumbusState FunctionInfo
-
--- | Pair of index and documents of the type TypeInfo
-type CurryTypeIndexerState        = HolumbusState TypeInfo
-
--- | Pair of index and documents with polomorph type
-type CurryIndexerState a          = HolumbusState a
-
--- | Triple of the index-documents-pairs
-type CurryIndexerStates           = (CurryModIndexerState, 
-                                    CurryFctIndexerState, 
-                                    CurryTypeIndexerState)
-
 -- | Pair of the loaded index and polomorph documents
-type LoadedIndexerState a         = (CompactInverted, SmallDocuments a)
+type LoadedIndexerState a  = (CompactInverted, SmallDocuments a)
 
 -- | Tripe of the loaded index-documents=pairs
-type LoadedIndexerStates          = ((CompactInverted, SmallDocuments ModuleInfo),
-                                    (CompactInverted, SmallDocuments FunctionInfo),
-                                    (CompactInverted, SmallDocuments TypeInfo))
+type LoadedIndexerStates = ( LoadedIndexerState ModuleInfo
+                           , LoadedIndexerState FunctionInfo
+                           , LoadedIndexerState TypeInfo
+                           )
