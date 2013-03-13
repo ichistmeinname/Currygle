@@ -13,10 +13,19 @@ Entry point to start server.
 
 module Main where
 
+import System.Posix.Process (getProcessID)
+
 import Snap.Extension.Server
 
 import Application
 import Site
 
+pidFile :: String
+pidFile = "server.pid"
+
 main :: IO ()
-main = quickHttpServe appInitializer site
+main = do
+  pid <- getProcessID
+  putStrLn ("Running with PID " ++ show pid)
+  writeFile pidFile (show pid)
+  quickHttpServe appInitializer site
