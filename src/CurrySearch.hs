@@ -158,14 +158,13 @@ data QRWords = QRWords { qwCount :: Int, qwInfo :: [InfoWord] }
 -- | A document stores information about its title, uri and score.
 --   Furthermore it consits of a mapping of the contexts (i.e. function, module, type, author etc)
 --   and its words and the corresponding curryInfo data (i.e. FunctionInfo, ModuleInfo, TypeInfo).
-data InfoDoc a =
-  InfoDoc
-    { idTitle      :: String,
-      idUri        :: String,
-      idInfo       :: a,
-      idContextMap :: M.Map Context DocWordHits,
-      idScore      :: Score
-    } deriving Show
+data InfoDoc a = InfoDoc
+  { idTitle      :: String
+  , idUri        :: String
+  , idInfo       :: a
+  , idContextMap :: M.Map Context DocWordHits
+  , idScore      :: Score
+  } deriving Show
 
 -- | Empty construtctor.
 emptyQRDocs :: QRDocs
@@ -173,10 +172,9 @@ emptyQRDocs = QRDocs 0 [] [] []
 
 -- | The documents that match a query are divided into three groups (aka the curryInfo data).
 --   So the data holds these three lists and an attribute that represents the total number of documents.
-data QRDocs =
-  QRDocs
-    { qdDocCount     :: Int,
-      qdModuleDocs   :: [InfoDoc ModuleInfo],
-      qdFunctionDocs :: [InfoDoc FunctionInfo],
-      qdTypeDocs     :: [InfoDoc TypeInfo]
-    } deriving Show
+data QRDocs = QRDocs
+  { qdDocCount     :: Int
+  , qdModuleDocs   :: [InfoDoc ModuleInfo]
+  , qdFunctionDocs :: [InfoDoc FunctionInfo]
+  , qdTypeDocs     :: [InfoDoc TypeInfo]
+  } deriving Show

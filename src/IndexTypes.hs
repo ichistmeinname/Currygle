@@ -51,3 +51,4 @@ type LoadedIndexerStates = ( LoadedIndexerState ModuleInfo
                            , LoadedIndexerState FunctionInfo
                            , LoadedIndexerState TypeInfo
                            )
+

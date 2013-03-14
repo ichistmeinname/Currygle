@@ -43,9 +43,9 @@ loadCurryState = do
   where
   loadIndexDocs i d = do
     idx <- loadIndex i
-    info "index" (sizeWords idx) "words"
     doc <- loadDocuments d
-    info "documents" (sizeDocs doc) "entries"
+    info "index"     (sizeWords idx) "words"
+    info "documents" (sizeDocs  doc) "entries"
     return (idx, doc)
   info what count cntnt = hPutStrLn stderr $ unwords
     ["Init process: Curry", what, "was loaded", '(':show count, cntnt ++ ")"]
