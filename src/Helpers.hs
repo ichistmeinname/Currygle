@@ -14,26 +14,30 @@ A module full of helper functions.
 
 module Helpers where
 
-import qualified Data.Text as T (pack, splitOn, unpack)
-import           Data.List
-  (intercalate, isInfixOf, isPrefixOf, isSuffixOf, tails)
-import           Data.Char      (chr)
+import Data.Char       (chr)
+import Data.List       (intercalate, isInfixOf, isPrefixOf, isSuffixOf, tails)
+import Data.List.Split (splitOn)
 
-import           CurryInfo
+import                 CurryInfo
 
 -- ---------------------------------------------------------------------------
 -- Pretty Printing
 --- --------------------------------------------------------------------------
 
--- When types are used in the module where they're defined, a qualified name is not necessary,
+-- When types are used in the module where they're defined,
+-- a qualified name is not necessary,
 -- same holds for types of the prelude.
 isQualifiedName :: String -> String -> Bool
-isQualifiedName moduleName fModuleName = moduleName == fModuleName || fModuleName == "Prelude" || moduleName == ""
+isQualifiedName moduleName fModuleName
+  = moduleName == fModuleName
+    || fModuleName == "Prelude"
+    || moduleName == ""
 
 -- Returns a given function with its qualfied name, if necessary
 qualifiedName :: String -> String -> String -> String
-qualifiedName moduleName fModuleName funcName =
-  if isQualifiedName moduleName fModuleName then funcName else fModuleName ++ "." ++ funcName
+qualifiedName moduleName fModuleName funcName
+  | isQualifiedName moduleName fModuleName = funcName
+  | otherwise                              = fModuleName ++ "." ++ funcName
 
 -- Parens a given string when flag is true
 paren :: Bool -> String -> String
@@ -156,15 +160,11 @@ listToSignature = intercalate " -> "
 
 -- Splits strings at whitespaces (ex.: for better handling of queries)
 splitOnWhitespace :: String -> [String]
-splitOnWhitespace = splitStringOn " "
+splitOnWhitespace = splitOn " "
 
 -- Shortcut to split on "->" (ex.: for better handling of signatures)
 splitOnArrow :: String -> [String]
-splitOnArrow = splitStringOn "->"
-
--- Splits string on a given string
-splitStringOn :: String -> String -> [String]
-splitStringOn splitter text = map T.unpack (T.splitOn  (T.pack splitter) (T.pack text))
+splitOnArrow = splitOn "->"
 
 -- -- returns a path that ends with '/'
 -- fullPath :: String -> String

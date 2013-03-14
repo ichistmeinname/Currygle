@@ -25,6 +25,7 @@ executable curryIndexer
                 , deepseq
                 , text
                 , transformers
+                , split
 
   ghc-options:  -threaded
                 -rtsopts
