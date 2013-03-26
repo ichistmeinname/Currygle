@@ -31,7 +31,7 @@ import           Text.JSON                 (encodeStrict, showJSONs)
 import           Text.Templating.Heist     (Splice, bindSplices)
 import qualified Text.XmlHtml       as X
 
-import Application ( Application, HasCurryState (..) )
+import Application ( Application, HasCurryIndex (..) )
 import CurryInfo
 import CurrySearch ( InfoDoc (..), QRDocs (..), InfoWord (..), QRWords (..)
                    , QueryFor, wordCompletions, queryResults )
@@ -113,7 +113,7 @@ pagerSplice query actPage (QRDocs count _ _ _)
 runQuery :: QueryFor a -> Application a
 runQuery queryfor = do
   query <- getRequestParam "query"
-  state <- asks getCurryState
+  state <- asks getCurryIndex
   liftIO $ queryfor state query
 
 -- Returns the value associated to a specific param from the Query-String

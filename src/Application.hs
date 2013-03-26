@@ -12,14 +12,14 @@ Portability :  portable
 Defines the application's monad, provides HasState instances
 and an initializer function to construct the AppState.
 -}
-module Application ( Application, appInitializer, HasCurryState (..) ) where
+module Application ( Application, appInitializer, HasCurryIndex (..) ) where
 
 import Control.Monad.Trans   (liftIO)
 
 import Snap.Extension
 import Snap.Extension.Heist.Impl
 
-import CurryState ( CurryState (..), loadCurryState )
+import IndexTypes ( CurryIndex (..), loadCurryIndex )
 
 type Application = SnapExtend ApplicationState
 
@@ -27,28 +27,27 @@ type Application = SnapExtend ApplicationState
 -- this includes the state needed by the used extensions.
 data ApplicationState = ApplicationState
   { heistState :: HeistState Application
-  , curryState :: CurryState
+  , curryState :: CurryIndex
   }
 
 -- | Constructs an ApplicationState.
 appInitializer :: Initializer ApplicationState
 appInitializer = do
   heistS <- heistInitializer "resources/templates" id
-  curryS <- curryInitializer
+  curryS <- curryInitializer True
   return $ ApplicationState heistS curryS
 
 -- | Initializes the 'CurryState'.
-curryInitializer :: Initializer CurryState
-curryInitializer = liftIO (loadCurryState True) >>= mkInitializer
+curryInitializer :: Bool -> Initializer CurryIndex
+curryInitializer verbose = liftIO (loadCurryIndex verbose) >>= mkInitializer
 
-instance InitializerState CurryState where
-  extensionId = const "Curry/CurryState"
+instance InitializerState CurryIndex where
+  extensionId = const "Curry/CurryIndex"
   mkCleanup   = const $ return ()
   mkReload    = const $ return ()
 
-class HasCurryState s where
-  getCurryState :: s -> CurryState
-  setCurryState :: CurryState -> s -> s
+class HasCurryIndex s where
+  getCurryIndex :: s -> CurryIndex
 
 -- | Instance to find the heist state.
 instance HasHeistState Application ApplicationState where
@@ -56,6 +55,5 @@ instance HasHeistState Application ApplicationState where
   setHeistState s a = a { heistState = s }
 
 -- | Instance to find the curry state.
-instance HasCurryState ApplicationState where
-  getCurryState     = curryState
-  setCurryState s a = a { curryState = s }
+instance HasCurryIndex ApplicationState where
+  getCurryIndex = curryState

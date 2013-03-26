@@ -28,14 +28,14 @@ import Holumbus.Query.Ranking
 import Holumbus.Query.Result
 
 import CurryInfo
-import CurryState  (CurryState (..))
+import IndexTypes  (CurryIndex (..))
 import Helpers     (splitOnWhitespace)
 import QueryParser (parse)
 
 -- | Shortcut for the result triple.
 type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
 
-type QueryFor a = CurryState -> String -> IO a
+type QueryFor a = CurryIndex -> String -> IO a
 
 -- | Returns only the documents of a query result.
 queryResults :: QueryFor QRDocs
@@ -59,8 +59,8 @@ wordCompletions state = makeQuery . prepare
     sortedWords (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
 
 -- | Processes a query for a given module, function and type indexer pair.
-queryResult :: CurryState -> Query -> IO MFTResult
-queryResult (CurryState ixM docM ixF docF ixT docT) q
+queryResult :: CurryIndex -> Query -> IO MFTResult
+queryResult (CurryIndex ixM docM ixF docF ixT docT) q
   = return (process ixM docM, process ixF docF, process ixT docT)
   where process ix doc = processQuery processCfg ix doc q
 
@@ -164,6 +164,10 @@ data QRDocs = QRDocs
   , qdTypeDocs     :: [InfoDoc TypeInfo]
   } deriving Show
 
+-- | Empty constructor.
+emptyQRDocs :: QRDocs
+emptyQRDocs = QRDocs 0 [] [] []
+
 -- |A document stores information about its title, uri and score.
 -- Furthermore, it consits of a mapping of the contexts
 -- (i.e. function, module, type, author etc)
@@ -177,6 +181,3 @@ data InfoDoc a = InfoDoc
   , idScore      :: Score
   } deriving Show
 
--- | Empty constructor.
-emptyQRDocs :: QRDocs
-emptyQRDocs = QRDocs 0 [] [] []

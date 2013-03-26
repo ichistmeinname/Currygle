@@ -37,7 +37,7 @@ executable curryServer
   main-is:        Main.hs
   hs-source-dirs: src
   other-modules:  CurryInfo, FilesAndLoading, Helpers, IndexTypes
-                , CurryState, CurrySearch, QueryParser, Application, Site
+                , CurrySearch, QueryParser, Application, Site
 
   build-depends:  base                   >= 4     && < 5
                 , xmlhtml                == 0.1.*
