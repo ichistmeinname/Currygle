@@ -5,7 +5,7 @@ import CurryInfo (TypeExpr (..))
 import Helpers (showType)
 import Test.HUnit
 import Holumbus.Query.Language.Grammar
-import Parser
+import QueryParser
 
 infixr 4 -->
 
@@ -20,22 +20,22 @@ runSigTests :: IO Counts
 runSigTests = runTestTT sigTests
 
 sigTests :: Test
-sigTests = test [simpleFuncType, funcTypeWithWhitespace, funcTypeWithParens, manyWhitespaces, leadingWhitespaces, typeConstructor, naryTypeConstructor, 
+sigTests = test [simpleFuncType, funcTypeWithWhitespace, funcTypeWithParens, manyWhitespaces, leadingWhitespaces, typeConstructor, naryTypeConstructor,
               consParserTest, primWithParens, moreParens, varParserTest, consParser2Test, tupelTest, listTest, listTupelTest]
 
-simpleFuncType = 
+simpleFuncType =
   unRight (parse "Int->Int") ~=? (Specifier ["signature"] (Word $ testShow (prim "Int" --> prim "Int")))
-funcTypeWithWhitespace = 
+funcTypeWithWhitespace =
   unRight (parse "String -> String") ~=? (Specifier ["signature"] (Word  $ testShow (prim "String" --> prim "String")))
-funcTypeWithParens = 
+funcTypeWithParens =
   unRight (parse "(String -> String) -> Float") ~=? (Specifier ["signature"](Word $ testShow ((prim "String" --> prim "String") --> prim "Float")))
-manyWhitespaces = 
+manyWhitespaces =
   unRight (parse "String         ->     String    ") ~=? (Specifier ["signature"](Word $ testShow (prim "String" --> prim "String")))
-leadingWhitespaces = 
+leadingWhitespaces =
   unRight (parse "  String ") ~=? (Specifier ["signature"](Word $ testShow (prim "String")))
 typeConstructor =
   unRight (parse "IO String") ~=? (Specifier ["signature"](Word $ testShow (cons "IO" [prim "String"])))
-naryTypeConstructor = 
+naryTypeConstructor =
   unRight (parse "Something Int Float Int Float (Int->Int)") ~=? (Specifier ["signature"](Word $ testShow (cons "Something" (map prim ["Int", "Float", "Int", "Float"] ++ [prim "Int" --> prim "Int"]))))
 consParserTest =
   unRight (parse "Something Int Float") ~=? (Specifier ["signature"](Word $ testShow (cons "Something" [prim "Int", prim "Float"])))
@@ -49,9 +49,9 @@ consParser2Test =
   unRight (parse "String -> Maybe Int") ~=? (Specifier ["signature"](Word $ testShow (prim "String" --> cons "Maybe" [prim "Int"])))
 tupelTest =
   (Specifier ["signature"] $ Word (testShow (TCons ("","(,,)") [prim "Int", prim "Float" --> prim "Map", prim "Int" --> prim "Float" --> prim "Map"]))) ~=? unRight (parse "(Int, Float -> Map, Int -> Float -> Map)")
-listTest = 
+listTest =
   (Specifier ["signature"] $ Word (testShow (TCons ("","[]") [prim "Float" --> prim "Map"]))) ~=? unRight (parse "[Float -> Map]")
-listTupelTest = 
+listTupelTest =
  (Specifier ["signature"] $ Word (testShow (TCons ("","(,)") [prim "Float" --> prim "Int", TCons ("","[]") [prim "Map"]]))) ~=? unRight (parse "(Float -> Int, [Map])")
 
 runBinTests :: IO Counts
@@ -71,7 +71,7 @@ multipleBins =
 nestedBinsAndSigs =
   BinQuery And ((Specifier ["signature"] $ Word $ testShow (prim "Int" --> prim "Int"))) ((Specifier ["signature"] $ Word "Float")) ~=? unRight (parse "Int -> Int AND Float")
 varTest =
-  Specifier ["signature"] (Word "a -> b") ~=? unRight (parse "a -> b") 
+  Specifier ["signature"] (Word "a -> b") ~=? unRight (parse "a -> b")
 
 runSpecTests = runTestTT specTests
 
@@ -80,7 +80,7 @@ specTests = test [signatureTest, allAtOnce, andAllAtOnce]
 
 signatureTest =
   Specifier ["signature"] (Word $ testShow (prim "Int" --> prim "String")) ~=? unRight (parse ":signature Int->String")
-allAtOnce = 
+allAtOnce =
   BinQuery And (BinQuery And (BinQuery And (Specifier ["type"] (Word "something")) (Specifier ["signature"] (Word "Int -> Int"))) (Specifier ["module"] (Word "Prelude"))) (Specifier ["function"] (Word "map")) ~=? unRight (parse ":type something Int->Int :module Prelude :function map")
 andAllAtOnce =
   BinQuery And (BinQuery And (BinQuery And (Specifier ["type"] (Word "something")) (Specifier ["signature"] (Word "Int -> Int"))) (Specifier ["module"] (Word "Prelude"))) (Specifier ["function"] (Word "map")) ~=? unRight (parse ":type something AND Int->Int AND :module Prelude AND :function map")
@@ -91,16 +91,16 @@ runParenTests = runTestTT parenTests
 parenTests :: Test
 parenTests = test [p1, p2, p3, p4]
 
-p1 = 
+p1 =
   BinQuery And (Specifier ["signature"] (Word "(Int -> Int) -> Int")) (specify ["type"] "b") ~=? unRight (parse "((Int->Int)->Int) AND (:type b)")
 
-p2 = 
+p2 =
   BinQuery And (Specifier ["signature"] (Word "Int -> Int")) (specify ["type"] "b") ~=? unRight (parse "(Int -> Int) AND (:type b)")
 
-p3 = 
+p3 =
   BinQuery And (Specifier ["signature"] (Word "Int -> Int")) (specify ["type"] "b") ~=? unRight (parse "(Int -> Int AND :type b)")
 
-p4 = 
+p4 =
   BinQuery And (Specifier ["signature"] (Word "Int -> Int")) (specify ["type"] "b") ~=? unRight (parse "Int -> Int AND :type b")
 
 unRight :: Either a b -> b

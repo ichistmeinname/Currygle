@@ -4,6 +4,16 @@ import qualified Data.Text      as T (pack)
 import           Data.List           (intercalate)
 import qualified Text.XmlHtml   as X (Node (..))
 
+-- Return the HTML info text for the number of search results found
+docCount :: Int -> X.Node
+docCount count = htmlLiClass "info"
+  [htmlTextNode $ unwords ["Found", show count, "docs"]]
+
+-- Returns the HTML info text, if no resuls were found
+noResults :: X.Node
+noResults = htmlLiClass "info"
+  [htmlTextNode "Sorry, there are no matching results."]
+
 -- Constant for the pagination label
 _previousPage :: String
 _previousPage = "Prev"

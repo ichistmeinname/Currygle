@@ -13,20 +13,19 @@ To narrow down the search, a special syntax can be used
 (i.e. ":function map" searches only for functions with the name "map").
 -}
 
-module Parser (parse) where
+module QueryParser (parse) where
 
-import Control.Applicative ((<*>), (<$>), (<|>), (*>), (<*))
-import Control.Monad (guard)
-
-import Data.Char (ord)
+import Control.Applicative   ((<*>), (<$>), (<|>), (*>), (<*))
+import Control.Monad         (guard)
+import Data.Char             (ord)
 import Data.Functor.Identity (Identity)
 
-import Text.Parsec.Token
-import Text.Parsec.Prim  (runP, Parsec, try, many, parserReturn)
-import Text.Parsec.Language (emptyDef)
-import Text.Parsec.Expr (buildExpressionParser, Operator (..), Assoc (..))
+import Text.Parsec.Char       (upper, alphaNum, lower, oneOf, char)
 import Text.Parsec.Combinator (sepBy1, notFollowedBy, option)
-import Text.Parsec.Char (upper, alphaNum, lower, oneOf, char)
+import Text.Parsec.Expr       (buildExpressionParser, Operator (..), Assoc (..))
+import Text.Parsec.Language   (emptyDef)
+import Text.Parsec.Prim       (runP, Parsec, try, many, parserReturn)
+import Text.Parsec.Token
 
 import Holumbus.Query.Language.Grammar
 

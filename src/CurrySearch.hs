@@ -20,18 +20,49 @@ import qualified Data.List              as L
 import qualified Data.Map               as M
 import           Data.Maybe             (fromMaybe)
 
-import           Holumbus.Index.Common
+import Holumbus.Index.Common
+import Holumbus.Query.Fuzzy            (FuzzyConfig (..), englishReplacements)
+import Holumbus.Query.Language.Grammar (Query (..))
+import Holumbus.Query.Processor        (ProcessConfig (..), processQuery)
+import Holumbus.Query.Ranking
+import Holumbus.Query.Result
 
-import           Holumbus.Query.Fuzzy (FuzzyConfig (..), englishReplacements)
-import           Holumbus.Query.Language.Grammar (Query (..))
-import           Holumbus.Query.Processor (ProcessConfig (..), processQuery)
-import           Holumbus.Query.Ranking
-import           Holumbus.Query.Result
+import CurryInfo
+import CurryState  (CurryState (..))
+import Helpers     (splitOnWhitespace)
+import QueryParser (parse)
 
-import           CurryInfo (emptyFunctionInfo, emptyTypeInfo, emptyModuleInfo)
-import           Helpers (splitOnWhitespace)
-import           IndexTypes
-import           Parser (parse)
+-- | Shortcut for the result triple.
+type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
+
+type QueryFor a = CurryState -> String -> IO a
+
+-- | Returns only the documents of a query result.
+queryResults :: QueryFor QRDocs
+queryResults state = either noResults makeQuery . parse
+  where
+  noResults _     = return emptyQRDocs
+  makeQuery query = do
+    results      <- queryResult state query
+    (rM, rF, rT) <- defaultRanks results
+    qResultDocs  <- docHitsToResult (docHits rM, docHits rF, docHits rT)
+    return qResultDocs
+
+-- | Returns only the word completions of a query result.
+wordCompletions :: QueryFor QRWords
+wordCompletions state = makeQuery . prepare
+  where
+  prepare = wordCompletionSpecifier . prepareWordCompletionQuery
+  makeQuery query = do
+    results <- queryResult state query
+    (rrM, rrF, rrT) <- defaultRanks results
+    sortedWords (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
+
+-- | Processes a query for a given module, function and type indexer pair.
+queryResult :: CurryState -> Query -> IO MFTResult
+queryResult (CurryState ixM docM ixF docF ixT docT) q
+  = return (process ixM docM, process ixF docF, process ixT docT)
+  where process ix doc = processQuery processCfg ix doc q
 
 -- The default weights for the contexts.
 _defaultRankTable :: RankTable
@@ -52,15 +83,6 @@ _wordCompletionRankTable = [(":function", 1.0), (":type", 0.5), (":module", 0.5)
 _defaultRankCfg :: RankConfig a
 _defaultRankCfg = RankConfig (docRankWeightedByCount _defaultRankTable)
                              (wordRankWeightedByCount _wordCompletionRankTable)
-
--- | Processes a query for a given module, function and type indexer pair.
-queryResult :: CompactInverted -> SmallDocuments ModuleInfo
-           -> CompactInverted -> SmallDocuments FunctionInfo
-           -> CompactInverted -> SmallDocuments TypeInfo
-           -> Query -> IO MFTResult
-queryResult ixM docM ixF docF ixT docT q
-    = return (process ixM docM, process ixF docF, process ixT docT)
-  where process ix doc = processQuery processCfg ix doc q
 
 -- Converts matching documents (DocHits) to a InfoDoc structure that holds information
 -- about the document and the corresponding curryInfo.
@@ -90,18 +112,6 @@ docHitsToResult (m, f, t) = return $ QRDocs size
                             (sortedInfoDoc emptyTypeInfo t)
  where size = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
 
--- | Returns only the documents of a query result.
-queryResultDocs :: (Query -> IO MFTResult) -> String -> IO QRDocs
-queryResultDocs process
-    = either noResults makeQuery . parse
-    where
-      noResults _  = return emptyQRDocs
-      makeQuery query = do
-               results      <- process query
-               (rM, rF, rT) <- defaultRanks results
-               qResultDocs  <- docHitsToResult (docHits rM, docHits rF, docHits rT)
-               return qResultDocs
-
 -- Sorts word completions by score that considers an (possibly) applied rank table
 -- and returns a word completion data structure.
 sortedWords :: WordHits -> IO QRWords
@@ -120,18 +130,6 @@ prepareWordCompletionQuery :: String -> String
 prepareWordCompletionQuery queryString =
   concat $ filter (not . (":" `L.isPrefixOf`)) $ splitOnWhitespace queryString
 
--- | Returns only the word completions of a query result.
-wordCompletions :: (Query -> IO MFTResult) -> String -> IO QRWords
-wordCompletions process = makeQuery . prepare
- where prepare = wordCompletionSpecifier . prepareWordCompletionQuery
-       makeQuery query = do
-            results <- process query
-            (rrM, rrF, rrT) <- defaultRanks results
-            sortedWords (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
-
--- | Shortcut for the used result triple.
-type MFTResult = (Result ModuleInfo, Result FunctionInfo, Result TypeInfo)
-
 -- | The function to apply a rank table (weights) to a given result.
 defaultRanks :: MFTResult -> IO MFTResult
 defaultRanks (m, f, t) = return (rank _defaultRankCfg m,
@@ -148,16 +146,29 @@ processCfg :: ProcessConfig
 processCfg =
   ProcessConfig (FuzzyConfig True True 1.0 englishReplacements) True 0 0
 
--- | A possible word completion holds a name (aka the word itself) and a score.
-data InfoWord = InfoWord { iwName :: String, iwScore :: Score}
-
--- | The data to represent the word completions.
---   It stores the number of possible completions and a list of these words.
+-- | Representation of word completions.
+-- It contains the number of possible completions and a list of these words.
 data QRWords = QRWords { qwCount :: Int, qwInfo :: [InfoWord] }
 
--- | A document stores information about its title, uri and score.
---   Furthermore it consits of a mapping of the contexts (i.e. function, module, type, author etc)
---   and its words and the corresponding curryInfo data (i.e. FunctionInfo, ModuleInfo, TypeInfo).
+-- | A possible word completion holds a name (the word itself) and a score.
+data InfoWord = InfoWord { iwName :: String, iwScore :: Score }
+
+-- |The documents that match a query are divided into three groups,
+-- corresponding to the curryInfo data.
+-- So the data holds these three lists and an attribute that represents
+-- the total number of documents.
+data QRDocs = QRDocs
+  { qdDocCount     :: Int
+  , qdModuleDocs   :: [InfoDoc ModuleInfo]
+  , qdFunctionDocs :: [InfoDoc FunctionInfo]
+  , qdTypeDocs     :: [InfoDoc TypeInfo]
+  } deriving Show
+
+-- |A document stores information about its title, uri and score.
+-- Furthermore, it consits of a mapping of the contexts
+-- (i.e. function, module, type, author etc)
+-- and its words and the corresponding curryInfo data
+-- (i.e. FunctionInfo, ModuleInfo, TypeInfo).
 data InfoDoc a = InfoDoc
   { idTitle      :: String
   , idUri        :: String
@@ -166,15 +177,6 @@ data InfoDoc a = InfoDoc
   , idScore      :: Score
   } deriving Show
 
--- | Empty construtctor.
+-- | Empty constructor.
 emptyQRDocs :: QRDocs
 emptyQRDocs = QRDocs 0 [] [] []
-
--- | The documents that match a query are divided into three groups (aka the curryInfo data).
---   So the data holds these three lists and an attribute that represents the total number of documents.
-data QRDocs = QRDocs
-  { qdDocCount     :: Int
-  , qdModuleDocs   :: [InfoDoc ModuleInfo]
-  , qdFunctionDocs :: [InfoDoc FunctionInfo]
-  , qdTypeDocs     :: [InfoDoc TypeInfo]
-  } deriving Show
