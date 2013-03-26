@@ -13,12 +13,7 @@ This module defines helper functions relating to loading data or file names.
 
 module FilesAndLoading where
 
-import Data.Binary (Binary)
 import System.FilePath
-
-import IndexTypes
-
-import Holumbus.Index.Common (loadFromFile, loadFromBinFile)
 
 -- Extension for the temporary index/doc/list file
 _tempFile :: String
@@ -51,25 +46,6 @@ _typeIndexPath = "./index/ix-type.bin"
 _moduleListPath :: FilePath
 _moduleListPath = "./index/module"
 
--- paths to load index and document files
-_curryModIndex :: FilePath
-_curryModIndex  = "./index/ix-mod.bin.idx"
-
-_curryModDocs :: FilePath
-_curryModDocs   = "./index/ix-mod.bin.doc"
-
-_curryFctIndex :: FilePath
-_curryFctIndex  = "./index/ix-fct.bin.idx"
-
-_curryFctDocs :: FilePath
-_curryFctDocs   = "./index/ix-fct.bin.doc"
-
-_curryTypeIndex :: FilePath
-_curryTypeIndex = "./index/ix-type.bin.idx"
-
-_curryTypeDocs :: FilePath
-_curryTypeDocs  = "./index/ix-type.bin.doc"
-
 pidFile :: String
 pidFile = "server.pid"
 
@@ -77,13 +53,13 @@ pidFile = "server.pid"
 readFromFile :: Read a => FilePath -> IO a
 readFromFile path = readFile path >>= readIO
 
--- Alias to load index with explicit type
-loadIndex :: FilePath -> IO CompactInverted
-loadIndex = loadFromFile
-
--- Alias to load documents with explicit type
-loadDocuments :: Binary a => FilePath -> IO (SmallDocuments a)
-loadDocuments = loadFromBinFile
+-- -- Alias to load index with explicit type
+-- loadIndex :: FilePath -> IO CompactInverted
+-- loadIndex = loadFromFile
+--
+-- -- Alias to load documents with explicit type
+-- loadDocuments :: Binary a => FilePath -> IO (SmallDocuments a)
+-- loadDocuments = loadFromBinFile
 
 hasExtension :: String -> FilePath -> Bool
 hasExtension ext fp = takeExtension fp == ext

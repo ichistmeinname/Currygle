@@ -39,7 +39,7 @@ appInitializer = do
 
 -- | Initializes the 'CurryState'.
 curryInitializer :: Initializer CurryState
-curryInitializer = liftIO loadCurryState >>= mkInitializer
+curryInitializer = liftIO (loadCurryState True) >>= mkInitializer
 
 instance InitializerState CurryState where
   extensionId = const "Curry/CurryState"

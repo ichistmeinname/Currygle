@@ -13,42 +13,44 @@ This module define the indexer types that are used by the search engine.
 module IndexTypes
   ( module IndexTypes
   , module Holumbus.Index.CompactIndex
-  , IndexerState (..)
   , ModuleInfo
   , FunctionInfo
   , TypeInfo
- ) where
+  ) where
+
+import Control.Monad               (when)
+import System.IO                   (stderr, hPutStrLn)
+
+import Holumbus.Index.Common (loadFromFile, loadFromBinFile)
+import Holumbus.Index.Common       (sizeWords, sizeDocs)
+import Holumbus.Index.CompactIndex
 
 import CurryInfo
+import FilesAndLoading
 
-import Holumbus.Index.CompactIndex
-import Holumbus.Crawler.IndexerCore (IndexerState (..))
+data CurryIndex = CurryIndex
+  { modIdx  :: ! CompactInverted
+  , modDocs :: ! (SmallDocuments ModuleInfo)
+  , fctIdx  :: ! CompactInverted
+  , fctDocs :: ! (SmallDocuments FunctionInfo)
+  , typIdx  :: ! CompactInverted
+  , typDocs :: ! (SmallDocuments TypeInfo)
+  }
 
--- | Triple of the index-documents-pairs
-type CurryIndexerStates =
-  ( -- | Pair of index and documents of the type ModuleInfo
-    HolumbusState ModuleInfo
-  , -- | Pair of index and documents of the type FunctionInfo
-    HolumbusState FunctionInfo
-  , -- | Pair of index and documents of the type TypeInfo
-    HolumbusState TypeInfo
-  )
-
-emptyCurryIndexerStates :: CurryIndexerStates
-emptyCurryIndexerStates = (emptyState, emptyState, emptyState)
-  where emptyState = emptyIndexerState emptyInverted emptyDocuments
-
-makeIndexerState :: Inverted -> Documents a -> HolumbusState a
-makeIndexerState = IndexerState
-
--- ------------------------------------------------------------
-
--- | Pair of the loaded index and polomorph documents
-type LoadedIndexerState a  = (CompactInverted, SmallDocuments a)
-
--- | Tripe of the loaded index-documents=pairs
-type LoadedIndexerStates = ( LoadedIndexerState ModuleInfo
-                           , LoadedIndexerState FunctionInfo
-                           , LoadedIndexerState TypeInfo
-                           )
-
+-- Helper function to load the three pairs of index and documents
+-- and return it as Core data.
+loadCurryIndex :: Bool -> IO CurryIndex
+loadCurryIndex verbose = do
+  (mi, md) <- loadIdxDoc "modules"   _moduleIndexPath
+  (fi, fd) <- loadIdxDoc "functions" _functionIndexPath
+  (ti, td) <- loadIdxDoc "types"     _typeIndexPath
+  return $ CurryIndex mi md fi fd ti td
+  where
+  loadIdxDoc what path = do
+    idx <- loadFromFile    (indexExtension    path)
+    doc <- loadFromBinFile (documentExtension path)
+    when verbose $ info what (sizeWords idx) (sizeDocs doc)
+    return (idx, doc)
+  info what wCnt dCnt = hPutStrLn stderr $ unwords
+    [ "Init process:", "Index for", what, "loaded", '(' : show wCnt, "words,"
+    , show dCnt, "documents)"]

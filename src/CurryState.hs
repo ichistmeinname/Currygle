@@ -13,7 +13,10 @@ This module defines a custom state to store the index and documents.
 -}
 module CurryState ( CurryState (..), loadCurryState ) where
 
+import Control.Monad         (when)
 import System.IO             (stderr, hPutStrLn)
+
+import Holumbus.Index.Common (loadFromFile, loadFromBinFile)
 import Holumbus.Index.Common (sizeWords, sizeDocs)
 
 import FilesAndLoading
@@ -30,22 +33,22 @@ data CurryState = CurryState
 
 -- Helper function to load the three pairs of index and documents
 -- and return it as Core data.
-loadCurryState :: IO CurryState
-loadCurryState = do
-  (idxMod, docMod) <- loadIndexDocs _curryModIndex  _curryModDocs
-  (idxFct, docFct) <- loadIndexDocs _curryFctIndex  _curryFctDocs
-  (idxTyp, docTyp) <- loadIndexDocs _curryTypeIndex _curryTypeDocs
+loadCurryState :: Bool -> IO CurryState
+loadCurryState verbose = do
+  (idxMod, docMod) <- loadIdxDoc "modules"   _moduleIndexPath
+  (idxFct, docFct) <- loadIdxDoc "functions" _functionIndexPath
+  (idxTyp, docTyp) <- loadIdxDoc "types"     _typeIndexPath
   return CurryState
     { modIndex  = idxMod, modDocuments  = docMod
     , fctIndex  = idxFct, fctDocuments  = docFct
     , typeIndex = idxTyp, typeDocuments = docTyp
     }
   where
-  loadIndexDocs i d = do
-    idx <- loadIndex i
-    doc <- loadDocuments d
-    info "index"     (sizeWords idx) "words"
-    info "documents" (sizeDocs  doc) "entries"
+  loadIdxDoc what path = do
+    idx <- loadFromFile    (indexExtension    path)
+    doc <- loadFromBinFile (documentExtension path)
+    when verbose $ info what (sizeWords idx) (sizeDocs doc)
     return (idx, doc)
-  info what count cntnt = hPutStrLn stderr $ unwords
-    ["Init process: Curry", what, "was loaded", '(':show count, cntnt ++ ")"]
+  info what wCnt dCnt = hPutStrLn stderr $ unwords
+    [ "Init process:", "Index for", what, "loaded", '(' : show wCnt, "words,"
+    , show dCnt, "documents)"]

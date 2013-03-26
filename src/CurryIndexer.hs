@@ -27,10 +27,11 @@ import System.IO          (hPutStrLn, stderr)
 
 import CurryInfo
 import FilesAndLoading
-import Helpers (biasedWord, splitOnWhitespace, constrTypeExpr,
-                signatureComponents)
+import Helpers            ( biasedWord, splitOnWhitespace, constrTypeExpr
+                          , signatureComponents )
 import IndexTypes
 
+import Holumbus.Crawler.IndexerCore (IndexerState (..))
 import Holumbus.Index.CompactSmallDocuments (docTable2smallDocTable, idToSmallDoc)
 import Holumbus.Index.Common.Occurences
 import Holumbus.Index.Common.DocId (DocId, addDocId)
@@ -101,9 +102,28 @@ writeIndex _   _       []    = putStr "NO cdoc files found."
 writeIndex new uriPath files = do
   (nM,nF,nT) <- foldr (occurenceCheck new uriPath) emptyStates files
   if new then writeIndex' moduleNames (nM,nF,nT)
-         else mergeIdxDoc moduleNames loadIndexerStates (nM, nF, nT)
+         else mergeIdxDoc moduleNames (loadCurryIndex False) (nM, nF, nT)
  where emptyStates = return emptyCurryIndexerStates
        moduleNames = map takeBaseName files
+
+
+-- | Triple of the index-documents-pairs
+type CurryIndexerStates =
+  ( -- | Pair of index and documents of the type ModuleInfo
+    HolumbusState ModuleInfo
+  , -- | Pair of index and documents of the type FunctionInfo
+    HolumbusState FunctionInfo
+  , -- | Pair of index and documents of the type TypeInfo
+    HolumbusState TypeInfo
+  )
+
+emptyCurryIndexerStates :: CurryIndexerStates
+emptyCurryIndexerStates = (emptyState, emptyState, emptyState)
+  where emptyState = emptyIndexerState emptyInverted emptyDocuments
+
+makeIndexerState :: Inverted -> Documents a -> HolumbusState a
+makeIndexerState = IndexerState
+
 
 -- Writes index and documents with a function that converts the types automatically
 -- (Inverted to CompactInverted, Documents a to SmallDocuments a)
@@ -299,10 +319,10 @@ writeDocIndex path cDoc cIndex = do
   writeBin (documentExtension (path++_tempFile)) cDoc
 
 -- | Writes and merges an existing pair of index and documents with a new one.
-mergeIdxDoc :: [String] -> IO LoadedIndexerStates -> CurryIndexerStates -> IO ()
+mergeIdxDoc :: [String] -> IO CurryIndex -> CurryIndexerStates -> IO ()
 mergeIdxDoc moduleList ixDoc1 (cMod, cFct, cTyp) = do
-  ((iM1, m1), (iF1, f1), (iT1, t1)) <- ixDoc1
-  currentModList                    <- loadModuleList
+  CurryIndex iM1 m1 iF1 f1 iT1 t1 <- ixDoc1
+  currentModList                  <- loadModuleList
   let (mDoc, mIndex) = cUnion m1 iM1 cMod
       (fDoc, fIndex) = cUnion f1 iF1 cFct
       (tDoc, tIndex) = cUnion t1 iT1 cTyp
@@ -312,19 +332,6 @@ mergeIdxDoc moduleList ixDoc1 (cMod, cFct, cTyp) = do
   writeFile (listExtension (_moduleListPath++_tempFile))
             (show $ moduleList ++ currentModList)
   reorganizeFiles
-
--- Loads pair of index and documents for module, function and type
-loadIndexerStates :: IO LoadedIndexerStates
-loadIndexerStates = do
-  modState <- loadIdxDoc _moduleIndexPath
-  fctState <- loadIdxDoc _functionIndexPath
-  typState <- loadIdxDoc _typeIndexPath
-  return (modState, fctState, typState)
-  where
-  loadIdxDoc fPath = do
-    index <- loadIndex     (indexExtension    fPath)
-    docs  <- loadDocuments (documentExtension fPath)
-    return (index, docs)
 
 -- Loads the list of modules that exist in the index
 loadModuleList :: IO [String]
