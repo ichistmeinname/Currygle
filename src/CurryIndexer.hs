@@ -283,13 +283,12 @@ docTable = docTable2smallDocTable . ixs_documents
 
 -- When merging, ids have to be disjoint, so start ids with the increment of the other states maxId
 editDoc :: Binary a => SmallDocuments a -> HolumbusState a -> SmallDocuments a
-editDoc state2 state = editDocIds (addDocId $ maxId state2)
-                                          $ docTable state
+editDoc state2 state = editDocIds (addDocId $ maxId state2) $ docTable state
+
 -- Adjusts the ids of the new created pair of index and documents, when merging
 editIndex :: Binary a => SmallDocuments a -> HolumbusState a -> CompactInverted
-editIndex docs state =
-  inverted2compactInverted $ updateDocIds' (addDocId (maxId docs))
-                                           (ixs_index state)
+editIndex docs state = inverted2compactInverted
+                     $ updateDocIds' (addDocId (maxId docs)) (ixs_index state)
 
 -- Union of a saved docIndex with a fresh one (ids have to be edited)
 cUnion :: Binary a => SmallDocuments a -> CompactInverted -> HolumbusState a
@@ -315,8 +314,9 @@ writeDocIndex :: Binary a => FilePath -> SmallDocuments a -> CompactInverted
               -> IO ()
 writeDocIndex path cDoc cIndex = do
   putStr "."
-  writeBin (indexExtension (path++_tempFile)) cIndex
-  writeBin (documentExtension (path++_tempFile)) cDoc
+  writeBin (indexExtension    path') cIndex
+  writeBin (documentExtension path') cDoc
+  where path' = path ++ _tempFile
 
 -- | Writes and merges an existing pair of index and documents with a new one.
 mergeIdxDoc :: [String] -> IO CurryIndex -> CurryIndexerStates -> IO ()
