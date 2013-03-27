@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-
 {- |
 Module      :  Site
 Description :  Routes, handlers and web representation
@@ -15,52 +14,63 @@ Furthermore, the representation of the web site is handled
 and gathered by the function site, which is exported.
 -}
 
-module Site ( site ) where
+module Site ( app ) where
 
 import           Control.Applicative       ((<|>), (<$>))
 import           Control.Monad.Reader      (MonadIO, asks, liftIO)
+import           Data.ByteString           (ByteString)
 import           Data.List                 (intercalate, isPrefixOf)
 import           Data.Maybe                (fromMaybe)
 import qualified Data.Text          as T   (pack, unpack)
-import qualified Data.Text.Encoding as E   (encodeUtf8, decodeUtf8)
+import qualified Data.Text.Encoding as T   (encodeUtf8, decodeUtf8)
 
-import           Snap.Extension.Heist.Impl (render, heistLocal)
+import           Snap
+import           Snap.Snaplet.Heist
+-- import           Snap.Extension.Heist.Impl (render, heistLocal)
 import           Snap.Util.FileServe       (serveDirectory)
 import           Snap.Types
 import           Text.JSON                 (encodeStrict, showJSONs)
 import           Text.Templating.Heist     (Splice, bindSplices)
 import qualified Text.XmlHtml       as X
 
-import Application ( Application, HasCurryIndex (..) )
+import Application
 import CurryInfo
 import CurrySearch ( InfoDoc (..), QRDocs (..), InfoWord (..), QRWords (..)
                    , QueryFor, wordCompletions, queryResults )
 import Helpers     ( showType, paren, constrTypeExpr, resultType )
+import IndexTypes  ( CurryIndex, loadCurryIndex)
 import XmlHelper
 
 -- ---------------------------------------------------------------------------
 -- Snap specific part
 -- ---------------------------------------------------------------------------
 
+-- | The application initializer.
+app :: SnapletInit App App
+app = makeSnaplet "currygle" "Curry API search" Nothing $ do
+  h <- nestSnaplet "heist" heist $ heistInit "resources/templates"
+  i <- liftIO $ loadCurryIndex True
+  addRoutes routes
+  return $ App h i
+
 -- | Defines the routing of the web site.
 -- It distinguishes between the front- and query-page
 -- as well as the word completions.
 -- All necessary files have to be stored in "resources/static".
-site :: Application ()
-site = dir "kics2" $ dir "currygle" $ route
-  [ ("/"           , frontpage   ) -- just render the frontpage
-  , ("/completions", completions ) -- show word completions (JSON)
-  , ("/results"    , results     ) -- show search results
-  ] <|> serveDirectory "resources/static"
+routes :: [(ByteString, AppHandler ())]
+routes =  [ ("/"           , frontpage   ) -- just render the frontpage
+          , ("/completions", completions ) -- show word completions (JSON)
+          , ("/results"    , results     ) -- show search results
+          , (""            , serveDirectory "resources/static")
+          ]
 
 -- | Render the template file without substituting any tags.
-frontpage :: Application ()
-frontpage
-  = ifTop $ heistLocal (bindSplices [("result", return [example])])
-  $ render "frontpage"
+frontpage :: AppHandler ()
+frontpage = ifTop $ heistLocal (bindSplices [("result", return [example])])
+          $ render "frontpage"
 
 -- | Return the list of word completions for the search text as JSON.
-completions :: Application ()
+completions :: AppHandler ()
 completions = do
   completns <- runQuery wordCompletions
   putResponse $ setContentType "text/plain; charset=UTF-8"
@@ -72,7 +82,7 @@ completions = do
 
 -- | Renders HTML page by substituing the tags <result />,
 -- and < pager /> and the value $(oldQuery) for the template file.
-results :: Application ()
+results :: AppHandler ()
 results = do
   docs  <- runQuery queryResults
   page  <- strToInt 1 <$> getRequestParam "page"
@@ -84,7 +94,7 @@ results = do
   heistLocal (bindSplices splices) $ render "frontpage"
 
 -- | Generates the HTML node of the search results.
-resultSplice :: Int -> QRDocs -> Splice Application
+resultSplice :: Int -> QRDocs -> Splice AppHandler
 resultSplice _ (QRDocs _ [] [] [])
   = debug "- keine Ergebnisse -" >> return ([htmlUl [noResults]])
 resultSplice pageNum (QRDocs count mHits fHits tHits) = do
@@ -103,25 +113,25 @@ debug :: MonadIO m => String -> m ()
 debug = liftIO . putStrLn
 
 -- | Generates the HTML node for the pagination, if necessary.
-pagerSplice :: String -> Int -> QRDocs -> Splice Application
+pagerSplice :: String -> Int -> QRDocs -> Splice AppHandler
 pagerSplice query actPage (QRDocs count _ _ _)
   | count <= _hitsPerPage = return []
   | otherwise             = return (mkPagerLink query actPage pageCount)
   where pageCount = ceiling $ (toRational count) / (toRational _hitsPerPage)
 
 -- Function to start the query processing
-runQuery :: QueryFor a -> Application a
+runQuery :: QueryFor a -> AppHandler a
 runQuery queryfor = do
   query <- getRequestParam "query"
-  state <- asks getCurryIndex
+  state <- gets _index
   liftIO $ queryfor state query
 
 -- Returns the value associated to a specific param from the Query-String
 -- (i.e. query or page)
-getRequestParam :: String -> Application String
+getRequestParam :: String -> AppHandler String
 getRequestParam param = do
-  query <- decodedParam $ E.encodeUtf8 $ T.pack param
-  return $ T.unpack (E.decodeUtf8 query)
+  query <- decodedParam $ T.encodeUtf8 $ T.pack param
+  return $ T.unpack (T.decodeUtf8 query)
   where decodedParam p = fromMaybe "" <$> getParam p
 
 -- ---------------------------------------------------------------------------
