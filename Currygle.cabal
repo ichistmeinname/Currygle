@@ -43,10 +43,10 @@ executable curryServer
                 , bytestring
                 , mtl                    == 2.*
                 , xmlhtml                == 0.1.*
-                , heist                  == 0.7.*
+                , heist                  == 0.8.*
                 , json                   >= 0.4   && < 1
-                , snap-core              == 0.7.*
-                , snap                   == 0.7.*
+                , snap-core              == 0.8.*
+                , snap                   == 0.8.*
                 , Holumbus-Searchengine  >= 1.2.3
                 , text
                 , mtl

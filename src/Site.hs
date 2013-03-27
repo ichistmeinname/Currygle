@@ -45,7 +45,7 @@ import XmlHelper
 -- | The application initializer.
 app :: SnapletInit App App
 app = makeSnaplet "currygle" "Curry API search" Nothing $ do
-  h <- nestSnaplet "heist" heist $ heistInit "resources/templates"
+  h <- nestSnaplet "" heist $ heistInit "templates"
   i <- liftIO $ loadCurryIndex True
   addRoutes routes
   return $ App h i
@@ -58,7 +58,7 @@ routes :: [(ByteString, AppHandler ())]
 routes =  [ ("/"           , frontpage   ) -- just render the frontpage
           , ("/completions", completions ) -- show word completions (JSON)
           , ("/results"    , results     ) -- show search results
-          , (""            , serveDirectory "resources/static")
+          , (""            , serveDirectory "static")
           ]
 
 -- | Render the template file without substituting any tags.

@@ -22,7 +22,7 @@
       </div>
       <div class="span9">
         <form onsubmit="return searchQuery();" class="well">
-          <input id="query" type="search" value=$(oldquery)
+          <input id="query" type="search" value=${oldquery}
                 class="search-query"
                 onkeyup="getCompletions(event)" />
           <button type="submit" class="btn">Search</button>
