@@ -16,8 +16,6 @@ and gathered by the function site, which is exported.
 
 module Site ( app ) where
 
-import           Control.Applicative       ((<|>), (<$>))
-import           Control.Monad.Reader      (MonadIO, asks, liftIO)
 import           Data.ByteString           (ByteString)
 import           Data.List                 (intercalate, isPrefixOf)
 import           Data.Maybe                (fromMaybe)
@@ -28,7 +26,6 @@ import           Snap
 import           Snap.Snaplet.Heist
 -- import           Snap.Extension.Heist.Impl (render, heistLocal)
 import           Snap.Util.FileServe       (serveDirectory)
-import           Snap.Types
 import           Text.JSON                 (encodeStrict, showJSONs)
 import           Text.Templating.Heist     (Splice, bindSplices)
 import qualified Text.XmlHtml       as X
@@ -38,7 +35,7 @@ import CurryInfo
 import CurrySearch ( InfoDoc (..), QRDocs (..), InfoWord (..), QRWords (..)
                    , QueryFor, wordCompletions, queryResults )
 import Helpers     ( showType, paren, constrTypeExpr, resultType )
-import IndexTypes  ( CurryIndex, loadCurryIndex)
+import IndexTypes  ( loadCurryIndex)
 import XmlHelper
 
 -- ---------------------------------------------------------------------------
@@ -122,9 +119,9 @@ pagerSplice query actPage (QRDocs count _ _ _)
 -- Function to start the query processing
 runQuery :: QueryFor a -> AppHandler a
 runQuery queryfor = do
-  query <- getRequestParam "query"
-  state <- gets _index
-  liftIO $ queryfor state query
+  qry <- getRequestParam "query"
+  idx <- gets _index
+  liftIO $ queryfor idx qry
 
 -- Returns the value associated to a specific param from the Query-String
 -- (i.e. query or page)
