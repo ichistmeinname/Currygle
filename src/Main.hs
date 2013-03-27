@@ -20,7 +20,8 @@ import           System.Posix.Process      (getProcessID)
 import           System.IO                 (hPutStrLn, stderr)
 
 import           Snap
-import           Snap.Loader.Prod          (loadSnapTH)
+import           Snap.Snaplet.Config
+import           Snap.Loader.Static        (loadSnapTH)
 
 import           FilesAndLoading           (pidFile)
 import           Site                      (app)
@@ -30,7 +31,7 @@ main = do
   savePID
   (conf, site, cleanup) <- $(loadSnapTH [| getConf |]
                                         'getActions
-                                        ["resources/templates"])
+                                        ["snaplets/heist/templates"])
   _ <- try $ httpServe conf $ site :: IO (Either SomeException ())
   cleanup
 
@@ -42,13 +43,13 @@ savePID = do
   writeFile pidFile (show pid)
 
 -- | This action loads the config used by this application.
-getConf :: IO (Config Snap ())
-getConf = commandLineConfig defaultConfig
+getConf :: IO (Config Snap AppConfig)
+getConf = commandLineAppConfig defaultConfig
 
 -- | This function generates the the site handler and cleanup action
 -- from the configuration.
-getActions :: Config Snap () -> IO (Snap (), IO ())
-getActions _ = do
-    (msgs, site, cleanup) <- runSnaplet app
-    hPutStrLn stderr $ T.unpack msgs
-    return (site, cleanup)
+getActions :: Config Snap AppConfig -> IO (Snap (), IO ())
+getActions conf = do
+  (msgs, site, cleanup) <- runSnaplet (appEnvironment =<< getOther conf) app
+  hPutStrLn stderr $ T.unpack msgs
+  return (site, cleanup)
