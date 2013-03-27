@@ -22,12 +22,11 @@ import           Data.Maybe                (fromMaybe)
 import qualified Data.Text          as T   (pack, unpack)
 import qualified Data.Text.Encoding as T   (encodeUtf8, decodeUtf8)
 
+import           Heist.Interpreted
 import           Snap
 import           Snap.Snaplet.Heist
--- import           Snap.Extension.Heist.Impl (render, heistLocal)
 import           Snap.Util.FileServe       (serveDirectory)
 import           Text.JSON                 (encodeStrict, showJSONs)
-import           Text.Templating.Heist     (Splice, bindSplices)
 import qualified Text.XmlHtml       as X
 
 import Application

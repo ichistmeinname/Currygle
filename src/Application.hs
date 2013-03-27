@@ -13,10 +13,11 @@ Defines the application's state.
 -}
 module Application where
 
-import           Snap               (Snaplet, Handler, makeLenses, subSnaplet)
-import           Snap.Snaplet.Heist (HasHeist (..), Heist)
+import Control.Lens
+import Snap.Snaplet       (Snaplet, Handler, subSnaplet)
+import Snap.Snaplet.Heist (HasHeist (..), Heist)
 
-import           IndexTypes         (CurryIndex)
+import IndexTypes         (CurryIndex)
 
 data App = App
   { _heist :: Snaplet (Heist App)
@@ -25,7 +26,7 @@ data App = App
 
 type AppHandler = Handler App App
 
-makeLenses [''App]
+makeLenses ''App
 
 instance HasHeist App where
     heistLens = subSnaplet heist
