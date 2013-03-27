@@ -40,14 +40,13 @@ executable curryServer
                 , CurrySearch, QueryParser, Application, Site
 
   build-depends:  base                   == 4.*
-                , bytestring             >= 0.9.1 && < 0.10
-                , MonadCatchIO-transformers >= 0.2.1 && < 0.3
+                , bytestring
                 , mtl                    == 2.*
                 , xmlhtml                == 0.1.*
-                , heist                  == 0.6.*
+                , heist                  == 0.7.*
                 , json                   >= 0.4   && < 1
-                , snap-core              == 0.6.*
-                , snap                   == 0.6.*
+                , snap-core              == 0.7.*
+                , snap                   == 0.7.*
                 , Holumbus-Searchengine  >= 1.2.3
                 , text
                 , mtl
