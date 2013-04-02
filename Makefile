@@ -4,7 +4,7 @@ server   = dist/build/curryServer/curryServer
 pidfile  = server.pid
 logfile  = log/production.log
 cdoc_dir = /srv/www/htdocs/kics2/lib/CDOC
-cdoc_uri = http://www.informatik.uni-kiel.de/kics2/lib/CDOC/
+cdoc_uri = http://www-ps.informatik.uni-kiel.de/kics2/lib/CDOC/
 
 # development only
 .PHONY: compile
@@ -28,7 +28,7 @@ start:
 .PHONY: stop
 stop:
 	@if [ -r $(pidfile) ]; then \
-	  echo "Stopping Currygle";
+	  echo "Stopping Currygle"; \
 	  ps -p `cat $(pidfile)` && kill -9 `cat $(pidfile)`; \
 	else \
 	  echo "Currygle is not running." ; \
