@@ -30,6 +30,7 @@ stop:
 	@if [ -r $(pidfile) ]; then \
 	  echo "Stopping Currygle"; \
 	  ps -p `cat $(pidfile)` && kill -9 `cat $(pidfile)`; \
+	  echo "" > $(pidfile);
 	else \
 	  echo "Currygle is not running." ; \
 	fi
