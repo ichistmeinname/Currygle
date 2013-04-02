@@ -27,8 +27,11 @@ start:
 
 .PHONY: stop
 stop:
-	if [ -r $(pidfile) ]; then \
-		ps -p `cat $(pidfile)` && kill -9 `cat $(pidfile)`; \
+	@if [ -r $(pidfile) ]; then \
+	  echo "Stopping Currygle";
+	  ps -p `cat $(pidfile)` && kill -9 `cat $(pidfile)`; \
+	else \
+	  echo "Currygle is not running." ; \
 	fi
 
 .PHONY: restart
@@ -36,7 +39,8 @@ restart: stop start
 
 .PHONY: status
 status:
-	if [ -r $(pidfile) ] ; then \
-	  echo 'Curryle is running with PID '`cat ${pid_path}`'.' ; \
-	  else echo 'Curryle is not running.' ; \
+	@if [ -r $(pidfile) ] ; then \
+	  echo 'Curryle is running with PID '`cat $(pidfile)`'.' ; \
+	else \
+	  echo 'Curryle is not running.' ; \
 	fi
