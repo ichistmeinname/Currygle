@@ -112,6 +112,24 @@ namespace :pidfile do
 end
 
 # ----------------------------------------------------------------------------
+# Indexer tasks
+# ----------------------------------------------------------------------------
+
+namespace :index do
+
+  desc "Create new index"
+  task :create do
+    run "cd #{current_app_path} && make index"
+  end
+
+  desc "Update index"
+  task :update do
+    run "cd #{current_app_path} && make update-index"
+  end
+
+end
+
+# ----------------------------------------------------------------------------
 # Cabal tasks
 # ----------------------------------------------------------------------------
 
@@ -122,10 +140,11 @@ depend :remote, :command, "cabal-dev"
 namespace :cabal do
 
   task :default do
-    clean
-    configure
-    build
     install
+  end
+
+  task :update do
+    cabal "update"
   end
 
   task :clean do
@@ -156,4 +175,4 @@ end
 
 after "deploy:setup"         , "pidfile:setup"
 after "deploy:create_symlink", "pidfile:create_symlink"
-# after "deploy:update"        , "cabal"
+after "deploy:update"        , "cabal"
