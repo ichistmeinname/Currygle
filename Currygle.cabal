@@ -59,6 +59,7 @@ executable curryServer
                 , containers
                 , transformers
                 , unix
+                , hashable               <  1.2
 
   if flag(old-base)
     build-depends:
