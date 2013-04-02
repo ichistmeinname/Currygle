@@ -46,8 +46,11 @@ app :: SnapletInit App App
 app = makeSnaplet "currygle" "Curry API search" Nothing $ do
   h <- nestSnaplet "" heist $ heistInit "templates"
   i <- liftIO $ loadCurryIndex True
-  addRoutes routes
+  addRoutes $ [(contextPath, route routes)]
   return $ App h i
+
+contextPath :: ByteString
+contextPath = "/kics2/currygle"
 
 -- | Defines the routing of the web site.
 -- It distinguishes between the front- and query-page
@@ -62,8 +65,10 @@ routes =  [ ("/"           , frontpage   ) -- just render the frontpage
 
 -- | Render the template file without substituting any tags.
 frontpage :: AppHandler ()
-frontpage = ifTop $ heistLocal (bindSplices [("result", return [example])])
-          $ render "frontpage"
+frontpage = ifTop $ heistLocal (bindSplices splices) $ render "frontpage"
+  where splices = [ ("result"  , return [example])
+                  , ("oldquery", return [htmlTextNode ""])
+                  ]
 
 -- | Return the list of word completions for the search text as JSON.
 completions :: AppHandler ()
