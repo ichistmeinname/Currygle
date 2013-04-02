@@ -23,7 +23,7 @@ update-index:
 
 .PHONY: start
 start:
-	nohup $(server) -p 1337 > $(logfile) 2>&1 &
+	nohup $(server) -b 127.0.0.1 -p 1337 > $(logfile) 2>&1 &
 
 .PHONY: stop
 stop:
