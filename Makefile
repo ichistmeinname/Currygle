@@ -29,7 +29,7 @@ start:
 stop:
 	@if [ -r $(pidfile) ]; then \
 	  echo "Stopping Currygle"; \
-	  ps -p `cat $(pidfile)` && kill -9 `cat $(pidfile)`; \
+	  (ps -p `cat $(pidfile)` && kill -9 `cat $(pidfile)`) || exit 0 ; \
 	else \
 	  echo "Currygle is not running." ; \
 	fi
