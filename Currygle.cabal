@@ -1,12 +1,9 @@
 name:          Currygle
 version:       0.1
--- license:       MIT
--- license-file:  LICENSE
 author:        Sandra Dylus
 stability:     experimental
-category:      Text, Data
+category:      Text, Data, Web
 synopsis:      Curr(y)gle
--- homepage:
 description:   Curr(y)gle - An API search engine for Curry
 cabal-version: >= 1.6
 build-type:    Simple
@@ -43,23 +40,28 @@ executable curryServer
   other-modules:  CurryInfo, FilesAndLoading, Helpers, IndexTypes
                 , CurrySearch, QueryParser, Application, Site
 
-  build-depends:  bytestring
-                , mtl                    == 2.*
-                , xmlhtml                >= 0.1
-                , heist                  == 0.11.*
-                , json                   >= 0.4    && < 1
-                , snap-core              == 0.9.*
-                , snap                   == 0.11.*
-                , snap-loader-static     == 0.9.*
-                , Holumbus-Searchengine  >= 1.2.3
-                , text
-                , binary                 >= 0.5
+  build-depends:  bytestring                >= 0.9.1   && < 0.11
+                , heist                     >= 0.11    && < 0.12
+                , MonadCatchIO-transformers >= 0.2.1   && < 0.4
+                , mtl                       >= 2       && < 3
+                , snap                      >= 0.11    && < 0.12
+                , snap-core                 >= 0.9     && < 0.10
+                , snap-server               >= 0.9     && < 0.10
+                , snap-loader-static        >= 0.9     && < 0.10
+                , text                      >= 0.11    && < 0.12
+                , time                      >= 1.1     && < 1.5
+                , xmlhtml                   >= 0.1
+
+                , json                      >= 0.4    && < 1
+                , Holumbus-Searchengine     >= 1.2.3
+                , binary                    >= 0.5
                 , deepseq
                 , parsec
                 , containers
                 , transformers
                 , unix
-                , hashable               <  1.2
+                , hashable                  >= 1.2.0.6
+                , tagged                    <  0.5
 
   if flag(old-base)
     build-depends:
