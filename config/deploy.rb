@@ -2,36 +2,31 @@
 # Initialization
 # ----------------------------------------------------------------------------
 
-# add path to cabal/cabal-dev binary
-set :default_environment, { 'PATH' => "~/.ghc-config/ghc/bin:~/.cabal/i386/bin:$PATH" }
-
 # ----------------------------------------------------------------------------
 # Configuration
 # ----------------------------------------------------------------------------
-set :application, "Curr(y)gle API search"
+set :application, 'currygle'
 
 # Version control information
-set :repository,  "ssh://git@git-ps.informatik.uni-kiel.de:55055/theses/2012-sad-ba.git"
+set :repository,  "ssh://git@git-ps.informatik.uni-kiel.de:55055/apps/#{application}.git"
 set :scm       , :git
 set :deploy_via, :remote_cache
-set :branch    , "master"
+set :branch    , 'master'
 
 # Deployment configuration
 ssh_options[:forward_agent] = true  # use ssh keys
 set :use_sudo, false                # no sudo!
+set :user    , 'www-rails'
 
-set :domain   , "lynch.informatik.uni-kiel.de"
+set :domain   , 'giscours.informatik.uni-kiel.de'
 set :port     , 55055
-set :deploy_to, "/srv/www/apps/currygle"
+set :deploy_to, '/srv/www-rails/currygle'
 
 role :web, domain                   # HTTP server: Apache2
 role :app, domain                   # Web server: Snap internal
 
 # Overwrite shared children
-set :shared_children, %w(CurrySearch/log CurrySearch/index CurrySearch/cabal-dev)
-
-set :app_dir         , "CurrySearch"
-set :current_app_path, File.join(current_path, app_dir)
+set :shared_children, %w(cabal-dev cdoc log index)
 
 # ----------------------------------------------------------------------------
 # Deploy tasks
@@ -47,19 +42,19 @@ set :pid_path, File.join(shared_path, pid_file)
 
 namespace :deploy do
   task :start do
-    run "cd #{current_app_path} && make start"
+    run "cd #{current_path} && make start"
   end
 
   task :stop do
-    run "cd #{current_app_path} && make stop"
+    run "cd #{current_path} && make stop"
   end
 
   task :restart do
-    run "cd #{current_app_path} && make restart"
+    run "cd #{current_path} && make restart"
   end
 
   task :status do
-    run "cd #{current_app_path} && make status"
+    run "cd #{current_path} && make status"
   end
 
 
@@ -104,7 +99,7 @@ namespace :pidfile do
 
   desc "Link the PID file"
   task :create_symlink do
-    cur_config_path = File.join(current_app_path, pid_file)
+    cur_config_path = File.join(current_path, pid_file)
     run "rm -f   #{cur_config_path}"
     run "ln -nsf #{pid_path} #{cur_config_path}"
   end
@@ -119,12 +114,12 @@ namespace :index do
 
   desc "Create new index"
   task :create do
-    run "cd #{current_app_path} && make index"
+    run "cd #{current_path} && make index"
   end
 
   desc "Update index"
   task :update do
-    run "cd #{current_app_path} && make update-index"
+    run "cd #{current_path} && make update-index"
   end
 
 end
@@ -166,7 +161,7 @@ namespace :cabal do
 end
 
 def cabal(command)
-  run "cd #{current_app_path} && cabal-dev #{command}"
+  run "cd #{current_path} && cabal-dev #{command}"
 end
 
 # ----------------------------------------------------------------------------
