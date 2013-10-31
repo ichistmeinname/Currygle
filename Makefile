@@ -3,7 +3,7 @@ indexer  = dist/build/curryIndexer/curryIndexer
 server   = dist/build/curryServer/curryServer
 pidfile  = server.pid
 logfile  = log/production.log
-cdoc_dir = /srv/www/htdocs/kics2/lib/CDOC
+cdoc_dir = cdoc
 cdoc_uri = http://www-ps.informatik.uni-kiel.de/kics2/lib/CDOC/
 
 # development only
