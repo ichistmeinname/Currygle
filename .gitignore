@@ -1,7 +1,10 @@
+.cabal-sandbox/
 cabal-dev/
+cdoc/
 dist/
 index/
 log/
 SourceGraph/
+cabal.sandbox.config
 nohup.out
 server.pid
