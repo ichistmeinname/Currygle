@@ -1,8 +1,4 @@
 # ----------------------------------------------------------------------------
-# Initialization
-# ----------------------------------------------------------------------------
-
-# ----------------------------------------------------------------------------
 # Configuration
 # ----------------------------------------------------------------------------
 set :application, 'currygle'
@@ -16,11 +12,11 @@ set :branch    , 'master'
 # Deployment configuration
 ssh_options[:forward_agent] = true  # use ssh keys
 set :use_sudo, false                # no sudo!
-set :user    , 'www-rails'
 
 set :domain   , 'giscours.informatik.uni-kiel.de'
 set :port     , 55055
-set :deploy_to, '/srv/www-rails/currygle'
+set :user    , 'www-rails'
+set :deploy_to, "/srv/www-rails/#{application}"
 
 role :web, domain                   # HTTP server: Apache2
 role :app, domain                   # Web server: Snap internal
@@ -31,14 +27,6 @@ set :shared_children, %w(cabal-dev cdoc log index)
 # ----------------------------------------------------------------------------
 # Deploy tasks
 # ----------------------------------------------------------------------------
-
-set :config_dir          , "conf"
-set :config_file         , "prod.conf"
-set :shared_config_path  , File.join(shared_path       , config_dir )
-set :shared_config_file  , File.join(shared_config_path, config_file)
-
-set :pid_file, "server.pid"
-set :pid_path, File.join(shared_path, pid_file)
 
 namespace :deploy do
   task :start do
@@ -91,6 +79,9 @@ end
 # ----------------------------------------------------------------------------
 
 namespace :pidfile do
+
+  set :pid_file, "server.pid"
+  set :pid_path, File.join(shared_path, pid_file)
 
   desc "Setup pidfile"
   task :setup do
@@ -168,6 +159,8 @@ end
 # Task integration
 # ----------------------------------------------------------------------------
 
-after "deploy:setup"         , "pidfile:setup"
-after "deploy:create_symlink", "pidfile:create_symlink"
-after "deploy:update"        , "cabal"
+after 'deploy:setup'         , 'pidfile:setup'
+after 'deploy:create_symlink', 'pidfile:create_symlink'
+after 'deploy:update'        , 'cabal'
+
+after 'deploy:update'        , 'deploy:cleanup'
