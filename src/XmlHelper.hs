@@ -144,7 +144,7 @@ example =
                   ++ [htmlTextNode " (also "]
                   ++ [bold ":t either"]
                   ++ [htmlTextNode "), without a following name, it searches for all types"]
-       author   = [bold "author donald"]
+       author   = [bold ":author donald"]
                   ++ [htmlTextNode " - searches for modules with"]
                   ++ [italic "donald"]
                   ++ [htmlTextNode " as author (also: "]
