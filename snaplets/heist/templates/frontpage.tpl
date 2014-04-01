@@ -12,7 +12,9 @@
   <div class="row-fluid">
     <div class="span12">
       <div class="hero-unit">
-        <h1>Curr(y)gle</h1>
+        <h1>
+          <a href=".">Curr(y)gle</a>
+        </h1>
         <p>Keep calm and curry on</p>
       </div>
     </div>

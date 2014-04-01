@@ -42,6 +42,11 @@ body {
   background-color: #ffffff;
 }
 
+h1 a {
+  text-decoration: none;
+  color: inherit;
+}
+
 .help {
   float: right;
   padding: 0 18px;
