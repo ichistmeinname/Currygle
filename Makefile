@@ -1,6 +1,6 @@
-
-indexer  = dist/build/curryIndexer/curryIndexer
-server   = dist/build/curryServer/curryServer
+bindir   = .cabal-sandox/bin/
+indexer  = $(bindir)/curryIndexer
+server   = $(bindir)/curryServer
 pidfile  = server.pid
 logfile  = log/production.log
 cdoc_dir = cdoc
