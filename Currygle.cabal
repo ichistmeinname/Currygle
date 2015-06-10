@@ -62,6 +62,13 @@ executable curryServer
                 , unix
                 , hashable                  >= 1.2.0.6
                 , tagged                    <  0.5
+                , distributive              <  0.4
+                , transformers-compat       <  0.2
+                , contravariant             <  0.5
+                , attoparsec                <  0.11
+                , comonad                   <  3.1
+                , syb                       <  0.5
+                , primitive                 <  0.6
 
   if flag(old-base)
     build-depends:
