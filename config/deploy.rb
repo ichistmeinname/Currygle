@@ -21,8 +21,11 @@ set :deploy_to, "/srv/www-rails/#{application}"
 role :web, domain                   # HTTP server: Apache2
 role :app, domain                   # Web server: Snap internal
 
+# GHC version
+set :ghc_version, '7.6.3'
+
 # Overwrite shared children
-set :shared_children, %w(cabal-dev cdoc log index)
+set :shared_children, %w(.cabal-sandbox cdoc log index)
 
 # ----------------------------------------------------------------------------
 # Deploy tasks
@@ -120,18 +123,28 @@ end
 # ----------------------------------------------------------------------------
 
 depend :remote, :command, "ghc"
+depend :remote, :command, "ghc-config"
 depend :remote, :command, "cabal"
-depend :remote, :command, "cabal-dev"
 
 namespace :cabal do
 
   task :default do
+    setghc
     update
+    sandbox
     install
+  end
+
+  task :setghc do
+    run "cd #{current_path} && ghc-config #{ghc_version}"
   end
 
   task :update do
     cabal "update"
+  end
+
+  task :sandbox do
+    cabal "sandbox init"
   end
 
   task :clean do
@@ -153,7 +166,7 @@ namespace :cabal do
 end
 
 def cabal(command)
-  run "cd #{current_path} && cabal-dev #{command}"
+  run "cd #{current_path} && cabal #{command}"
 end
 
 # ----------------------------------------------------------------------------
