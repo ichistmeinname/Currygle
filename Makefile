@@ -1,4 +1,4 @@
-bindir   = .cabal-sandox/bin/
+bindir   = .cabal-sandbox/bin/
 indexer  = $(bindir)/curryIndexer
 server   = $(bindir)/curryServer
 pidfile  = server.pid
