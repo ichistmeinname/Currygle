@@ -126,6 +126,7 @@ depend :remote, :command, "cabal-dev"
 namespace :cabal do
 
   task :default do
+    update
     install
   end
 
