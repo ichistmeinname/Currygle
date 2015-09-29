@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Module Prelude</title>
+<link rel="stylesheet" type="text/css" href="currysource.css"/>
+</head>
+<body>
+<table><tbody><tr>
+<td class="linenumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510
+511
+512
+513
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566
+567
+568
+569
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585
+586
+587
+588
+589
+590
+591
+592
+593
+594
+595
+596
+597
+598
+599
+600
+601
+602
+603
+604
+605
+606
+607
+608
+609
+610
+611
+612
+613
+614
+615
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+738
+739
+740
+741
+742
+743
+744
+745
+746
+747
+748
+749
+750
+751
+752
+753
+754
+755
+756
+757
+758
+759
+760
+761
+762
+763
+764
+765
+766
+767
+768
+769
+770
+771
+772
+773
+774
+775
+776
+777
+778
+779
+780
+781
+782
+783
+784
+785
+786
+787
+788
+789
+790
+791
+792
+793
+794
+795
+796
+797
+798
+799
+800
+801
+802
+803
+804
+805
+806
+807
+808
+809
+810
+811
+812
+813
+814
+815
+816
+817
+818
+819
+820
+821
+822
+823
+824
+825
+826
+827
+828
+829
+830
+831
+832
+833
+834
+835
+836
+837
+838
+839
+840
+841
+842
+843
+844
+845
+846
+847
+848
+849
+850
+851
+852
+853
+854
+855
+856
+857
+858
+859
+860
+861
+862
+863
+864
+865
+866
+867
+868
+869
+870
+871
+872
+873
+874
+</pre></td>
+<td class="sourcecode"><pre><span class="comment">----------------------------------------------------------------------------</span>
+<span class="comment">--- The standard prelude of Curry.</span>
+<span class="comment">--- All top-level functions defined in this module</span>
+<span class="comment">--- are always available in any Curry program.</span>
+<span class="comment">---</span>
+<span class="comment">--- @category general</span>
+<span class="comment">----------------------------------------------------------------------------</span>
+
+<span class="pragma">{-# OPTIONS_CYMAKE -Wno-incomplete-patterns -Wno-overlapping #-}</span>
+
+<span class="keyword">module</span> <span class="module">Prelude</span> <span class="keyword">where</span>
+
+<span class="comment">-- Lines beginning with &quot;--++&quot; are part of the prelude</span>
+<span class="comment">-- but cannot parsed by the compiler</span>
+
+<span class="comment">-- Infix operator declarations:</span>
+
+
+<span class="keyword">infixl</span> <span class="number">9</span> <a href="#%21%21"><span class="func">!!</span></a>
+<span class="keyword">infixr</span> <span class="number">9</span> <a href="#."><span class="func">.</span></a>
+<span class="keyword">infixl</span> <span class="number">7</span> <a href="#%2A"><span class="func">*</span></a><span class="symbol">,</span> <span class="symbol">`</span><a href="#div"><span class="func">div</span></a><span class="symbol">`</span><span class="symbol">,</span> <span class="symbol">`</span><a href="#mod"><span class="func">mod</span></a><span class="symbol">`</span><span class="symbol">,</span> <span class="symbol">`</span><a href="#quot"><span class="func">quot</span></a><span class="symbol">`</span><span class="symbol">,</span> <span class="symbol">`</span><a href="#rem"><span class="func">rem</span></a><span class="symbol">`</span>
+<span class="keyword">infixl</span> <span class="number">6</span> <a href="#%2B"><span class="func">+</span></a><span class="symbol">,</span> <a href="#-"><span class="func">-</span></a>
+<span class="comment">-- infixr 5 :                          -- declared together with list</span>
+<span class="keyword">infixr</span> <span class="number">5</span> <a href="#%2B%2B"><span class="func">++</span></a>
+<span class="keyword">infix</span>  <span class="number">4</span> <a href="#%3D%3A%3D"><span class="func">=:=</span></a><span class="symbol">,</span> <a href="#%3D%3D"><span class="func">==</span></a><span class="symbol">,</span> <a href="#%3D%3D%3D"><span class="func">===</span></a><span class="symbol">,</span> <a href="#%2F%3D"><span class="func">/=</span></a><span class="symbol">,</span> <a href="#%3C"><span class="func">&lt;</span></a><span class="symbol">,</span> <a href="#%3E"><span class="func">&gt;</span></a><span class="symbol">,</span> <a href="#%3C%3D"><span class="func">&lt;=</span></a><span class="symbol">,</span> <a href="#%3E%3D"><span class="func">&gt;=</span></a><span class="symbol">,</span> <a href="#%3D%3A%3C%3D"><span class="func">=:&lt;=</span></a>
+<span class="keyword">infix</span>  <span class="number">4</span>  <span class="symbol">`</span><a href="#elem"><span class="func">elem</span></a><span class="symbol">`</span><span class="symbol">,</span> <span class="symbol">`</span><a href="#notElem"><span class="func">notElem</span></a><span class="symbol">`</span>
+<span class="keyword">infixr</span> <span class="number">3</span> <a href="#%26%26"><span class="func">&amp;&amp;</span></a>
+<span class="keyword">infixr</span> <span class="number">2</span> <a href="#%7C%7C"><span class="func">||</span></a>
+<span class="keyword">infixl</span> <span class="number">1</span> <a href="#%3E%3E"><span class="func">&gt;&gt;</span></a><span class="symbol">,</span> <a href="#%3E%3E%3D"><span class="func">&gt;&gt;=</span></a>
+<span class="keyword">infixr</span> <span class="number">0</span> <a href="#%24"><span class="func">$</span></a><span class="symbol">,</span> <a href="#%24%21"><span class="func">$!</span></a><span class="symbol">,</span> <a href="#%24%21%21"><span class="func">$!!</span></a><span class="symbol">,</span> <a href="#%24%23"><span class="func">$#</span></a><span class="symbol">,</span> <a href="#%24%23%23"><span class="func">$##</span></a><span class="symbol">,</span> <span class="symbol">`</span><a href="#seq"><span class="func">seq</span></a><span class="symbol">`</span><span class="symbol">,</span> <a href="#%26%26%3E"><span class="func">&amp;&amp;&gt;</span></a><span class="symbol">,</span> <a href="#%26"><span class="func">&amp;</span></a><span class="symbol">,</span> <a href="#%26%3E"><span class="func">&amp;&gt;</span></a><span class="symbol">,</span> <a href="#%3F"><span class="func">?</span></a>
+
+
+<span class="comment">-- externally defined types for numbers and characters</span>
+<span class="keyword">data</span> <span class="type" id="Int">Int</span>
+<span class="keyword">data</span> <span class="type" id="Float">Float</span>
+<span class="keyword">data</span> <span class="type" id="Char">Char</span>
+
+
+<span class="keyword">type</span> <span class="type" id="String">String</span> <span class="symbol">=</span> <span class="symbol">[</span><a href="#Char"><span class="type">Char</span></a><span class="symbol">]</span>
+
+<span class="comment">-- Some standard combinators:</span>
+
+<span class="comment">--- Function composition.</span>
+<span class="symbol">(</span><a href="#."><span class="func">.</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span>
+<span class="ident">f</span> <span class="func" id=".">.</span> <span class="ident">g</span> <span class="symbol">=</span> <span class="symbol">\</span><span class="ident">x</span> <span class="symbol">-&gt;</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">g</span> <span class="ident">x</span><span class="symbol">)</span>
+
+<span class="comment">--- Identity function.</span>
+<a href="#id"><span class="func">id</span></a>              <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="id">id</span> <span class="ident">x</span>            <span class="symbol">=</span> <span class="ident">x</span>
+
+<span class="comment">--- Constant function.</span>
+<a href="#const"><span class="func">const</span></a>           <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="const">const</span> <span class="ident">x</span> <span class="symbol">_</span>       <span class="symbol">=</span> <span class="ident">x</span>
+
+<span class="comment">--- Converts an uncurried function to a curried function.</span>
+<a href="#curry"><span class="func">curry</span></a>           <span class="symbol">::</span> <span class="symbol">(</span><span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">c</span>
+<span class="func" id="curry">curry</span> <span class="ident">f</span> <span class="ident">a</span> <span class="ident">b</span>     <span class="symbol">=</span>  <span class="ident">f</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span>
+
+<span class="comment">--- Converts an curried function to a function on pairs.</span>
+<a href="#uncurry"><span class="func">uncurry</span></a>         <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">c</span>
+<span class="func" id="uncurry">uncurry</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">a</span> <span class="ident">b</span>
+
+<span class="comment">--- (flip f) is identical to f but with the order of arguments reversed.</span>
+<a href="#flip"><span class="func">flip</span></a>            <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">c</span>
+<span class="func" id="flip">flip</span>  <span class="ident">f</span> <span class="ident">x</span> <span class="ident">y</span>     <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">y</span> <span class="ident">x</span>
+
+<span class="comment">--- Repeats application of a function until a predicate holds.</span>
+<a href="#until"><span class="func">until</span></a>          <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="until">until</span> <span class="ident">p</span> <span class="ident">f</span> <span class="ident">x</span>     <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">p</span> <span class="ident">x</span> <span class="keyword">then</span> <span class="ident">x</span> <span class="keyword">else</span> <a href="#until"><span class="func">until</span></a> <span class="ident">p</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">f</span> <span class="ident">x</span><span class="symbol">)</span>
+
+<span class="comment">--- Evaluates the first argument to head normal form (which could also</span>
+<span class="comment">--- be a free variable) and returns the second argument.</span>
+<a href="#seq"><span class="func">seq</span></a>     <span class="symbol">::</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="ident">x</span> <span class="symbol">`</span><span class="func" id="seq">seq</span><span class="symbol">`</span> <span class="ident">y</span> <span class="symbol">=</span> <a href="#const"><span class="func">const</span></a> <span class="ident">y</span> <a href="#%24%21"><span class="func">$!</span></a> <span class="ident">x</span>
+
+<span class="comment">--- Evaluates the argument to head normal form and returns it.</span>
+<span class="comment">--- Suspends until the result is bound to a non-variable term.</span>
+<a href="#ensureNotFree"><span class="func">ensureNotFree</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="ensureNotFree">ensureNotFree</span> <span class="keyword">external</span>
+
+<span class="comment">--- Evaluates the argument to spine form and returns it.</span>
+<span class="comment">--- Suspends until the result is bound to a non-variable spine.</span>
+<a href="#ensureSpine"><span class="func">ensureSpine</span></a> <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="ensureSpine">ensureSpine</span> <span class="ident">l</span> <span class="symbol">=</span> <span class="ident">ensureList</span> <span class="symbol">(</span><a href="#ensureNotFree"><span class="func">ensureNotFree</span></a> <span class="ident">l</span><span class="symbol">)</span>
+ <span class="keyword">where</span> <span class="func" id="ensureList.20">ensureList</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+       <span class="func">ensureList</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#ensureSpine"><span class="func">ensureSpine</span></a> <span class="ident">xs</span>
+
+<span class="comment">--- Right-associative application.</span>
+<span class="symbol">(</span><a href="#%24"><span class="func">$</span></a><span class="symbol">)</span>     <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="ident">f</span> <span class="func" id="$">$</span> <span class="ident">x</span>   <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span>
+
+<span class="comment">--- Right-associative application with strict evaluation of its argument</span>
+<span class="comment">--- to head normal form.</span>
+<span class="symbol">(</span><a href="#%24%21"><span class="func">$!</span></a><span class="symbol">)</span>    <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="symbol">(</span><span class="func" id="$!">$!</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Right-associative application with strict evaluation of its argument</span>
+<span class="comment">--- to normal form.</span>
+<span class="symbol">(</span><a href="#%24%21%21"><span class="func">$!!</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="symbol">(</span><span class="func" id="$!!">$!!</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Right-associative application with strict evaluation of its argument</span>
+<span class="comment">--- to a non-variable term.</span>
+<span class="symbol">(</span><a href="#%24%23"><span class="func">$#</span></a><span class="symbol">)</span>    <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="ident">f</span> <span class="func" id="$#">$#</span> <span class="ident">x</span>  <span class="symbol">=</span> <span class="ident">f</span> <a href="#%24%21"><span class="func">$!</span></a> <span class="symbol">(</span><a href="#ensureNotFree"><span class="func">ensureNotFree</span></a> <span class="ident">x</span><span class="symbol">)</span>
+
+<span class="comment">--- Right-associative application with strict evaluation of its argument</span>
+<span class="comment">--- to ground normal form.</span>
+<span class="symbol">(</span><a href="#%24%23%23"><span class="func">$##</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="symbol">(</span><span class="func" id="$##">$##</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Aborts the execution with an error message.</span>
+<a href="#error"><span class="func">error</span></a> <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <span class="symbol">_</span>
+<span class="func" id="error">error</span> <span class="ident">x</span> <span class="symbol">=</span> <a href="#prim_error"><span class="func">prim_error</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">x</span>
+
+<a href="#prim_error"><span class="func">prim_error</span></a>    <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <span class="symbol">_</span>
+<span class="func" id="prim_error">prim_error</span> <span class="keyword">external</span>
+
+<span class="comment">--- A non-reducible polymorphic function.</span>
+<span class="comment">--- It is useful to express a failure in a search branch of the execution.</span>
+<span class="comment">--- It could be defined by: `failed = head []`</span>
+<a href="#failed"><span class="func">failed</span></a> <span class="symbol">::</span> <span class="symbol">_</span>
+<span class="func" id="failed">failed</span> <span class="keyword">external</span>
+
+
+<span class="comment">-- Boolean values</span>
+<span class="comment">-- already defined as builtin, since it is required for if-then-else</span>
+<span class="keyword">data</span> <span class="type" id="Bool">Bool</span> <span class="symbol">=</span> <span class="cons" id="False">False</span> <span class="symbol">|</span> <span class="cons" id="True">True</span>
+
+<span class="comment">--- Sequential conjunction on Booleans.</span>
+<span class="symbol">(</span><a href="#%26%26"><span class="func">&amp;&amp;</span></a><span class="symbol">)</span>            <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<a href="#True"><span class="cons">True</span></a>  <span class="func" id="&amp;&amp;">&amp;&amp;</span> <span class="ident">x</span>      <span class="symbol">=</span> <span class="ident">x</span>
+<a href="#False"><span class="cons">False</span></a> <span class="func">&amp;&amp;</span> <span class="symbol">_</span>      <span class="symbol">=</span> <a href="#False"><span class="cons">False</span></a>
+
+
+<span class="comment">--- Sequential disjunction on Booleans.</span>
+<span class="symbol">(</span><a href="#%7C%7C"><span class="func">||</span></a><span class="symbol">)</span>            <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<a href="#True"><span class="cons">True</span></a>  <span class="func" id="||">||</span> <span class="symbol">_</span>      <span class="symbol">=</span> <a href="#True"><span class="cons">True</span></a>
+<a href="#False"><span class="cons">False</span></a> <span class="func">||</span> <span class="ident">x</span>      <span class="symbol">=</span> <span class="ident">x</span>
+
+
+<span class="comment">--- Negation on Booleans.</span>
+<a href="#not"><span class="func">not</span></a>             <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="not">not</span> <a href="#True"><span class="cons">True</span></a>        <span class="symbol">=</span> <a href="#False"><span class="cons">False</span></a>
+<span class="func">not</span> <a href="#False"><span class="cons">False</span></a>       <span class="symbol">=</span> <a href="#True"><span class="cons">True</span></a>
+
+<span class="comment">--- Useful name for the last condition in a sequence of conditional equations.</span>
+<a href="#otherwise"><span class="func">otherwise</span></a>       <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="otherwise">otherwise</span>       <span class="symbol">=</span> <a href="#True"><span class="cons">True</span></a>
+
+
+<span class="comment">--- The standard conditional. It suspends if the condition is a free variable.</span>
+<a href="#if_then_else"><span class="func">if_then_else</span></a>           <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="if_then_else">if_then_else</span> <span class="ident">b</span> <span class="ident">t</span> <span class="ident">f</span> <span class="symbol">=</span> <span class="keyword">case</span> <span class="ident">b</span> <span class="keyword">of</span> <a href="#True"><span class="cons">True</span></a>  <span class="symbol">-&gt;</span> <span class="ident">t</span>
+                               <a href="#False"><span class="cons">False</span></a> <span class="symbol">-&gt;</span> <span class="ident">f</span>
+
+<span class="comment">--- Enforce a Boolean condition to be true.</span>
+<span class="comment">--- The computation fails if the argument evaluates to `False`.</span>
+<a href="#solve"><span class="func">solve</span></a> <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="solve">solve</span> <a href="#True"><span class="cons">True</span></a> <span class="symbol">=</span> <a href="#True"><span class="cons">True</span></a>
+
+<span class="comment">--- Conditional expression.</span>
+<span class="comment">--- An expression like `(c &amp;&amp;&gt; e)` is evaluated by evaluating the first</span>
+<span class="comment">--- argument to `True` and then evaluating `e`.</span>
+<span class="comment">--- The expression has no value if the condition does not evaluate to `True`.</span>
+<span class="symbol">(</span><a href="#%26%26%3E"><span class="func">&amp;&amp;&gt;</span></a><span class="symbol">)</span> <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<a href="#True"><span class="cons">True</span></a> <span class="func" id="&amp;&amp;&gt;">&amp;&amp;&gt;</span> <span class="ident">x</span> <span class="symbol">=</span> <span class="ident">x</span>
+
+<span class="comment">--- Equality on finite ground data terms.</span>
+<span class="symbol">(</span><a href="#%3D%3D"><span class="func">==</span></a><span class="symbol">)</span>            <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="symbol">(</span><span class="func" id="==">==</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Disequality.</span>
+<span class="symbol">(</span><a href="#%2F%3D"><span class="func">/=</span></a><span class="symbol">)</span>            <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="ident">x</span> <span class="func" id="/=">/=</span> <span class="ident">y</span>          <span class="symbol">=</span> <a href="#not"><span class="func">not</span></a> <span class="symbol">(</span><span class="ident">x</span><a href="#%3D%3D"><span class="func">==</span></a><span class="ident">y</span><span class="symbol">)</span>
+
+<span class="comment">--- Ordering type. Useful as a result of comparison functions.</span>
+<span class="keyword">data</span> <span class="type" id="Ordering">Ordering</span> <span class="symbol">=</span> <span class="cons" id="LT">LT</span> <span class="symbol">|</span> <span class="cons" id="EQ">EQ</span> <span class="symbol">|</span> <span class="cons" id="GT">GT</span>
+
+<span class="comment">--- Comparison of arbitrary ground data terms.</span>
+<span class="comment">--- Data constructors are compared in the order of their definition</span>
+<span class="comment">--- in the datatype declarations and recursively in the arguments.</span>
+<a href="#compare"><span class="func">compare</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Ordering"><span class="type">Ordering</span></a>
+<span class="func" id="compare">compare</span> <span class="ident">x</span> <span class="ident">y</span> <span class="symbol">|</span> <span class="ident">x</span> <a href="#%3D%3D"><span class="func">==</span></a> <span class="ident">y</span>    <span class="symbol">=</span> <a href="#EQ"><span class="cons">EQ</span></a>
+            <span class="symbol">|</span> <span class="ident">x</span> <a href="#%3C%3D"><span class="func">&lt;=</span></a> <span class="ident">y</span>    <span class="symbol">=</span> <a href="#LT"><span class="cons">LT</span></a>
+            <span class="symbol">|</span> <a href="#otherwise"><span class="func">otherwise</span></a> <span class="symbol">=</span> <a href="#GT"><span class="cons">GT</span></a>
+
+<span class="comment">--- Less-than on ground data terms.</span>
+<span class="symbol">(</span><a href="#%3C"><span class="func">&lt;</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="ident">x</span> <span class="func" id="&lt;">&lt;</span> <span class="ident">y</span> <span class="symbol">=</span> <a href="#not"><span class="func">not</span></a> <span class="symbol">(</span><span class="ident">y</span> <a href="#%3C%3D"><span class="func">&lt;=</span></a> <span class="ident">x</span><span class="symbol">)</span>
+
+<span class="comment">--- Greater-than on ground data terms.</span>
+<span class="symbol">(</span><a href="#%3E"><span class="func">&gt;</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="ident">x</span> <span class="func" id="&gt;">&gt;</span> <span class="ident">y</span> <span class="symbol">=</span> <a href="#not"><span class="func">not</span></a> <span class="symbol">(</span><span class="ident">x</span> <a href="#%3C%3D"><span class="func">&lt;=</span></a> <span class="ident">y</span><span class="symbol">)</span>
+
+<span class="comment">--- Less-or-equal on ground data terms.</span>
+<span class="symbol">(</span><a href="#%3C%3D"><span class="func">&lt;=</span></a><span class="symbol">)</span>  <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="symbol">(</span><span class="func" id="&lt;=">&lt;=</span><span class="symbol">)</span>  <span class="keyword">external</span>
+
+<span class="comment">--- Greater-or-equal on ground data terms.</span>
+<span class="symbol">(</span><a href="#%3E%3D"><span class="func">&gt;=</span></a><span class="symbol">)</span>  <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="ident">x</span> <span class="func" id="&gt;=">&gt;=</span> <span class="ident">y</span> <span class="symbol">=</span> <a href="#not"><span class="func">not</span></a> <span class="symbol">(</span><span class="ident">x</span> <a href="#%3C"><span class="func">&lt;</span></a> <span class="ident">y</span><span class="symbol">)</span>
+
+<span class="comment">--- Maximum of ground data terms.</span>
+<a href="#max"><span class="func">max</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="max">max</span> <span class="ident">x</span> <span class="ident">y</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">x</span> <a href="#%3E%3D"><span class="func">&gt;=</span></a> <span class="ident">y</span> <span class="keyword">then</span> <span class="ident">x</span> <span class="keyword">else</span> <span class="ident">y</span>
+
+<span class="comment">--- Minimum of ground data terms.</span>
+<a href="#min"><span class="func">min</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="min">min</span> <span class="ident">x</span> <span class="ident">y</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">x</span> <a href="#%3C%3D"><span class="func">&lt;=</span></a> <span class="ident">y</span> <span class="keyword">then</span> <span class="ident">x</span> <span class="keyword">else</span> <span class="ident">y</span>
+
+
+<span class="comment">-- Pairs</span>
+
+<span class="comment">--++ data (a,b) = (a,b)</span>
+
+<span class="comment">--- Selects the first component of a pair.</span>
+<a href="#fst"><span class="func">fst</span></a>             <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="fst">fst</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span><span class="symbol">_</span><span class="symbol">)</span>       <span class="symbol">=</span> <span class="ident">x</span>
+
+<span class="comment">--- Selects the second component of a pair.</span>
+<a href="#snd"><span class="func">snd</span></a>             <span class="symbol">::</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="func" id="snd">snd</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">)</span>       <span class="symbol">=</span> <span class="ident">y</span>
+
+
+<span class="comment">-- Unit type</span>
+<span class="comment">--++ data () = ()</span>
+
+
+<span class="comment">-- Lists</span>
+
+<span class="comment">--++ data [a] = [] | a : [a]</span>
+
+<span class="comment">--- Computes the first element of a list.</span>
+<a href="#head"><span class="func">head</span></a>            <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="head">head</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>      <span class="symbol">=</span> <span class="ident">x</span>
+
+<span class="comment">--- Computes the remaining elements of a list.</span>
+<a href="#tail"><span class="func">tail</span></a>            <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="tail">tail</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>     <span class="symbol">=</span> <span class="ident">xs</span>
+
+<span class="comment">--- Is a list empty?</span>
+<a href="#null"><span class="func">null</span></a>            <span class="symbol">::</span> <span class="symbol">[</span><span class="symbol">_</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="null">null</span> <span class="symbol">[</span><span class="symbol">]</span>         <span class="symbol">=</span> <a href="#True"><span class="cons">True</span></a>
+<span class="func">null</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>      <span class="symbol">=</span> <a href="#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Concatenates two lists.</span>
+<span class="comment">--- Since it is flexible, it could be also used to split a list</span>
+<span class="comment">--- into two sublists etc.</span>
+<span class="symbol">(</span><a href="#%2B%2B"><span class="func">++</span></a><span class="symbol">)</span>            <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="symbol">[</span><span class="symbol">]</span>     <span class="func" id="++">++</span> <span class="ident">ys</span>    <span class="symbol">=</span> <span class="ident">ys</span>
+<span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="func">++</span> <span class="ident">ys</span>    <span class="symbol">=</span> <span class="ident">x</span> <span class="symbol">:</span> <span class="ident">xs</span><a href="#%2B%2B"><span class="func">++</span></a><span class="ident">ys</span>
+
+<span class="comment">--- Computes the length of a list.</span>
+<a href="#length"><span class="func">length</span></a>          <span class="symbol">::</span> <span class="symbol">[</span><span class="symbol">_</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="length">length</span> <span class="ident">xs</span> <span class="symbol">=</span> <span class="ident">len</span> <span class="ident">xs</span> <span class="number">0</span>
+  <span class="keyword">where</span>
+    <span class="func" id="len.94">len</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="ident">n</span> <span class="symbol">=</span> <span class="ident">n</span>
+    <span class="func">len</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">)</span> <span class="ident">n</span> <span class="symbol">=</span> <span class="keyword">let</span> <span class="ident">np1</span> <span class="symbol">=</span> <span class="ident">n</span> <a href="#%2B"><span class="func">+</span></a> <span class="number">1</span> <span class="keyword">in</span> <span class="ident">len</span> <span class="ident">ys</span> <a href="#%24%21%21"><span class="func">$!!</span></a> <span class="ident">np1</span>
+<span class="comment">--length []       = 0</span>
+<span class="comment">--length (_:xs)   = 1 + length xs</span>
+
+<span class="comment">--- List index (subscript) operator, head has index 0.</span>
+<span class="symbol">(</span><a href="#%21%21"><span class="func">!!</span></a><span class="symbol">)</span>            <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="func" id="!!">!!</span> <span class="ident">n</span> <span class="symbol">|</span> <span class="ident">n</span><a href="#%3D%3D"><span class="func">==</span></a><span class="number">0</span>      <span class="symbol">=</span> <span class="ident">x</span>
+            <span class="symbol">|</span> <span class="ident">n</span><a href="#%3E"><span class="func">&gt;</span></a><span class="number">0</span>       <span class="symbol">=</span> <span class="ident">xs</span> <a href="#%21%21"><span class="func">!!</span></a> <span class="symbol">(</span><span class="ident">n</span><a href="#-"><span class="func">-</span></a><span class="number">1</span><span class="symbol">)</span>
+
+<span class="comment">--- Map a function on all elements of a list.</span>
+<a href="#map"><span class="func">map</span></a>             <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">-&gt;</span><span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span>
+<span class="func" id="map">map</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>        <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">map</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>    <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#map"><span class="func">map</span></a> <span class="ident">f</span> <span class="ident">xs</span>
+
+<span class="comment">--- Accumulates all list elements by applying a binary operator from</span>
+<span class="comment">--- left to right. Thus,</span>
+<span class="comment">---</span>
+<span class="comment">---     foldl f z [x1,x2,...,xn] = (...((z `f` x1) `f` x2) ...) `f` xn</span>
+<a href="#foldl"><span class="func">foldl</span></a>            <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="foldl">foldl</span> <span class="symbol">_</span> <span class="ident">z</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="ident">z</span>
+<span class="func">foldl</span> <span class="ident">f</span> <span class="ident">z</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#foldl"><span class="func">foldl</span></a> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">f</span> <span class="ident">z</span> <span class="ident">x</span><span class="symbol">)</span> <span class="ident">xs</span>
+
+<span class="comment">--- Accumulates a non-empty list from left to right.</span>
+<a href="#foldl1"><span class="func">foldl1</span></a>           <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="foldl1">foldl1</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>  <span class="symbol">=</span> <a href="#foldl"><span class="func">foldl</span></a> <span class="ident">f</span> <span class="ident">x</span> <span class="ident">xs</span>
+
+<span class="comment">--- Accumulates all list elements by applying a binary operator from</span>
+<span class="comment">--- right to left. Thus,</span>
+<span class="comment">---</span>
+<span class="comment">---     foldr f z [x1,x2,...,xn] = (x1 `f` (x2 `f` ... (xn `f` z)...))</span>
+<a href="#foldr"><span class="func">foldr</span></a>            <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">-&gt;</span><span class="ident">b</span><span class="symbol">-&gt;</span><span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="func" id="foldr">foldr</span> <span class="symbol">_</span> <span class="ident">z</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="ident">z</span>
+<span class="func">foldr</span> <span class="ident">f</span> <span class="ident">z</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span> <span class="symbol">(</span><a href="#foldr"><span class="func">foldr</span></a> <span class="ident">f</span> <span class="ident">z</span> <span class="ident">xs</span><span class="symbol">)</span>
+
+<span class="comment">--- Accumulates a non-empty list from right to left:</span>
+<a href="#foldr1"><span class="func">foldr1</span></a>              <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="foldr1">foldr1</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="ident">x</span><span class="symbol">]</span>        <span class="symbol">=</span> <span class="ident">x</span>
+<span class="func">foldr1</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">x1</span><span class="symbol">:</span><span class="ident">x2</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x1</span> <span class="symbol">(</span><a href="#foldr1"><span class="func">foldr1</span></a> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">x2</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span><span class="symbol">)</span>
+
+<span class="comment">--- Filters all elements satisfying a given predicate in a list.</span>
+<a href="#filter"><span class="func">filter</span></a>            <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="filter">filter</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>       <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">filter</span> <span class="ident">p</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>   <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">p</span> <span class="ident">x</span> <span class="keyword">then</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#filter"><span class="func">filter</span></a> <span class="ident">p</span> <span class="ident">xs</span>
+                           <span class="keyword">else</span> <a href="#filter"><span class="func">filter</span></a> <span class="ident">p</span> <span class="ident">xs</span>
+
+<span class="comment">--- Joins two lists into one list of pairs. If one input list is shorter than</span>
+<span class="comment">--- the other, the additional elements of the longer list are discarded.</span>
+<a href="#zip"><span class="func">zip</span></a>               <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span><span class="symbol">]</span>
+<span class="func" id="zip">zip</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>      <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zip</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zip</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">y</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">)</span> <span class="symbol">:</span> <a href="#zip"><span class="func">zip</span></a> <span class="ident">xs</span> <span class="ident">ys</span>
+
+<span class="comment">--- Joins three lists into one list of triples. If one input list is shorter</span>
+<span class="comment">--- than the other, the additional elements of the longer lists are discarded.</span>
+<a href="#zip3"><span class="func">zip3</span></a>                      <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">c</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">,</span><span class="ident">c</span><span class="symbol">)</span><span class="symbol">]</span>
+<span class="func" id="zip3">zip3</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>      <span class="symbol">_</span>      <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zip3</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>      <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zip3</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zip3</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">y</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">z</span><span class="symbol">:</span><span class="ident">zs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">,</span><span class="ident">z</span><span class="symbol">)</span> <span class="symbol">:</span> <a href="#zip3"><span class="func">zip3</span></a> <span class="ident">xs</span> <span class="ident">ys</span> <span class="ident">zs</span>
+
+<span class="comment">--- Joins two lists into one list by applying a combination function to</span>
+<span class="comment">--- corresponding pairs of elements. Thus `zip = zipWith (,)`</span>
+<a href="#zipWith"><span class="func">zipWith</span></a>                 <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">-&gt;</span><span class="ident">b</span><span class="symbol">-&gt;</span><span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">c</span><span class="symbol">]</span>
+<span class="func" id="zipWith">zipWith</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>      <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zipWith</span> <span class="symbol">_</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zipWith</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">y</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span> <span class="ident">y</span> <span class="symbol">:</span> <a href="#zipWith"><span class="func">zipWith</span></a> <span class="ident">f</span> <span class="ident">xs</span> <span class="ident">ys</span>
+
+<span class="comment">--- Joins three lists into one list by applying a combination function to</span>
+<span class="comment">--- corresponding triples of elements. Thus `zip3 = zipWith3 (,,)`</span>
+<a href="#zipWith3"><span class="func">zipWith3</span></a>                        <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">-&gt;</span><span class="ident">b</span><span class="symbol">-&gt;</span><span class="ident">c</span><span class="symbol">-&gt;</span><span class="ident">d</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">c</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">d</span><span class="symbol">]</span>
+<span class="func" id="zipWith3">zipWith3</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>      <span class="symbol">_</span>      <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zipWith3</span> <span class="symbol">_</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>      <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zipWith3</span> <span class="symbol">_</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span>  <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">zipWith3</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">y</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">z</span><span class="symbol">:</span><span class="ident">zs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span> <span class="ident">y</span> <span class="ident">z</span> <span class="symbol">:</span> <a href="#zipWith3"><span class="func">zipWith3</span></a> <span class="ident">f</span> <span class="ident">xs</span> <span class="ident">ys</span> <span class="ident">zs</span>
+
+<span class="comment">--- Transforms a list of pairs into a pair of lists.</span>
+<a href="#unzip"><span class="func">unzip</span></a>               <span class="symbol">::</span> <span class="symbol">[</span><span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func" id="unzip">unzip</span> <span class="symbol">[</span><span class="symbol">]</span>            <span class="symbol">=</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func">unzip</span> <span class="symbol">(</span><span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">)</span><span class="symbol">:</span><span class="ident">ps</span><span class="symbol">)</span>    <span class="symbol">=</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">)</span> <span class="keyword">where</span> <span class="symbol">(</span><span class="ident">xs</span><span class="symbol">,</span><span class="ident">ys</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#unzip"><span class="func">unzip</span></a> <span class="ident">ps</span>
+
+<span class="comment">--- Transforms a list of triples into a triple of lists.</span>
+<a href="#unzip3"><span class="func">unzip3</span></a>              <span class="symbol">::</span> <span class="symbol">[</span><span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">,</span><span class="ident">c</span><span class="symbol">)</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="ident">c</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func" id="unzip3">unzip3</span> <span class="symbol">[</span><span class="symbol">]</span>           <span class="symbol">=</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func">unzip3</span> <span class="symbol">(</span><span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">,</span><span class="ident">z</span><span class="symbol">)</span><span class="symbol">:</span><span class="ident">ts</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">,</span><span class="ident">z</span><span class="symbol">:</span><span class="ident">zs</span><span class="symbol">)</span> <span class="keyword">where</span> <span class="symbol">(</span><span class="ident">xs</span><span class="symbol">,</span><span class="ident">ys</span><span class="symbol">,</span><span class="ident">zs</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#unzip3"><span class="func">unzip3</span></a> <span class="ident">ts</span>
+
+<span class="comment">--- Concatenates a list of lists into one list.</span>
+<a href="#concat"><span class="func">concat</span></a>            <span class="symbol">::</span> <span class="symbol">[</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="concat">concat</span> <span class="ident">l</span>          <span class="symbol">=</span> <a href="#foldr"><span class="func">foldr</span></a> <span class="symbol">(</span><a href="#%2B%2B"><span class="func">++</span></a><span class="symbol">)</span> <span class="symbol">[</span><span class="symbol">]</span> <span class="ident">l</span>
+
+<span class="comment">--- Maps a function from elements to lists and merges the result into one list.</span>
+<a href="#concatMap"><span class="func">concatMap</span></a>         <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span>
+<span class="func" id="concatMap">concatMap</span> <span class="ident">f</span>       <span class="symbol">=</span> <a href="#concat"><span class="func">concat</span></a> <a href="#."><span class="func">.</span></a> <a href="#map"><span class="func">map</span></a> <span class="ident">f</span>
+
+<span class="comment">--- Infinite list of repeated applications of a function f to an element x.</span>
+<span class="comment">--- Thus, `iterate f x = [x, f x, f (f x),...]`</span>
+<a href="#iterate"><span class="func">iterate</span></a>           <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="iterate">iterate</span> <span class="ident">f</span> <span class="ident">x</span>       <span class="symbol">=</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#iterate"><span class="func">iterate</span></a> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">f</span> <span class="ident">x</span><span class="symbol">)</span>
+
+<span class="comment">--- Infinite list where all elements have the same value.</span>
+<span class="comment">--- Thus, `repeat x = [x, x, x,...]`</span>
+<a href="#repeat"><span class="func">repeat</span></a>            <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="repeat">repeat</span> <span class="ident">x</span>          <span class="symbol">=</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#repeat"><span class="func">repeat</span></a> <span class="ident">x</span>
+
+<span class="comment">--- List of length n where all elements have the same value.</span>
+<a href="#replicate"><span class="func">replicate</span></a>         <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="replicate">replicate</span> <span class="ident">n</span> <span class="ident">x</span>     <span class="symbol">=</span> <a href="#take"><span class="func">take</span></a> <span class="ident">n</span> <span class="symbol">(</span><a href="#repeat"><span class="func">repeat</span></a> <span class="ident">x</span><span class="symbol">)</span>
+
+<span class="comment">--- Returns prefix of length n.</span>
+<a href="#take"><span class="func">take</span></a>              <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="take">take</span> <span class="ident">n</span> <span class="ident">l</span>          <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">n</span><a href="#%3C%3D"><span class="func">&lt;=</span></a><span class="number">0</span> <span class="keyword">then</span> <span class="symbol">[</span><span class="symbol">]</span> <span class="keyword">else</span> <span class="ident">takep</span> <span class="ident">n</span> <span class="ident">l</span>
+   <span class="keyword">where</span> <span class="func" id="takep.214">takep</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+         <span class="func">takep</span> <span class="ident">m</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#take"><span class="func">take</span></a> <span class="symbol">(</span><span class="ident">m</span><a href="#-"><span class="func">-</span></a><span class="number">1</span><span class="symbol">)</span> <span class="ident">xs</span>
+
+<span class="comment">--- Returns suffix without first n elements.</span>
+<a href="#drop"><span class="func">drop</span></a>              <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="drop">drop</span> <span class="ident">n</span> <span class="ident">l</span>          <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">n</span><a href="#%3C%3D"><span class="func">&lt;=</span></a><span class="number">0</span> <span class="keyword">then</span> <span class="ident">l</span> <span class="keyword">else</span> <span class="ident">dropp</span> <span class="ident">n</span> <span class="ident">l</span>
+   <span class="keyword">where</span> <span class="func" id="dropp.223">dropp</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+         <span class="func">dropp</span> <span class="ident">m</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#drop"><span class="func">drop</span></a> <span class="symbol">(</span><span class="ident">m</span><a href="#-"><span class="func">-</span></a><span class="number">1</span><span class="symbol">)</span> <span class="ident">xs</span>
+
+<span class="comment">--- (splitAt n xs) is equivalent to (take n xs, drop n xs)</span>
+<a href="#splitAt"><span class="func">splitAt</span></a>           <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func" id="splitAt">splitAt</span> <span class="ident">n</span> <span class="ident">l</span>       <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">n</span><a href="#%3C%3D"><span class="func">&lt;=</span></a><span class="number">0</span> <span class="keyword">then</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="ident">l</span><span class="symbol">)</span> <span class="keyword">else</span> <span class="ident">splitAtp</span> <span class="ident">n</span> <span class="ident">l</span>
+   <span class="keyword">where</span> <span class="func" id="splitAtp.233">splitAtp</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">)</span>
+         <span class="func">splitAtp</span> <span class="ident">m</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="keyword">let</span> <span class="symbol">(</span><span class="ident">ys</span><span class="symbol">,</span><span class="ident">zs</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#splitAt"><span class="func">splitAt</span></a> <span class="symbol">(</span><span class="ident">m</span><a href="#-"><span class="func">-</span></a><span class="number">1</span><span class="symbol">)</span> <span class="ident">xs</span> <span class="keyword">in</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">,</span><span class="ident">zs</span><span class="symbol">)</span>
+
+<span class="comment">--- Returns longest prefix with elements satisfying a predicate.</span>
+<a href="#takeWhile"><span class="func">takeWhile</span></a>          <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="takeWhile">takeWhile</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">takeWhile</span> <span class="ident">p</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">p</span> <span class="ident">x</span> <span class="keyword">then</span> <span class="ident">x</span> <span class="symbol">:</span> <a href="#takeWhile"><span class="func">takeWhile</span></a> <span class="ident">p</span> <span class="ident">xs</span> <span class="keyword">else</span> <span class="symbol">[</span><span class="symbol">]</span>
+
+<span class="comment">--- Returns suffix without takeWhile prefix.</span>
+<a href="#dropWhile"><span class="func">dropWhile</span></a>          <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="dropWhile">dropWhile</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">dropWhile</span> <span class="ident">p</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">p</span> <span class="ident">x</span> <span class="keyword">then</span> <a href="#dropWhile"><span class="func">dropWhile</span></a> <span class="ident">p</span> <span class="ident">xs</span> <span class="keyword">else</span> <span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span>
+
+<span class="comment">--- (span p xs) is equivalent to (takeWhile p xs, dropWhile p xs)</span>
+<a href="#span"><span class="func">span</span></a>               <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func" id="span">span</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>          <span class="symbol">=</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func">span</span> <span class="ident">p</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>
+       <span class="symbol">|</span> <span class="ident">p</span> <span class="ident">x</span>       <span class="symbol">=</span> <span class="keyword">let</span> <span class="symbol">(</span><span class="ident">ys</span><span class="symbol">,</span><span class="ident">zs</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#span"><span class="func">span</span></a> <span class="ident">p</span> <span class="ident">xs</span> <span class="keyword">in</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">ys</span><span class="symbol">,</span> <span class="ident">zs</span><span class="symbol">)</span>
+       <span class="symbol">|</span> <a href="#otherwise"><span class="func">otherwise</span></a> <span class="symbol">=</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>
+
+<span class="comment">--- (break p xs) is equivalent to (takeWhile (not.p) xs, dropWhile (not.p) xs).</span>
+<span class="comment">--- Thus, it breaks a list at the first occurrence of an element satisfying p.</span>
+<a href="#break"><span class="func">break</span></a>              <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span><span class="symbol">)</span>
+<span class="func" id="break">break</span> <span class="ident">p</span>            <span class="symbol">=</span> <a href="#span"><span class="func">span</span></a> <span class="symbol">(</span><a href="#not"><span class="func">not</span></a> <a href="#."><span class="func">.</span></a> <span class="ident">p</span><span class="symbol">)</span>
+
+<span class="comment">--- Breaks a string into a list of lines where a line is terminated at a</span>
+<span class="comment">--- newline character. The resulting lines do not contain newline characters.</span>
+<a href="#lines"><span class="func">lines</span></a>        <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="#String"><span class="type">String</span></a><span class="symbol">]</span>
+<span class="func" id="lines">lines</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">lines</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="keyword">let</span> <span class="symbol">(</span><span class="ident">l</span><span class="symbol">,</span><span class="ident">xs_l</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">splitline</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="keyword">in</span> <span class="ident">l</span> <span class="symbol">:</span> <a href="#lines"><span class="func">lines</span></a> <span class="ident">xs_l</span>
+ <span class="keyword">where</span> <span class="func" id="splitline.265">splitline</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">)</span>
+       <span class="func">splitline</span> <span class="symbol">(</span><span class="ident">c</span><span class="symbol">:</span><span class="ident">cs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">c</span><a href="#%3D%3D"><span class="func">==</span></a><span class="char">'\n'</span>
+                          <span class="keyword">then</span> <span class="symbol">(</span><span class="symbol">[</span><span class="symbol">]</span><span class="symbol">,</span><span class="ident">cs</span><span class="symbol">)</span>
+                          <span class="keyword">else</span> <span class="keyword">let</span> <span class="symbol">(</span><span class="ident">ds</span><span class="symbol">,</span><span class="ident">es</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">splitline</span> <span class="ident">cs</span> <span class="keyword">in</span> <span class="symbol">(</span><span class="ident">c</span><span class="symbol">:</span><span class="ident">ds</span><span class="symbol">,</span><span class="ident">es</span><span class="symbol">)</span>
+
+<span class="comment">--- Concatenates a list of strings with terminating newlines.</span>
+<a href="#unlines"><span class="func">unlines</span></a>    <span class="symbol">::</span> <span class="symbol">[</span><a href="#String"><span class="type">String</span></a><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="unlines">unlines</span> <span class="ident">ls</span> <span class="symbol">=</span> <a href="#concatMap"><span class="func">concatMap</span></a> <span class="symbol">(</span><a href="#%2B%2B"><span class="func">++</span></a><span class="string">&quot;\n&quot;</span><span class="symbol">)</span> <span class="ident">ls</span>
+
+<span class="comment">--- Breaks a string into a list of words where the words are delimited by</span>
+<span class="comment">--- white spaces.</span>
+<a href="#words"><span class="func">words</span></a>      <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="#String"><span class="type">String</span></a><span class="symbol">]</span>
+<span class="func" id="words">words</span> <span class="ident">s</span>    <span class="symbol">=</span> <span class="keyword">let</span> <span class="ident">s1</span> <span class="symbol">=</span> <a href="#dropWhile"><span class="func">dropWhile</span></a> <span class="ident">isSpace</span> <span class="ident">s</span>
+              <span class="keyword">in</span> <span class="keyword">if</span> <span class="ident">s1</span><a href="#%3D%3D"><span class="func">==</span></a><span class="string">&quot;&quot;</span> <span class="keyword">then</span> <span class="symbol">[</span><span class="symbol">]</span>
+                           <span class="keyword">else</span> <span class="keyword">let</span> <span class="symbol">(</span><span class="ident">w</span><span class="symbol">,</span><span class="ident">s2</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#break"><span class="func">break</span></a> <span class="ident">isSpace</span> <span class="ident">s1</span>
+                                 <span class="keyword">in</span> <span class="ident">w</span> <span class="symbol">:</span> <a href="#words"><span class="func">words</span></a> <span class="ident">s2</span>
+ <span class="keyword">where</span>
+   <span class="func" id="isSpace.277">isSpace</span> <span class="ident">c</span> <span class="symbol">=</span> <span class="ident">c</span> <a href="#%3D%3D"><span class="func">==</span></a> <span class="char">' '</span>  <a href="#%7C%7C"><span class="func">||</span></a> <span class="ident">c</span> <a href="#%3D%3D"><span class="func">==</span></a> <span class="char">'\t'</span> <a href="#%7C%7C"><span class="func">||</span></a> <span class="ident">c</span> <a href="#%3D%3D"><span class="func">==</span></a> <span class="char">'\n'</span> <a href="#%7C%7C"><span class="func">||</span></a> <span class="ident">c</span> <a href="#%3D%3D"><span class="func">==</span></a> <span class="char">'\r'</span>
+
+<span class="comment">--- Concatenates a list of strings with a blank between two strings.</span>
+<a href="#unwords"><span class="func">unwords</span></a>    <span class="symbol">::</span> <span class="symbol">[</span><a href="#String"><span class="type">String</span></a><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="unwords">unwords</span> <span class="ident">ws</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">ws</span><a href="#%3D%3D"><span class="func">==</span></a><span class="symbol">[</span><span class="symbol">]</span> <span class="keyword">then</span> <span class="symbol">[</span><span class="symbol">]</span>
+                       <span class="keyword">else</span> <a href="#foldr1"><span class="func">foldr1</span></a> <span class="symbol">(</span><span class="symbol">\</span><span class="ident">w</span> <span class="ident">s</span> <span class="symbol">-&gt;</span> <span class="ident">w</span> <a href="#%2B%2B"><span class="func">++</span></a> <span class="char">' '</span><span class="symbol">:</span><span class="ident">s</span><span class="symbol">)</span> <span class="ident">ws</span>
+
+<span class="comment">--- Reverses the order of all elements in a list.</span>
+<a href="#reverse"><span class="func">reverse</span></a>    <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="reverse">reverse</span>    <span class="symbol">=</span> <a href="#foldl"><span class="func">foldl</span></a> <span class="symbol">(</span><a href="#flip"><span class="func">flip</span></a> <span class="symbol">(</span><span class="symbol">:</span><span class="symbol">)</span><span class="symbol">)</span> <span class="symbol">[</span><span class="symbol">]</span>
+
+<span class="comment">--- Computes the conjunction of a Boolean list.</span>
+<a href="#and"><span class="func">and</span></a>        <span class="symbol">::</span> <span class="symbol">[</span><a href="#Bool"><span class="type">Bool</span></a><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="and">and</span>        <span class="symbol">=</span> <a href="#foldr"><span class="func">foldr</span></a> <span class="symbol">(</span><a href="#%26%26"><span class="func">&amp;&amp;</span></a><span class="symbol">)</span> <a href="#True"><span class="cons">True</span></a>
+
+<span class="comment">--- Computes the disjunction of a Boolean list.</span>
+<a href="#or"><span class="func">or</span></a>         <span class="symbol">::</span> <span class="symbol">[</span><a href="#Bool"><span class="type">Bool</span></a><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="or">or</span>         <span class="symbol">=</span> <a href="#foldr"><span class="func">foldr</span></a> <span class="symbol">(</span><a href="#%7C%7C"><span class="func">||</span></a><span class="symbol">)</span> <a href="#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Is there an element in a list satisfying a given predicate?</span>
+<a href="#any"><span class="func">any</span></a>        <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="any">any</span> <span class="ident">p</span>      <span class="symbol">=</span> <a href="#or"><span class="func">or</span></a> <a href="#."><span class="func">.</span></a> <a href="#map"><span class="func">map</span></a> <span class="ident">p</span>
+
+<span class="comment">--- Is a given predicate satisfied by all elements in a list?</span>
+<a href="#all"><span class="func">all</span></a>        <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="all">all</span> <span class="ident">p</span>      <span class="symbol">=</span> <a href="#and"><span class="func">and</span></a> <a href="#."><span class="func">.</span></a> <a href="#map"><span class="func">map</span></a> <span class="ident">p</span>
+
+<span class="comment">--- Element of a list?</span>
+<a href="#elem"><span class="func">elem</span></a>       <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="elem">elem</span> <span class="ident">x</span>     <span class="symbol">=</span> <a href="#any"><span class="func">any</span></a> <span class="symbol">(</span><span class="ident">x</span><a href="#%3D%3D"><span class="func">==</span></a><span class="symbol">)</span>
+
+<span class="comment">--- Not element of a list?</span>
+<a href="#notElem"><span class="func">notElem</span></a>    <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="func" id="notElem">notElem</span> <span class="ident">x</span>  <span class="symbol">=</span> <a href="#all"><span class="func">all</span></a> <span class="symbol">(</span><span class="ident">x</span><a href="#%2F%3D"><span class="func">/=</span></a><span class="symbol">)</span>
+
+<span class="comment">--- Looks up a key in an association list.</span>
+<a href="#lookup"><span class="func">lookup</span></a>            <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><span class="ident">b</span><span class="symbol">)</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Maybe"><span class="type">Maybe</span></a> <span class="ident">b</span>
+<span class="func" id="lookup">lookup</span> <span class="symbol">_</span> <span class="symbol">[</span><span class="symbol">]</span>       <span class="symbol">=</span> <a href="#Nothing"><span class="cons">Nothing</span></a>
+<span class="func">lookup</span> <span class="ident">k</span> <span class="symbol">(</span><span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span><span class="ident">y</span><span class="symbol">)</span><span class="symbol">:</span><span class="ident">xys</span><span class="symbol">)</span>
+      <span class="symbol">|</span> <span class="ident">k</span><a href="#%3D%3D"><span class="func">==</span></a><span class="ident">x</span>      <span class="symbol">=</span> <a href="#Just"><span class="cons">Just</span></a> <span class="ident">y</span>
+      <span class="symbol">|</span> <a href="#otherwise"><span class="func">otherwise</span></a> <span class="symbol">=</span> <a href="#lookup"><span class="func">lookup</span></a> <span class="ident">k</span> <span class="ident">xys</span>
+
+<span class="comment">--- Generates an infinite sequence of ascending integers.</span>
+<a href="#enumFrom"><span class="func">enumFrom</span></a>               <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="#Int"><span class="type">Int</span></a><span class="symbol">]</span>                   <span class="comment">-- [n..]</span>
+<span class="func" id="enumFrom">enumFrom</span> <span class="ident">n</span>             <span class="symbol">=</span> <span class="ident">n</span> <span class="symbol">:</span> <a href="#enumFrom"><span class="func">enumFrom</span></a> <span class="symbol">(</span><span class="ident">n</span><a href="#%2B"><span class="func">+</span></a><span class="number">1</span><span class="symbol">)</span>
+
+<span class="comment">--- Generates an infinite sequence of integers with a particular in/decrement.</span>
+<a href="#enumFromThen"><span class="func">enumFromThen</span></a>           <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="#Int"><span class="type">Int</span></a><span class="symbol">]</span>            <span class="comment">-- [n1,n2..]</span>
+<span class="func" id="enumFromThen">enumFromThen</span> <span class="ident">n1</span> <span class="ident">n2</span>     <span class="symbol">=</span> <a href="#iterate"><span class="func">iterate</span></a> <span class="symbol">(</span><span class="symbol">(</span><span class="ident">n2</span><a href="#-"><span class="func">-</span></a><span class="ident">n1</span><span class="symbol">)</span><a href="#%2B"><span class="func">+</span></a><span class="symbol">)</span> <span class="ident">n1</span>
+
+<span class="comment">--- Generates a sequence of ascending integers.</span>
+<a href="#enumFromTo"><span class="func">enumFromTo</span></a>             <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="#Int"><span class="type">Int</span></a><span class="symbol">]</span>            <span class="comment">-- [n..m]</span>
+<span class="func" id="enumFromTo">enumFromTo</span> <span class="ident">n</span> <span class="ident">m</span>         <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">n</span><a href="#%3E"><span class="func">&gt;</span></a><span class="ident">m</span> <span class="keyword">then</span> <span class="symbol">[</span><span class="symbol">]</span> <span class="keyword">else</span> <span class="ident">n</span> <span class="symbol">:</span> <a href="#enumFromTo"><span class="func">enumFromTo</span></a> <span class="symbol">(</span><span class="ident">n</span><a href="#%2B"><span class="func">+</span></a><span class="number">1</span><span class="symbol">)</span> <span class="ident">m</span>
+
+<span class="comment">--- Generates a sequence of integers with a particular in/decrement.</span>
+<a href="#enumFromThenTo"><span class="func">enumFromThenTo</span></a>         <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="#Int"><span class="type">Int</span></a><span class="symbol">]</span>     <span class="comment">-- [n1,n2..m]</span>
+<span class="func" id="enumFromThenTo">enumFromThenTo</span> <span class="ident">n1</span> <span class="ident">n2</span> <span class="ident">m</span> <span class="symbol">=</span> <a href="#takeWhile"><span class="func">takeWhile</span></a> <span class="ident">p</span> <span class="symbol">(</span><a href="#enumFromThen"><span class="func">enumFromThen</span></a> <span class="ident">n1</span> <span class="ident">n2</span><span class="symbol">)</span>
+                         <span class="keyword">where</span> <span class="func" id="p.315">p</span> <span class="ident">x</span> <span class="symbol">|</span> <span class="ident">n2</span> <a href="#%3E%3D"><span class="func">&gt;=</span></a> <span class="ident">n1</span>  <span class="symbol">=</span> <span class="symbol">(</span><span class="ident">x</span> <a href="#%3C%3D"><span class="func">&lt;=</span></a> <span class="ident">m</span><span class="symbol">)</span>
+                                   <span class="symbol">|</span> <a href="#otherwise"><span class="func">otherwise</span></a> <span class="symbol">=</span> <span class="symbol">(</span><span class="ident">x</span> <a href="#%3E%3D"><span class="func">&gt;=</span></a> <span class="ident">m</span><span class="symbol">)</span>
+
+
+<span class="comment">--- Converts a character into its ASCII value.</span>
+<a href="#ord"><span class="func">ord</span></a> <span class="symbol">::</span> <a href="#Char"><span class="type">Char</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="ord">ord</span> <span class="ident">c</span> <span class="symbol">=</span> <a href="#prim_ord"><span class="func">prim_ord</span></a> <a href="#%24%23"><span class="func">$#</span></a> <span class="ident">c</span>
+
+<a href="#prim_ord"><span class="func">prim_ord</span></a> <span class="symbol">::</span> <a href="#Char"><span class="type">Char</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="prim_ord">prim_ord</span> <span class="keyword">external</span>
+
+<span class="comment">--- Converts a Unicode value into a character, fails iff the value is out of bounds</span>
+<a href="#chr"><span class="func">chr</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Char"><span class="type">Char</span></a>
+<span class="func" id="chr">chr</span> <span class="ident">n</span> <span class="symbol">|</span> <span class="ident">n</span> <a href="#%3E%3D"><span class="func">&gt;=</span></a> <span class="number">0</span> <span class="symbol">=</span> <a href="#prim_chr"><span class="func">prim_chr</span></a> <a href="#%24%23"><span class="func">$#</span></a> <span class="ident">n</span>
+<span class="comment">-- chr n | n &lt; 0 || n &gt; 1114111 = failed</span>
+<span class="comment">--       | otherwise = prim_chr $# n</span>
+
+<a href="#prim_chr"><span class="func">prim_chr</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Char"><span class="type">Char</span></a>
+<span class="func" id="prim_chr">prim_chr</span> <span class="keyword">external</span>
+
+
+<span class="comment">-- Types of primitive arithmetic functions and predicates</span>
+
+<span class="comment">--- Adds two integers.</span>
+<span class="symbol">(</span><a href="#%2B"><span class="func">+</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="symbol">(</span><span class="func" id="+">+</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Subtracts two integers.</span>
+<span class="symbol">(</span><a href="#-"><span class="func">-</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="symbol">(</span><span class="func" id="-">-</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Multiplies two integers.</span>
+<span class="symbol">(</span><a href="#%2A"><span class="func">*</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="symbol">(</span><span class="func" id="*">*</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Integer division. The value is the integer quotient of its arguments</span>
+<span class="comment">--- and always truncated towards negative infinity.</span>
+<span class="comment">--- Thus, the value of &lt;code&gt;13 `div` 5&lt;/code&gt; is &lt;code&gt;2&lt;/code&gt;,</span>
+<span class="comment">--- and the value of &lt;code&gt;-15 `div` 4&lt;/code&gt; is &lt;code&gt;-4&lt;/code&gt;.</span>
+<a href="#div"><span class="func">div</span></a>   <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="div">div</span> <span class="keyword">external</span>
+
+<span class="comment">--- Integer remainder. The value is the remainder of the integer division and</span>
+<span class="comment">--- it obeys the rule &lt;code&gt;x `mod` y = x - y * (x `div` y)&lt;/code&gt;.</span>
+<span class="comment">--- Thus, the value of &lt;code&gt;13 `mod` 5&lt;/code&gt; is &lt;code&gt;3&lt;/code&gt;,</span>
+<span class="comment">--- and the value of &lt;code&gt;-15 `mod` 4&lt;/code&gt; is &lt;code&gt;-3&lt;/code&gt;.</span>
+<a href="#mod"><span class="func">mod</span></a>   <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="mod">mod</span> <span class="keyword">external</span>
+
+<span class="comment">--- Returns an integer (quotient,remainder) pair.</span>
+<span class="comment">--- The value is the integer quotient of its arguments</span>
+<span class="comment">--- and always truncated towards negative infinity.</span>
+<a href="#divMod"><span class="func">divMod</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">(</span><a href="#Int"><span class="type">Int</span></a><span class="symbol">,</span> <a href="#Int"><span class="type">Int</span></a><span class="symbol">)</span>
+<span class="func" id="divMod">divMod</span> <span class="keyword">external</span>
+
+<span class="comment">--- Integer division. The value is the integer quotient of its arguments</span>
+<span class="comment">--- and always truncated towards zero.</span>
+<span class="comment">--- Thus, the value of &lt;code&gt;13 `quot` 5&lt;/code&gt; is &lt;code&gt;2&lt;/code&gt;,</span>
+<span class="comment">--- and the value of &lt;code&gt;-15 `quot` 4&lt;/code&gt; is &lt;code&gt;-3&lt;/code&gt;.</span>
+<a href="#quot"><span class="func">quot</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="quot">quot</span> <span class="keyword">external</span>
+
+<span class="comment">--- Integer remainder. The value is the remainder of the integer division and</span>
+<span class="comment">--- it obeys the rule &lt;code&gt;x `rem` y = x - y * (x `quot` y)&lt;/code&gt;.</span>
+<span class="comment">--- Thus, the value of &lt;code&gt;13 `rem` 5&lt;/code&gt; is &lt;code&gt;3&lt;/code&gt;,</span>
+<span class="comment">--- and the value of &lt;code&gt;-15 `rem` 4&lt;/code&gt; is &lt;code&gt;-3&lt;/code&gt;.</span>
+<a href="#rem"><span class="func">rem</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="rem">rem</span> <span class="keyword">external</span>
+
+<span class="comment">--- Returns an integer (quotient,remainder) pair.</span>
+<span class="comment">--- The value is the integer quotient of its arguments</span>
+<span class="comment">--- and always truncated towards zero.</span>
+<a href="#quotRem"><span class="func">quotRem</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">(</span><a href="#Int"><span class="type">Int</span></a><span class="symbol">,</span> <a href="#Int"><span class="type">Int</span></a><span class="symbol">)</span>
+<span class="func" id="quotRem">quotRem</span> <span class="keyword">external</span>
+
+<span class="comment">--- Unary minus. Usually written as &quot;- e&quot;.</span>
+<a href="#negate"><span class="func">negate</span></a> <span class="symbol">::</span> <a href="#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <a href="#Int"><span class="type">Int</span></a>
+<span class="func" id="negate">negate</span> <span class="ident">x</span> <span class="symbol">=</span> <span class="number">0</span> <a href="#-"><span class="func">-</span></a> <span class="ident">x</span>
+
+<span class="comment">--- Unary minus on Floats. Usually written as &quot;-e&quot;.</span>
+<a href="#negateFloat"><span class="func">negateFloat</span></a> <span class="symbol">::</span> <a href="#Float"><span class="type">Float</span></a> <span class="symbol">-&gt;</span> <a href="#Float"><span class="type">Float</span></a>
+<span class="func" id="negateFloat">negateFloat</span> <span class="keyword">external</span>
+
+
+<span class="comment">-- Constraints</span>
+<span class="keyword">data</span> <span class="type" id="Success">Success</span> <span class="comment">-- = Success</span>
+
+<span class="comment">--- The equational constraint.</span>
+<span class="comment">--- (e1 =:= e2) is satisfiable if both sides e1 and e2 can be</span>
+<span class="comment">--- reduced to a unifiable data term (i.e., a term without defined</span>
+<span class="comment">--- function symbols).</span>
+<span class="symbol">(</span><a href="#%3D%3A%3D"><span class="func">=:=</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Success"><span class="type">Success</span></a>
+<span class="symbol">(</span><span class="func" id="=:=">=:=</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- The equational constraint.</span>
+<span class="comment">--- (e1 === e2) reduces to `True` if both sides e1 and e2 can be</span>
+<span class="comment">--- reduced to a unifiable data term (i.e., a term without defined</span>
+<span class="comment">--- function symbols), otherwise it fails.</span>
+<span class="symbol">(</span><a href="#%3D%3D%3D"><span class="func">===</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Bool"><span class="type">Bool</span></a>
+<span class="ident">x</span> <span class="func" id="===">===</span> <span class="ident">y</span> <span class="symbol">|</span> <span class="ident">x</span> <a href="#%3D%3A%3D"><span class="func">=:=</span></a> <span class="ident">y</span> <span class="symbol">=</span> <a href="#True"><span class="cons">True</span></a>
+
+<span class="comment">--- The always satisfiable constraint.</span>
+<a href="#success"><span class="func">success</span></a> <span class="symbol">::</span> <a href="#Success"><span class="type">Success</span></a>
+<span class="func" id="success">success</span> <span class="keyword">external</span>
+
+<span class="comment">--- Concurrent conjunction on constraints.</span>
+<span class="comment">--- An expression like (c1 &amp; c2) is evaluated by evaluating</span>
+<span class="comment">--- the constraints c1 and c2 in a concurrent manner.</span>
+<span class="symbol">(</span><a href="#%26"><span class="func">&amp;</span></a><span class="symbol">)</span>     <span class="symbol">::</span> <a href="#Success"><span class="type">Success</span></a> <span class="symbol">-&gt;</span> <a href="#Success"><span class="type">Success</span></a> <span class="symbol">-&gt;</span> <a href="#Success"><span class="type">Success</span></a>
+<span class="symbol">(</span><span class="func" id="&amp;">&amp;</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- Constrained expression.</span>
+<span class="comment">--- An expression like (c &amp;&gt; e) is evaluated by first solving</span>
+<span class="comment">--- constraint c and then evaluating e.</span>
+<span class="symbol">(</span><a href="#%26%3E"><span class="func">&amp;&gt;</span></a><span class="symbol">)</span>          <span class="symbol">::</span> <a href="#Success"><span class="type">Success</span></a> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="ident">c</span> <span class="func" id="&amp;&gt;">&amp;&gt;</span> <span class="ident">x</span> <span class="symbol">|</span> <span class="ident">c</span> <span class="symbol">=</span> <span class="ident">x</span>
+
+
+<span class="comment">-- Maybe type</span>
+
+<span class="keyword">data</span> <span class="type" id="Maybe">Maybe</span> <span class="ident">a</span> <span class="symbol">=</span> <span class="cons" id="Nothing">Nothing</span> <span class="symbol">|</span> <span class="cons" id="Just">Just</span> <span class="ident">a</span>
+
+<a href="#maybe"><span class="func">maybe</span></a>              <span class="symbol">::</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="func" id="maybe">maybe</span> <span class="ident">n</span> <span class="symbol">_</span> <a href="#Nothing"><span class="cons">Nothing</span></a>  <span class="symbol">=</span> <span class="ident">n</span>
+<span class="func">maybe</span> <span class="symbol">_</span> <span class="ident">f</span> <span class="symbol">(</span><a href="#Just"><span class="cons">Just</span></a> <span class="ident">x</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span>
+
+
+<span class="comment">-- Either type</span>
+
+<span class="keyword">data</span> <span class="type" id="Either">Either</span> <span class="ident">a</span> <span class="ident">b</span> <span class="symbol">=</span> <span class="cons" id="Left">Left</span> <span class="ident">a</span> <span class="symbol">|</span> <span class="cons" id="Right">Right</span> <span class="ident">b</span>
+
+<a href="#either"><span class="func">either</span></a>               <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">c</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#Either"><span class="type">Either</span></a> <span class="ident">a</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <span class="ident">c</span>
+<span class="func" id="either">either</span> <span class="ident">f</span> <span class="symbol">_</span> <span class="symbol">(</span><a href="#Left"><span class="cons">Left</span></a> <span class="ident">x</span><span class="symbol">)</span>  <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span>
+<span class="func">either</span> <span class="symbol">_</span> <span class="ident">g</span> <span class="symbol">(</span><a href="#Right"><span class="cons">Right</span></a> <span class="ident">x</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">g</span> <span class="ident">x</span>
+
+
+<span class="comment">-- Monadic IO</span>
+
+<span class="keyword">data</span> <span class="type" id="IO">IO</span> <span class="symbol">_</span>  <span class="comment">-- conceptually: World -&gt; (a,World)</span>
+
+<span class="comment">--- Sequential composition of actions.</span>
+<span class="comment">--- @param a - An action</span>
+<span class="comment">--- @param fa - A function from a value into an action</span>
+<span class="comment">--- @return An action that first performs a (yielding result r)</span>
+<span class="comment">---         and then performs (fa r)</span>
+<span class="symbol">(</span><a href="#%3E%3E%3D"><span class="func">&gt;&gt;=</span></a><span class="symbol">)</span>             <span class="symbol">::</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span>
+<span class="symbol">(</span><span class="func" id="&gt;&gt;=">&gt;&gt;=</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">--- The empty action that directly returns its argument.</span>
+<a href="#return"><span class="func">return</span></a>            <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span>
+<span class="func" id="return">return</span> <span class="keyword">external</span>
+
+<span class="comment">--- Sequential composition of actions.</span>
+<span class="comment">--- @param a1 - An action</span>
+<span class="comment">--- @param a2 - An action</span>
+<span class="comment">--- @return An action that first performs a1 and then a2</span>
+<span class="symbol">(</span><a href="#%3E%3E"><span class="func">&gt;&gt;</span></a><span class="symbol">)</span>              <span class="symbol">::</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span>        <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span>
+<span class="ident">a</span> <span class="func" id="&gt;&gt;">&gt;&gt;</span> <span class="ident">b</span>            <span class="symbol">=</span> <span class="ident">a</span> <a href="#%3E%3E%3D"><span class="func">&gt;&gt;=</span></a> <span class="symbol">(</span><span class="symbol">\</span><span class="symbol">_</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span>
+
+<span class="comment">--- The empty action that returns nothing.</span>
+<a href="#done"><span class="func">done</span></a>              <span class="symbol">::</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="done">done</span>              <span class="symbol">=</span> <a href="#return"><span class="func">return</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+
+<span class="comment">--- An action that puts its character argument on standard output.</span>
+<a href="#putChar"><span class="func">putChar</span></a>           <span class="symbol">::</span> <a href="#Char"><span class="type">Char</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="putChar">putChar</span> <span class="ident">c</span> <span class="symbol">=</span> <a href="#prim_putChar"><span class="func">prim_putChar</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">c</span>
+
+<a href="#prim_putChar"><span class="func">prim_putChar</span></a>           <span class="symbol">::</span> <a href="#Char"><span class="type">Char</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="prim_putChar">prim_putChar</span> <span class="keyword">external</span>
+
+<span class="comment">--- An action that reads a character from standard output and returns it.</span>
+<a href="#getChar"><span class="func">getChar</span></a>           <span class="symbol">::</span> <a href="#IO"><span class="type">IO</span></a> <a href="#Char"><span class="type">Char</span></a>
+<span class="func" id="getChar">getChar</span> <span class="keyword">external</span>
+
+<span class="comment">--- An action that (lazily) reads a file and returns its contents.</span>
+<a href="#readFile"><span class="func">readFile</span></a>          <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="readFile">readFile</span> <span class="ident">f</span> <span class="symbol">=</span> <a href="#prim_readFile"><span class="func">prim_readFile</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">f</span>
+
+<a href="#prim_readFile"><span class="func">prim_readFile</span></a>          <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="prim_readFile">prim_readFile</span> <span class="keyword">external</span>
+
+<span class="comment">--- An action that writes a file.</span>
+<span class="comment">--- @param filename - The name of the file to be written.</span>
+<span class="comment">--- @param contents - The contents to be written to the file.</span>
+<a href="#writeFile"><span class="func">writeFile</span></a>         <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="writeFile">writeFile</span> <span class="ident">f</span> <span class="ident">s</span> <span class="symbol">=</span> <span class="symbol">(</span><a href="#prim_writeFile"><span class="func">prim_writeFile</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">f</span><span class="symbol">)</span> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">s</span>
+
+<a href="#prim_writeFile"><span class="func">prim_writeFile</span></a>         <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="prim_writeFile">prim_writeFile</span> <span class="keyword">external</span>
+
+<span class="comment">--- An action that appends a string to a file.</span>
+<span class="comment">--- It behaves like writeFile if the file does not exist.</span>
+<span class="comment">--- @param filename - The name of the file to be written.</span>
+<span class="comment">--- @param contents - The contents to be appended to the file.</span>
+<a href="#appendFile"><span class="func">appendFile</span></a>        <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="appendFile">appendFile</span> <span class="ident">f</span> <span class="ident">s</span> <span class="symbol">=</span> <span class="symbol">(</span><a href="#prim_appendFile"><span class="func">prim_appendFile</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">f</span><span class="symbol">)</span> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">s</span>
+
+<a href="#prim_appendFile"><span class="func">prim_appendFile</span></a>         <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="prim_appendFile">prim_appendFile</span> <span class="keyword">external</span>
+
+<span class="comment">--- Action to print a string on stdout.</span>
+<a href="#putStr"><span class="func">putStr</span></a>            <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="putStr">putStr</span> <span class="symbol">[</span><span class="symbol">]</span>         <span class="symbol">=</span> <a href="#done"><span class="func">done</span></a>
+<span class="func">putStr</span> <span class="symbol">(</span><span class="ident">c</span><span class="symbol">:</span><span class="ident">cs</span><span class="symbol">)</span>     <span class="symbol">=</span> <a href="#putChar"><span class="func">putChar</span></a> <span class="ident">c</span> <a href="#%3E%3E"><span class="func">&gt;&gt;</span></a> <a href="#putStr"><span class="func">putStr</span></a> <span class="ident">cs</span>
+
+<span class="comment">--- Action to print a string with a newline on stdout.</span>
+<a href="#putStrLn"><span class="func">putStrLn</span></a>          <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="putStrLn">putStrLn</span> <span class="ident">cs</span>       <span class="symbol">=</span> <a href="#putStr"><span class="func">putStr</span></a> <span class="ident">cs</span> <a href="#%3E%3E"><span class="func">&gt;&gt;</span></a> <a href="#putChar"><span class="func">putChar</span></a> <span class="char">'\n'</span>
+
+<span class="comment">--- Action to read a line from stdin.</span>
+<a href="#getLine"><span class="func">getLine</span></a>           <span class="symbol">::</span> <a href="#IO"><span class="type">IO</span></a> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="getLine">getLine</span>           <span class="symbol">=</span> <span class="keyword">do</span> <span class="ident">c</span> <span class="symbol">&lt;-</span> <a href="#getChar"><span class="func">getChar</span></a>
+                       <span class="keyword">if</span> <span class="ident">c</span><a href="#%3D%3D"><span class="func">==</span></a><span class="char">'\n'</span> <span class="keyword">then</span> <a href="#return"><span class="func">return</span></a> <span class="symbol">[</span><span class="symbol">]</span>
+                                  <span class="keyword">else</span> <span class="keyword">do</span> <span class="ident">cs</span> <span class="symbol">&lt;-</span> <a href="#getLine"><span class="func">getLine</span></a>
+                                          <a href="#return"><span class="func">return</span></a> <span class="symbol">(</span><span class="ident">c</span><span class="symbol">:</span><span class="ident">cs</span><span class="symbol">)</span>
+
+<span class="comment">----------------------------------------------------------------------------</span>
+<span class="comment">-- Error handling in the I/O monad:</span>
+
+<span class="comment">--- The (abstract) type of error values.</span>
+<span class="comment">--- Currently, it distinguishes between general IO errors,</span>
+<span class="comment">--- user-generated errors (see 'userError'), failures and non-determinism</span>
+<span class="comment">--- errors during IO computations. These errors can be caught by 'catch'</span>
+<span class="comment">--- and shown by 'showError'.</span>
+<span class="comment">--- Each error contains a string shortly explaining the error.</span>
+<span class="comment">--- This type might be extended in the future to distinguish</span>
+<span class="comment">--- further error situations.</span>
+<span class="keyword">data</span> <span class="type" id="IOError">IOError</span>
+  <span class="symbol">=</span> <span class="cons">IOError</span>     <a href="#String"><span class="type">String</span></a> <span class="comment">-- normal IO error</span>
+  <span class="symbol">|</span> <span class="cons" id="UserError">UserError</span>   <a href="#String"><span class="type">String</span></a> <span class="comment">-- user-specified error</span>
+  <span class="symbol">|</span> <span class="cons" id="FailError">FailError</span>   <a href="#String"><span class="type">String</span></a> <span class="comment">-- failing computation</span>
+  <span class="symbol">|</span> <span class="cons" id="NondetError">NondetError</span> <a href="#String"><span class="type">String</span></a> <span class="comment">-- non-deterministic computation</span>
+
+<span class="comment">--- A user error value is created by providing a description of the</span>
+<span class="comment">--- error situation as a string.</span>
+<a href="#userError"><span class="func">userError</span></a> <span class="symbol">::</span> <a href="#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#IOError"><span class="type">IOError</span></a>
+<span class="func" id="userError">userError</span> <span class="ident">s</span> <span class="symbol">=</span> <a href="#UserError"><span class="cons">UserError</span></a> <span class="ident">s</span>
+
+<span class="comment">--- Raises an I/O exception with a given error value.</span>
+<a href="#ioError"><span class="func">ioError</span></a> <span class="symbol">::</span> <a href="#IOError"><span class="type">IOError</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">_</span>
+<span class="func" id="ioError">ioError</span> <span class="ident">err</span> <span class="symbol">=</span> <a href="#prim_ioError"><span class="func">prim_ioError</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">err</span>
+
+<a href="#prim_ioError"><span class="func">prim_ioError</span></a> <span class="symbol">::</span> <a href="#IOError"><span class="type">IOError</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">_</span>
+<span class="func" id="prim_ioError">prim_ioError</span> <span class="keyword">external</span>
+
+<span class="comment">--- Shows an error values as a string.</span>
+<a href="#showError"><span class="func">showError</span></a> <span class="symbol">::</span> <a href="#IOError"><span class="type">IOError</span></a> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="showError">showError</span> <span class="symbol">(</span><a href="#IOError"><span class="cons">IOError</span></a>     <span class="ident">s</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="string">&quot;i/o error: &quot;</span>    <a href="#%2B%2B"><span class="func">++</span></a> <span class="ident">s</span>
+<span class="func">showError</span> <span class="symbol">(</span><a href="#UserError"><span class="cons">UserError</span></a>   <span class="ident">s</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="string">&quot;user error: &quot;</span>   <a href="#%2B%2B"><span class="func">++</span></a> <span class="ident">s</span>
+<span class="func">showError</span> <span class="symbol">(</span><a href="#FailError"><span class="cons">FailError</span></a>   <span class="ident">s</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="string">&quot;fail error: &quot;</span>   <a href="#%2B%2B"><span class="func">++</span></a> <span class="ident">s</span>
+<span class="func">showError</span> <span class="symbol">(</span><a href="#NondetError"><span class="cons">NondetError</span></a> <span class="ident">s</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="string">&quot;nondet error: &quot;</span> <a href="#%2B%2B"><span class="func">++</span></a> <span class="ident">s</span>
+
+<span class="comment">--- Catches a possible error or failure during the execution of an</span>
+<span class="comment">--- I/O action. `(catch act errfun)` executes the I/O action</span>
+<span class="comment">--- `act`. If an exception or failure occurs</span>
+<span class="comment">--- during this I/O action, the function `errfun` is applied</span>
+<span class="comment">--- to the error value.</span>
+<a href="#catch"><span class="func">catch</span></a> <span class="symbol">::</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><a href="#IOError"><span class="type">IOError</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span>
+<span class="func" id="catch">catch</span> <span class="keyword">external</span>
+
+<span class="comment">----------------------------------------------------------------------------</span>
+
+<span class="comment">--- Converts an arbitrary term into an external string representation.</span>
+<a href="#show"><span class="func">show</span></a>    <span class="symbol">::</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="show">show</span> <span class="ident">x</span> <span class="symbol">=</span> <a href="#prim_show"><span class="func">prim_show</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">x</span>
+
+<a href="#prim_show"><span class="func">prim_show</span></a>    <span class="symbol">::</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="#String"><span class="type">String</span></a>
+<span class="func" id="prim_show">prim_show</span> <span class="keyword">external</span>
+
+<span class="comment">--- Converts a term into a string and prints it.</span>
+<a href="#print"><span class="func">print</span></a>   <span class="symbol">::</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="print">print</span> <span class="ident">t</span> <span class="symbol">=</span> <a href="#putStrLn"><span class="func">putStrLn</span></a> <span class="symbol">(</span><a href="#show"><span class="func">show</span></a> <span class="ident">t</span><span class="symbol">)</span>
+
+<span class="comment">--- Solves a constraint as an I/O action.</span>
+<span class="comment">--- Note: the constraint should be always solvable in a deterministic way</span>
+<a href="#doSolve"><span class="func">doSolve</span></a> <span class="symbol">::</span> <a href="#Success"><span class="type">Success</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="doSolve">doSolve</span> <span class="ident">constraint</span> <span class="symbol">|</span> <span class="ident">constraint</span> <span class="symbol">=</span> <a href="#done"><span class="func">done</span></a>
+
+
+<span class="comment">-- IO monad auxiliary functions:</span>
+
+<span class="comment">--- Executes a sequence of I/O actions and collects all results in a list.</span>
+<a href="#sequenceIO"><span class="func">sequenceIO</span></a>       <span class="symbol">::</span> <span class="symbol">[</span><a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="sequenceIO">sequenceIO</span> <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">=</span> <a href="#return"><span class="func">return</span></a> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">sequenceIO</span> <span class="symbol">(</span><span class="ident">c</span><span class="symbol">:</span><span class="ident">cs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="keyword">do</span> <span class="ident">x</span>  <span class="symbol">&lt;-</span> <span class="ident">c</span>
+                       <span class="ident">xs</span> <span class="symbol">&lt;-</span> <a href="#sequenceIO"><span class="func">sequenceIO</span></a> <span class="ident">cs</span>
+                       <a href="#return"><span class="func">return</span></a> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>
+
+<span class="comment">--- Executes a sequence of I/O actions and ignores the results.</span>
+<a href="#sequenceIO_"><span class="func">sequenceIO_</span></a>        <span class="symbol">::</span> <span class="symbol">[</span><a href="#IO"><span class="type">IO</span></a> <span class="symbol">_</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="sequenceIO_">sequenceIO_</span>         <span class="symbol">=</span> <a href="#foldr"><span class="func">foldr</span></a> <span class="symbol">(</span><a href="#%3E%3E"><span class="func">&gt;&gt;</span></a><span class="symbol">)</span> <a href="#done"><span class="func">done</span></a>
+
+<span class="comment">--- Maps an I/O action function on a list of elements.</span>
+<span class="comment">--- The results of all I/O actions are collected in a list.</span>
+<a href="#mapIO"><span class="func">mapIO</span></a>             <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span>
+<span class="func" id="mapIO">mapIO</span> <span class="ident">f</span>            <span class="symbol">=</span> <a href="#sequenceIO"><span class="func">sequenceIO</span></a> <a href="#."><span class="func">.</span></a> <a href="#map"><span class="func">map</span></a> <span class="ident">f</span>
+
+<span class="comment">--- Maps an I/O action function on a list of elements.</span>
+<span class="comment">--- The results of all I/O actions are ignored.</span>
+<a href="#mapIO_"><span class="func">mapIO_</span></a>            <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="mapIO_">mapIO_</span> <span class="ident">f</span>           <span class="symbol">=</span> <a href="#sequenceIO_"><span class="func">sequenceIO_</span></a> <a href="#."><span class="func">.</span></a> <a href="#map"><span class="func">map</span></a> <span class="ident">f</span>
+
+<span class="comment">--- Folds a list of elements using an binary I/O action and a value</span>
+<span class="comment">--- for the empty list.</span>
+<a href="#foldIO"><span class="func">foldIO</span></a> <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span>
+<span class="func" id="foldIO">foldIO</span> <span class="symbol">_</span> <span class="ident">a</span> <span class="symbol">[</span><span class="symbol">]</span>      <span class="symbol">=</span>  <a href="#return"><span class="func">return</span></a> <span class="ident">a</span>
+<span class="func">foldIO</span> <span class="ident">f</span> <span class="ident">a</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>  <span class="symbol">=</span>  <span class="ident">f</span> <span class="ident">a</span> <span class="ident">x</span> <a href="#%3E%3E%3D"><span class="func">&gt;&gt;=</span></a> <span class="symbol">\</span><span class="ident">fax</span> <span class="symbol">-&gt;</span> <a href="#foldIO"><span class="func">foldIO</span></a> <span class="ident">f</span> <span class="ident">fax</span> <span class="ident">xs</span>
+
+<span class="comment">--- Apply a pure function to the result of an I/O action.</span>
+<a href="#liftIO"><span class="func">liftIO</span></a> <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span>
+<span class="func" id="liftIO">liftIO</span> <span class="ident">f</span> <span class="ident">m</span> <span class="symbol">=</span> <span class="ident">m</span> <a href="#%3E%3E%3D"><span class="func">&gt;&gt;=</span></a> <a href="#return"><span class="func">return</span></a> <a href="#."><span class="func">.</span></a> <span class="ident">f</span>
+
+<span class="comment">--- Like `mapIO`, but with flipped arguments.</span>
+<span class="comment">---</span>
+<span class="comment">--- This can be useful if the definition of the function is longer</span>
+<span class="comment">--- than those of the list, like in</span>
+<span class="comment">---</span>
+<span class="comment">--- forIO [1..10] $ \n -&gt; do</span>
+<span class="comment">---   ...</span>
+<a href="#forIO"><span class="func">forIO</span></a> <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span>
+<span class="func" id="forIO">forIO</span> <span class="ident">xs</span> <span class="ident">f</span> <span class="symbol">=</span> <a href="#mapIO"><span class="func">mapIO</span></a> <span class="ident">f</span> <span class="ident">xs</span>
+
+<span class="comment">--- Like `mapIO_`, but with flipped arguments.</span>
+<span class="comment">---</span>
+<span class="comment">--- This can be useful if the definition of the function is longer</span>
+<span class="comment">--- than those of the list, like in</span>
+<span class="comment">---</span>
+<span class="comment">--- forIO_ [1..10] $ \n -&gt; do</span>
+<span class="comment">---   ...</span>
+<a href="#forIO_"><span class="func">forIO_</span></a> <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="forIO_">forIO_</span> <span class="ident">xs</span> <span class="ident">f</span> <span class="symbol">=</span> <a href="#mapIO_"><span class="func">mapIO_</span></a> <span class="ident">f</span> <span class="ident">xs</span>
+
+<span class="comment">--- Performs an `IO` action unless the condition is met.</span>
+<a href="#unless"><span class="func">unless</span></a> <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="unless">unless</span> <span class="ident">p</span> <span class="ident">act</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">p</span> <span class="keyword">then</span> <a href="#done"><span class="func">done</span></a> <span class="keyword">else</span> <span class="ident">act</span>
+
+<span class="comment">--- Performs an `IO` action when the condition is met.</span>
+<a href="#when"><span class="func">when</span></a> <span class="symbol">::</span> <a href="#Bool"><span class="type">Bool</span></a> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#IO"><span class="type">IO</span></a> <span class="symbol">(</span><span class="symbol">)</span>
+<span class="func" id="when">when</span> <span class="ident">p</span> <span class="ident">act</span> <span class="symbol">=</span> <span class="keyword">if</span> <span class="ident">p</span> <span class="keyword">then</span> <span class="ident">act</span> <span class="keyword">else</span> <a href="#done"><span class="func">done</span></a>
+
+<span class="comment">----------------------------------------------------------------</span>
+<span class="comment">-- Non-determinism and free variables:</span>
+
+<span class="comment">--- Non-deterministic choice _par excellence_.</span>
+<span class="comment">--- The value of `x ? y` is either `x` or `y`.</span>
+<span class="comment">--- @param x - The right argument.</span>
+<span class="comment">--- @param y - The left argument.</span>
+<span class="comment">--- @return either `x` or `y` non-deterministically.</span>
+<span class="symbol">(</span><a href="#%3F"><span class="func">?</span></a><span class="symbol">)</span>   <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="ident">x</span> <span class="func" id="?">?</span> <span class="symbol">_</span> <span class="symbol">=</span> <span class="ident">x</span>
+<span class="symbol">_</span> <span class="func">?</span> <span class="ident">y</span> <span class="symbol">=</span> <span class="ident">y</span>
+
+
+<span class="comment">--- Evaluates to a fresh free variable.</span>
+<a href="#unknown"><span class="func">unknown</span></a> <span class="symbol">::</span> <span class="symbol">_</span>
+<span class="func" id="unknown">unknown</span> <span class="symbol">=</span> <span class="keyword">let</span> <span class="ident">x</span> <span class="keyword">free</span> <span class="keyword">in</span> <span class="ident">x</span>
+
+<span class="comment">----------------------------------------------------------------</span>
+<span class="comment">--- Identity type synonym used to mark deterministic operations.</span>
+<span class="keyword">type</span> <span class="type" id="DET">DET</span> <span class="ident">a</span> <span class="symbol">=</span> <span class="ident">a</span>
+
+<span class="comment">--- Identity function used by the partial evaluator</span>
+<span class="comment">--- to mark expressions to be partially evaluated.</span>
+<a href="#PEVAL"><span class="func">PEVAL</span></a>   <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="PEVAL">PEVAL</span> <span class="ident">x</span> <span class="symbol">=</span> <span class="ident">x</span>
+
+<span class="comment">--- Evaluates the argument to normal form and returns it.</span>
+<a href="#normalForm"><span class="func">normalForm</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="normalForm">normalForm</span> <span class="ident">x</span> <span class="symbol">=</span> <a href="#id"><span class="func">id</span></a> <a href="#%24%21%21"><span class="func">$!!</span></a> <span class="ident">x</span>
+
+<span class="comment">--- Evaluates the argument to ground normal form and returns it.</span>
+<span class="comment">--- Suspends as long as the normal form of the argument is not ground.</span>
+<a href="#groundNormalForm"><span class="func">groundNormalForm</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="groundNormalForm">groundNormalForm</span> <span class="ident">x</span> <span class="symbol">=</span> <a href="#id"><span class="func">id</span></a> <a href="#%24%23%23"><span class="func">$##</span></a> <span class="ident">x</span>
+
+<span class="comment">-- Only for internal use:</span>
+<span class="comment">-- Representation of higher-order applications in FlatCurry.</span>
+<a href="#apply"><span class="func">apply</span></a> <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">b</span>
+<span class="func" id="apply">apply</span> <span class="keyword">external</span>
+
+<span class="comment">-- Only for internal use:</span>
+<span class="comment">-- Representation of conditional rules in FlatCurry.</span>
+<a href="#cond"><span class="func">cond</span></a> <span class="symbol">::</span> <a href="#Success"><span class="type">Success</span></a> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="cond">cond</span> <span class="keyword">external</span>
+
+<span class="comment">--- Non-strict equational constraint. Used to implement functional patterns.</span>
+<span class="symbol">(</span><a href="#%3D%3A%3C%3D"><span class="func">=:&lt;=</span></a><span class="symbol">)</span> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Success"><span class="type">Success</span></a>
+<span class="symbol">(</span><span class="func" id="=:&lt;=">=:&lt;=</span><span class="symbol">)</span> <span class="keyword">external</span>
+
+<span class="comment">-- the end of the standard prelude</span>
+</pre></td>
+</tr></tbody></table>
+</body>
+</html>

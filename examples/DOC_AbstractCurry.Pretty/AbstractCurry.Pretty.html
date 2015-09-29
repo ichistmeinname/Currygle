@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  
+  <head>
+    
+    <title>
+      Module AbstractCurry.Pretty
+    </title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <link rel="shortcut icon" href="http://www-ps.informatik.uni-kiel.de/kics2/img/favicon.ico"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap-responsive.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/font-awesome.min.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/currydoc.css"/>
+    
+  </head>
+  
+  <body>
+    <nav>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        
+        <div class="navbar-inner">
+          
+          <div class="container-fluid">
+            
+            <ul class="nav">
+              
+              <li>
+                <a href="?">Module AbstractCurry.Pretty</a>
+              </li>
+              
+              <li>
+                <a href="#imported_modules">Imports</a>
+              </li>
+              
+              <li>
+                <a href="#exported_datatypes">Datatypes</a>
+              </li>
+              
+              <li>
+                <a href="#exported_operations">Operations</a>
+              </li>
+              
+            </ul>
+            
+            <div class="navbar-text pull-right">
+              
+              <ul class="nav">
+                
+                <li>
+                  <a href="http://www.curry-language.org" target="_blank"><i class="fa fa-external-link"></i>
+                    Curry Homepage</a>
+                </li>
+                
+                <li>
+                  <a href="http://www-ps.informatik.uni-kiel.de/kics2/lib/" target="_blank"><i class="fa fa-external-link"></i>
+                    KiCS2 Libraries</a>
+                </li>
+                
+                <li>
+                  <a href="http://www.curry-language.org/tools/currydoc" target="_blank"><i class="fa fa-external-link"></i>
+                    About CurryDoc</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      </nav>
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <header class="hero-unit">
+          <h1>
+            Module <a href="AbstractCurry.Pretty_curry.html">AbstractCurry.Pretty</a>
+          </h1>
+          </header>
+      </div>
+      
+    </div>
+    
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <nav>
+          <div class="span3">
+            
+            <div class="well sidebar-nav">
+              <b>Exported names:</b>
+              <ul class="nav nav-list">
+                
+                <li class="nav-header">
+                  Datatypes:
+                </li>
+                
+                <li>
+                  <a href="#Options">Options</a>
+                </li>
+                
+                <li>
+                  <a href="#Qualification">Qualification</a>
+                </li>
+                
+                <li class="nav-header">
+                  Constructors:
+                </li>
+                
+                <li>
+                  <a href="#Full_CONS">Full</a>
+                </li>
+                
+                <li>
+                  <a href="#Imports_CONS">Imports</a>
+                </li>
+                
+                <li>
+                  <a href="#None_CONS">None</a>
+                </li>
+                
+                <li class="nav-header">
+                  Operations:
+                </li>
+                
+                <li>
+                  <a href="#defaultOptions">defaultOptions</a>
+                </li>
+                
+                <li>
+                  <a href="#options">options</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCExpr">ppCExpr</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCFuncDecl">ppCFuncDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCFuncDeclWithoutSig">ppCFuncDeclWithoutSig</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCFuncSignature">ppCFuncSignature</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCLiteral">ppCLiteral</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCOpDecl">ppCOpDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCPattern">ppCPattern</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCStatement">ppCStatement</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCTypeDecl">ppCTypeDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCTypeExpr">ppCTypeExpr</a>
+                </li>
+                
+                <li>
+                  <a href="#ppCurryProg">ppCurryProg</a>
+                </li>
+                
+                <li>
+                  <a href="#ppExports">ppExports</a>
+                </li>
+                
+                <li>
+                  <a href="#ppImports">ppImports</a>
+                </li>
+                
+                <li>
+                  <a href="#ppMName">ppMName</a>
+                </li>
+                
+                <li>
+                  <a href="#ppName">ppName</a>
+                </li>
+                
+                <li>
+                  <a href="#ppQName">ppQName</a>
+                </li>
+                
+                <li>
+                  <a href="#prettyCurryProg">prettyCurryProg</a>
+                </li>
+                
+                <li>
+                  <a href="#setIndentWith">setIndentWith</a>
+                </li>
+                
+                <li>
+                  <a href="#setModName">setModName</a>
+                </li>
+                
+                <li>
+                  <a href="#setPageWith">setPageWith</a>
+                </li>
+                
+                <li>
+                  <a href="#setQualification">setQualification</a>
+                </li>
+                
+                <li>
+                  <a href="#showCProg">showCProg</a>
+                </li>
+                
+              </ul>
+              <span class="anchored" id="imported_modules"><b>Imported modules:</b></span>
+              <ul class="nav nav-list">
+                
+                <li>
+                  <a href="Prelude.html">Prelude</a>
+                </li>
+                
+                <li>
+                  <a href="Pretty.html">Pretty</a>
+                </li>
+                
+                <li>
+                  <a href="AbstractCurry.Select.html">AbstractCurry.Select</a>
+                </li>
+                
+                <li>
+                  <a href="AbstractCurry.Types.html">AbstractCurry.Types</a>
+                </li>
+                
+                <li>
+                  <a href="List.html">List</a>
+                </li>
+                
+                <li>
+                  <a href="Maybe.html">Maybe</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          </nav>
+        <div class="span9">
+          
+          <div class="row-fluid">
+            
+            <p>
+              Pretty printing of AbstractCurry.
+            </p>
+            
+            <p>
+              This library provides a pretty-printer for AbstractCurry modules.
+            </p>
+            
+            <p>
+              <b>Author: </b>Yannik Potdevin
+            </p>
+            
+            <p>
+              <b>Version: </b>September 2015
+            </p>
+            
+            <h2>
+              Summary of exported operations:
+            </h2>
+            
+            <table class="table table-bordered table-hover">
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="defaultOptions_SHORT"><a href="#defaultOptions">defaultOptions</a></span></span>
+                    :: <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  <code>defaultOptions = options 78 2 Imports &quot;&quot;</code>
+                  Therefore use these options only with functions like <code><a href="#prettyCurryProg">prettyCurryProg</a></code> or
+<code><a href="#ppCurryProg">ppCurryProg</a></code>, because they will overwrite the module name anyway.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="options_SHORT"><a href="#options">options</a></span></span>
+                    :: Int -&gt; Int -&gt; <a href="#Qualification">Qualification</a> -&gt; String -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="setPageWith_SHORT"><a href="#setPageWith">setPageWith</a></span></span>
+                    :: Int -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Sets the page width of the pretty printer options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="setIndentWith_SHORT"><a href="#setIndentWith">setIndentWith</a></span></span>
+                    :: Int -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Sets the indentation width of the pretty printer options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="setQualification_SHORT"><a href="#setQualification">setQualification</a></span></span>
+                    :: <a href="#Qualification">Qualification</a> -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Sets the qualification method to be used by the pretty printer.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="setModName_SHORT"><a href="#setModName">setModName</a></span></span>
+                    :: String -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Sets the name of the current module in the pretty printer options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="showCProg_SHORT"><a href="#showCProg">showCProg</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CurryProg">CurryProg</a> -&gt; String</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Shows a pretty formatted version of an abstract Curry Program.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="prettyCurryProg_SHORT"><a href="#prettyCurryProg">prettyCurryProg</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CurryProg">CurryProg</a> -&gt; String</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print the document generated by <code><a href="#ppCurryProg">ppCurryProg</a></code>, using the page width
+specified by given options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCurryProg_SHORT"><a href="#ppCurryProg">ppCurryProg</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CurryProg">CurryProg</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a CurryProg (the representation of a program, written in curry,
+using AbstractCurry) according to given options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppMName_SHORT"><a href="#ppMName">ppMName</a></span></span>
+                    :: String -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a module name (just a string).
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppExports_SHORT"><a href="#ppExports">ppExports</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; [<a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a>] -&gt; [<a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a>] -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print exports, i.e.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppImports_SHORT"><a href="#ppImports">ppImports</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; [String] -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print imports (list of module names) by prepending the word "import"
+to the module name.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCOpDecl_SHORT"><a href="#ppCOpDecl">ppCOpDecl</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#COpDecl">COpDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print operator precedence declarations.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCTypeDecl_SHORT"><a href="#ppCTypeDecl">ppCTypeDecl</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print type declarations, like `data ...
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCFuncDecl_SHORT"><a href="#ppCFuncDecl">ppCFuncDecl</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a function declaration.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCFuncDeclWithoutSig_SHORT"><a href="#ppCFuncDeclWithoutSig">ppCFuncDeclWithoutSig</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a function declaration without signature.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCFuncSignature_SHORT"><a href="#ppCFuncSignature">ppCFuncSignature</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; (String,String) -&gt; <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a function signature according to given options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCTypeExpr_SHORT"><a href="#ppCTypeExpr">ppCTypeExpr</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a type expression.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCPattern_SHORT"><a href="#ppCPattern">ppCPattern</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CPattern">CPattern</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a pattern expression.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCLiteral_SHORT"><a href="#ppCLiteral">ppCLiteral</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CLiteral">CLiteral</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print given literal (Int, Float, ...).
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCExpr_SHORT"><a href="#ppCExpr">ppCExpr</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CExpr">CExpr</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print an expression.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppCStatement_SHORT"><a href="#ppCStatement">ppCStatement</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CStatement">CStatement</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppQName_SHORT"><a href="#ppQName">ppQName</a></span></span>
+                    :: <a href="#Options">Options</a> -&gt; (String,String) -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a QName qualified according to given options.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="ppName_SHORT"><a href="#ppName">ppName</a></span></span>
+                    :: (String,String) -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  pretty-print a QName non-qualified.
+                </td>
+                
+              </tr>
+              
+            </table>
+            <section id="exported_datatypes">
+              <h2>
+                Exported datatypes:
+              </h2>
+              
+              <hr/>
+              <span class="anchored" id="Qualification"><span class="typeheader">Qualification</span></span>
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="Full_CONS"><code><span class="opname">Full</span>
+                      :: Qualification</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="Imports_CONS"><code><span class="opname">Imports</span>
+                      :: Qualification</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="None_CONS"><code><span class="opname">None</span>
+                      :: Qualification</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="Options"><span class="typeheader">Options</span></span>
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <hr/>
+              </section><section id="exported_operations">
+              <h2>
+                Exported operations:
+              </h2>
+              
+              <div class="anchored" id="defaultOptions">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#defaultOptions">defaultOptions</a></span>
+                          :: <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <code>defaultOptions = options 78 2 Imports &quot;&quot;</code>
+                        Therefore use these options only with functions like <code><a href="#prettyCurryProg">prettyCurryProg</a></code> or
+<code><a href="#ppCurryProg">ppCurryProg</a></code>, because they will overwrite the module name anyway.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="options">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#options">options</a></span>
+                          :: Int -&gt; Int -&gt; <a href="#Qualification">Qualification</a> -&gt; String -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(options pw iw q m rels)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>pw</code>
+                          : the page width to use
+                        </li>
+                        
+                        <li>
+                          <code>iw</code>
+                          : the indentation width to use
+                        </li>
+                        
+                        <li>
+                          <code>q</code>
+                          : the qualification method to use
+                        </li>
+                        
+                        <li>
+                          <code>m</code>
+                          : the name of the current module
+                        </li>
+                        
+                        <li>
+                          <code>rels</code>
+                          : A list of all to the current module related modules, i.e. the
+              current module itself and all its imports (including prelude).
+              The current module must be the head of that list.
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          options with the desired behavior
+                        </dd>
+                        
+                      </dl>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="setPageWith">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#setPageWith">setPageWith</a></span>
+                          :: Int -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Sets the page width of the pretty printer options.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="setIndentWith">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#setIndentWith">setIndentWith</a></span>
+                          :: Int -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Sets the indentation width of the pretty printer options.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="setQualification">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#setQualification">setQualification</a></span>
+                          :: <a href="#Qualification">Qualification</a> -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Sets the qualification method to be used by the pretty printer.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="setModName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#setModName">setModName</a></span>
+                          :: String -&gt; <a href="#Options">Options</a> -&gt; <a href="#Options">Options</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Sets the name of the current module in the pretty printer options.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="showCProg">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#showCProg">showCProg</a></span>
+                          :: <a href="AbstractCurry.Types.html#CurryProg">CurryProg</a> -&gt; String</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Shows a pretty formatted version of an abstract Curry Program.
+The options for pretty printing are the <code><a href="#defaultOptions">defaultOptions</a></code>.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(showCProg prog)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>prog</code>
+                          : a curry prog
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          a string, which represents the input program <code>prog</code>
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="prettyCurryProg">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#prettyCurryProg">prettyCurryProg</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CurryProg">CurryProg</a> -&gt; String</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print the document generated by <code><a href="#ppCurryProg">ppCurryProg</a></code>, using the page width
+specified by given options.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCurryProg">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCurryProg">ppCurryProg</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CurryProg">CurryProg</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a CurryProg (the representation of a program, written in curry,
+using AbstractCurry) according to given options. This function will overwrite
+the module name given by options with the name encapsulated in CurryProg.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppMName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppMName">ppMName</a></span>
+                          :: String -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a module name (just a string).
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppExports">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppExports">ppExports</a></span>
+                          :: <a href="#Options">Options</a> -&gt; [<a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a>] -&gt; [<a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a>] -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print exports, i.e. all type and function declarations which are
+public.
+extract the type and function declarations which are public and gather their
+qualified names in a list.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppImports">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppImports">ppImports</a></span>
+                          :: <a href="#Options">Options</a> -&gt; [String] -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print imports (list of module names) by prepending the word "import"
+to the module name.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCOpDecl">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCOpDecl">ppCOpDecl</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#COpDecl">COpDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print operator precedence declarations.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCTypeDecl">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCTypeDecl">ppCTypeDecl</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print type declarations, like <code>data ... = ...</code>, <code>type ... = ...</code>
+                        or
+<code>newtype ... = ...</code>.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCFuncDecl">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCFuncDecl">ppCFuncDecl</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a function declaration.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCFuncDeclWithoutSig">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCFuncDeclWithoutSig">ppCFuncDeclWithoutSig</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a function declaration without signature.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCFuncSignature">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCFuncSignature">ppCFuncSignature</a></span>
+                          :: <a href="#Options">Options</a> -&gt; (String,String) -&gt; <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a function signature according to given options.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCTypeExpr">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCTypeExpr">ppCTypeExpr</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a type expression.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCPattern">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCPattern">ppCPattern</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CPattern">CPattern</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a pattern expression.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCLiteral">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCLiteral">ppCLiteral</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CLiteral">CLiteral</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print given literal (Int, Float, ...).
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCExpr">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCExpr">ppCExpr</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CExpr">CExpr</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print an expression.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppCStatement">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppCStatement">ppCStatement</a></span>
+                          :: <a href="#Options">Options</a> -&gt; <a href="AbstractCurry.Types.html#CStatement">CStatement</a> -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppQName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppQName">ppQName</a></span>
+                          :: <a href="#Options">Options</a> -&gt; (String,String) -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a QName qualified according to given options.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="ppName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Pretty_curry.html#ppName">ppName</a></span>
+                          :: (String,String) -&gt; <a href="Pretty.html#Doc">Doc</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        pretty-print a QName non-qualified.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              </section>
+          </div>
+          
+        </div>
+        
+        <hr/>
+        <footer><i>Generated by <b>CurryDoc</b>
+            (Version 0.8.0 of June 4, 2015) at Sep 29 09:02:11 2015</i></footer>
+      </div>
+      
+    </div>
+    
+  </body>
+  
+</html>

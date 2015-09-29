@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Module AbstractCurry.Types</title>
+<link rel="stylesheet" type="text/css" href="currysource.css"/>
+</head>
+<body>
+<table><tbody><tr>
+<td class="linenumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+</pre></td>
+<td class="sourcecode"><pre><span class="comment">-- ---------------------------------------------------------------------------</span>
+<span class="comment">--- This library contains a definition for representing Curry programs</span>
+<span class="comment">--- in Curry and an I/O action to read Curry programs and</span>
+<span class="comment">--- transform them into this abstract representation.</span>
+<span class="comment">---</span>
+<span class="comment">--- Note this defines a slightly new format for AbstractCurry</span>
+<span class="comment">--- in comparison to the first proposal of 2003.</span>
+<span class="comment">---</span>
+<span class="comment">--- Assumption: an abstract Curry program is stored in file with</span>
+<span class="comment">--- extension .acy</span>
+<span class="comment">---</span>
+<span class="comment">--- @author Michael Hanus, Bj&ouml;rn Peem&ouml;ller</span>
+<span class="comment">--- @version September 2015</span>
+<span class="comment">--- @category meta</span>
+<span class="comment">-- ---------------------------------------------------------------------------</span>
+
+<span class="keyword">module</span> <span class="module">AbstractCurry.Types</span> <span class="keyword">where</span>
+
+<span class="comment">-- ---------------------------------------------------------------------------</span>
+<span class="comment">-- Definition of data types for representing abstract Curry programs:</span>
+<span class="comment">-- ---------------------------------------------------------------------------</span>
+
+<span class="comment">--- Current version of AbstractCurry</span>
+<a href="#version"><span class="func">version</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a>
+<span class="func" id="version">version</span> <span class="symbol">=</span> <span class="string">&quot;AbstractCurry 1.0&quot;</span>
+
+<span class="comment">--- A module name.</span>
+<span class="keyword">type</span> <span class="type" id="MName">MName</span> <span class="symbol">=</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a>
+
+<span class="comment">--- The data type for representing qualified names.</span>
+<span class="comment">--- In AbstractCurry all names are qualified to avoid name clashes.</span>
+<span class="comment">--- The first component is the module name and the second component the</span>
+<span class="comment">--- unqualified name as it occurs in the source program.</span>
+<span class="comment">--- An exception are locally defined names where the module name is</span>
+<span class="comment">--- the empty string (to avoid name clashes with a globally defined name).</span>
+<span class="keyword">type</span> <span class="type" id="QName">QName</span> <span class="symbol">=</span> <span class="symbol">(</span><a href="#MName"><span class="type">MName</span></a><span class="symbol">,</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a><span class="symbol">)</span>
+
+<span class="comment">--- Data type to specify the visibility of various entities.</span>
+<span class="keyword">data</span> <span class="type" id="CVisibility">CVisibility</span>
+  <span class="symbol">=</span> <span class="cons" id="Public">Public</span>    <span class="comment">-- exported entity</span>
+  <span class="symbol">|</span> <span class="cons" id="Private">Private</span>   <span class="comment">-- private entity</span>
+
+
+<span class="comment">--- Data type for representing a Curry module in the intermediate form.</span>
+<span class="comment">--- A value of this data type has the form</span>
+<span class="comment">--- </span>
+<span class="comment">---     (CProg modname imports typedecls functions opdecls)</span>
+<span class="comment">--- </span>
+<span class="comment">--- where modname: name of this module,</span>
+<span class="comment">---       imports: list of modules names that are imported,</span>
+<span class="comment">---       typedecls: Type declarations</span>
+<span class="comment">---       functions: Function declarations</span>
+<span class="comment">---       opdecls: Operator precedence declarations</span>
+<span class="keyword">data</span> <span class="type" id="CurryProg">CurryProg</span> <span class="symbol">=</span> <span class="cons">CurryProg</span> <a href="#MName"><span class="type">MName</span></a> <span class="symbol">[</span><a href="#MName"><span class="type">MName</span></a><span class="symbol">]</span> <span class="symbol">[</span><a href="#CTypeDecl"><span class="type">CTypeDecl</span></a><span class="symbol">]</span> <span class="symbol">[</span><a href="#CFuncDecl"><span class="type">CFuncDecl</span></a><span class="symbol">]</span> <span class="symbol">[</span><a href="#COpDecl"><span class="type">COpDecl</span></a><span class="symbol">]</span>
+
+<span class="comment">--- Data type for representing definitions of algebraic data types</span>
+<span class="comment">--- and type synonyms.</span>
+<span class="comment">---</span>
+<span class="comment">--- A data type definition of the form</span>
+<span class="comment">---</span>
+<span class="comment">---     data t x1...xn = ...| c t1....tkc |...</span>
+<span class="comment">---</span>
+<span class="comment">--- is represented by the Curry term</span>
+<span class="comment">---</span>
+<span class="comment">---     (CType t v [i1,...,in] [...(CCons c kc v [t1,...,tkc])...])</span>
+<span class="comment">---</span>
+<span class="comment">--- where each `ij` is the index of the type variable `xj`.</span>
+<span class="comment">---</span>
+<span class="comment">--- Note: the type variable indices are unique inside each type declaration</span>
+<span class="comment">---       and are usually numbered from 0</span>
+<span class="comment">---</span>
+<span class="comment">--- Thus, a data type declaration consists of the name of the data type,</span>
+<span class="comment">--- a list of type parameters and a list of constructor declarations.</span>
+<span class="keyword">data</span> <span class="type" id="CTypeDecl">CTypeDecl</span>
+  <span class="symbol">=</span> <span class="cons" id="CType">CType</span>    <a href="#QName"><span class="type">QName</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <span class="symbol">[</span><a href="#CTVarIName"><span class="type">CTVarIName</span></a><span class="symbol">]</span> <span class="symbol">[</span><a href="#CConsDecl"><span class="type">CConsDecl</span></a><span class="symbol">]</span>
+  <span class="symbol">|</span> <span class="cons" id="CTypeSyn">CTypeSyn</span> <a href="#QName"><span class="type">QName</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <span class="symbol">[</span><a href="#CTVarIName"><span class="type">CTVarIName</span></a><span class="symbol">]</span> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a>
+  <span class="symbol">|</span> <span class="cons" id="CNewType">CNewType</span> <a href="#QName"><span class="type">QName</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <span class="symbol">[</span><a href="#CTVarIName"><span class="type">CTVarIName</span></a><span class="symbol">]</span> <a href="#CConsDecl"><span class="type">CConsDecl</span></a>
+
+<span class="comment">--- The type for representing type variables.</span>
+<span class="comment">--- They are represented by (i,n) where i is a type variable index</span>
+<span class="comment">--- which is unique inside a function and n is a name (if possible,</span>
+<span class="comment">--- the name written in the source program).</span>
+<span class="keyword">type</span> <span class="type" id="CTVarIName">CTVarIName</span> <span class="symbol">=</span> <span class="symbol">(</span><a href="Prelude_curry.html#Int"><span class="type">Int</span></a><span class="symbol">,</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a><span class="symbol">)</span>
+
+<span class="comment">--- A constructor declaration consists of the name of the</span>
+<span class="comment">--- constructor and a list of the argument types of the constructor.</span>
+<span class="comment">--- The arity equals the number of types.</span>
+<span class="keyword">data</span> <span class="type" id="CConsDecl">CConsDecl</span>
+  <span class="symbol">=</span> <span class="cons" id="CCons">CCons</span>   <a href="#QName"><span class="type">QName</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <span class="symbol">[</span><a href="#CTypeExpr"><span class="type">CTypeExpr</span></a><span class="symbol">]</span>
+  <span class="symbol">|</span> <span class="cons" id="CRecord">CRecord</span> <a href="#QName"><span class="type">QName</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <span class="symbol">[</span><a href="#CFieldDecl"><span class="type">CFieldDecl</span></a><span class="symbol">]</span>
+
+<span class="comment">--- A record field declaration consists of the name of the</span>
+<span class="comment">--- the label, the visibility and its corresponding type.</span>
+<span class="keyword">data</span> <span class="type" id="CFieldDecl">CFieldDecl</span> <span class="symbol">=</span> <span class="cons" id="CField">CField</span> <a href="#QName"><span class="type">QName</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a>
+
+<span class="comment">--- Type expression.</span>
+<span class="comment">--- A type expression is either a type variable, a function type,</span>
+<span class="comment">--- or a type constructor application.</span>
+<span class="comment">---</span>
+<span class="comment">--- Note: the names of the predefined type constructors are</span>
+<span class="comment">---       &quot;Int&quot;, &quot;Float&quot;, &quot;Bool&quot;, &quot;Char&quot;, &quot;IO&quot;, &quot;Success&quot;,</span>
+<span class="comment">---       &quot;()&quot; (unit type), &quot;(,...,)&quot; (tuple types), &quot;[]&quot; (list type)</span>
+<span class="keyword">data</span> <span class="type" id="CTypeExpr">CTypeExpr</span>
+  <span class="symbol">=</span> <span class="cons" id="CTVar">CTVar</span> <a href="#CTVarIName"><span class="type">CTVarIName</span></a>               <span class="comment">-- type variable</span>
+  <span class="symbol">|</span> <span class="cons" id="CFuncType">CFuncType</span> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a>  <span class="comment">-- function type t1-&gt;t2</span>
+  <span class="symbol">|</span> <span class="cons" id="CTCons">CTCons</span> <a href="#QName"><span class="type">QName</span></a> <span class="symbol">[</span><a href="#CTypeExpr"><span class="type">CTypeExpr</span></a><span class="symbol">]</span>       <span class="comment">-- type constructor application</span>
+                                   <span class="comment">-- (CTCons (module,name) arguments)</span>
+
+<span class="comment">--- Labeled record fields</span>
+<span class="keyword">type</span> <span class="type">CField</span> <span class="ident">a</span> <span class="symbol">=</span> <span class="symbol">(</span><a href="#QName"><span class="type">QName</span></a><span class="symbol">,</span> <span class="ident">a</span><span class="symbol">)</span>
+
+<span class="comment">--- Data type for operator declarations.</span>
+<span class="comment">--- An operator declaration &quot;fix p n&quot; in Curry corresponds to the</span>
+<span class="comment">--- AbstractCurry term (COp n fix p).</span>
+<span class="keyword">data</span> <span class="type" id="COpDecl">COpDecl</span> <span class="symbol">=</span> <span class="cons" id="COp">COp</span> <a href="#QName"><span class="type">QName</span></a> <a href="#CFixity"><span class="type">CFixity</span></a> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a>
+
+<span class="comment">--- Data type for operator associativity</span>
+<span class="keyword">data</span> <span class="type" id="CFixity">CFixity</span>
+  <span class="symbol">=</span> <span class="cons" id="CInfixOp">CInfixOp</span>   <span class="comment">-- non-associative infix operator</span>
+  <span class="symbol">|</span> <span class="cons" id="CInfixlOp">CInfixlOp</span>  <span class="comment">-- left-associative infix operator</span>
+  <span class="symbol">|</span> <span class="cons" id="CInfixrOp">CInfixrOp</span>  <span class="comment">-- right-associative infix operator</span>
+
+<span class="comment">--- Function arity</span>
+<span class="keyword">type</span> <span class="type" id="Arity">Arity</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a>
+
+<span class="comment">--- Data type for representing function declarations.</span>
+<span class="comment">---</span>
+<span class="comment">--- A function declaration in AbstractCurry is a term of the form</span>
+<span class="comment">---</span>
+<span class="comment">--- &lt;code&gt;(CFunc name arity visibility type (CRules eval [CRule rule1,...,rulek]))&lt;/code&gt;</span>
+<span class="comment">---</span>
+<span class="comment">--- and represents the function &lt;code&gt;name&lt;/code&gt; defined by the rules</span>
+<span class="comment">--- &lt;code&gt;rule1,...,rulek&lt;/code&gt;.</span>
+<span class="comment">---</span>
+<span class="comment">--- Note: the variable indices are unique inside each rule</span>
+<span class="comment">---</span>
+<span class="comment">--- Thus, a function declaration consists of the name, arity, type, and</span>
+<span class="comment">--- a list of rules.</span>
+<span class="comment">---</span>
+<span class="comment">--- A function declaration with the constructor &lt;code&gt;CmtFunc&lt;/code&gt;</span>
+<span class="comment">--- is similarly to &lt;code&gt;CFunc&lt;/code&gt; but has a comment</span>
+<span class="comment">--- as an additional first argument. This comment could be used</span>
+<span class="comment">--- by pretty printers that generate a readable Curry program</span>
+<span class="comment">--- containing documentation comments.</span>
+<span class="keyword">data</span> <span class="type" id="CFuncDecl">CFuncDecl</span>
+  <span class="symbol">=</span> <span class="cons" id="CFunc">CFunc</span>          <a href="#QName"><span class="type">QName</span></a> <a href="#Arity"><span class="type">Arity</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">[</span><a href="#CRule"><span class="type">CRule</span></a><span class="symbol">]</span>
+  <span class="symbol">|</span> <span class="cons" id="CmtFunc">CmtFunc</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a> <a href="#QName"><span class="type">QName</span></a> <a href="#Arity"><span class="type">Arity</span></a> <a href="#CVisibility"><span class="type">CVisibility</span></a> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">[</span><a href="#CRule"><span class="type">CRule</span></a><span class="symbol">]</span>
+
+<span class="comment">--- The general form of a function rule. It consists of a list of patterns</span>
+<span class="comment">--- (left-hand side) and the right-hand side for these patterns.</span>
+<span class="keyword">data</span> <span class="type" id="CRule">CRule</span> <span class="symbol">=</span> <span class="cons">CRule</span> <span class="symbol">[</span><a href="#CPattern"><span class="type">CPattern</span></a><span class="symbol">]</span> <a href="#CRhs"><span class="type">CRhs</span></a>
+
+<span class="comment">--- Right-hand-side of a 'CRule' or a `case` expression.</span>
+<span class="comment">--- It is either a simple unconditional right-hand side or</span>
+<span class="comment">--- a list of guards with their corresponding right-hand sides, and</span>
+<span class="comment">--- a list of local declarations.</span>
+<span class="keyword">data</span> <span class="type" id="CRhs">CRhs</span>
+  <span class="symbol">=</span> <span class="cons" id="CSimpleRhs">CSimpleRhs</span>  <a href="#CExpr"><span class="type">CExpr</span></a>            <span class="symbol">[</span><a href="#CLocalDecl"><span class="type">CLocalDecl</span></a><span class="symbol">]</span> <span class="comment">-- expr where decls</span>
+  <span class="symbol">|</span> <span class="cons" id="CGuardedRhs">CGuardedRhs</span> <span class="symbol">[</span><span class="symbol">(</span><a href="#CExpr"><span class="type">CExpr</span></a><span class="symbol">,</span> <a href="#CExpr"><span class="type">CExpr</span></a><span class="symbol">)</span><span class="symbol">]</span> <span class="symbol">[</span><a href="#CLocalDecl"><span class="type">CLocalDecl</span></a><span class="symbol">]</span> <span class="comment">-- | cond = expr where decls</span>
+
+<span class="comment">--- Data type for representing local (let/where) declarations</span>
+<span class="keyword">data</span> <span class="type" id="CLocalDecl">CLocalDecl</span>
+  <span class="symbol">=</span> <span class="cons" id="CLocalFunc">CLocalFunc</span> <a href="#CFuncDecl"><span class="type">CFuncDecl</span></a>     <span class="comment">-- local function declaration</span>
+  <span class="symbol">|</span> <span class="cons" id="CLocalPat">CLocalPat</span>  <a href="#CPattern"><span class="type">CPattern</span></a> <a href="#CRhs"><span class="type">CRhs</span></a> <span class="comment">-- local pattern declaration</span>
+  <span class="symbol">|</span> <span class="cons" id="CLocalVars">CLocalVars</span> <span class="symbol">[</span><a href="#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>   <span class="comment">-- local free variable declaration</span>
+
+<span class="comment">--- Data types for representing object variables.</span>
+<span class="comment">--- Object variables occurring in expressions are represented by (Var i)</span>
+<span class="comment">--- where i is a variable index.</span>
+<span class="keyword">type</span> <span class="type" id="CVarIName">CVarIName</span> <span class="symbol">=</span> <span class="symbol">(</span><a href="Prelude_curry.html#Int"><span class="type">Int</span></a><span class="symbol">,</span><a href="Prelude_curry.html#String"><span class="type">String</span></a><span class="symbol">)</span>
+
+<span class="comment">--- Data type for representing pattern expressions.</span>
+<span class="keyword">data</span> <span class="type" id="CPattern">CPattern</span>
+  <span class="symbol">=</span> <span class="cons" id="CPVar">CPVar</span>      <a href="#CVarIName"><span class="type">CVarIName</span></a>               <span class="comment">-- pattern variable (unique index / name)</span>
+  <span class="symbol">|</span> <span class="cons" id="CPLit">CPLit</span>      <a href="#CLiteral"><span class="type">CLiteral</span></a>                <span class="comment">-- literal (Integer/Float/Char constant)</span>
+  <span class="symbol">|</span> <span class="cons" id="CPComb">CPComb</span>     <a href="#QName"><span class="type">QName</span></a> <span class="symbol">[</span><a href="#CPattern"><span class="type">CPattern</span></a><span class="symbol">]</span>        <span class="comment">-- application (m.c e1 ... en) of n-ary</span>
+                                       <span class="comment">-- constructor m.c (CPComb (m,c) [e1,...,en])</span>
+  <span class="symbol">|</span> <span class="cons" id="CPAs">CPAs</span>       <a href="#CVarIName"><span class="type">CVarIName</span></a> <a href="#CPattern"><span class="type">CPattern</span></a>      <span class="comment">-- as-pattern (extended Curry)</span>
+  <span class="symbol">|</span> <span class="cons" id="CPFuncComb">CPFuncComb</span> <a href="#QName"><span class="type">QName</span></a> <span class="symbol">[</span><a href="#CPattern"><span class="type">CPattern</span></a><span class="symbol">]</span>        <span class="comment">-- function pattern (extended Curry)</span>
+  <span class="symbol">|</span> <span class="cons" id="CPLazy">CPLazy</span>     <a href="#CPattern"><span class="type">CPattern</span></a>                <span class="comment">-- lazy pattern (extended Curry)</span>
+  <span class="symbol">|</span> <span class="cons" id="CPRecord">CPRecord</span>   <a href="#QName"><span class="type">QName</span></a> <span class="symbol">[</span><a href="#CField"><span class="type">CField</span></a> <a href="#CPattern"><span class="type">CPattern</span></a><span class="symbol">]</span> <span class="comment">-- record pattern (extended Curry)</span>
+
+<span class="comment">--- Data type for representing Curry expressions.</span>
+<span class="keyword">data</span> <span class="type" id="CExpr">CExpr</span>
+ <span class="symbol">=</span> <span class="cons" id="CVar">CVar</span>       <a href="#CVarIName"><span class="type">CVarIName</span></a>                          <span class="comment">-- variable (unique index / name)</span>
+ <span class="symbol">|</span> <span class="cons" id="CLit">CLit</span>       <a href="#CLiteral"><span class="type">CLiteral</span></a>                           <span class="comment">-- literal (Integer/Float/Char constant)</span>
+ <span class="symbol">|</span> <span class="cons" id="CSymbol">CSymbol</span>    <a href="#QName"><span class="type">QName</span></a>                              <span class="comment">-- a defined symbol with module and name</span>
+ <span class="symbol">|</span> <span class="cons" id="CApply">CApply</span>     <a href="#CExpr"><span class="type">CExpr</span></a> <a href="#CExpr"><span class="type">CExpr</span></a>                        <span class="comment">-- application (e1 e2)</span>
+ <span class="symbol">|</span> <span class="cons" id="CLambda">CLambda</span>    <span class="symbol">[</span><a href="#CPattern"><span class="type">CPattern</span></a><span class="symbol">]</span> <a href="#CExpr"><span class="type">CExpr</span></a>                   <span class="comment">-- lambda abstraction</span>
+ <span class="symbol">|</span> <span class="cons" id="CLetDecl">CLetDecl</span>   <span class="symbol">[</span><a href="#CLocalDecl"><span class="type">CLocalDecl</span></a><span class="symbol">]</span> <a href="#CExpr"><span class="type">CExpr</span></a>                 <span class="comment">-- local let declarations</span>
+ <span class="symbol">|</span> <span class="cons" id="CDoExpr">CDoExpr</span>    <span class="symbol">[</span><a href="#CStatement"><span class="type">CStatement</span></a><span class="symbol">]</span>                       <span class="comment">-- do expression</span>
+ <span class="symbol">|</span> <span class="cons" id="CListComp">CListComp</span>  <a href="#CExpr"><span class="type">CExpr</span></a> <span class="symbol">[</span><a href="#CStatement"><span class="type">CStatement</span></a><span class="symbol">]</span>                 <span class="comment">-- list comprehension</span>
+ <span class="symbol">|</span> <span class="cons" id="CCase">CCase</span>      <a href="#CCaseType"><span class="type">CCaseType</span></a> <a href="#CExpr"><span class="type">CExpr</span></a> <span class="symbol">[</span><span class="symbol">(</span><a href="#CPattern"><span class="type">CPattern</span></a><span class="symbol">,</span> <a href="#CRhs"><span class="type">CRhs</span></a><span class="symbol">)</span><span class="symbol">]</span> <span class="comment">-- case expression</span>
+ <span class="symbol">|</span> <span class="cons" id="CTyped">CTyped</span>     <a href="#CExpr"><span class="type">CExpr</span></a> <a href="#CTypeExpr"><span class="type">CTypeExpr</span></a>                    <span class="comment">-- typed expression</span>
+ <span class="symbol">|</span> <span class="cons" id="CRecConstr">CRecConstr</span> <a href="#QName"><span class="type">QName</span></a> <span class="symbol">[</span><a href="#CField"><span class="type">CField</span></a> <a href="#CExpr"><span class="type">CExpr</span></a><span class="symbol">]</span>               <span class="comment">-- record construction (extended Curry)</span>
+ <span class="symbol">|</span> <span class="cons" id="CRecUpdate">CRecUpdate</span> <a href="#CExpr"><span class="type">CExpr</span></a> <span class="symbol">[</span><a href="#CField"><span class="type">CField</span></a> <a href="#CExpr"><span class="type">CExpr</span></a><span class="symbol">]</span>               <span class="comment">-- record update (extended Curry)</span>
+
+<span class="comment">--- Data type for representing literals occurring in an expression.</span>
+<span class="comment">--- It is either an integer, a float, or a character constant.</span>
+<span class="keyword">data</span> <span class="type" id="CLiteral">CLiteral</span>
+  <span class="symbol">=</span> <span class="cons" id="CIntc">CIntc</span>   <a href="Prelude_curry.html#Int"><span class="type">Int</span></a>
+  <span class="symbol">|</span> <span class="cons" id="CFloatc">CFloatc</span> <a href="Prelude_curry.html#Float"><span class="type">Float</span></a>
+  <span class="symbol">|</span> <span class="cons" id="CCharc">CCharc</span>  <a href="Prelude_curry.html#Char"><span class="type">Char</span></a>
+  <span class="symbol">|</span> <span class="cons" id="CStringc">CStringc</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a>
+
+<span class="comment">--- Data type for representing statements in do expressions and</span>
+<span class="comment">--- list comprehensions.</span>
+<span class="keyword">data</span> <span class="type" id="CStatement">CStatement</span>
+  <span class="symbol">=</span> <span class="cons" id="CSExpr">CSExpr</span> <a href="#CExpr"><span class="type">CExpr</span></a>         <span class="comment">-- an expression (I/O action or boolean)</span>
+  <span class="symbol">|</span> <span class="cons" id="CSPat">CSPat</span> <a href="#CPattern"><span class="type">CPattern</span></a> <a href="#CExpr"><span class="type">CExpr</span></a> <span class="comment">-- a pattern definition</span>
+  <span class="symbol">|</span> <span class="cons" id="CSLet">CSLet</span> <span class="symbol">[</span><a href="#CLocalDecl"><span class="type">CLocalDecl</span></a><span class="symbol">]</span>   <span class="comment">-- a local let declaration</span>
+
+<span class="comment">--- Type of case expressions</span>
+<span class="keyword">data</span> <span class="type" id="CCaseType">CCaseType</span>
+  <span class="symbol">=</span> <span class="cons" id="CRigid">CRigid</span> <span class="comment">-- rigid case expression</span>
+  <span class="symbol">|</span> <span class="cons" id="CFlex">CFlex</span>  <span class="comment">-- flexible case expression</span>
+
+<span class="comment">---------------------------------------------------------------------------</span>
+<span class="comment">--- Converts a string into a qualified name of the Prelude.</span>
+<a href="#pre"><span class="func">pre</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="#QName"><span class="type">QName</span></a>
+<span class="func" id="pre">pre</span> <span class="ident">f</span> <span class="symbol">=</span> <span class="symbol">(</span><span class="string">&quot;Prelude&quot;</span><span class="symbol">,</span> <span class="ident">f</span><span class="symbol">)</span>
+
+<span class="comment">---------------------------------------------------------------------------</span>
+</pre></td>
+</tr></tbody></table>
+</body>
+</html>

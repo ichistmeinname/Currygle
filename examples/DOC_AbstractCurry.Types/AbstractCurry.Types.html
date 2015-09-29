@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  
+  <head>
+    
+    <title>
+      Module AbstractCurry.Types
+    </title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <link rel="shortcut icon" href="http://www-ps.informatik.uni-kiel.de/kics2/img/favicon.ico"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap-responsive.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/font-awesome.min.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/currydoc.css"/>
+    
+  </head>
+  
+  <body>
+    <nav>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        
+        <div class="navbar-inner">
+          
+          <div class="container-fluid">
+            
+            <ul class="nav">
+              
+              <li>
+                <a href="?">Module AbstractCurry.Types</a>
+              </li>
+              
+              <li>
+                <a href="#imported_modules">Imports</a>
+              </li>
+              
+              <li>
+                <a href="#exported_datatypes">Datatypes</a>
+              </li>
+              
+              <li>
+                <a href="#exported_operations">Operations</a>
+              </li>
+              
+            </ul>
+            
+            <div class="navbar-text pull-right">
+              
+              <ul class="nav">
+                
+                <li>
+                  <a href="http://www.curry-language.org" target="_blank"><i class="fa fa-external-link"></i>
+                    Curry Homepage</a>
+                </li>
+                
+                <li>
+                  <a href="http://www-ps.informatik.uni-kiel.de/kics2/lib/" target="_blank"><i class="fa fa-external-link"></i>
+                    KiCS2 Libraries</a>
+                </li>
+                
+                <li>
+                  <a href="http://www.curry-language.org/tools/currydoc" target="_blank"><i class="fa fa-external-link"></i>
+                    About CurryDoc</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      </nav>
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <header class="hero-unit">
+          <h1>
+            Module <a href="AbstractCurry.Types_curry.html">AbstractCurry.Types</a>
+          </h1>
+          </header>
+      </div>
+      
+    </div>
+    
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <nav>
+          <div class="span3">
+            
+            <div class="well sidebar-nav">
+              <b>Exported names:</b>
+              <ul class="nav nav-list">
+                
+                <li class="nav-header">
+                  Datatypes:
+                </li>
+                
+                <li>
+                  <a href="#Arity">Arity</a>
+                </li>
+                
+                <li>
+                  <a href="#CCaseType">CCaseType</a>
+                </li>
+                
+                <li>
+                  <a href="#CConsDecl">CConsDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#CExpr">CExpr</a>
+                </li>
+                
+                <li>
+                  <a href="#CField">CField</a>
+                </li>
+                
+                <li>
+                  <a href="#CFieldDecl">CFieldDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#CFixity">CFixity</a>
+                </li>
+                
+                <li>
+                  <a href="#CFuncDecl">CFuncDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#CLiteral">CLiteral</a>
+                </li>
+                
+                <li>
+                  <a href="#CLocalDecl">CLocalDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#COpDecl">COpDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#CPattern">CPattern</a>
+                </li>
+                
+                <li>
+                  <a href="#CRhs">CRhs</a>
+                </li>
+                
+                <li>
+                  <a href="#CRule">CRule</a>
+                </li>
+                
+                <li>
+                  <a href="#CStatement">CStatement</a>
+                </li>
+                
+                <li>
+                  <a href="#CTVarIName">CTVarIName</a>
+                </li>
+                
+                <li>
+                  <a href="#CTypeDecl">CTypeDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#CTypeExpr">CTypeExpr</a>
+                </li>
+                
+                <li>
+                  <a href="#CurryProg">CurryProg</a>
+                </li>
+                
+                <li>
+                  <a href="#CVarIName">CVarIName</a>
+                </li>
+                
+                <li>
+                  <a href="#CVisibility">CVisibility</a>
+                </li>
+                
+                <li>
+                  <a href="#MName">MName</a>
+                </li>
+                
+                <li>
+                  <a href="#QName">QName</a>
+                </li>
+                
+                <li class="nav-header">
+                  Constructors:
+                </li>
+                
+                <li>
+                  <a href="#CApply_CONS">CApply</a>
+                </li>
+                
+                <li>
+                  <a href="#CCase_CONS">CCase</a>
+                </li>
+                
+                <li>
+                  <a href="#CCharc_CONS">CCharc</a>
+                </li>
+                
+                <li>
+                  <a href="#CCons_CONS">CCons</a>
+                </li>
+                
+                <li>
+                  <a href="#CDoExpr_CONS">CDoExpr</a>
+                </li>
+                
+                <li>
+                  <a href="#CField_CONS">CField</a>
+                </li>
+                
+                <li>
+                  <a href="#CFlex_CONS">CFlex</a>
+                </li>
+                
+                <li>
+                  <a href="#CFloatc_CONS">CFloatc</a>
+                </li>
+                
+                <li>
+                  <a href="#CFunc_CONS">CFunc</a>
+                </li>
+                
+                <li>
+                  <a href="#CFuncType_CONS">CFuncType</a>
+                </li>
+                
+                <li>
+                  <a href="#CGuardedRhs_CONS">CGuardedRhs</a>
+                </li>
+                
+                <li>
+                  <a href="#CInfixlOp_CONS">CInfixlOp</a>
+                </li>
+                
+                <li>
+                  <a href="#CInfixOp_CONS">CInfixOp</a>
+                </li>
+                
+                <li>
+                  <a href="#CInfixrOp_CONS">CInfixrOp</a>
+                </li>
+                
+                <li>
+                  <a href="#CIntc_CONS">CIntc</a>
+                </li>
+                
+                <li>
+                  <a href="#CLambda_CONS">CLambda</a>
+                </li>
+                
+                <li>
+                  <a href="#CLetDecl_CONS">CLetDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#CListComp_CONS">CListComp</a>
+                </li>
+                
+                <li>
+                  <a href="#CLit_CONS">CLit</a>
+                </li>
+                
+                <li>
+                  <a href="#CLocalFunc_CONS">CLocalFunc</a>
+                </li>
+                
+                <li>
+                  <a href="#CLocalPat_CONS">CLocalPat</a>
+                </li>
+                
+                <li>
+                  <a href="#CLocalVars_CONS">CLocalVars</a>
+                </li>
+                
+                <li>
+                  <a href="#CmtFunc_CONS">CmtFunc</a>
+                </li>
+                
+                <li>
+                  <a href="#CNewType_CONS">CNewType</a>
+                </li>
+                
+                <li>
+                  <a href="#COp_CONS">COp</a>
+                </li>
+                
+                <li>
+                  <a href="#CPAs_CONS">CPAs</a>
+                </li>
+                
+                <li>
+                  <a href="#CPComb_CONS">CPComb</a>
+                </li>
+                
+                <li>
+                  <a href="#CPFuncComb_CONS">CPFuncComb</a>
+                </li>
+                
+                <li>
+                  <a href="#CPLazy_CONS">CPLazy</a>
+                </li>
+                
+                <li>
+                  <a href="#CPLit_CONS">CPLit</a>
+                </li>
+                
+                <li>
+                  <a href="#CPRecord_CONS">CPRecord</a>
+                </li>
+                
+                <li>
+                  <a href="#CPVar_CONS">CPVar</a>
+                </li>
+                
+                <li>
+                  <a href="#CRecConstr_CONS">CRecConstr</a>
+                </li>
+                
+                <li>
+                  <a href="#CRecord_CONS">CRecord</a>
+                </li>
+                
+                <li>
+                  <a href="#CRecUpdate_CONS">CRecUpdate</a>
+                </li>
+                
+                <li>
+                  <a href="#CRigid_CONS">CRigid</a>
+                </li>
+                
+                <li>
+                  <a href="#CRule_CONS">CRule</a>
+                </li>
+                
+                <li>
+                  <a href="#CSExpr_CONS">CSExpr</a>
+                </li>
+                
+                <li>
+                  <a href="#CSimpleRhs_CONS">CSimpleRhs</a>
+                </li>
+                
+                <li>
+                  <a href="#CSLet_CONS">CSLet</a>
+                </li>
+                
+                <li>
+                  <a href="#CSPat_CONS">CSPat</a>
+                </li>
+                
+                <li>
+                  <a href="#CStringc_CONS">CStringc</a>
+                </li>
+                
+                <li>
+                  <a href="#CSymbol_CONS">CSymbol</a>
+                </li>
+                
+                <li>
+                  <a href="#CTCons_CONS">CTCons</a>
+                </li>
+                
+                <li>
+                  <a href="#CTVar_CONS">CTVar</a>
+                </li>
+                
+                <li>
+                  <a href="#CType_CONS">CType</a>
+                </li>
+                
+                <li>
+                  <a href="#CTyped_CONS">CTyped</a>
+                </li>
+                
+                <li>
+                  <a href="#CTypeSyn_CONS">CTypeSyn</a>
+                </li>
+                
+                <li>
+                  <a href="#CurryProg_CONS">CurryProg</a>
+                </li>
+                
+                <li>
+                  <a href="#CVar_CONS">CVar</a>
+                </li>
+                
+                <li>
+                  <a href="#Private_CONS">Private</a>
+                </li>
+                
+                <li>
+                  <a href="#Public_CONS">Public</a>
+                </li>
+                
+                <li class="nav-header">
+                  Operations:
+                </li>
+                
+                <li>
+                  <a href="#pre">pre</a>
+                </li>
+                
+                <li>
+                  <a href="#version">version</a>
+                </li>
+                
+              </ul>
+              <span class="anchored" id="imported_modules"><b>Imported modules:</b></span>
+              <ul class="nav nav-list">
+                
+                <li>
+                  <a href="Prelude.html">Prelude</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          </nav>
+        <div class="span9">
+          
+          <div class="row-fluid">
+            
+            <p>
+              This library contains a definition for representing Curry programs
+in Curry and an I/O action to read Curry programs and
+transform them into this abstract representation.
+            </p>
+            
+            <p>
+              Note this defines a slightly new format for AbstractCurry
+in comparison to the first proposal of 2003.
+            </p>
+            
+            <p>
+              Assumption: an abstract Curry program is stored in file with
+extension .acy
+            </p>
+            
+            <p>
+              <b>Author: </b>Michael Hanus, Bj&ouml;rn Peem&ouml;ller
+            </p>
+            
+            <p>
+              <b>Version: </b>September 2015
+            </p>
+            
+            <h2>
+              Summary of exported operations:
+            </h2>
+            
+            <table class="table table-bordered table-hover">
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="version_SHORT"><a href="#version">version</a></span></span>
+                    :: String</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Current version of AbstractCurry
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="pre_SHORT"><a href="#pre">pre</a></span></span>
+                    :: String -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Converts a string into a qualified name of the Prelude.
+                </td>
+                
+              </tr>
+              
+            </table>
+            <section id="exported_datatypes">
+              <h2>
+                Exported datatypes:
+              </h2>
+              
+              <hr/>
+              <span class="anchored" id="MName"><span class="typeheader">MName</span></span>
+              <p>
+                A module name.
+              </p>
+              
+              <p>
+                <span class="explaincat">Type synonym:</span>&nbsp;<code>MName = String</code>
+              </p>
+              
+              <hr/>
+              <span class="anchored" id="QName"><span class="typeheader">QName</span></span>
+              <p>
+                The data type for representing qualified names.
+In AbstractCurry all names are qualified to avoid name clashes.
+The first component is the module name and the second component the
+unqualified name as it occurs in the source program.
+An exception are locally defined names where the module name is
+the empty string (to avoid name clashes with a globally defined name).
+              </p>
+              
+              <p>
+                <span class="explaincat">Type synonym:</span>&nbsp;<code>QName = (<a href="#MName">MName</a>,String)</code>
+              </p>
+              
+              <hr/>
+              <span class="anchored" id="CVisibility"><span class="typeheader">CVisibility</span></span>
+              <p>
+                Data type to specify the visibility of various entities.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="Public_CONS"><code><span class="opname">Public</span>
+                      :: CVisibility</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="Private_CONS"><code><span class="opname">Private</span>
+                      :: CVisibility</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CurryProg"><span class="typeheader">CurryProg</span></span>
+              <p>
+                Data type for representing a Curry module in the intermediate form.
+A value of this data type has the form
+              </p>
+              <pre>(CProg modname imports typedecls functions opdecls)</pre>
+              <p>
+                where modname: name of this module,
+      imports: list of modules names that are imported,
+      typedecls: Type declarations
+      functions: Function declarations
+      opdecls: Operator precedence declarations
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CurryProg_CONS"><code><span class="opname">CurryProg</span>
+                      ::  <a href="#MName">MName</a> ->  [<a href="#MName">MName</a>] ->  [<a href="#CTypeDecl">CTypeDecl</a>] ->  [<a href="#CFuncDecl">CFuncDecl</a>] ->  [<a href="#COpDecl">COpDecl</a>] -> CurryProg</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CTypeDecl"><span class="typeheader">CTypeDecl</span></span>
+              <p>
+                Data type for representing definitions of algebraic data types
+and type synonyms.
+              </p>
+              
+              <p>
+                A data type definition of the form
+              </p>
+              <pre>data t x1...xn = ...| c t1....tkc |...</pre>
+              <p>
+                is represented by the Curry term
+              </p>
+              <pre>(CType t v [i1,...,in] [...(CCons c kc v [t1,...,tkc])...])</pre>
+              <p>
+                where each <code>ij</code>
+                is the index of the type variable <code>xj</code>.
+              </p>
+              
+              <p>
+                Note: the type variable indices are unique inside each type declaration
+      and are usually numbered from 0
+              </p>
+              
+              <p>
+                Thus, a data type declaration consists of the name of the data type,
+a list of type parameters and a list of constructor declarations.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CType_CONS"><code><span class="opname">CType</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CVisibility">CVisibility</a> ->  [<a href="#CTVarIName">CTVarIName</a>] ->  [<a href="#CConsDecl">CConsDecl</a>] -> CTypeDecl</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CTypeSyn_CONS"><code><span class="opname">CTypeSyn</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CVisibility">CVisibility</a> ->  [<a href="#CTVarIName">CTVarIName</a>] ->  <a href="#CTypeExpr">CTypeExpr</a> -> CTypeDecl</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CNewType_CONS"><code><span class="opname">CNewType</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CVisibility">CVisibility</a> ->  [<a href="#CTVarIName">CTVarIName</a>] ->  <a href="#CConsDecl">CConsDecl</a> -> CTypeDecl</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CTVarIName"><span class="typeheader">CTVarIName</span></span>
+              <p>
+                The type for representing type variables.
+They are represented by (i,n) where i is a type variable index
+which is unique inside a function and n is a name (if possible,
+the name written in the source program).
+              </p>
+              
+              <p>
+                <span class="explaincat">Type synonym:</span>&nbsp;<code>CTVarIName = (Int,String)</code>
+              </p>
+              
+              <hr/>
+              <span class="anchored" id="CConsDecl"><span class="typeheader">CConsDecl</span></span>
+              <p>
+                A constructor declaration consists of the name of the
+constructor and a list of the argument types of the constructor.
+The arity equals the number of types.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CCons_CONS"><code><span class="opname">CCons</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CVisibility">CVisibility</a> ->  [<a href="#CTypeExpr">CTypeExpr</a>] -> CConsDecl</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CRecord_CONS"><code><span class="opname">CRecord</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CVisibility">CVisibility</a> ->  [<a href="#CFieldDecl">CFieldDecl</a>] -> CConsDecl</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CFieldDecl"><span class="typeheader">CFieldDecl</span></span>
+              <p>
+                A record field declaration consists of the name of the
+the label, the visibility and its corresponding type.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CField_CONS"><code><span class="opname">CField</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CVisibility">CVisibility</a> ->  <a href="#CTypeExpr">CTypeExpr</a> -> CFieldDecl</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CTypeExpr"><span class="typeheader">CTypeExpr</span></span>
+              <p>
+                Type expression.
+A type expression is either a type variable, a function type,
+or a type constructor application.
+              </p>
+              
+              <p>
+                Note: the names of the predefined type constructors are
+      "Int", "Float", "Bool", "Char", "IO", "Success",
+      "()" (unit type), "(,...,)" (tuple types), "[]" (list type)
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CTVar_CONS"><code><span class="opname">CTVar</span>
+                      ::  <a href="#CTVarIName">CTVarIName</a> -> CTypeExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CFuncType_CONS"><code><span class="opname">CFuncType</span>
+                      ::  <a href="#CTypeExpr">CTypeExpr</a> ->  <a href="#CTypeExpr">CTypeExpr</a> -> CTypeExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CTCons_CONS"><code><span class="opname">CTCons</span>
+                      ::  <a href="#QName">QName</a> ->  [<a href="#CTypeExpr">CTypeExpr</a>] -> CTypeExpr</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CField"><span class="typeheader">CField</span></span>
+              <p>
+                Labeled record fields
+              </p>
+              
+              <p>
+                <span class="explaincat">Type synonym:</span>&nbsp;<code>CField a = (<a href="#QName">QName</a>,a)</code>
+              </p>
+              
+              <hr/>
+              <span class="anchored" id="COpDecl"><span class="typeheader">COpDecl</span></span>
+              <p>
+                Data type for operator declarations.
+An operator declaration "fix p n" in Curry corresponds to the
+AbstractCurry term (COp n fix p).
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="COp_CONS"><code><span class="opname">COp</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#CFixity">CFixity</a> ->  Int -> COpDecl</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CFixity"><span class="typeheader">CFixity</span></span>
+              <p>
+                Data type for operator associativity
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CInfixOp_CONS"><code><span class="opname">CInfixOp</span>
+                      :: CFixity</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CInfixlOp_CONS"><code><span class="opname">CInfixlOp</span>
+                      :: CFixity</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CInfixrOp_CONS"><code><span class="opname">CInfixrOp</span>
+                      :: CFixity</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="Arity"><span class="typeheader">Arity</span></span>
+              <p>
+                Function arity
+              </p>
+              
+              <p>
+                <span class="explaincat">Type synonym:</span>&nbsp;<code>Arity = Int</code>
+              </p>
+              
+              <hr/>
+              <span class="anchored" id="CFuncDecl"><span class="typeheader">CFuncDecl</span></span>
+              <p>
+                Data type for representing function declarations.
+              </p>
+              
+              <p>
+                A function declaration in AbstractCurry is a term of the form
+              </p>
+              
+              <p>
+                <code>(CFunc name arity visibility type (CRules eval [CRule rule1,...,rulek]))</code>
+              </p>
+              
+              <p>
+                and represents the function <code>name</code> defined by the rules
+<code>rule1,...,rulek</code>.
+              </p>
+              
+              <p>
+                Note: the variable indices are unique inside each rule
+              </p>
+              
+              <p>
+                Thus, a function declaration consists of the name, arity, type, and
+a list of rules.
+              </p>
+              
+              <p>
+                A function declaration with the constructor <code>CmtFunc</code>
+is similarly to <code>CFunc</code> but has a comment
+as an additional first argument. This comment could be used
+by pretty printers that generate a readable Curry program
+containing documentation comments.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CFunc_CONS"><code><span class="opname">CFunc</span>
+                      ::  <a href="#QName">QName</a> ->  <a href="#Arity">Arity</a> ->  <a href="#CVisibility">CVisibility</a> ->  <a href="#CTypeExpr">CTypeExpr</a> ->  [<a href="#CRule">CRule</a>] -> CFuncDecl</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CmtFunc_CONS"><code><span class="opname">CmtFunc</span>
+                      ::  String ->  <a href="#QName">QName</a> ->  <a href="#Arity">Arity</a> ->  <a href="#CVisibility">CVisibility</a> ->  <a href="#CTypeExpr">CTypeExpr</a> ->  [<a href="#CRule">CRule</a>] -> CFuncDecl</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CRule"><span class="typeheader">CRule</span></span>
+              <p>
+                The general form of a function rule. It consists of a list of patterns
+(left-hand side) and the right-hand side for these patterns.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CRule_CONS"><code><span class="opname">CRule</span>
+                      ::  [<a href="#CPattern">CPattern</a>] ->  <a href="#CRhs">CRhs</a> -> CRule</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CRhs"><span class="typeheader">CRhs</span></span>
+              <p>
+                Right-hand-side of a <code><a href="#CRule">CRule</a></code> or a <code>case</code>
+                expression.
+It is either a simple unconditional right-hand side or
+a list of guards with their corresponding right-hand sides, and
+a list of local declarations.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CSimpleRhs_CONS"><code><span class="opname">CSimpleRhs</span>
+                      ::  <a href="#CExpr">CExpr</a> ->  [<a href="#CLocalDecl">CLocalDecl</a>] -> CRhs</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CGuardedRhs_CONS"><code><span class="opname">CGuardedRhs</span>
+                      ::  [(<a href="#CExpr">CExpr</a>,<a href="#CExpr">CExpr</a>)] ->  [<a href="#CLocalDecl">CLocalDecl</a>] -> CRhs</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CLocalDecl"><span class="typeheader">CLocalDecl</span></span>
+              <p>
+                Data type for representing local (let/where) declarations
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CLocalFunc_CONS"><code><span class="opname">CLocalFunc</span>
+                      ::  <a href="#CFuncDecl">CFuncDecl</a> -> CLocalDecl</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CLocalPat_CONS"><code><span class="opname">CLocalPat</span>
+                      ::  <a href="#CPattern">CPattern</a> ->  <a href="#CRhs">CRhs</a> -> CLocalDecl</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CLocalVars_CONS"><code><span class="opname">CLocalVars</span>
+                      ::  [<a href="#CVarIName">CVarIName</a>] -> CLocalDecl</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CVarIName"><span class="typeheader">CVarIName</span></span>
+              <p>
+                Data types for representing object variables.
+Object variables occurring in expressions are represented by (Var i)
+where i is a variable index.
+              </p>
+              
+              <p>
+                <span class="explaincat">Type synonym:</span>&nbsp;<code>CVarIName = (Int,String)</code>
+              </p>
+              
+              <hr/>
+              <span class="anchored" id="CPattern"><span class="typeheader">CPattern</span></span>
+              <p>
+                Data type for representing pattern expressions.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CPVar_CONS"><code><span class="opname">CPVar</span>
+                      ::  <a href="#CVarIName">CVarIName</a> -> CPattern</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CPLit_CONS"><code><span class="opname">CPLit</span>
+                      ::  <a href="#CLiteral">CLiteral</a> -> CPattern</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CPComb_CONS"><code><span class="opname">CPComb</span>
+                      ::  <a href="#QName">QName</a> ->  [<a href="#CPattern">CPattern</a>] -> CPattern</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CPAs_CONS"><code><span class="opname">CPAs</span>
+                      ::  <a href="#CVarIName">CVarIName</a> ->  <a href="#CPattern">CPattern</a> -> CPattern</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CPFuncComb_CONS"><code><span class="opname">CPFuncComb</span>
+                      ::  <a href="#QName">QName</a> ->  [<a href="#CPattern">CPattern</a>] -> CPattern</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CPLazy_CONS"><code><span class="opname">CPLazy</span>
+                      ::  <a href="#CPattern">CPattern</a> -> CPattern</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CPRecord_CONS"><code><span class="opname">CPRecord</span>
+                      ::  <a href="#QName">QName</a> ->  [<a href="#CField">CField</a> <a href="#CPattern">CPattern</a>] -> CPattern</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CExpr"><span class="typeheader">CExpr</span></span>
+              <p>
+                Data type for representing Curry expressions.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CVar_CONS"><code><span class="opname">CVar</span>
+                      ::  <a href="#CVarIName">CVarIName</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CLit_CONS"><code><span class="opname">CLit</span>
+                      ::  <a href="#CLiteral">CLiteral</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CSymbol_CONS"><code><span class="opname">CSymbol</span>
+                      ::  <a href="#QName">QName</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CApply_CONS"><code><span class="opname">CApply</span>
+                      ::  <a href="#CExpr">CExpr</a> ->  <a href="#CExpr">CExpr</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CLambda_CONS"><code><span class="opname">CLambda</span>
+                      ::  [<a href="#CPattern">CPattern</a>] ->  <a href="#CExpr">CExpr</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CLetDecl_CONS"><code><span class="opname">CLetDecl</span>
+                      ::  [<a href="#CLocalDecl">CLocalDecl</a>] ->  <a href="#CExpr">CExpr</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CDoExpr_CONS"><code><span class="opname">CDoExpr</span>
+                      ::  [<a href="#CStatement">CStatement</a>] -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CListComp_CONS"><code><span class="opname">CListComp</span>
+                      ::  <a href="#CExpr">CExpr</a> ->  [<a href="#CStatement">CStatement</a>] -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CCase_CONS"><code><span class="opname">CCase</span>
+                      ::  <a href="#CCaseType">CCaseType</a> ->  <a href="#CExpr">CExpr</a> ->  [(<a href="#CPattern">CPattern</a>,<a href="#CRhs">CRhs</a>)] -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CTyped_CONS"><code><span class="opname">CTyped</span>
+                      ::  <a href="#CExpr">CExpr</a> ->  <a href="#CTypeExpr">CTypeExpr</a> -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CRecConstr_CONS"><code><span class="opname">CRecConstr</span>
+                      ::  <a href="#QName">QName</a> ->  [<a href="#CField">CField</a> <a href="#CExpr">CExpr</a>] -> CExpr</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CRecUpdate_CONS"><code><span class="opname">CRecUpdate</span>
+                      ::  <a href="#CExpr">CExpr</a> ->  [<a href="#CField">CField</a> <a href="#CExpr">CExpr</a>] -> CExpr</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CLiteral"><span class="typeheader">CLiteral</span></span>
+              <p>
+                Data type for representing literals occurring in an expression.
+It is either an integer, a float, or a character constant.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CIntc_CONS"><code><span class="opname">CIntc</span>
+                      ::  Int -> CLiteral</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CFloatc_CONS"><code><span class="opname">CFloatc</span>
+                      ::  Float -> CLiteral</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CCharc_CONS"><code><span class="opname">CCharc</span>
+                      ::  Char -> CLiteral</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CStringc_CONS"><code><span class="opname">CStringc</span>
+                      ::  String -> CLiteral</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CStatement"><span class="typeheader">CStatement</span></span>
+              <p>
+                Data type for representing statements in do expressions and
+list comprehensions.
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CSExpr_CONS"><code><span class="opname">CSExpr</span>
+                      ::  <a href="#CExpr">CExpr</a> -> CStatement</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CSPat_CONS"><code><span class="opname">CSPat</span>
+                      ::  <a href="#CPattern">CPattern</a> ->  <a href="#CExpr">CExpr</a> -> CStatement</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CSLet_CONS"><code><span class="opname">CSLet</span>
+                      ::  [<a href="#CLocalDecl">CLocalDecl</a>] -> CStatement</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              <span class="anchored" id="CCaseType"><span class="typeheader">CCaseType</span></span>
+              <p>
+                Type of case expressions
+              </p>
+              
+              <p>
+                <span class="explaincat">Constructors:</span>
+              </p>
+              
+              <ul>
+                
+                <li>
+                  <span class="anchored" id="CRigid_CONS"><code><span class="opname">CRigid</span>
+                      :: CCaseType</code></span>
+                </li>
+                
+                <li>
+                  <span class="anchored" id="CFlex_CONS"><code><span class="opname">CFlex</span>
+                      :: CCaseType</code></span>
+                </li>
+                
+              </ul>
+              
+              <hr/>
+              </section><section id="exported_operations">
+              <h2>
+                Exported operations:
+              </h2>
+              
+              <div class="anchored" id="version">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Types_curry.html#version">version</a></span>
+                          :: String</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Current version of AbstractCurry
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="pre">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Types_curry.html#pre">pre</a></span>
+                          :: String -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Converts a string into a qualified name of the Prelude.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              </section>
+          </div>
+          
+        </div>
+        
+        <hr/>
+        <footer><i>Generated by <b>CurryDoc</b>
+            (Version 0.8.0 of June 4, 2015) at Sep 29 09:01:45 2015</i></footer>
+      </div>
+      
+    </div>
+    
+  </body>
+  
+</html>

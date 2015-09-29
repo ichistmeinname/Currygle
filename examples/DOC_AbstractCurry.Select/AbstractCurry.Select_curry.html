@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Module AbstractCurry.Select</title>
+<link rel="stylesheet" type="text/css" href="currysource.css"/>
+</head>
+<body>
+<table><tbody><tr>
+<td class="linenumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+</pre></td>
+<td class="sourcecode"><pre><span class="comment">------------------------------------------------------------------------</span>
+<span class="comment">--- This library provides some useful operations to select components</span>
+<span class="comment">--- in AbstractCurry programs, i.e., it provides a collection of</span>
+<span class="comment">--- selector functions for AbstractCurry.</span>
+<span class="comment">---</span>
+<span class="comment">--- @version September 2015</span>
+<span class="comment">--- @category meta</span>
+<span class="comment">------------------------------------------------------------------------</span>
+
+<span class="keyword">module</span> <span class="module">AbstractCurry.Select</span> <span class="keyword">where</span>
+
+<span class="keyword">import</span> <span class="module">AbstractCurry.Types</span>
+<span class="keyword">import</span> <span class="module">List</span><span class="symbol">(</span><a href="List_curry.html#union"><span class="func">union</span></a><span class="symbol">)</span>
+
+<span class="comment">------------------------------------------------------------------------</span>
+<span class="comment">-- Selectors for type expressions</span>
+
+<span class="comment">--- Returns the name of a given type declaration</span>
+<a href="#typeName"><span class="func">typeName</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeDecl"><span class="type">CTypeDecl</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#QName"><span class="type">QName</span></a>
+<span class="func" id="typeName">typeName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CType"><span class="cons">CType</span></a>    <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+<span class="func">typeName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTypeSyn"><span class="cons">CTypeSyn</span></a> <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+<span class="func">typeName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CNewType"><span class="cons">CNewType</span></a> <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+
+<span class="comment">--- Returns the visibility of a given type declaration</span>
+<a href="#typeVis"><span class="func">typeVis</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeDecl"><span class="type">CTypeDecl</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#CVisibility"><span class="type">CVisibility</span></a>
+<span class="func" id="typeVis">typeVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CType"><span class="cons">CType</span></a>    <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+<span class="func">typeVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTypeSyn"><span class="cons">CTypeSyn</span></a> <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+<span class="func">typeVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CNewType"><span class="cons">CNewType</span></a> <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+
+<span class="comment">--- Returns the constructors of a given type declaration</span>
+<a href="#typeCons"><span class="func">typeCons</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeDecl"><span class="type">CTypeDecl</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CConsDecl"><span class="type">CConsDecl</span></a><span class="symbol">]</span>
+<span class="func" id="typeCons">typeCons</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CType"><span class="cons">CType</span></a>    <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="ident">cs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">cs</span>
+<span class="func">typeCons</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTypeSyn"><span class="cons">CTypeSyn</span></a> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">typeCons</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CNewType"><span class="cons">CNewType</span></a> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="ident">c</span> <span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="ident">c</span><span class="symbol">]</span>
+
+<span class="comment">--- Returns the name of a given constructor declaration</span>
+<a href="#consName"><span class="func">consName</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CConsDecl"><span class="type">CConsDecl</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#QName"><span class="type">QName</span></a>
+<span class="func" id="consName">consName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CCons"><span class="cons">CCons</span></a>   <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+<span class="func">consName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CRecord"><span class="cons">CRecord</span></a> <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+
+<span class="comment">--- Returns the visibility of a given constructor declaration</span>
+<a href="#consVis"><span class="func">consVis</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CConsDecl"><span class="type">CConsDecl</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#CVisibility"><span class="type">CVisibility</span></a>
+<span class="func" id="consVis">consVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CCons"><span class="cons">CCons</span></a>   <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+<span class="func">consVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CRecord"><span class="cons">CRecord</span></a> <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+
+<span class="comment">--- Returns true if the type expression is a base type.</span>
+<a href="#isBaseType"><span class="func">isBaseType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isBaseType">isBaseType</span> <span class="ident">texp</span> <span class="symbol">=</span> <span class="keyword">case</span> <span class="ident">texp</span> <span class="keyword">of</span>
+  <a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="symbol">_</span> <span class="ident">args</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#null"><span class="func">null</span></a> <span class="ident">args</span>
+  <span class="symbol">_</span>             <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Returns true if the type expression contains type variables.</span>
+<a href="#isPolyType"><span class="func">isPolyType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isPolyType">isPolyType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a>                <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#True"><span class="cons">True</span></a>
+<span class="func">isPolyType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a> <span class="ident">domain</span> <span class="ident">range</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#isPolyType"><span class="func">isPolyType</span></a> <span class="ident">domain</span> <a href="Prelude_curry.html#%7C%7C"><span class="func">||</span></a> <a href="#isPolyType"><span class="func">isPolyType</span></a> <span class="ident">range</span>
+<span class="func">isPolyType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a>      <span class="symbol">_</span> <span class="ident">typelist</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#any"><span class="func">any</span></a> <a href="#isPolyType"><span class="func">isPolyType</span></a> <span class="ident">typelist</span>
+
+<span class="comment">--- Returns true if the type expression is a functional type.</span>
+<a href="#isFunctionalType"><span class="func">isFunctionalType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isFunctionalType">isFunctionalType</span> <span class="ident">texp</span> <span class="symbol">=</span> <span class="keyword">case</span> <span class="ident">texp</span> <span class="keyword">of</span>
+  <a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#True"><span class="cons">True</span></a>
+  <span class="symbol">_</span>             <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Returns true if the type expression is (IO t).</span>
+<a href="#isIOType"><span class="func">isIOType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isIOType">isIOType</span> <span class="ident">texp</span> <span class="symbol">=</span> <span class="keyword">case</span> <span class="ident">texp</span> <span class="keyword">of</span>
+  <a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="ident">tc</span> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <span class="ident">tc</span> <a href="Prelude_curry.html#%3D%3D"><span class="func">==</span></a> <a href="AbstractCurry.Types_curry.html#pre"><span class="func">pre</span></a> <span class="string">&quot;IO&quot;</span>
+  <span class="symbol">_</span>           <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Returns true if the type expression is (IO t) with t/=() and</span>
+<span class="comment">--- t is not functional</span>
+<a href="#isIOReturnType"><span class="func">isIOReturnType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isIOReturnType">isIOReturnType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a>            <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+<span class="func">isIOReturnType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a>      <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+<span class="func">isIOReturnType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="ident">tc</span> <span class="ident">typelist</span><span class="symbol">)</span> <span class="symbol">=</span>
+  <span class="ident">tc</span><a href="Prelude_curry.html#%3D%3D"><span class="func">==</span></a><a href="AbstractCurry.Types_curry.html#pre"><span class="func">pre</span></a> <span class="string">&quot;IO&quot;</span> <a href="Prelude_curry.html#%26%26"><span class="func">&amp;&amp;</span></a> <a href="Prelude_curry.html#head"><span class="func">head</span></a> <span class="ident">typelist</span> <a href="Prelude_curry.html#%2F%3D"><span class="func">/=</span></a> <a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#pre"><span class="func">pre</span></a> <span class="string">&quot;()&quot;</span><span class="symbol">)</span> <span class="symbol">[</span><span class="symbol">]</span>
+  <a href="Prelude_curry.html#%26%26"><span class="func">&amp;&amp;</span></a> <a href="Prelude_curry.html#not"><span class="func">not</span></a> <span class="symbol">(</span><a href="#isFunctionalType"><span class="func">isFunctionalType</span></a> <span class="symbol">(</span><a href="Prelude_curry.html#head"><span class="func">head</span></a> <span class="ident">typelist</span><span class="symbol">)</span><span class="symbol">)</span>
+
+<span class="comment">--- Returns all argument types from a functional type</span>
+<a href="#argTypes"><span class="func">argTypes</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a><span class="symbol">]</span>
+<span class="func" id="argTypes">argTypes</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a>         <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">argTypes</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a>      <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">argTypes</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a> <span class="ident">t1</span> <span class="ident">t2</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">t1</span> <span class="symbol">:</span> <a href="#argTypes"><span class="func">argTypes</span></a> <span class="ident">t2</span>
+
+<span class="comment">--- Return the result type from a (nested) functional type</span>
+<a href="#resultType"><span class="func">resultType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a>
+<span class="func" id="resultType">resultType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a>          <span class="ident">n</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a> <span class="ident">n</span>
+<span class="func">resultType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="ident">name</span> <span class="ident">args</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="ident">name</span> <span class="ident">args</span>
+<span class="func">resultType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a>   <span class="symbol">_</span> <span class="ident">t2</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#resultType"><span class="func">resultType</span></a> <span class="ident">t2</span>
+
+<span class="comment">--- Returns all type variables occurring in a type expression.</span>
+<a href="#tvarsOfType"><span class="func">tvarsOfType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CTVarIName"><span class="type">CTVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="tvarsOfType">tvarsOfType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a> <span class="ident">v</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="ident">v</span><span class="symbol">]</span>
+<span class="func">tvarsOfType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a> <span class="ident">t1</span> <span class="ident">t2</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#tvarsOfType"><span class="func">tvarsOfType</span></a> <span class="ident">t1</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#tvarsOfType"><span class="func">tvarsOfType</span></a> <span class="ident">t2</span>
+<span class="func">tvarsOfType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="symbol">_</span> <span class="ident">args</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#tvarsOfType"><span class="func">tvarsOfType</span></a> <span class="ident">args</span>
+
+<span class="comment">--- Returns all modules used in the given type.</span>
+<a href="#modsOfType"><span class="func">modsOfType</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CTypeExpr"><span class="type">CTypeExpr</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="Prelude_curry.html#String"><span class="type">String</span></a><span class="symbol">]</span>
+<span class="func" id="modsOfType">modsOfType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTVar"><span class="cons">CTVar</span></a>            <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">modsOfType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFuncType"><span class="cons">CFuncType</span></a>    <span class="ident">t1</span> <span class="ident">t2</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#modsOfType"><span class="func">modsOfType</span></a> <span class="ident">t1</span> <span class="symbol">`</span><a href="List_curry.html#union"><span class="func">union</span></a><span class="symbol">`</span> <a href="#modsOfType"><span class="func">modsOfType</span></a> <span class="ident">t2</span>
+<span class="func">modsOfType</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTCons"><span class="cons">CTCons</span></a> <span class="symbol">(</span><span class="ident">mod</span><span class="symbol">,</span><span class="symbol">_</span><span class="symbol">)</span> <span class="ident">tys</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#foldr"><span class="func">foldr</span></a> <a href="List_curry.html#union"><span class="func">union</span></a> <span class="symbol">[</span><span class="ident">mod</span><span class="symbol">]</span> <a href="Prelude_curry.html#%24"><span class="func">$</span></a> <a href="Prelude_curry.html#map"><span class="func">map</span></a> <a href="#modsOfType"><span class="func">modsOfType</span></a> <span class="ident">tys</span>
+
+<span class="comment">------------------------------------------------------------------------</span>
+<span class="comment">-- Selectors for function definitions</span>
+
+<span class="comment">--- Returns the name of a given function declaration</span>
+<a href="#funcName"><span class="func">funcName</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CFuncDecl"><span class="type">CFuncDecl</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#QName"><span class="type">QName</span></a>
+<span class="func" id="funcName">funcName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFunc"><span class="cons">CFunc</span></a>     <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+<span class="func">funcName</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CmtFunc"><span class="cons">CmtFunc</span></a> <span class="symbol">_</span> <span class="ident">n</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">n</span>
+
+<span class="comment">--- Returns the visibility of a given function declaration</span>
+<a href="#funcVis"><span class="func">funcVis</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CFuncDecl"><span class="type">CFuncDecl</span></a> <span class="symbol">-&gt;</span> <a href="AbstractCurry.Types_curry.html#CVisibility"><span class="type">CVisibility</span></a>
+<span class="func" id="funcVis">funcVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFunc"><span class="cons">CFunc</span></a>     <span class="symbol">_</span> <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+<span class="func">funcVis</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CmtFunc"><span class="cons">CmtFunc</span></a> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="ident">vis</span> <span class="symbol">_</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">vis</span>
+
+<span class="comment">------------------------------------------------------------------------</span>
+<span class="comment">-- Operations to compute the variables occurring in a pattern or expression:</span>
+
+<span class="comment">--- Returns list of all variables occurring in a pattern.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CPattern"><span class="type">CPattern</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfPat">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPVar"><span class="cons">CPVar</span></a> <span class="ident">v</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="ident">v</span><span class="symbol">]</span>
+<span class="func">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPLit"><span class="cons">CPLit</span></a> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPComb"><span class="cons">CPComb</span></a> <span class="symbol">_</span> <span class="ident">pats</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">pats</span>
+<span class="func">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPAs"><span class="cons">CPAs</span></a> <span class="ident">v</span> <span class="ident">pat</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">v</span> <span class="symbol">:</span> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">pat</span>
+<span class="func">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPFuncComb"><span class="cons">CPFuncComb</span></a> <span class="symbol">_</span> <span class="ident">pats</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">pats</span>
+<span class="func">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPLazy"><span class="cons">CPLazy</span></a> <span class="ident">pat</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">pat</span>
+<span class="func">varsOfPat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CPRecord"><span class="cons">CPRecord</span></a> <span class="symbol">_</span> <span class="ident">recpats</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <span class="symbol">(</span><a href="#varsOfPat"><span class="func">varsOfPat</span></a> <a href="Prelude_curry.html#."><span class="func">.</span></a> <a href="Prelude_curry.html#snd"><span class="func">snd</span></a><span class="symbol">)</span> <span class="ident">recpats</span>
+
+<span class="comment">--- Returns list of all variables occurring in an expression.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CExpr"><span class="type">CExpr</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfExp">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CVar"><span class="cons">CVar</span></a> <span class="ident">v</span><span class="symbol">)</span>             <span class="symbol">=</span> <span class="symbol">[</span><span class="ident">v</span><span class="symbol">]</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CLit"><span class="cons">CLit</span></a> <span class="symbol">_</span><span class="symbol">)</span>             <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CSymbol"><span class="cons">CSymbol</span></a> <span class="symbol">_</span><span class="symbol">)</span>          <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CApply"><span class="cons">CApply</span></a> <span class="ident">e1</span> <span class="ident">e2</span><span class="symbol">)</span>       <span class="symbol">=</span> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">e1</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">e2</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CLambda"><span class="cons">CLambda</span></a> <span class="ident">pl</span> <span class="ident">le</span><span class="symbol">)</span>      <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">pl</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">le</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CLetDecl"><span class="cons">CLetDecl</span></a> <span class="ident">ld</span> <span class="ident">le</span><span class="symbol">)</span>     <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfLDecl"><span class="func">varsOfLDecl</span></a> <span class="ident">ld</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">le</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CDoExpr"><span class="cons">CDoExpr</span></a> <span class="ident">sl</span><span class="symbol">)</span>         <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfStat"><span class="func">varsOfStat</span></a> <span class="ident">sl</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CListComp"><span class="cons">CListComp</span></a> <span class="ident">le</span> <span class="ident">sl</span><span class="symbol">)</span>    <span class="symbol">=</span> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">le</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfStat"><span class="func">varsOfStat</span></a> <span class="ident">sl</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CCase"><span class="cons">CCase</span></a> <span class="symbol">_</span> <span class="ident">ce</span> <span class="ident">bl</span><span class="symbol">)</span>      <span class="symbol">=</span>
+  <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">ce</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <span class="symbol">(</span><span class="symbol">\</span> <span class="symbol">(</span><span class="ident">p</span><span class="symbol">,</span><span class="ident">rhs</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">p</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfRhs"><span class="func">varsOfRhs</span></a> <span class="ident">rhs</span><span class="symbol">)</span> <span class="ident">bl</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CTyped"><span class="cons">CTyped</span></a> <span class="ident">te</span> <span class="symbol">_</span><span class="symbol">)</span>        <span class="symbol">=</span> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">te</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CRecConstr"><span class="cons">CRecConstr</span></a> <span class="symbol">_</span> <span class="ident">upds</span><span class="symbol">)</span>  <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <span class="symbol">(</span><a href="#varsOfExp"><span class="func">varsOfExp</span></a> <a href="Prelude_curry.html#."><span class="func">.</span></a> <a href="Prelude_curry.html#snd"><span class="func">snd</span></a><span class="symbol">)</span> <span class="ident">upds</span>
+<span class="func">varsOfExp</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CRecUpdate"><span class="cons">CRecUpdate</span></a> <span class="ident">e</span> <span class="ident">upds</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">e</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <span class="symbol">(</span><a href="#varsOfExp"><span class="func">varsOfExp</span></a> <a href="Prelude_curry.html#."><span class="func">.</span></a> <a href="Prelude_curry.html#snd"><span class="func">snd</span></a><span class="symbol">)</span> <span class="ident">upds</span>
+
+<span class="comment">--- Returns list of all variables occurring in a right-hand side.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfRhs"><span class="func">varsOfRhs</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CRhs"><span class="type">CRhs</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfRhs">varsOfRhs</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CSimpleRhs"><span class="cons">CSimpleRhs</span></a> <span class="ident">rhs</span> <span class="ident">ldecls</span><span class="symbol">)</span> <span class="symbol">=</span>
+  <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">rhs</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfLDecl"><span class="func">varsOfLDecl</span></a> <span class="ident">ldecls</span>
+<span class="func">varsOfRhs</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CGuardedRhs"><span class="cons">CGuardedRhs</span></a> <span class="ident">gs</span>  <span class="ident">ldecls</span><span class="symbol">)</span> <span class="symbol">=</span>
+  <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <span class="symbol">(</span><span class="symbol">\</span> <span class="symbol">(</span><span class="ident">g</span><span class="symbol">,</span><span class="ident">e</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">g</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">e</span><span class="symbol">)</span> <span class="ident">gs</span>  <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a>
+  <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfLDecl"><span class="func">varsOfLDecl</span></a> <span class="ident">ldecls</span>
+
+<span class="comment">--- Returns list of all variables occurring in a statement.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfStat"><span class="func">varsOfStat</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CStatement"><span class="type">CStatement</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfStat">varsOfStat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CSExpr"><span class="cons">CSExpr</span></a> <span class="ident">e</span><span class="symbol">)</span>  <span class="symbol">=</span> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">e</span>
+<span class="func">varsOfStat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CSPat"><span class="cons">CSPat</span></a> <span class="ident">p</span> <span class="ident">e</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">p</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfExp"><span class="func">varsOfExp</span></a> <span class="ident">e</span>
+<span class="func">varsOfStat</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CSLet"><span class="cons">CSLet</span></a> <span class="ident">ld</span><span class="symbol">)</span>  <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfLDecl"><span class="func">varsOfLDecl</span></a> <span class="ident">ld</span>
+
+<span class="comment">--- Returns list of all variables occurring in a local declaration.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfLDecl"><span class="func">varsOfLDecl</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CLocalDecl"><span class="type">CLocalDecl</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfLDecl">varsOfLDecl</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CLocalFunc"><span class="cons">CLocalFunc</span></a> <span class="ident">f</span><span class="symbol">)</span>     <span class="symbol">=</span> <a href="#varsOfFDecl"><span class="func">varsOfFDecl</span></a> <span class="ident">f</span>
+<span class="func">varsOfLDecl</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CLocalPat"><span class="cons">CLocalPat</span></a> <span class="ident">p</span> <span class="ident">rhs</span><span class="symbol">)</span>  <span class="symbol">=</span> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">p</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfRhs"><span class="func">varsOfRhs</span></a> <span class="ident">rhs</span>
+<span class="func">varsOfLDecl</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CLocalVars"><span class="cons">CLocalVars</span></a> <span class="ident">lvars</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">lvars</span>
+
+<span class="comment">--- Returns list of all variables occurring in a function declaration.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfFDecl"><span class="func">varsOfFDecl</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CFuncDecl"><span class="type">CFuncDecl</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfFDecl">varsOfFDecl</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CFunc"><span class="cons">CFunc</span></a>     <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfRule"><span class="func">varsOfRule</span></a> <span class="ident">r</span>
+<span class="func">varsOfFDecl</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CmtFunc"><span class="cons">CmtFunc</span></a> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="symbol">_</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfRule"><span class="func">varsOfRule</span></a> <span class="ident">r</span>
+
+<span class="comment">--- Returns list of all variables occurring in a rule.</span>
+<span class="comment">--- Each occurrence corresponds to one element, i.e., the list might</span>
+<span class="comment">--- contain multiple elements.</span>
+<a href="#varsOfRule"><span class="func">varsOfRule</span></a> <span class="symbol">::</span> <a href="AbstractCurry.Types_curry.html#CRule"><span class="type">CRule</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><a href="AbstractCurry.Types_curry.html#CVarIName"><span class="type">CVarIName</span></a><span class="symbol">]</span>
+<span class="func" id="varsOfRule">varsOfRule</span> <span class="symbol">(</span><a href="AbstractCurry.Types_curry.html#CRule"><span class="cons">CRule</span></a> <span class="ident">pats</span> <span class="ident">rhs</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#concatMap"><span class="func">concatMap</span></a> <a href="#varsOfPat"><span class="func">varsOfPat</span></a> <span class="ident">pats</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="#varsOfRhs"><span class="func">varsOfRhs</span></a> <span class="ident">rhs</span>
+
+<span class="comment">------------------------------------------------------------------------</span>
+<span class="comment">--- Tests whether a module name is the prelude.</span>
+<a href="#isPrelude"><span class="func">isPrelude</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#String"><span class="type">String</span></a> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isPrelude">isPrelude</span> <span class="ident">m</span> <span class="symbol">=</span> <span class="ident">m</span><a href="Prelude_curry.html#%3D%3D"><span class="func">==</span></a><span class="string">&quot;Prelude&quot;</span>
+
+<span class="comment">------------------------------------------------------------------------</span>
+</pre></td>
+</tr></tbody></table>
+</body>
+</html>

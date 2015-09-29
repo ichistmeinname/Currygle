@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  
+  <head>
+    
+    <title>
+      Module AbstractCurry.Select
+    </title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <link rel="shortcut icon" href="http://www-ps.informatik.uni-kiel.de/kics2/img/favicon.ico"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap-responsive.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/font-awesome.min.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/currydoc.css"/>
+    
+  </head>
+  
+  <body>
+    <nav>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        
+        <div class="navbar-inner">
+          
+          <div class="container-fluid">
+            
+            <ul class="nav">
+              
+              <li>
+                <a href="?">Module AbstractCurry.Select</a>
+              </li>
+              
+              <li>
+                <a href="#imported_modules">Imports</a>
+              </li>
+              
+              <li>
+                <a href="#exported_operations">Operations</a>
+              </li>
+              
+            </ul>
+            
+            <div class="navbar-text pull-right">
+              
+              <ul class="nav">
+                
+                <li>
+                  <a href="http://www.curry-language.org" target="_blank"><i class="fa fa-external-link"></i>
+                    Curry Homepage</a>
+                </li>
+                
+                <li>
+                  <a href="http://www-ps.informatik.uni-kiel.de/kics2/lib/" target="_blank"><i class="fa fa-external-link"></i>
+                    KiCS2 Libraries</a>
+                </li>
+                
+                <li>
+                  <a href="http://www.curry-language.org/tools/currydoc" target="_blank"><i class="fa fa-external-link"></i>
+                    About CurryDoc</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      </nav>
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <header class="hero-unit">
+          <h1>
+            Module <a href="AbstractCurry.Select_curry.html">AbstractCurry.Select</a>
+          </h1>
+          </header>
+      </div>
+      
+    </div>
+    
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <nav>
+          <div class="span3">
+            
+            <div class="well sidebar-nav">
+              <b>Exported names:</b>
+              <ul class="nav nav-list">
+                
+                <li class="nav-header">
+                  Operations:
+                </li>
+                
+                <li>
+                  <a href="#argTypes">argTypes</a>
+                </li>
+                
+                <li>
+                  <a href="#consName">consName</a>
+                </li>
+                
+                <li>
+                  <a href="#consVis">consVis</a>
+                </li>
+                
+                <li>
+                  <a href="#funcName">funcName</a>
+                </li>
+                
+                <li>
+                  <a href="#funcVis">funcVis</a>
+                </li>
+                
+                <li>
+                  <a href="#isBaseType">isBaseType</a>
+                </li>
+                
+                <li>
+                  <a href="#isFunctionalType">isFunctionalType</a>
+                </li>
+                
+                <li>
+                  <a href="#isIOReturnType">isIOReturnType</a>
+                </li>
+                
+                <li>
+                  <a href="#isIOType">isIOType</a>
+                </li>
+                
+                <li>
+                  <a href="#isPolyType">isPolyType</a>
+                </li>
+                
+                <li>
+                  <a href="#isPrelude">isPrelude</a>
+                </li>
+                
+                <li>
+                  <a href="#modsOfType">modsOfType</a>
+                </li>
+                
+                <li>
+                  <a href="#resultType">resultType</a>
+                </li>
+                
+                <li>
+                  <a href="#tvarsOfType">tvarsOfType</a>
+                </li>
+                
+                <li>
+                  <a href="#typeCons">typeCons</a>
+                </li>
+                
+                <li>
+                  <a href="#typeName">typeName</a>
+                </li>
+                
+                <li>
+                  <a href="#typeVis">typeVis</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfExp">varsOfExp</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfFDecl">varsOfFDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfLDecl">varsOfLDecl</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfPat">varsOfPat</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfRhs">varsOfRhs</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfRule">varsOfRule</a>
+                </li>
+                
+                <li>
+                  <a href="#varsOfStat">varsOfStat</a>
+                </li>
+                
+              </ul>
+              <span class="anchored" id="imported_modules"><b>Imported modules:</b></span>
+              <ul class="nav nav-list">
+                
+                <li>
+                  <a href="Prelude.html">Prelude</a>
+                </li>
+                
+                <li>
+                  <a href="AbstractCurry.Types.html">AbstractCurry.Types</a>
+                </li>
+                
+                <li>
+                  <a href="List.html">List</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          </nav>
+        <div class="span9">
+          
+          <div class="row-fluid">
+            
+            <p>
+              This library provides some useful operations to select components
+in AbstractCurry programs, i.e., it provides a collection of
+selector functions for AbstractCurry.
+            </p>
+            
+            <p>
+              <b>Version: </b>September 2015
+            </p>
+            
+            <h2>
+              Summary of exported operations:
+            </h2>
+            
+            <table class="table table-bordered table-hover">
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="typeName_SHORT"><a href="#typeName">typeName</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the name of a given type declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="typeVis_SHORT"><a href="#typeVis">typeVis</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; <a href="AbstractCurry.Types.html#CVisibility">CVisibility</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the visibility of a given type declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="typeCons_SHORT"><a href="#typeCons">typeCons</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; [<a href="AbstractCurry.Types.html#CConsDecl">CConsDecl</a>]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the constructors of a given type declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="consName_SHORT"><a href="#consName">consName</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CConsDecl">CConsDecl</a> -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the name of a given constructor declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="consVis_SHORT"><a href="#consVis">consVis</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CConsDecl">CConsDecl</a> -&gt; <a href="AbstractCurry.Types.html#CVisibility">CVisibility</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the visibility of a given constructor declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isBaseType_SHORT"><a href="#isBaseType">isBaseType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns true if the type expression is a base type.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isPolyType_SHORT"><a href="#isPolyType">isPolyType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns true if the type expression contains type variables.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isFunctionalType_SHORT"><a href="#isFunctionalType">isFunctionalType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns true if the type expression is a functional type.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isIOType_SHORT"><a href="#isIOType">isIOType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns true if the type expression is (IO t).
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isIOReturnType_SHORT"><a href="#isIOReturnType">isIOReturnType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns true if the type expression is (IO t) with t/=() and
+t is not functional
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="argTypes_SHORT"><a href="#argTypes">argTypes</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; [<a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a>]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns all argument types from a functional type
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="resultType_SHORT"><a href="#resultType">resultType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Return the result type from a (nested) functional type
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="tvarsOfType_SHORT"><a href="#tvarsOfType">tvarsOfType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns all type variables occurring in a type expression.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="modsOfType_SHORT"><a href="#modsOfType">modsOfType</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; [String]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns all modules used in the given type.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="funcName_SHORT"><a href="#funcName">funcName</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the name of a given function declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="funcVis_SHORT"><a href="#funcVis">funcVis</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; <a href="AbstractCurry.Types.html#CVisibility">CVisibility</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the visibility of a given function declaration
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfPat_SHORT"><a href="#varsOfPat">varsOfPat</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CPattern">CPattern</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in a pattern.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfExp_SHORT"><a href="#varsOfExp">varsOfExp</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CExpr">CExpr</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in an expression.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfRhs_SHORT"><a href="#varsOfRhs">varsOfRhs</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CRhs">CRhs</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in a right-hand side.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfStat_SHORT"><a href="#varsOfStat">varsOfStat</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CStatement">CStatement</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in a statement.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfLDecl_SHORT"><a href="#varsOfLDecl">varsOfLDecl</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CLocalDecl">CLocalDecl</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in a local declaration.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfFDecl_SHORT"><a href="#varsOfFDecl">varsOfFDecl</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in a function declaration.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="varsOfRule_SHORT"><a href="#varsOfRule">varsOfRule</a></span></span>
+                    :: <a href="AbstractCurry.Types.html#CRule">CRule</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns list of all variables occurring in a rule.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isPrelude_SHORT"><a href="#isPrelude">isPrelude</a></span></span>
+                    :: String -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Tests whether a module name is the prelude.
+                </td>
+                
+              </tr>
+              
+            </table>
+            <section id="exported_operations">
+              <h2>
+                Exported operations:
+              </h2>
+              
+              <div class="anchored" id="typeName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#typeName">typeName</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the name of a given type declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="typeVis">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#typeVis">typeVis</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; <a href="AbstractCurry.Types.html#CVisibility">CVisibility</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the visibility of a given type declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="typeCons">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#typeCons">typeCons</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeDecl">CTypeDecl</a> -&gt; [<a href="AbstractCurry.Types.html#CConsDecl">CConsDecl</a>]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the constructors of a given type declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="consName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#consName">consName</a></span>
+                          :: <a href="AbstractCurry.Types.html#CConsDecl">CConsDecl</a> -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the name of a given constructor declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="consVis">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#consVis">consVis</a></span>
+                          :: <a href="AbstractCurry.Types.html#CConsDecl">CConsDecl</a> -&gt; <a href="AbstractCurry.Types.html#CVisibility">CVisibility</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the visibility of a given constructor declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isBaseType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#isBaseType">isBaseType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns true if the type expression is a base type.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isPolyType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#isPolyType">isPolyType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns true if the type expression contains type variables.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isFunctionalType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#isFunctionalType">isFunctionalType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns true if the type expression is a functional type.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isIOType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#isIOType">isIOType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns true if the type expression is (IO t).
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isIOReturnType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#isIOReturnType">isIOReturnType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns true if the type expression is (IO t) with t/=() and
+t is not functional
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="argTypes">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#argTypes">argTypes</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; [<a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a>]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns all argument types from a functional type
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="resultType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#resultType">resultType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Return the result type from a (nested) functional type
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="tvarsOfType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#tvarsOfType">tvarsOfType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns all type variables occurring in a type expression.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="modsOfType">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#modsOfType">modsOfType</a></span>
+                          :: <a href="AbstractCurry.Types.html#CTypeExpr">CTypeExpr</a> -&gt; [String]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns all modules used in the given type.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="funcName">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#funcName">funcName</a></span>
+                          :: <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; (String,String)</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the name of a given function declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="funcVis">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#funcVis">funcVis</a></span>
+                          :: <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; <a href="AbstractCurry.Types.html#CVisibility">CVisibility</a></code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the visibility of a given function declaration
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfPat">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfPat">varsOfPat</a></span>
+                          :: <a href="AbstractCurry.Types.html#CPattern">CPattern</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in a pattern.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfExp">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfExp">varsOfExp</a></span>
+                          :: <a href="AbstractCurry.Types.html#CExpr">CExpr</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in an expression.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfRhs">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfRhs">varsOfRhs</a></span>
+                          :: <a href="AbstractCurry.Types.html#CRhs">CRhs</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in a right-hand side.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfStat">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfStat">varsOfStat</a></span>
+                          :: <a href="AbstractCurry.Types.html#CStatement">CStatement</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in a statement.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfLDecl">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfLDecl">varsOfLDecl</a></span>
+                          :: <a href="AbstractCurry.Types.html#CLocalDecl">CLocalDecl</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in a local declaration.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfFDecl">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfFDecl">varsOfFDecl</a></span>
+                          :: <a href="AbstractCurry.Types.html#CFuncDecl">CFuncDecl</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in a function declaration.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="varsOfRule">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#varsOfRule">varsOfRule</a></span>
+                          :: <a href="AbstractCurry.Types.html#CRule">CRule</a> -&gt; [(Int,String)]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns list of all variables occurring in a rule.
+Each occurrence corresponds to one element, i.e., the list might
+contain multiple elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isPrelude">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="AbstractCurry.Select_curry.html#isPrelude">isPrelude</a></span>
+                          :: String -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Tests whether a module name is the prelude.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              </section>
+          </div>
+          
+        </div>
+        
+        <hr/>
+        <footer><i>Generated by <b>CurryDoc</b>
+            (Version 0.8.0 of June 4, 2015) at Sep 29 09:02:11 2015</i></footer>
+      </div>
+      
+    </div>
+    
+  </body>
+  
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Module Maybe</title>
+<link rel="stylesheet" type="text/css" href="currysource.css"/>
+</head>
+<body>
+<table><tbody><tr>
+<td class="linenumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+</pre></td>
+<td class="sourcecode"><pre><span class="comment">--- ----------------------------------------------------------------------------</span>
+<span class="comment">--- Library with some useful functions on the `Maybe` datatype.</span>
+<span class="comment">---</span>
+<span class="comment">--- @author Frank Huch, Bernd Brassel, Bj&ouml;rn Peem&ouml;ller</span>
+<span class="comment">--- @version October 2014</span>
+<span class="comment">--- @category general</span>
+<span class="comment">--- ----------------------------------------------------------------------------</span>
+
+<span class="keyword">module</span> <span class="module">Maybe</span>
+  <span class="symbol">(</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">(</span><span class="symbol">..</span><span class="symbol">)</span>
+  <span class="symbol">,</span> <a href="Prelude_curry.html#maybe"><span class="func">maybe</span></a>
+  <span class="symbol">,</span> <a href="#isJust"><span class="func">isJust</span></a><span class="symbol">,</span> <a href="#isNothing"><span class="func">isNothing</span></a>
+  <span class="symbol">,</span> <a href="#fromJust"><span class="func">fromJust</span></a><span class="symbol">,</span> <a href="#fromMaybe"><span class="func">fromMaybe</span></a>
+  <span class="symbol">,</span> <a href="#listToMaybe"><span class="func">listToMaybe</span></a><span class="symbol">,</span> <a href="#maybeToList"><span class="func">maybeToList</span></a>
+  <span class="symbol">,</span> <a href="#catMaybes"><span class="func">catMaybes</span></a><span class="symbol">,</span> <a href="#mapMaybe"><span class="func">mapMaybe</span></a>
+  <span class="symbol">,</span> <span class="symbol">(</span><a href="#%3E%3E-"><span class="func">&gt;&gt;-</span></a><span class="symbol">)</span><span class="symbol">,</span> <a href="#sequenceMaybe"><span class="func">sequenceMaybe</span></a><span class="symbol">,</span> <a href="#mapMMaybe"><span class="func">mapMMaybe</span></a><span class="symbol">,</span> <a href="#mplus"><span class="func">mplus</span></a>
+  <span class="symbol">)</span> <span class="keyword">where</span>
+
+<span class="keyword">infixl</span> <span class="number">1</span> <a href="#%3E%3E-"><span class="func">&gt;&gt;-</span></a>
+
+<span class="comment">--- Return `True` iff the argument is of the form `Just _`.</span>
+<a href="#isJust"><span class="func">isJust</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isJust">isJust</span> <span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#True"><span class="cons">True</span></a>
+<span class="func">isJust</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>  <span class="symbol">=</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Return `True` iff the argument is of the form `Nothing`.</span>
+<a href="#isNothing"><span class="func">isNothing</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isNothing">isNothing</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>  <span class="symbol">=</span> <a href="Prelude_curry.html#True"><span class="cons">True</span></a>
+<span class="func">isNothing</span> <span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#False"><span class="cons">False</span></a>
+
+<span class="comment">--- Extract the argument from the `Just` constructor and throw an error</span>
+<span class="comment">--- if the argument is `Nothing`.</span>
+<a href="#fromJust"><span class="func">fromJust</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="fromJust">fromJust</span> <span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">a</span>
+<span class="func">fromJust</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>  <span class="symbol">=</span> <a href="Prelude_curry.html#error"><span class="func">error</span></a> <span class="string">&quot;Maybe.fromJust: Nothing&quot;</span>
+
+<span class="comment">--- Extract the argument from the `Just` constructor or return the provided</span>
+<span class="comment">--- default value if the argument is `Nothing`.</span>
+<a href="#fromMaybe"><span class="func">fromMaybe</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="fromMaybe">fromMaybe</span> <span class="ident">d</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>  <span class="symbol">=</span> <span class="ident">d</span>
+<span class="func">fromMaybe</span> <span class="symbol">_</span> <span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">a</span>
+
+<span class="comment">--- Return `Nothing` on an empty list or `Just x` where `x` is the first</span>
+<span class="comment">--- list element.</span>
+<a href="#listToMaybe"><span class="func">listToMaybe</span></a> <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span>
+<span class="func" id="listToMaybe">listToMaybe</span> <span class="symbol">[</span><span class="symbol">]</span>      <span class="symbol">=</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>
+<span class="func">listToMaybe</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">:</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="ident">a</span>
+
+<span class="comment">--- Return an empty list for `Nothing` or a singleton list for `Just x`.</span>
+<a href="#maybeToList"><span class="func">maybeToList</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="maybeToList">maybeToList</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>  <span class="symbol">=</span> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">maybeToList</span> <span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="ident">a</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+
+<span class="comment">--- Return the list of all `Just` values.</span>
+<a href="#catMaybes"><span class="func">catMaybes</span></a> <span class="symbol">::</span> <span class="symbol">[</span><a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="catMaybes">catMaybes</span> <span class="ident">ms</span> <span class="symbol">=</span> <span class="symbol">[</span> <span class="ident">m</span> <span class="symbol">|</span> <span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="ident">m</span><span class="symbol">)</span> <span class="symbol">&lt;-</span> <span class="ident">ms</span> <span class="symbol">]</span>
+
+<span class="comment">--- Apply a function which may throw out elements using the `Nothing`</span>
+<span class="comment">--- constructor to a list of elements.</span>
+<a href="#mapMaybe"><span class="func">mapMaybe</span></a> <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span>
+<span class="func" id="mapMaybe">mapMaybe</span> <span class="ident">f</span> <span class="symbol">=</span> <a href="#catMaybes"><span class="func">catMaybes</span></a> <a href="Prelude_curry.html#."><span class="func">.</span></a> <a href="Prelude_curry.html#map"><span class="func">map</span></a> <span class="ident">f</span>
+
+<span class="comment">--- Monadic bind for Maybe.</span>
+<span class="comment">--- Maybe can be interpreted as a monad where Nothing is interpreted</span>
+<span class="comment">--- as the error case by this monadic binding.</span>
+<span class="comment">--- @param maybeValue - Nothing or Just x</span>
+<span class="comment">--- @param f - function to be applied to x</span>
+<span class="comment">--- @return Nothing if maybeValue is Nothing, otherwise f is applied to x</span>
+<span class="symbol">(</span><a href="#%3E%3E-"><span class="func">&gt;&gt;-</span></a><span class="symbol">)</span> <span class="symbol">::</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">b</span>
+<a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a> <span class="func" id="&gt;&gt;-">&gt;&gt;-</span> <span class="symbol">_</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>
+<a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="ident">x</span>  <span class="func">&gt;&gt;-</span> <span class="ident">f</span> <span class="symbol">=</span> <span class="ident">f</span> <span class="ident">x</span>
+
+<span class="comment">--- Monadic `sequence` for `Maybe`.</span>
+<a href="#sequenceMaybe"><span class="func">sequenceMaybe</span></a> <span class="symbol">::</span> <span class="symbol">[</span><a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="sequenceMaybe">sequenceMaybe</span> <span class="symbol">[</span><span class="symbol">]</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">[</span><span class="symbol">]</span>
+<span class="func">sequenceMaybe</span> <span class="symbol">(</span><span class="ident">c</span><span class="symbol">:</span><span class="ident">cs</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">c</span> <a href="#%3E%3E-"><span class="func">&gt;&gt;-</span></a> <span class="symbol">\</span><span class="ident">x</span> <span class="symbol">-&gt;</span> <a href="#sequenceMaybe"><span class="func">sequenceMaybe</span></a> <span class="ident">cs</span> <a href="#%3E%3E-"><span class="func">&gt;&gt;-</span></a> <span class="symbol">\</span><span class="ident">xs</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span>
+
+<span class="comment">--- Monadic `map` for `Maybe`.</span>
+<a href="#mapMMaybe"><span class="func">mapMMaybe</span></a> <span class="symbol">::</span> <span class="symbol">(</span><span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">b</span><span class="symbol">)</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">[</span><span class="ident">b</span><span class="symbol">]</span>
+<span class="func" id="mapMMaybe">mapMMaybe</span> <span class="ident">f</span> <span class="symbol">=</span> <a href="#sequenceMaybe"><span class="func">sequenceMaybe</span></a> <a href="Prelude_curry.html#."><span class="func">.</span></a> <a href="Prelude_curry.html#map"><span class="func">map</span></a> <span class="ident">f</span>
+
+<span class="comment">--- Combine two `Maybe`s, returning the first `Just` value, if any.</span>
+<a href="#mplus"><span class="func">mplus</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="ident">a</span>
+<a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>    <span class="symbol">`</span><span class="func" id="mplus">mplus</span><span class="symbol">`</span> <span class="ident">y</span> <span class="symbol">=</span> <span class="ident">y</span>
+<span class="ident">x</span><span class="symbol">@</span><span class="symbol">(</span><a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">`</span><span class="func">mplus</span><span class="symbol">`</span> <span class="symbol">_</span> <span class="symbol">=</span> <span class="ident">x</span>
+</pre></td>
+</tr></tbody></table>
+</body>
+</html>

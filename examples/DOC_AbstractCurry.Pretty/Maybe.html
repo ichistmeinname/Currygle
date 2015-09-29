@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  
+  <head>
+    
+    <title>
+      Module Maybe
+    </title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <link rel="shortcut icon" href="http://www-ps.informatik.uni-kiel.de/kics2/img/favicon.ico"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap-responsive.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/font-awesome.min.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/currydoc.css"/>
+    
+  </head>
+  
+  <body>
+    <nav>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        
+        <div class="navbar-inner">
+          
+          <div class="container-fluid">
+            
+            <ul class="nav">
+              
+              <li>
+                <a href="?">Module Maybe</a>
+              </li>
+              
+              <li>
+                <a href="#imported_modules">Imports</a>
+              </li>
+              
+              <li>
+                <a href="#exported_operations">Operations</a>
+              </li>
+              
+            </ul>
+            
+            <div class="navbar-text pull-right">
+              
+              <ul class="nav">
+                
+                <li>
+                  <a href="http://www.curry-language.org" target="_blank"><i class="fa fa-external-link"></i>
+                    Curry Homepage</a>
+                </li>
+                
+                <li>
+                  <a href="http://www-ps.informatik.uni-kiel.de/kics2/lib/" target="_blank"><i class="fa fa-external-link"></i>
+                    KiCS2 Libraries</a>
+                </li>
+                
+                <li>
+                  <a href="http://www.curry-language.org/tools/currydoc" target="_blank"><i class="fa fa-external-link"></i>
+                    About CurryDoc</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      </nav>
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <header class="hero-unit">
+          <h1>
+            Module <a href="Maybe_curry.html">Maybe</a>
+          </h1>
+          </header>
+      </div>
+      
+    </div>
+    
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <nav>
+          <div class="span3">
+            
+            <div class="well sidebar-nav">
+              <b>Exported names:</b>
+              <ul class="nav nav-list">
+                
+                <li class="nav-header">
+                  Operations:
+                </li>
+                
+                <li>
+                  <a href="#>>-">&gt;&gt;-</a>
+                </li>
+                
+                <li>
+                  <a href="#catMaybes">catMaybes</a>
+                </li>
+                
+                <li>
+                  <a href="#fromJust">fromJust</a>
+                </li>
+                
+                <li>
+                  <a href="#fromMaybe">fromMaybe</a>
+                </li>
+                
+                <li>
+                  <a href="#isJust">isJust</a>
+                </li>
+                
+                <li>
+                  <a href="#isNothing">isNothing</a>
+                </li>
+                
+                <li>
+                  <a href="#listToMaybe">listToMaybe</a>
+                </li>
+                
+                <li>
+                  <a href="#mapMaybe">mapMaybe</a>
+                </li>
+                
+                <li>
+                  <a href="#mapMMaybe">mapMMaybe</a>
+                </li>
+                
+                <li>
+                  <a href="#maybeToList">maybeToList</a>
+                </li>
+                
+                <li>
+                  <a href="#mplus">mplus</a>
+                </li>
+                
+                <li>
+                  <a href="#sequenceMaybe">sequenceMaybe</a>
+                </li>
+                
+              </ul>
+              <span class="anchored" id="imported_modules"><b>Imported modules:</b></span>
+              <ul class="nav nav-list">
+                
+                <li>
+                  <a href="Prelude.html">Prelude</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          </nav>
+        <div class="span9">
+          
+          <div class="row-fluid">
+            
+            <p>
+              Library with some useful functions on the <code>Maybe</code>
+              datatype.
+            </p>
+            
+            <p>
+              <b>Author: </b>Frank Huch, Bernd Brassel, Bj&ouml;rn Peem&ouml;ller
+            </p>
+            
+            <p>
+              <b>Version: </b>October 2014
+            </p>
+            
+            <h2>
+              Summary of exported operations:
+            </h2>
+            
+            <table class="table table-bordered table-hover">
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isJust_SHORT"><a href="#isJust">isJust</a></span></span>
+                    :: Maybe a -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Return <code>True</code>
+                  iff the argument is of the form <code>Just _</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isNothing_SHORT"><a href="#isNothing">isNothing</a></span></span>
+                    :: Maybe a -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Return <code>True</code>
+                  iff the argument is of the form <code>Nothing</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="fromJust_SHORT"><a href="#fromJust">fromJust</a></span></span>
+                    :: Maybe a -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Extract the argument from the <code>Just</code>
+                  constructor and throw an error
+if the argument is <code>Nothing</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="fromMaybe_SHORT"><a href="#fromMaybe">fromMaybe</a></span></span>
+                    :: a -&gt; Maybe a -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Extract the argument from the <code>Just</code>
+                  constructor or return the provided
+default value if the argument is <code>Nothing</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="listToMaybe_SHORT"><a href="#listToMaybe">listToMaybe</a></span></span>
+                    :: [a] -&gt; Maybe a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Return <code>Nothing</code>
+                  on an empty list or <code>Just x</code>
+                  where <code>x</code>
+                  is the first
+list element.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="maybeToList_SHORT"><a href="#maybeToList">maybeToList</a></span></span>
+                    :: Maybe a -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Return an empty list for <code>Nothing</code>
+                  or a singleton list for <code>Just x</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="catMaybes_SHORT"><a href="#catMaybes">catMaybes</a></span></span>
+                    :: [Maybe a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Return the list of all <code>Just</code>
+                  values.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="mapMaybe_SHORT"><a href="#mapMaybe">mapMaybe</a></span></span>
+                    :: (a -&gt; Maybe b) -&gt; [a] -&gt; [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Apply a function which may throw out elements using the <code>Nothing</code>
+                  constructor to a list of elements.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id=">>-_SHORT"><a href="#>>-">(&gt;&gt;-)</a></span></span>
+                    :: Maybe a -&gt; (a -&gt; Maybe b) -&gt; Maybe b</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Monadic bind for Maybe.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="sequenceMaybe_SHORT"><a href="#sequenceMaybe">sequenceMaybe</a></span></span>
+                    :: [Maybe a] -&gt; Maybe [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Monadic <code>sequence</code>
+                  for <code>Maybe</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="mapMMaybe_SHORT"><a href="#mapMMaybe">mapMMaybe</a></span></span>
+                    :: (a -&gt; Maybe b) -&gt; [a] -&gt; Maybe [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Monadic <code>map</code>
+                  for <code>Maybe</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="mplus_SHORT"><a href="#mplus">mplus</a></span></span>
+                    :: Maybe a -&gt; Maybe a -&gt; Maybe a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Combine two <code>Maybe</code>s, returning the first <code>Just</code>
+                  value, if any.
+                </td>
+                
+              </tr>
+              
+            </table>
+            <section id="exported_operations">
+              <h2>
+                Exported operations:
+              </h2>
+              
+              <div class="anchored" id="isJust">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#isJust">isJust</a></span>
+                          :: Maybe a -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Return <code>True</code>
+                        iff the argument is of the form <code>Just _</code>.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isNothing">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#isNothing">isNothing</a></span>
+                          :: Maybe a -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Return <code>True</code>
+                        iff the argument is of the form <code>Nothing</code>.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="fromJust">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#fromJust">fromJust</a></span>
+                          :: Maybe a -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Extract the argument from the <code>Just</code>
+                        constructor and throw an error
+if the argument is <code>Nothing</code>.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="fromMaybe">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#fromMaybe">fromMaybe</a></span>
+                          :: a -&gt; Maybe a -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Extract the argument from the <code>Just</code>
+                        constructor or return the provided
+default value if the argument is <code>Nothing</code>.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="listToMaybe">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#listToMaybe">listToMaybe</a></span>
+                          :: [a] -&gt; Maybe a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Return <code>Nothing</code>
+                        on an empty list or <code>Just x</code>
+                        where <code>x</code>
+                        is the first
+list element.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="maybeToList">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#maybeToList">maybeToList</a></span>
+                          :: Maybe a -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Return an empty list for <code>Nothing</code>
+                        or a singleton list for <code>Just x</code>.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="catMaybes">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#catMaybes">catMaybes</a></span>
+                          :: [Maybe a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Return the list of all <code>Just</code>
+                        values.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="mapMaybe">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#mapMaybe">mapMaybe</a></span>
+                          :: (a -&gt; Maybe b) -&gt; [a] -&gt; [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Apply a function which may throw out elements using the <code>Nothing</code>
+                        constructor to a list of elements.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id=">>-">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#>>-">(&gt;&gt;-)</a></span>
+                          :: Maybe a -&gt; (a -&gt; Maybe b) -&gt; Maybe b</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Monadic bind for Maybe.
+Maybe can be interpreted as a monad where Nothing is interpreted
+as the error case by this monadic binding.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(maybeValue &gt;&gt;- f)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>maybeValue</code>
+                          : Nothing or Just x
+                        </li>
+                        
+                        <li>
+                          <code>f</code>
+                          : function to be applied to x
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          Nothing if maybeValue is Nothing, otherwise f is applied to x
+                        </dd>
+                        
+                      </dl>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              defined as left-associative infix operator with precedence 1
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="sequenceMaybe">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#sequenceMaybe">sequenceMaybe</a></span>
+                          :: [Maybe a] -&gt; Maybe [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Monadic <code>sequence</code>
+                        for <code>Maybe</code>.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="mapMMaybe">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#mapMMaybe">mapMMaybe</a></span>
+                          :: (a -&gt; Maybe b) -&gt; [a] -&gt; Maybe [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Monadic <code>map</code>
+                        for <code>Maybe</code>.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="mplus">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="Maybe_curry.html#mplus">mplus</a></span>
+                          :: Maybe a -&gt; Maybe a -&gt; Maybe a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Combine two <code>Maybe</code>s, returning the first <code>Just</code>
+                        value, if any.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              </section>
+          </div>
+          
+        </div>
+        
+        <hr/>
+        <footer><i>Generated by <b>CurryDoc</b>
+            (Version 0.8.0 of June 4, 2015) at Sep 29 09:02:14 2015</i></footer>
+      </div>
+      
+    </div>
+    
+  </body>
+  
+</html>

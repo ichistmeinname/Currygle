@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Module Dequeue</title>
+<link rel="stylesheet" type="text/css" href="currysource.css"/>
+</head>
+<body>
+<table><tbody><tr>
+<td class="linenumbers"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+</pre></td>
+<td class="sourcecode"><pre><span class="comment">------------------------------------------------------------------------------</span>
+<span class="comment">--- An implementation of double-ended queues supporting access at both</span>
+<span class="comment">--- ends in constant amortized time.</span>
+<span class="comment">---</span>
+<span class="comment">--- @author Bernd Brassel, Olaf Chitil, Michael Hanus, Sebastian Fischer,</span>
+<span class="comment">---         Bj&ouml;rn Peem&ouml;ller</span>
+<span class="comment">--- @version January 2015</span>
+<span class="comment">--- @category algorithm</span>
+<span class="comment">------------------------------------------------------------------------------</span>
+
+<span class="keyword">module</span> <span class="module">Dequeue</span>
+  <span class="symbol">(</span> <span class="comment">-- Abstract data type, constructors and queries</span>
+    <a href="#Queue"><span class="func">Queue</span></a><span class="symbol">,</span> <a href="#empty"><span class="func">empty</span></a><span class="symbol">,</span> <a href="#cons"><span class="func">cons</span></a><span class="symbol">,</span> <a href="#snoc"><span class="func">snoc</span></a><span class="symbol">,</span> <a href="#isEmpty"><span class="func">isEmpty</span></a><span class="symbol">,</span> <a href="#deqLength"><span class="func">deqLength</span></a>
+    <span class="comment">-- Selectors</span>
+  <span class="symbol">,</span> <a href="#deqHead"><span class="func">deqHead</span></a><span class="symbol">,</span> <a href="#deqTail"><span class="func">deqTail</span></a><span class="symbol">,</span> <a href="#deqLast"><span class="func">deqLast</span></a><span class="symbol">,</span> <a href="#deqInit"><span class="func">deqInit</span></a><span class="symbol">,</span> <a href="#deqReverse"><span class="func">deqReverse</span></a><span class="symbol">,</span> <a href="#rotate"><span class="func">rotate</span></a><span class="symbol">,</span> <a href="#matchHead"><span class="func">matchHead</span></a><span class="symbol">,</span> <a href="#matchLast"><span class="func">matchLast</span></a>
+    <span class="comment">-- conversion from and to lists</span>
+  <span class="symbol">,</span> <a href="#listToDeq"><span class="func">listToDeq</span></a><span class="symbol">,</span> <a href="#deqToList"><span class="func">deqToList</span></a>
+  <span class="symbol">)</span> <span class="keyword">where</span>
+
+<span class="comment">--- The datatype of a queue.</span>
+<span class="keyword">data</span> <span class="type" id="Queue">Queue</span> <span class="ident">a</span> <span class="symbol">=</span> <span class="cons" id="S">S</span> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+
+<span class="comment">--- The empty queue.</span>
+<a href="#empty"><span class="func">empty</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="symbol">_</span>
+<span class="func" id="empty">empty</span> <span class="symbol">=</span> <a href="#S"><span class="cons">S</span></a> <span class="number">0</span> <span class="symbol">[</span><span class="symbol">]</span> <span class="number">0</span> <span class="symbol">[</span><span class="symbol">]</span>
+
+<span class="comment">--- Inserts an element at the front of the queue.</span>
+<a href="#cons"><span class="func">cons</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="cons">cons</span> <span class="ident">x</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#check"><span class="func">check</span></a> <span class="symbol">(</span><span class="ident">lenf</span> <a href="Prelude_curry.html#%2B"><span class="func">+</span></a> <span class="number">1</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">x</span> <span class="symbol">:</span> <span class="ident">f</span><span class="symbol">)</span> <span class="ident">lenr</span> <span class="ident">r</span>
+
+<span class="comment">--- Inserts an element at the end of the queue.</span>
+<a href="#snoc"><span class="func">snoc</span></a> <span class="symbol">::</span> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="snoc">snoc</span> <span class="ident">x</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#deqReverse"><span class="func">deqReverse</span></a> <span class="symbol">(</span><a href="#check"><span class="func">check</span></a> <span class="symbol">(</span><span class="ident">lenr</span> <a href="Prelude_curry.html#%2B"><span class="func">+</span></a> <span class="number">1</span><span class="symbol">)</span> <span class="symbol">(</span><span class="ident">x</span> <span class="symbol">:</span> <span class="ident">r</span><span class="symbol">)</span> <span class="ident">lenf</span> <span class="ident">f</span><span class="symbol">)</span>
+
+<span class="comment">--- Is the queue empty?</span>
+<a href="#isEmpty"><span class="func">isEmpty</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Bool"><span class="type">Bool</span></a>
+<span class="func" id="isEmpty">isEmpty</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="symbol">_</span> <span class="ident">lenr</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">lenf</span> <a href="Prelude_curry.html#%2B"><span class="func">+</span></a> <span class="ident">lenr</span> <a href="Prelude_curry.html#%3D%3D"><span class="func">==</span></a> <span class="number">0</span>
+
+<span class="comment">--- Returns the number of elements in the queue.</span>
+<a href="#deqLength"><span class="func">deqLength</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="symbol">_</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a>
+<span class="func" id="deqLength">deqLength</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="symbol">_</span> <span class="ident">lenr</span> <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">lenf</span> <a href="Prelude_curry.html#%2B"><span class="func">+</span></a> <span class="ident">lenr</span>
+
+<span class="comment">--- The first element of the queue.</span>
+<a href="#deqHead"><span class="func">deqHead</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="deqHead">deqHead</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="symbol">_</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#head"><span class="func">head</span></a> <span class="symbol">(</span><span class="keyword">if</span> <span class="ident">lenf</span> <a href="Prelude_curry.html#%3D%3D"><span class="func">==</span></a> <span class="number">0</span> <span class="keyword">then</span> <span class="ident">r</span> <span class="keyword">else</span> <span class="ident">f</span><span class="symbol">)</span>
+
+<span class="comment">--- Removes an element at the front of the queue.</span>
+<a href="#deqTail"><span class="func">deqTail</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="deqTail">deqTail</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>    <span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#empty"><span class="func">empty</span></a>
+<span class="func">deqTail</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="ident">fs</span><span class="symbol">)</span> <span class="ident">lenr</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#deqReverse"><span class="func">deqReverse</span></a> <span class="symbol">(</span><a href="#check"><span class="func">check</span></a> <span class="ident">lenr</span> <span class="ident">r</span> <span class="symbol">(</span><span class="ident">lenf</span> <a href="Prelude_curry.html#-"><span class="func">-</span></a> <span class="number">1</span><span class="symbol">)</span> <span class="ident">fs</span><span class="symbol">)</span>
+
+<span class="comment">--- The last element of the queue.</span>
+<a href="#deqLast"><span class="func">deqLast</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="ident">a</span>
+<span class="func" id="deqLast">deqLast</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#head"><span class="func">head</span></a> <span class="symbol">(</span><span class="keyword">if</span> <span class="ident">lenr</span> <a href="Prelude_curry.html#%3D%3D"><span class="func">==</span></a> <span class="number">0</span> <span class="keyword">then</span> <span class="ident">f</span> <span class="keyword">else</span> <span class="ident">r</span><span class="symbol">)</span>
+
+<span class="comment">--- Removes an element at the end of the queue.</span>
+<a href="#deqInit"><span class="func">deqInit</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="deqInit">deqInit</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">_</span> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>    <span class="symbol">)</span> <span class="symbol">=</span> <a href="#empty"><span class="func">empty</span></a>
+<span class="func">deqInit</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="ident">rs</span><span class="symbol">)</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#check"><span class="func">check</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">lenr</span> <a href="Prelude_curry.html#-"><span class="func">-</span></a> <span class="number">1</span><span class="symbol">)</span> <span class="ident">rs</span>
+
+<span class="comment">--- Reverses a double ended queue.</span>
+<a href="#deqReverse"><span class="func">deqReverse</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="deqReverse">deqReverse</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="ident">r</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="#S"><span class="cons">S</span></a> <span class="ident">lenr</span> <span class="ident">r</span> <span class="ident">lenf</span> <span class="ident">f</span>
+
+<span class="comment">--- Moves the first element to the end of the queue.</span>
+<a href="#rotate"><span class="func">rotate</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="rotate">rotate</span> <span class="ident">q</span> <span class="symbol">=</span> <a href="#snoc"><span class="func">snoc</span></a> <span class="symbol">(</span><a href="#deqHead"><span class="func">deqHead</span></a> <span class="ident">q</span><span class="symbol">)</span> <span class="symbol">(</span><a href="#deqTail"><span class="func">deqTail</span></a> <span class="ident">q</span><span class="symbol">)</span>
+
+<span class="comment">--- Matches the front of a queue.</span>
+<span class="comment">--- &lt;code&gt;matchHead q&lt;/code&gt; is equivalent to</span>
+<span class="comment">--- &lt;code&gt;if isEmpty q then Nothing else Just (deqHead q, deqTail q)&lt;/code&gt;</span>
+<span class="comment">--- but more efficient.</span>
+<a href="#matchHead"><span class="func">matchHead</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span><span class="symbol">)</span>
+<span class="func" id="matchHead">matchHead</span>   <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>
+<span class="func">matchHead</span>   <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>    <span class="symbol">[</span><span class="ident">x</span><span class="symbol">]</span>    <span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span> <a href="#empty"><span class="func">empty</span></a><span class="symbol">)</span>
+<span class="func">matchHead</span> <span class="ident">q</span><span class="symbol">@</span><span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>     <span class="symbol">_</span>    <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span><span class="symbol">)</span>
+  <span class="symbol">=</span> <a href="Prelude_curry.html#error"><span class="func">error</span></a> <a href="Prelude_curry.html#%24"><span class="func">$</span></a> <span class="string">&quot;Dequeue.matchHead: illegal queue &quot;</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#show"><span class="func">show</span></a> <span class="ident">q</span>
+<span class="func">matchHead</span>   <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span> <span class="ident">lenr</span> <span class="ident">r</span>      <span class="symbol">)</span>
+  <span class="symbol">=</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span> <a href="#deqReverse"><span class="func">deqReverse</span></a> <span class="symbol">(</span><a href="#check"><span class="func">check</span></a> <span class="ident">lenr</span> <span class="ident">r</span> <span class="symbol">(</span><span class="ident">lenf</span> <a href="Prelude_curry.html#-"><span class="func">-</span></a> <span class="number">1</span><span class="symbol">)</span> <span class="ident">xs</span><span class="symbol">)</span><span class="symbol">)</span>
+
+<span class="comment">--- Matches the end of a queue.</span>
+<span class="comment">--- &lt;code&gt;matchLast q&lt;/code&gt; is equivalent to</span>
+<span class="comment">--- &lt;code&gt;if isEmpty q then Nothing else Just (deqLast q,deqInit q)&lt;/code&gt;</span>
+<span class="comment">--- but more efficient.</span>
+<a href="#matchLast"><span class="func">matchLast</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Maybe"><span class="type">Maybe</span></a> <span class="symbol">(</span><span class="ident">a</span><span class="symbol">,</span><a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span><span class="symbol">)</span>
+<span class="func" id="matchLast">matchLast</span>   <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>      <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>    <span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Nothing"><span class="cons">Nothing</span></a>
+<span class="func">matchLast</span>   <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">[</span><span class="ident">x</span><span class="symbol">]</span>     <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>    <span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span> <a href="#empty"><span class="func">empty</span></a><span class="symbol">)</span>
+<span class="func">matchLast</span> <span class="ident">q</span><span class="symbol">@</span><span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span>    <span class="symbol">(</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">:</span><span class="symbol">_</span><span class="symbol">)</span> <span class="symbol">_</span>    <span class="symbol">[</span><span class="symbol">]</span>    <span class="symbol">)</span>
+  <span class="symbol">=</span> <a href="Prelude_curry.html#error"><span class="func">error</span></a> <a href="Prelude_curry.html#%24"><span class="func">$</span></a> <span class="string">&quot;Dequeue.matchLast: illegal queue &quot;</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#show"><span class="func">show</span></a> <span class="ident">q</span>
+<span class="func">matchLast</span>   <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span>       <span class="ident">lenr</span> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">:</span><span class="ident">xs</span><span class="symbol">)</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#Just"><span class="cons">Just</span></a> <span class="symbol">(</span><span class="ident">x</span><span class="symbol">,</span> <a href="#check"><span class="func">check</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="symbol">(</span><span class="ident">lenr</span> <a href="Prelude_curry.html#-"><span class="func">-</span></a> <span class="number">1</span><span class="symbol">)</span> <span class="ident">xs</span><span class="symbol">)</span>
+
+<span class="comment">--- Transforms a list to a double ended queue.</span>
+<a href="#listToDeq"><span class="func">listToDeq</span></a> <span class="symbol">::</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="listToDeq">listToDeq</span> <span class="ident">xs</span> <span class="symbol">=</span> <a href="#check"><span class="func">check</span></a> <span class="symbol">(</span><a href="Prelude_curry.html#length"><span class="func">length</span></a> <span class="ident">xs</span><span class="symbol">)</span> <span class="ident">xs</span> <span class="number">0</span> <span class="symbol">[</span><span class="symbol">]</span>
+
+<span class="comment">--- Transforms a double ended queue to a list.</span>
+<a href="#deqToList"><span class="func">deqToList</span></a> <span class="symbol">::</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span>
+<span class="func" id="deqToList">deqToList</span> <span class="symbol">(</span><a href="#S"><span class="cons">S</span></a> <span class="symbol">_</span> <span class="ident">xs</span> <span class="symbol">_</span> <span class="ident">ys</span><span class="symbol">)</span> <span class="symbol">=</span> <span class="ident">xs</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#reverse"><span class="func">reverse</span></a> <span class="ident">ys</span>
+
+<span class="comment">--- Check for invariant: The length of the first list is smaller than</span>
+<span class="comment">--- three times the length of the second plus 1.</span>
+<a href="#check"><span class="func">check</span></a> <span class="symbol">::</span> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="Prelude_curry.html#Int"><span class="type">Int</span></a> <span class="symbol">-&gt;</span> <span class="symbol">[</span><span class="ident">a</span><span class="symbol">]</span> <span class="symbol">-&gt;</span> <a href="#Queue"><span class="type">Queue</span></a> <span class="ident">a</span>
+<span class="func" id="check">check</span> <span class="ident">lenf</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="ident">r</span>
+  <span class="symbol">|</span> <span class="ident">lenf</span> <a href="Prelude_curry.html#%3C%3D"><span class="func">&lt;=</span></a> <span class="number">3</span> <a href="Prelude_curry.html#%2A"><span class="func">*</span></a> <span class="ident">lenr</span> <a href="Prelude_curry.html#%2B"><span class="func">+</span></a> <span class="number">1</span> <span class="symbol">=</span> <a href="#S"><span class="cons">S</span></a> <span class="ident">lenf</span> <span class="ident">f</span> <span class="ident">lenr</span> <span class="ident">r</span>
+  <span class="symbol">|</span> <a href="Prelude_curry.html#otherwise"><span class="func">otherwise</span></a>            <span class="symbol">=</span> <a href="#S"><span class="cons">S</span></a> <span class="ident">lenf'</span> <span class="ident">f'</span> <span class="ident">lenr'</span> <span class="ident">r'</span>
+  <span class="keyword">where</span>
+    <span class="ident">len</span>       <span class="symbol">=</span> <span class="ident">lenf</span> <a href="Prelude_curry.html#%2B"><span class="func">+</span></a> <span class="ident">lenr</span>
+    <span class="ident">lenf'</span>     <span class="symbol">=</span> <span class="ident">len</span> <span class="symbol">`</span><a href="Prelude_curry.html#div"><span class="func">div</span></a><span class="symbol">`</span> <span class="number">2</span>
+    <span class="ident">lenr'</span>     <span class="symbol">=</span> <span class="ident">len</span> <a href="Prelude_curry.html#-"><span class="func">-</span></a> <span class="ident">lenf'</span>
+    <span class="symbol">(</span><span class="ident">f'</span><span class="symbol">,</span> <span class="ident">rf'</span><span class="symbol">)</span> <span class="symbol">=</span> <a href="Prelude_curry.html#splitAt"><span class="func">splitAt</span></a> <span class="ident">lenf'</span> <span class="ident">f</span>
+    <span class="ident">r'</span>        <span class="symbol">=</span> <span class="ident">r</span> <a href="Prelude_curry.html#%2B%2B"><span class="func">++</span></a> <a href="Prelude_curry.html#reverse"><span class="func">reverse</span></a> <span class="ident">rf'</span>
+</pre></td>
+</tr></tbody></table>
+</body>
+</html>

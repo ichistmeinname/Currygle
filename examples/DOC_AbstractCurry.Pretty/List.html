@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  
+  <head>
+    
+    <title>
+      Module List
+    </title>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+    <link rel="shortcut icon" href="http://www-ps.informatik.uni-kiel.de/kics2/img/favicon.ico"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/bootstrap-responsive.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/font-awesome.min.css"/>
+    
+    <link rel="stylesheet" type="text/css" href="http://www-ps.informatik.uni-kiel.de/kics2/css/currydoc.css"/>
+    
+  </head>
+  
+  <body>
+    <nav>
+      <div class="navbar navbar-inverse navbar-fixed-top">
+        
+        <div class="navbar-inner">
+          
+          <div class="container-fluid">
+            
+            <ul class="nav">
+              
+              <li>
+                <a href="?">Module List</a>
+              </li>
+              
+              <li>
+                <a href="#imported_modules">Imports</a>
+              </li>
+              
+              <li>
+                <a href="#exported_operations">Operations</a>
+              </li>
+              
+            </ul>
+            
+            <div class="navbar-text pull-right">
+              
+              <ul class="nav">
+                
+                <li>
+                  <a href="http://www.curry-language.org" target="_blank"><i class="fa fa-external-link"></i>
+                    Curry Homepage</a>
+                </li>
+                
+                <li>
+                  <a href="http://www-ps.informatik.uni-kiel.de/kics2/lib/" target="_blank"><i class="fa fa-external-link"></i>
+                    KiCS2 Libraries</a>
+                </li>
+                
+                <li>
+                  <a href="http://www.curry-language.org/tools/currydoc" target="_blank"><i class="fa fa-external-link"></i>
+                    About CurryDoc</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+        
+      </div>
+      </nav>
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <header class="hero-unit">
+          <h1>
+            Module <a href="List_curry.html">List</a>
+          </h1>
+          </header>
+      </div>
+      
+    </div>
+    
+    <div class="container-fluid">
+      
+      <div class="row-fluid">
+        <nav>
+          <div class="span3">
+            
+            <div class="well sidebar-nav">
+              <b>Exported names:</b>
+              <ul class="nav nav-list">
+                
+                <li class="nav-header">
+                  Operations:
+                </li>
+                
+                <li>
+                  <a href="#cycle">cycle</a>
+                </li>
+                
+                <li>
+                  <a href="#delete">delete</a>
+                </li>
+                
+                <li>
+                  <a href="#deleteBy">deleteBy</a>
+                </li>
+                
+                <li>
+                  <a href="#elemIndex">elemIndex</a>
+                </li>
+                
+                <li>
+                  <a href="#elemIndices">elemIndices</a>
+                </li>
+                
+                <li>
+                  <a href="#find">find</a>
+                </li>
+                
+                <li>
+                  <a href="#findIndex">findIndex</a>
+                </li>
+                
+                <li>
+                  <a href="#findIndices">findIndices</a>
+                </li>
+                
+                <li>
+                  <a href="#group">group</a>
+                </li>
+                
+                <li>
+                  <a href="#groupBy">groupBy</a>
+                </li>
+                
+                <li>
+                  <a href="#init">init</a>
+                </li>
+                
+                <li>
+                  <a href="#inits">inits</a>
+                </li>
+                
+                <li>
+                  <a href="#insertBy">insertBy</a>
+                </li>
+                
+                <li>
+                  <a href="#intercalate">intercalate</a>
+                </li>
+                
+                <li>
+                  <a href="#intersect">intersect</a>
+                </li>
+                
+                <li>
+                  <a href="#intersectBy">intersectBy</a>
+                </li>
+                
+                <li>
+                  <a href="#intersperse">intersperse</a>
+                </li>
+                
+                <li>
+                  <a href="#isInfixOf">isInfixOf</a>
+                </li>
+                
+                <li>
+                  <a href="#isPrefixOf">isPrefixOf</a>
+                </li>
+                
+                <li>
+                  <a href="#isSuffixOf">isSuffixOf</a>
+                </li>
+                
+                <li>
+                  <a href="#last">last</a>
+                </li>
+                
+                <li>
+                  <a href="#mapAccumL">mapAccumL</a>
+                </li>
+                
+                <li>
+                  <a href="#mapAccumR">mapAccumR</a>
+                </li>
+                
+                <li>
+                  <a href="#maximum">maximum</a>
+                </li>
+                
+                <li>
+                  <a href="#maximumBy">maximumBy</a>
+                </li>
+                
+                <li>
+                  <a href="#minimum">minimum</a>
+                </li>
+                
+                <li>
+                  <a href="#minimumBy">minimumBy</a>
+                </li>
+                
+                <li>
+                  <a href="#nub">nub</a>
+                </li>
+                
+                <li>
+                  <a href="#nubBy">nubBy</a>
+                </li>
+                
+                <li>
+                  <a href="#partition">partition</a>
+                </li>
+                
+                <li>
+                  <a href="#permutations">permutations</a>
+                </li>
+                
+                <li>
+                  <a href="#product">product</a>
+                </li>
+                
+                <li>
+                  <a href="#replace">replace</a>
+                </li>
+                
+                <li>
+                  <a href="#scanl">scanl</a>
+                </li>
+                
+                <li>
+                  <a href="#scanl1">scanl1</a>
+                </li>
+                
+                <li>
+                  <a href="#scanr">scanr</a>
+                </li>
+                
+                <li>
+                  <a href="#scanr1">scanr1</a>
+                </li>
+                
+                <li>
+                  <a href="#sortBy">sortBy</a>
+                </li>
+                
+                <li>
+                  <a href="#split">split</a>
+                </li>
+                
+                <li>
+                  <a href="#splitOn">splitOn</a>
+                </li>
+                
+                <li>
+                  <a href="#sum">sum</a>
+                </li>
+                
+                <li>
+                  <a href="#tails">tails</a>
+                </li>
+                
+                <li>
+                  <a href="#transpose">transpose</a>
+                </li>
+                
+                <li>
+                  <a href="#unfoldr">unfoldr</a>
+                </li>
+                
+                <li>
+                  <a href="#union">union</a>
+                </li>
+                
+                <li>
+                  <a href="#unionBy">unionBy</a>
+                </li>
+                
+                <li>
+                  <a href="#\\">\\</a>
+                </li>
+                
+              </ul>
+              <span class="anchored" id="imported_modules"><b>Imported modules:</b></span>
+              <ul class="nav nav-list">
+                
+                <li>
+                  <a href="Prelude.html">Prelude</a>
+                </li>
+                
+                <li>
+                  <a href="Maybe.html">Maybe</a>
+                </li>
+                
+              </ul>
+              
+            </div>
+            
+          </div>
+          </nav>
+        <div class="span9">
+          
+          <div class="row-fluid">
+            
+            <p>
+              Library with some useful operations on lists.
+            </p>
+            
+            <p>
+              <b>Author: </b>Michael Hanus, Bjoern Peemoeller
+            </p>
+            
+            <p>
+              <b>Version: </b>September 2012
+            </p>
+            
+            <h2>
+              Summary of exported operations:
+            </h2>
+            
+            <table class="table table-bordered table-hover">
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="elemIndex_SHORT"><a href="#elemIndex">elemIndex</a></span></span>
+                    :: a -&gt; [a] -&gt; Maybe Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the index <code>i</code>
+                  of the first occurrence of an element in a list
+as <code>(Just i)</code>, otherwise <code>Nothing</code>
+                  is returned.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="elemIndices_SHORT"><a href="#elemIndices">elemIndices</a></span></span>
+                    :: a -&gt; [a] -&gt; [Int]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the list of indices of occurrences of an element in a list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="find_SHORT"><a href="#find">find</a></span></span>
+                    :: (a -&gt; Bool) -&gt; [a] -&gt; Maybe a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the first element <code>e</code>
+                  of a list satisfying a predicate as <code>(Just e)</code>,
+otherwise <code>Nothing</code>
+                  is returned.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="findIndex_SHORT"><a href="#findIndex">findIndex</a></span></span>
+                    :: (a -&gt; Bool) -&gt; [a] -&gt; Maybe Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the index <code>i</code>
+                  of the first occurrences of a list element
+satisfying a predicate as <code>(Just i)</code>, otherwise <code>Nothing</code>
+                  is returned.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="findIndices_SHORT"><a href="#findIndices">findIndices</a></span></span>
+                    :: (a -&gt; Bool) -&gt; [a] -&gt; [Int]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the list of indices of list elements satisfying a predicate.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="nub_SHORT"><a href="#nub">nub</a></span></span>
+                    :: [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Removes all duplicates in the argument list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="nubBy_SHORT"><a href="#nubBy">nubBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Removes all duplicates in the argument list according to an
+equivalence relation.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="delete_SHORT"><a href="#delete">delete</a></span></span>
+                    :: a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Deletes the first occurrence of an element in a list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="deleteBy_SHORT"><a href="#deleteBy">deleteBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Deletes the first occurrence of an element in a list
+according to an equivalence relation.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="\\_SHORT"><a href="#\\">(\\)</a></span></span>
+                    :: [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Computes the difference of two lists.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="union_SHORT"><a href="#union">union</a></span></span>
+                    :: [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Computes the union of two lists.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="unionBy_SHORT"><a href="#unionBy">unionBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Computes the union of two lists according to the given equivalence relation
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="intersect_SHORT"><a href="#intersect">intersect</a></span></span>
+                    :: [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Computes the intersection of two lists.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="intersectBy_SHORT"><a href="#intersectBy">intersectBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Computes the intersection of two lists
+according to the given equivalence relation
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="intersperse_SHORT"><a href="#intersperse">intersperse</a></span></span>
+                    :: a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Puts a separator element between all elements in a list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="intercalate_SHORT"><a href="#intercalate">intercalate</a></span></span>
+                    :: [a] -&gt; [[a]] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  <code>intercalate xs xss</code>
+                  is equivalent to <code>(concat (intersperse xs xss))</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="transpose_SHORT"><a href="#transpose">transpose</a></span></span>
+                    :: [[a]] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Transposes the rows and columns of the argument.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="permutations_SHORT"><a href="#permutations">permutations</a></span></span>
+                    :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the list of all permutations of the argument.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="partition_SHORT"><a href="#partition">partition</a></span></span>
+                    :: (a -&gt; Bool) -&gt; [a] -&gt; ([a],[a])</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Partitions a list into a pair of lists where the first list
+contains those elements that satisfy the predicate argument
+and the second list contains the remaining arguments.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="group_SHORT"><a href="#group">group</a></span></span>
+                    :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Splits the list argument into a list of lists of equal adjacent
+elements.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="groupBy_SHORT"><a href="#groupBy">groupBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Splits the list argument into a list of lists of related adjacent
+elements.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="splitOn_SHORT"><a href="#splitOn">splitOn</a></span></span>
+                    :: [a] -&gt; [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Breaks the second list argument into pieces separated by the first
+list argument, consuming the delimiter.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="split_SHORT"><a href="#split">split</a></span></span>
+                    :: (a -&gt; Bool) -&gt; [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Splits a list into components delimited by separators,
+where the predicate returns True for a separator element.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="inits_SHORT"><a href="#inits">inits</a></span></span>
+                    :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns all initial segments of a list, starting with the shortest.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="tails_SHORT"><a href="#tails">tails</a></span></span>
+                    :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns all final segments of a list, starting with the longest.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="replace_SHORT"><a href="#replace">replace</a></span></span>
+                    :: a -&gt; Int -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Replaces an element in a list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isPrefixOf_SHORT"><a href="#isPrefixOf">isPrefixOf</a></span></span>
+                    :: [a] -&gt; [a] -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Checks whether a list is a prefix of another.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isSuffixOf_SHORT"><a href="#isSuffixOf">isSuffixOf</a></span></span>
+                    :: [a] -&gt; [a] -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Checks whether a list is a suffix of another.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="isInfixOf_SHORT"><a href="#isInfixOf">isInfixOf</a></span></span>
+                    :: [a] -&gt; [a] -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Checks whether a list is contained in another.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="sortBy_SHORT"><a href="#sortBy">sortBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Sorts a list w.r.t.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="insertBy_SHORT"><a href="#insertBy">insertBy</a></span></span>
+                    :: (a -&gt; a -&gt; Bool) -&gt; a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Inserts an object into a list according to an ordering relation.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="last_SHORT"><a href="#last">last</a></span></span>
+                    :: [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the last element of a non-empty list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="init_SHORT"><a href="#init">init</a></span></span>
+                    :: [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the input list with the last element removed.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="sum_SHORT"><a href="#sum">sum</a></span></span>
+                    :: [Int] -&gt; Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the sum of a list of integers.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="product_SHORT"><a href="#product">product</a></span></span>
+                    :: [Int] -&gt; Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the product of a list of integers.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="maximum_SHORT"><a href="#maximum">maximum</a></span></span>
+                    :: [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the maximum of a non-empty list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="maximumBy_SHORT"><a href="#maximumBy">maximumBy</a></span></span>
+                    :: (a -&gt; a -&gt; Ordering) -&gt; [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the maximum of a non-empty list
+according to the given comparison function
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="minimum_SHORT"><a href="#minimum">minimum</a></span></span>
+                    :: [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the minimum of a non-empty list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="minimumBy_SHORT"><a href="#minimumBy">minimumBy</a></span></span>
+                    :: (a -&gt; a -&gt; Ordering) -&gt; [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Returns the minimum of a non-empty list
+according to the given comparison function
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="scanl_SHORT"><a href="#scanl">scanl</a></span></span>
+                    :: (a -&gt; b -&gt; a) -&gt; a -&gt; [b] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  <code>scanl</code>
+                  is similar to <code>foldl</code>, but returns a list of successive
+reduced values from the left:
+  scanl f z [x1, x2, ...] == [z, z <code>f</code>
+                  x1, (z <code>f</code>
+                  x1) <code>f</code>
+                  x2, ...]
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="scanl1_SHORT"><a href="#scanl1">scanl1</a></span></span>
+                    :: (a -&gt; a -&gt; a) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  <code>scanl1</code>
+                  is a variant of <code>scanl</code>
+                  that has no starting value argument:
+ scanl1 f [x1, x2, ...] == [x1, x1 <code>f</code>
+                  x2, ...]
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="scanr_SHORT"><a href="#scanr">scanr</a></span></span>
+                    :: (a -&gt; b -&gt; b) -&gt; b -&gt; [a] -&gt; [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  <code>scanr</code>
+                  is the right-to-left dual of <code>scanl</code>.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="scanr1_SHORT"><a href="#scanr1">scanr1</a></span></span>
+                    :: (a -&gt; a -&gt; a) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  <code>scanr1</code>
+                  is a variant of <code>scanr</code>
+                  that has no starting value argument.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="mapAccumL_SHORT"><a href="#mapAccumL">mapAccumL</a></span></span>
+                    :: (a -&gt; b -&gt; (a,c)) -&gt; a -&gt; [b] -&gt; (a,[c])</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  The <code>mapAccumL</code>
+                  function behaves like a combination of <code>map</code>
+                  and
+<code>foldl</code>; it applies a function to each element of a list, passing
+an accumulating parameter from left to right, and returning a final
+value of this accumulator together with the new list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="mapAccumR_SHORT"><a href="#mapAccumR">mapAccumR</a></span></span>
+                    :: (a -&gt; b -&gt; (a,c)) -&gt; a -&gt; [b] -&gt; (a,[c])</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  The <code>mapAccumR</code>
+                  function behaves like a combination of <code>map</code>
+                  and
+<code>foldr</code>; it applies a function to each element of a list, passing
+an accumulating parameter from right to left, and returning a final
+value of this accumulator together with the new list.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="cycle_SHORT"><a href="#cycle">cycle</a></span></span>
+                    :: [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Builds an infinite list from a finite one.
+                </td>
+                
+              </tr>
+              
+              <tr>
+                
+                <td>
+                  <code><span class="opname"><span class="anchored" id="unfoldr_SHORT"><a href="#unfoldr">unfoldr</a></span></span>
+                    :: (a -&gt; Maybe (b,a)) -&gt; a -&gt; [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                  <br/>
+                  Builds a list from a seed value.
+                </td>
+                
+              </tr>
+              
+            </table>
+            <section id="exported_operations">
+              <h2>
+                Exported operations:
+              </h2>
+              
+              <div class="anchored" id="elemIndex">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#elemIndex">elemIndex</a></span>
+                          :: a -&gt; [a] -&gt; Maybe Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the index <code>i</code>
+                        of the first occurrence of an element in a list
+as <code>(Just i)</code>, otherwise <code>Nothing</code>
+                        is returned.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="elemIndices">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#elemIndices">elemIndices</a></span>
+                          :: a -&gt; [a] -&gt; [Int]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the list of indices of occurrences of an element in a list.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="find">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#find">find</a></span>
+                          :: (a -&gt; Bool) -&gt; [a] -&gt; Maybe a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the first element <code>e</code>
+                        of a list satisfying a predicate as <code>(Just e)</code>,
+otherwise <code>Nothing</code>
+                        is returned.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="findIndex">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#findIndex">findIndex</a></span>
+                          :: (a -&gt; Bool) -&gt; [a] -&gt; Maybe Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the index <code>i</code>
+                        of the first occurrences of a list element
+satisfying a predicate as <code>(Just i)</code>, otherwise <code>Nothing</code>
+                        is returned.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="findIndices">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#findIndices">findIndices</a></span>
+                          :: (a -&gt; Bool) -&gt; [a] -&gt; [Int]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the list of indices of list elements satisfying a predicate.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="nub">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#nub">nub</a></span>
+                          :: [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Removes all duplicates in the argument list.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="nubBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#nubBy">nubBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Removes all duplicates in the argument list according to an
+equivalence relation.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="delete">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#delete">delete</a></span>
+                          :: a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Deletes the first occurrence of an element in a list.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="deleteBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#deleteBy">deleteBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Deletes the first occurrence of an element in a list
+according to an equivalence relation.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="\\">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#\\">(\\)</a></span>
+                          :: [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Computes the difference of two lists.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(xs \\ ys)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>xs</code>
+                          : a list
+                        </li>
+                        
+                        <li>
+                          <code>ys</code>
+                          : a list
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          the list where the first occurrence of each element of
+        <code>ys</code>
+                          has been removed from <code>xs</code>
+                        </dd>
+                        
+                      </dl>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              defined as non-associative infix operator with precedence 5
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="union">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#union">union</a></span>
+                          :: [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Computes the union of two lists.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="unionBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#unionBy">unionBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Computes the union of two lists according to the given equivalence relation
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="intersect">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#intersect">intersect</a></span>
+                          :: [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Computes the intersection of two lists.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="intersectBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#intersectBy">intersectBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Computes the intersection of two lists
+according to the given equivalence relation
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="intersperse">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#intersperse">intersperse</a></span>
+                          :: a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Puts a separator element between all elements in a list.
+                      </p>
+                      
+                      <p>
+                        Example: <code>(intersperse 9 [1,2,3,4]) = [1,9,2,9,3,9,4]</code>
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="intercalate">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#intercalate">intercalate</a></span>
+                          :: [a] -&gt; [[a]] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <code>intercalate xs xss</code>
+                        is equivalent to <code>(concat (intersperse xs xss))</code>.
+It inserts the list <code>xs</code>
+                        in between the lists in <code>xss</code>
+                        and
+concatenates the result.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="transpose">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#transpose">transpose</a></span>
+                          :: [[a]] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Transposes the rows and columns of the argument.
+                      </p>
+                      
+                      <p>
+                        Example: <code>(transpose [[1,2,3],[4,5,6]]) = [[1,4],[2,5],[3,6]]</code>
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="permutations">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#permutations">permutations</a></span>
+                          :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the list of all permutations of the argument.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="partition">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#partition">partition</a></span>
+                          :: (a -&gt; Bool) -&gt; [a] -&gt; ([a],[a])</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Partitions a list into a pair of lists where the first list
+contains those elements that satisfy the predicate argument
+and the second list contains the remaining arguments.
+                      </p>
+                      
+                      <p>
+                        Example: <code>(partition (&lt;4) [8,1,5,2,4,3]) = ([1,2,3],[8,5,4])</code>
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="group">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#group">group</a></span>
+                          :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Splits the list argument into a list of lists of equal adjacent
+elements.
+                      </p>
+                      
+                      <p>
+                        Example: <code>(group [1,2,2,3,3,3,4]) = [[1],[2,2],[3,3,3],[4]]</code>
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="groupBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#groupBy">groupBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Splits the list argument into a list of lists of related adjacent
+elements.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(groupBy eq xs)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>eq</code>
+                          : the relation to classify adjacent elements
+                        </li>
+                        
+                        <li>
+                          <code>xs</code>
+                          : the list of elements
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          the list of lists of related adjacent elements
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="splitOn">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#splitOn">splitOn</a></span>
+                          :: [a] -&gt; [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Breaks the second list argument into pieces separated by the first
+list argument, consuming the delimiter. An empty delimiter is
+invalid, and will cause an error to be raised.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="split">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#split">split</a></span>
+                          :: (a -&gt; Bool) -&gt; [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Splits a list into components delimited by separators,
+where the predicate returns True for a separator element.
+The resulting components do not contain the separators.
+Two adjacent separators result in an empty component in the output.
+                      </p>
+                      <blockquote>
+                        <p>
+                          split (==<code><a href="#a">a</a></code>) "aabbaca" == ["","","bb","c",""]
+split (==<code><a href="#a">a</a></code>) ""        == [""]
+                        </p>
+                        </blockquote>
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="inits">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#inits">inits</a></span>
+                          :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns all initial segments of a list, starting with the shortest.
+Example: <code>inits [1,2,3] == [[],[1],[1,2],[1,2,3]]</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(inits xs)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>xs</code>
+                          : the list of elements
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          the list of initial segments of the argument list
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="tails">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#tails">tails</a></span>
+                          :: [a] -&gt; [[a]]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns all final segments of a list, starting with the longest.
+Example: <code>tails [1,2,3] == [[1,2,3],[2,3],[3],[]]</code>
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="replace">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#replace">replace</a></span>
+                          :: a -&gt; Int -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Replaces an element in a list.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(replace x p ys)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>x</code>
+                          : the new element
+                        </li>
+                        
+                        <li>
+                          <code>p</code>
+                          : the position of the new element (head = 0)
+                        </li>
+                        
+                        <li>
+                          <code>ys</code>
+                          : the old list
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          the new list where the <code>p</code>. element is replaced by <code>x</code>
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isPrefixOf">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#isPrefixOf">isPrefixOf</a></span>
+                          :: [a] -&gt; [a] -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Checks whether a list is a prefix of another.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(isPrefixOf xs ys)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>xs</code>
+                          : a list
+                        </li>
+                        
+                        <li>
+                          <code>ys</code>
+                          : a list
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          <code>True</code>
+                          if <code>xs</code>
+                          is a prefix of <code>ys</code>
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isSuffixOf">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#isSuffixOf">isSuffixOf</a></span>
+                          :: [a] -&gt; [a] -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Checks whether a list is a suffix of another.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(isSuffixOf xs ys)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>xs</code>
+                          : a list
+                        </li>
+                        
+                        <li>
+                          <code>ys</code>
+                          : a list
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          <code>True</code>
+                          if <code>xs</code>
+                          is a suffix of <code>ys</code>
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="isInfixOf">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#isInfixOf">isInfixOf</a></span>
+                          :: [a] -&gt; [a] -&gt; Bool</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Checks whether a list is contained in another.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(isInfixOf xs ys)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>xs</code>
+                          : a list
+                        </li>
+                        
+                        <li>
+                          <code>ys</code>
+                          : a list
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          True if xs is contained in ys
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="sortBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#sortBy">sortBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Sorts a list w.r.t. an ordering relation by the insertion method.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="insertBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#insertBy">insertBy</a></span>
+                          :: (a -&gt; a -&gt; Bool) -&gt; a -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Inserts an object into a list according to an ordering relation.
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Example call:</span>&nbsp;<code>(insertBy le x xs)</code>
+                      </p>
+                      
+                      <p>
+                        <span class="explaincat">Parameters:</span>
+                      </p>
+                      
+                      <ul>
+                        
+                        <li>
+                          <code>le</code>
+                          : an ordering relation (e.g., less-or-equal)
+                        </li>
+                        
+                        <li>
+                          <code>x</code>
+                          : an element
+                        </li>
+                        
+                        <li>
+                          <code>xs</code>
+                          : a list
+                        </li>
+                        
+                      </ul>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Returns:</span>
+                        </dt>
+                        
+                        <dd>
+                          a list where the element has been inserted
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="last">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#last">last</a></span>
+                          :: [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the last element of a non-empty list.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="init">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#init">init</a></span>
+                          :: [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the input list with the last element removed.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="sum">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#sum">sum</a></span>
+                          :: [Int] -&gt; Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the sum of a list of integers.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="product">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#product">product</a></span>
+                          :: [Int] -&gt; Int</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the product of a list of integers.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="maximum">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#maximum">maximum</a></span>
+                          :: [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the maximum of a non-empty list.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="maximumBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#maximumBy">maximumBy</a></span>
+                          :: (a -&gt; a -&gt; Ordering) -&gt; [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the maximum of a non-empty list
+according to the given comparison function
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="minimum">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#minimum">minimum</a></span>
+                          :: [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the minimum of a non-empty list.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="minimumBy">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#minimumBy">minimumBy</a></span>
+                          :: (a -&gt; a -&gt; Ordering) -&gt; [a] -&gt; a</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Returns the minimum of a non-empty list
+according to the given comparison function
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="scanl">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#scanl">scanl</a></span>
+                          :: (a -&gt; b -&gt; a) -&gt; a -&gt; [b] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <code>scanl</code>
+                        is similar to <code>foldl</code>, but returns a list of successive
+reduced values from the left:
+  scanl f z [x1, x2, ...] == [z, z <code>f</code>
+                        x1, (z <code>f</code>
+                        x1) <code>f</code>
+                        x2, ...]
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="scanl1">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#scanl1">scanl1</a></span>
+                          :: (a -&gt; a -&gt; a) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <code>scanl1</code>
+                        is a variant of <code>scanl</code>
+                        that has no starting value argument:
+ scanl1 f [x1, x2, ...] == [x1, x1 <code>f</code>
+                        x2, ...]
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="scanr">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#scanr">scanr</a></span>
+                          :: (a -&gt; b -&gt; b) -&gt; b -&gt; [a] -&gt; [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <code>scanr</code>
+                        is the right-to-left dual of <code>scanl</code>.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="scanr1">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#scanr1">scanr1</a></span>
+                          :: (a -&gt; a -&gt; a) -&gt; [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        <code>scanr1</code>
+                        is a variant of <code>scanr</code>
+                        that has no starting value argument.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="mapAccumL">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#mapAccumL">mapAccumL</a></span>
+                          :: (a -&gt; b -&gt; (a,c)) -&gt; a -&gt; [b] -&gt; (a,[c])</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        The <code>mapAccumL</code>
+                        function behaves like a combination of <code>map</code>
+                        and
+<code>foldl</code>; it applies a function to each element of a list, passing
+an accumulating parameter from left to right, and returning a final
+value of this accumulator together with the new list.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="mapAccumR">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#mapAccumR">mapAccumR</a></span>
+                          :: (a -&gt; b -&gt; (a,c)) -&gt; a -&gt; [b] -&gt; (a,[c])</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        The <code>mapAccumR</code>
+                        function behaves like a combination of <code>map</code>
+                        and
+<code>foldr</code>; it applies a function to each element of a list, passing
+an accumulating parameter from right to left, and returning a final
+value of this accumulator together with the new list.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="cycle">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#cycle">cycle</a></span>
+                          :: [a] -&gt; [a]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Builds an infinite list from a finite one.
+                      </p>
+                      
+                      <dl>
+                        
+                        <dt>
+                          <span class="explaincat">Further infos:</span>
+                        </dt>
+                        
+                        <dd>
+                          
+                          <ul>
+                            
+                            <li>
+                              partially defined
+                            </li>
+                            
+                            <li>
+                              solution complete, i.e., able to compute all solutions
+                            </li>
+                            
+                          </ul>
+                          
+                        </dd>
+                        
+                      </dl>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              
+              <div class="anchored" id="unfoldr">
+                
+                <table class="table table-bordered table-hover">
+                  
+                  <tr>
+                    
+                    <td>
+                      
+                      <p>
+                        <code><span class="opname"><a href="List_curry.html#unfoldr">unfoldr</a></span>
+                          :: (a -&gt; Maybe (b,a)) -&gt; a -&gt; [b]</code>&nbsp;&nbsp;<a href="index.html#det_explain"><i class="fa fa-long-arrow-down" title="This operation is deterministic"></i></a>&nbsp;
+                      </p>
+                      
+                      <p>
+                        Builds a list from a seed value.
+                      </p>
+                      
+                    </td>
+                    
+                  </tr>
+                  
+                </table>
+                
+              </div>
+              </section>
+          </div>
+          
+        </div>
+        
+        <hr/>
+        <footer><i>Generated by <b>CurryDoc</b>
+            (Version 0.8.0 of June 4, 2015) at Sep 29 09:02:14 2015</i></footer>
+      </div>
+      
+    </div>
+    
+  </body>
+  
+</html>
