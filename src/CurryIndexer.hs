@@ -16,7 +16,7 @@ for the module, function and type information.
 module Main (main) where
 
 import Control.Monad       (liftM)
-import Data.Binary         (Binary , Word32)
+import Data.Binary         (Binary)
 import Data.List.Split     (splitOn)
 
 import System.Directory   (renameFile, getDirectoryContents)
@@ -34,6 +34,7 @@ import IndexTypes
 import Holumbus.Crawler.IndexerCore (IndexerState (..))
 import Holumbus.Index.CompactSmallDocuments (docTable2smallDocTable, idToSmallDoc)
 import Holumbus.Index.Common.Occurences
+import Holumbus.Index.Common.BasicTypes (Position)
 import Holumbus.Index.Common.DocId (DocId, addDocId)
 import Holumbus.Index.Common.DocIdMap (maxKeyDocIdMap)
 import Holumbus.Index.Common (HolIndex (..), HolDocuments (..), HolDocIndex (..), Document (..))
@@ -135,7 +136,7 @@ writeIndex' moduleList (curryModState, curryFctState, curryTypeState) = do
   writeFile (listExtension _moduleListPath) (show moduleList)
 
 -- Singleton shortcut for Occurences
-occ :: DocId -> Word32 -> Occurrences
+occ :: DocId -> Position -> Occurrences
 occ = singletonOccurrence
 
 -- Adds an occurences to a tuple, returns a triple

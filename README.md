@@ -24,7 +24,9 @@ Installation
 This directory contains cabal-file, for the installation you simply
 have to run cabal.
 
-    $ cabal configure 
+    $ cabal sandbox init
+    $ cabal sandbox add-source holumbus
+    $ cabal configure
     $ cabal build 
     $ cabal install
 

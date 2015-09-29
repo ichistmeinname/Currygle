@@ -21,7 +21,7 @@ executable curryIndexer
   build-depends:  base                   == 4.*
                 , filepath               == 1.*
                 , directory
-                , Holumbus-Searchengine  >= 1.2.3
+                , Holumbus-Searchengine  >= 1.2.6
                 , binary                 >= 0.5  && < 1
                 , deepseq
                 , text
@@ -40,44 +40,25 @@ executable curryServer
   other-modules:  CurryInfo, FilesAndLoading, Helpers, IndexTypes
                 , CurrySearch, QueryParser, Application, Site
 
-  build-depends:  bytestring                >= 0.9.1   && < 0.11
-                , heist                     >= 0.11    && < 0.12
-                , MonadCatchIO-transformers >= 0.2.1   && < 0.4
-                , mtl                       >= 2       && < 3
-                , snap                      >= 0.11    && < 0.12
-                , snap-core                 >= 0.9     && < 0.10
-                , snap-server               >= 0.9     && < 0.10
-                , snap-loader-static        >= 0.9     && < 0.10
-                , text                      >= 0.11    && < 0.12
-                , time                      >= 1.1     && < 1.5
+  build-depends:  bytestring
+                , heist
+                , snap                      >= 0.11
+                , snap-core                 >= 0.9
+                , snap-server               >= 0.9
+                , snap-loader-static        >= 0.9
+                , snap-extras
                 , xmlhtml                   >= 0.1
-
-                , json                      >= 0.4    && < 1
-                , Holumbus-Searchengine     >= 1.2.3
-                , binary                    >= 0.5
+                , Holumbus-Searchengine     >= 1.2.6.4
+                , binary                    >= 0.5     && < 1
                 , deepseq
                 , parsec
                 , containers
                 , transformers
                 , unix
                 , hashable                  >= 1.2.0.6
-                , tagged                    <  0.5
-                , distributive              <  0.4
-                , transformers-compat       <  0.2
-                , contravariant             <  0.5
-                , attoparsec                <  0.11
-                , comonad                   <  3.1
-                , syb                       <  0.5
-                , primitive                 <  0.6
-
-  if flag(old-base)
-    build-depends:
-      base                      >= 4        && < 4.4,
-      lens                      >= 3.7.6    && < 3.8
-  else
-    build-depends:
-      base                      >= 4.4      && < 5,
-      lens                      >= 3.7.6    && < 3.9
+                , lens
+                , mtl
+                , json
 
   ghc-options:  -threaded
                 -O2
