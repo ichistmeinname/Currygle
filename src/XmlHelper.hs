@@ -100,8 +100,8 @@ descriptionHtml text = [htmlLiClass "description" [htmlTextNode text]]
 -- Creates one "document" of the search results as HTML node
 -- Short example:
 -- <div><a href=uri class="result-item"><h3>TITLE</h3><ul><li class="description>DESCR</li></ul></a></div>
-makeResult :: String -> String -> (String, String) -> String -> [(String, String)] -> X.Node
-makeResult title uri (oAtt, oText) descr sig =
+resultNode :: String -> String -> (String, String) -> String -> [(String, String)] -> X.Node
+resultNode title uri (oAtt, oText) descr sig =
   resultHtml uri (captionHtml title ++
                  [htmlUl (sigHtml signature ++ othersHtml ++ descriptionHtml descr)])
  where signature = ifNotEmpty sig [typeConsHtml $ map (\(name, consSig) -> name ++ " :: " ++ consSig) sig]
@@ -145,7 +145,7 @@ example =
                   ++ [bold ":t either"]
                   ++ [htmlTextNode "), without a following name, it searches for all types"]
        author   = [bold ":author donald"]
-                  ++ [htmlTextNode " - searches for modules with"]
+                  ++ [htmlTextNode " - searches for modules with "]
                   ++ [italic "donald"]
                   ++ [htmlTextNode " as author (also: "]
                   ++ [bold ":a donald"] ++ [htmlTextNode ")"]
