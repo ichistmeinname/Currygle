@@ -20,16 +20,17 @@ import qualified Data.List              as L
 import qualified Data.Map               as M
 import           Data.Maybe             (fromMaybe)
 
-import Holumbus.Index.Common
-import Holumbus.Query.Fuzzy            (FuzzyConfig (..), englishReplacements)
-import Holumbus.Query.Language.Grammar (Query (..))
-import Holumbus.Query.Processor        (ProcessConfig (..), processQuery)
-import Holumbus.Query.Ranking
-import Holumbus.Query.Result
+import           Holumbus.Index.Common
+import           Holumbus.Index.Common.DocIdMap  (elemsDocIdMap, sizeDocIdMap, emptyDocIdMap)
+import           Holumbus.Query.Fuzzy            (FuzzyConfig (..), englishReplacements)
+import           Holumbus.Query.Language.Grammar (Query (..))
+import           Holumbus.Query.Processor        (ProcessConfig (..), processQuery)
+import           Holumbus.Query.Ranking
+import           Holumbus.Query.Result
 
 import CurryInfo
 import IndexTypes  (CurryIndex (..))
-import Helpers     (splitOnWhitespace)
+-- import Helpers     (splitOnWhitespace)
 import QueryParser (parse)
 
 -- | Shortcut for the result triple.
@@ -45,18 +46,18 @@ queryResults state = either noResults makeQuery . parse
   makeQuery query = do
     results      <- queryResult state query
     (rM, rF, rT) <- defaultRanks results
-    qResultDocs  <- docHitsToResult (docHits rM, docHits rF, docHits rT)
-    return qResultDocs
+    docHitsToResult (docHits rM, docHits rF, docHits rT)
 
 -- | Returns only the word completions of a query result.
 wordCompletions :: QueryFor QRWords
-wordCompletions state = makeQuery . prepare
+wordCompletions state str = either (const (return emptyQRWords)) makeQuery (parse str)
   where
-  prepare = wordCompletionSpecifier . prepareWordCompletionQuery
+  -- queryWithoutSpecifier = prepareWordCompletionQuery str
   makeQuery query = do
-    results <- queryResult state query
+    let queryWithSpecifier = wordCompletionSpecifier query
+    results <- queryResult state queryWithSpecifier
     (rrM, rrF, rrT) <- defaultRanks results
-    sortedWords (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT])
+    return (sortWords (foldr M.union (wordHits rrM) [wordHits rrF, wordHits rrT]))
 
 -- | Processes a query for a given module, function and type indexer pair.
 queryResult :: CurryIndex -> Query -> IO MFTResult
@@ -73,11 +74,13 @@ _defaultRankTable =
   , ("module"     , 0.5 )
   , ("author"     , 0.2 )
   , ("description", 0.1 )
-  ]
 
 -- The context weights for a word completion, only function, type, and module names are important.
 _wordCompletionRankTable :: RankTable
-_wordCompletionRankTable = [(":function", 1.0), (":type", 0.5), (":module", 0.5)]
+_wordCompletionRankTable =
+  [ ("function", 1.0)
+  , ("type", 0.5)
+  , ("module", 0.5) ]
 
 -- For this search engine, the documents and word completions have different rank tables.
 _defaultRankCfg :: RankConfig a
@@ -92,8 +95,8 @@ infoDoc emptyInfo (_, (DocInfo (Document title' uri' info') score', contextMap')
 
 -- Sorts the documents by score considering the (possibly) applied rank table
 -- and returns a list of these documents as info document data structure.
-sortedInfoDoc :: (Binary a) => a -> DocHits a -> [InfoDoc a]
-sortedInfoDoc emptyInfo info = map (infoDoc emptyInfo) $ docData info
+sortInfoDoc :: (Binary a) => a -> DocHits a -> [InfoDoc a]
+sortInfoDoc emptyInfo info = map (infoDoc emptyInfo) $ docData info
   where docData = L.sortBy pred' . toListDocIdMap
         pred' info1 info2 =
           case (compare `on` (docScore . fst . snd)) info1 info2 of
@@ -107,28 +110,26 @@ docHitsToResult :: (DocHits ModuleInfo,
                     DocHits FunctionInfo,
                     DocHits TypeInfo) -> IO QRDocs
 docHitsToResult (m, f, t) = return $ QRDocs size
-                            (sortedInfoDoc emptyModuleInfo m)
-                            (sortedInfoDoc emptyFunctionInfo f)
-                            (sortedInfoDoc emptyTypeInfo t)
+                            (sortInfoDoc emptyModuleInfo m)
+                            (sortInfoDoc emptyFunctionInfo f)
+                            (sortInfoDoc emptyTypeInfo t)
  where size = sizeDocIdMap m + sizeDocIdMap f + sizeDocIdMap t
 
--- Sorts word completions by score that considers an (possibly) applied rank table
--- and returns a word completion data structure.
-sortedWords :: WordHits -> IO QRWords
-sortedWords h =
-  return $ QRWords (M.size h) wordData
- where wordData = L.reverse $ L.sortBy (compare `on` iwScore)
-                  (map (\ (word, (wordInfo, _)) -> uncurry InfoWord (word, wordScore wordInfo))
+-- Sorts word/doc completions by score that considers an (possibly) applied rank table
+-- and returns a word/doc completion data structure.
+sortWords :: WordHits -> QRWords
+sortWords h =
+  QRWords (M.size h) wordData
+ where wordData = L.reverse $ L.sortBy (compare `on` iwName)
+                  (map (\ (word, (wordInfo, _)) -> InfoWord word (wordScore wordInfo))
                        $ M.toList h)
 
 -- When processing word completions consider only the function, module and type contexts.
-wordCompletionSpecifier :: String -> Query
-wordCompletionSpecifier = Specifier ["function","module","type"] . Word
-
--- Removes context specifiers (substrings starting with ':') from the string.
-prepareWordCompletionQuery :: String -> String
-prepareWordCompletionQuery queryString =
-  concat $ filter (not . (":" `L.isPrefixOf`)) $ splitOnWhitespace queryString
+wordCompletionSpecifier :: Query -> Query
+wordCompletionSpecifier (Specifier cs query) =
+  Specifier ("function":"module":"type":"author":cs) query
+wordCompletionSpecifier query                =
+  Specifier ["function","module","type","author"] query
 
 -- | The function to apply a rank table (weights) to a given result.
 defaultRanks :: MFTResult -> IO MFTResult
@@ -149,9 +150,14 @@ processCfg =
 -- | Representation of word completions.
 -- It contains the number of possible completions and a list of these words.
 data QRWords = QRWords { qwCount :: Int, qwInfo :: [InfoWord] }
+  deriving Show
+
+emptyQRWords :: QRWords
+emptyQRWords = QRWords 0 []
 
 -- | A possible word completion holds a name (the word itself) and a score.
 data InfoWord = InfoWord { iwName :: String, iwScore :: Score }
+  deriving Show
 
 -- |The documents that match a query are divided into three groups,
 -- corresponding to the curryInfo data.
@@ -168,6 +174,12 @@ data QRDocs = QRDocs
 emptyQRDocs :: QRDocs
 emptyQRDocs = QRDocs 0 [] [] []
 
+qrDocsToQrWords :: QRDocs -> QRWords
+qrDocsToQrWords (QRDocs count mds fcts tps) =
+  QRWords count (map infoDocToInfoWord mds
+                ++ map infoDocToInfoWord fcts
+                ++ map infoDocToInfoWord tps)
+
 -- |A document stores information about its title, uri and score.
 -- Furthermore, it consits of a mapping of the contexts
 -- (i.e. function, module, type, author etc)
@@ -181,3 +193,7 @@ data InfoDoc a = InfoDoc
   , idScore      :: Score
   } deriving Show
 
+infoDocToInfoWord :: InfoDoc a -> InfoWord
+infoDocToInfoWord (InfoDoc name _ _ _ score) = InfoWord name score
+
+data ResultDoc a = ResultDoc { rName :: String, rScore :: Score, rExtra :: a }

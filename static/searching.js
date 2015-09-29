@@ -1,68 +1,30 @@
+$(document).ready(function(){
+    var states = ["Andorra","United Arab Emirates","Afghanistan","Antigua and Barbuda","Anguilla","Albania","Armenia","Angola","Antarctica","Argentina","American Samoa","Austria","Australia","Aruba","Åland","Azerbaijan","Bosnia and Herzegovina","Barbados","Bangladesh","Belgium","Burkina Faso","Bulgaria","Bahrain","Burundi","Benin","Saint Barthélemy","Bermuda","Brunei","Bolivia","Bonaire","Brazil","Bahamas","Bhutan","Bouvet Island","Botswana","Belarus","Belize","Canada","Cocos [Keeling] Islands","Congo","Central African Republic","Republic of the Congo","Switzerland","Ivory Coast","Cook Islands","Chile","Cameroon","China","Colombia","Costa Rica","Cuba","Cape Verde","Curacao","Christmas Island","Cyprus","Czechia","Germany","Djibouti","Denmark","Dominica","Dominican Republic","Algeria","Ecuador","Estonia","Egypt","Western Sahara","Eritrea","Spain","Ethiopia","Finland","Fiji","Falkland Islands","Micronesia","Faroe Islands","France","Gabon","United Kingdom","Grenada","Georgia","French Guiana","Guernsey","Ghana","Gibraltar","Greenland","Gambia","Guinea","Guadeloupe","Equatorial Guinea","Greece","South Georgia and the South Sandwich Islands","Guatemala","Guam","Guinea-Bissau","Guyana","Hong Kong","Heard Island and McDonald Islands","Honduras","Croatia","Haiti","Hungary","Indonesia","Ireland","Israel","Isle of Man","India","British Indian Ocean Territory","Iraq","Iran","Iceland","Italy","Jersey","Jamaica","Jordan","Japan","Kenya","Kyrgyzstan","Cambodia","Kiribati","Comoros","Saint Kitts and Nevis","North Korea","South Korea","Kuwait","Cayman Islands","Kazakhstan","Laos","Lebanon","Saint Lucia","Liechtenstein","Sri Lanka","Liberia","Lesotho","Lithuania","Luxembourg","Latvia","Libya","Morocco","Monaco","Moldova","Montenegro","Saint Martin","Madagascar","Marshall Islands","Macedonia","Mali","Myanmar [Burma]","Mongolia","Macao","Northern Mariana Islands","Martinique","Mauritania","Montserrat","Malta","Mauritius","Maldives","Malawi","Mexico","Malaysia","Mozambique","Namibia","New Caledonia","Niger","Norfolk Island","Nigeria","Nicaragua","Netherlands","Norway","Nepal","Nauru","Niue","New Zealand","Oman","Panama","Peru","French Polynesia","Papua New Guinea","Philippines","Pakistan","Poland","Saint Pierre and Miquelon","Pitcairn Islands","Puerto Rico","Palestine","Portugal","Palau","Paraguay","Qatar","Réunion","Romania","Serbia","Russia","Rwanda","Saudi Arabia","Solomon Islands","Seychelles","Sudan","Sweden","Singapore","Saint Helena","Slovenia","Svalbard and Jan Mayen","Slovakia","Sierra Leone","San Marino","Senegal","Somalia","Suriname","South Sudan","São Tomé and Príncipe","El Salvador","Sint Maarten","Syria","Swaziland","Turks and Caicos Islands","Chad","French Southern Territories","Togo","Thailand","Tajikistan","Tokelau","East Timor","Turkmenistan","Tunisia","Tonga","Turkey","Trinidad and Tobago","Tuvalu","Taiwan","Tanzania","Ukraine","Uganda","U.S. Minor Outlying Islands","United States","Uruguay","Uzbekistan","Vatican City","Saint Vincent and the Grenadines","Venezuela","British Virgin Islands","U.S. Virgin Islands","Vietnam","Vanuatu","Wallis and Futuna","Samoa","Kosovo","Yemen","Mayotte","South Africa","Zambia","Zimbabwe"];
+    var engine = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        // local: states
+        prefetch: '/kics2/currygle/completions?query=:f',
+        remote: {
+            url: '/kics2/currygle/completions?query=%QUERY', // + encodeURIComponent(document.getElementById("query-input").value)
+            wildcard: '%QUERY'
+        }
+    });
 
-function createRequestObject() {
-  var ro;
-  var browser=navigator.appName;
-
-  if(browser=="Microsoft Internet Explorer") {
-    ro=new ActiveXObject("Microsoft.XMLHTTP");
-  } else {
-    ro=new XMLHttpRequest();
-  }
-  return ro;
-}
-
-// var http=createRequestObject();
+    $('#query-input').typeahead(null,
+    // {
+    //     hint: true,
+    //     highlight: true,
+    //     minLength: 1
+    // },
+                                {
+        name: 'states',
+                                    source: engine
+                                    , limit: 15});
+});
 
 function searchQuery() {
-  location.href="./results?query="
-   +encodeURIComponent(document.getElementById("query").value);
-  return false;
-}
-
-function getCompletions(e) {
-  var query=encodeURIComponent(document.getElementById("query").value);
-  var autocomplete=$('input').typeahead();
-  switch(e.keyCode) {
-    case 9: // tab
-    case 13: // enter
-
-    return;
-
-    case 27: // escape
-        //autocomplete.data('typeahead').hide();
-    return;
-
-    case 32: // space bar
-    case 37: // arrows
-    case 38:
-    case 39:
-    case 40:
-    e.preventDefault()
-        //autocomplete.data('typeahead').keyup(e)
-    return;
-   }
-  var lastBlankPos = query.lastIndexOf(' ');
-  if (query.length>lastBlankPos+1) {
-      query=query.substring(lastBlankPos);
-    }
-  if (query.length>0) {
-     $.get('./completions?query='+query, function(data){
-        autocomplete.data('typeahead').source=eval(data);
-        autocomplete.data('typeahead').lookup();
-        });
-      //http.open('get', 'completions?query='+query);
-      //http.onreadystatechange=getHTTPResponse;
-      //http.send(null);
-  } else {
-    autocomplete.data('typeahead').source = [];
-    }
-}
-
-function getHTTPResponse() {
-  if (http.readyState==4) {
-      var suggestions = eval(http.responseText);
-      var autocomplete=$('input').typeahead();
-      autocomplete.data('typeahead').source=suggestions;
-      autocomplete.data('typeahead').lookup();
-  }
+    location.href="./results?query="
+        +encodeURIComponent(document.getElementById("query-input").value);
+    return false;
 }
