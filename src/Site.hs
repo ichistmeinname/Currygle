@@ -110,12 +110,10 @@ results = do
 -- | Generates the HTML node of the search results.
 resultSplice :: Int -> QRDocs -> Splice AppHandler
 resultSplice _ (QRDocs _ [] [] [])
-  = debug "- keine Ergebnisse -" >> return ([htmlUl [noResults]])
-resultSplice pageNum (QRDocs count mHits fHits tHits) = do
-  debug $ "<" ++ (show $ length $ mHits) ++ ", " ++ (show $ length $ fHits)
-            ++ ", " ++ (show $ length tHits) ++ ">"
-  return $ docCount count : itemsForPage
-  where
+  = return ([htmlUl [noResults]])
+resultSplice pageNum (QRDocs count mHits fHits tHits) =
+  return (docCount count : itemsForPage)
+ where
   itemsForPage = pageHits (map rExtra
                                (sortBy compare' itemsWithScore))
   compare' x y = case (compare `on` rScore) x y of
