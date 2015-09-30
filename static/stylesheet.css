@@ -1,28 +1,3 @@
-.header {
-  height: 90px;
-  display: block;
-}
-
-.result {
-  min-height: 512px;
-}
-
-.sidebar {
-  color: #ffffff;
-}
-
-.well {
-    background-color:  rgb(238, 238, 238);
-}
-
-/* .footer { */
-/*   background-color:  rgb(238, 238, 238); */
-/*   height: 200px; */
-/*   width: 100%; */
-/*   bottom: 0; */
-/*   position: absolute; */
-/* } */
-
 body {
   margin: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -52,6 +27,12 @@ ul {
   list-style: none;
 }
 
+.info {
+    font-style: oblique;
+    list-style-type: none;
+    margin-bottom: 25px;
+}
+
 .optional li {
   line-height: 18px;
 }
@@ -73,33 +54,107 @@ a.result-item {
 
 h3 {
   font-size: 18px;
-  line-height: 27px;
+  line-height: 25px;
   text-decoration: none;
-  margin: 0;
+  margin: 5px 10px 5px 10px;
   font-family: inherit;
   font-weight: bold;
   color: inherit;
   text-rendering: optimizelegibility;
 }
 
-/* [class^="icon-"], */
-/* [class*=" icon-"] { */
-/*   display: inline-block; */
-/*   width: 14px; */
-/*   height: 14px; */
-/*   padding-left: 3px; */
-/*   *margin-right: .3em; */
-/*   line-height: 14px; */
-/*   vertical-align: text-top; */
-/*   background-image: url("glyphicons-halflings.png"); */
-/*   background-position: 14px 14px; */
-/*   background-repeat: no-repeat; */
-/* } */
-
-.icon-leaf {
-    background-position: -48px -120px;
-    background-image: url("glyphicons-halflings.png");
+.header {
+    float: left;
+    width: 100%;
+    padding: 60px;
+    margin-bottom: 30px;
+    font-size: 18px;
+    font-weight: 200;
+    line-height: 30px;
+    -webkit-border-bottom-radius: 6px;
+    -moz-border-bottom-radius: 6px;
+    border-bottom-radius: 6px;
 }
+
+.content {
+    float: left;
+    width: 100%;
+}
+
+.centered {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.results {
+    padding: 30px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+
+.results>div {
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    border: solid 2px rgb(216, 214, 220);    
+}
+
+.pagination {
+    float: left;
+    width: 100%;
+}
+
+a {
+    color: #196AFF;
+}
+
+a:hover {
+    color: #003390;
+}
+
+.active>a {
+    text-decoration: underline;
+    color: #196AFF;
+}
+
+.active>a:hover {
+    text-decoration: underline;
+    color: #196AFF;
+}
+
+.footer {
+    float: left;
+    /* height: 100px; */
+    width: 100%;
+    bottom: 0;
+    /* position: absolute; */
+    clear: both;
+}
+
+.footer-text {
+    width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+
+.haskell-logo {
+    width: 33%;
+    height: 33%;
+}
+
+.color1 {
+    background-color:  rgb(216, 214, 220);
+}
+
+/* .icon-leaf { */
+/*     background-position: -48px -120px; */
+/*     background-image: url("glyphicons-halflings.png"); */
+/* } */
 
 #title {
     float: left;
@@ -152,16 +207,16 @@ input[type="text"].tt-input:focus {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
-  border: 2px solid #0097cf;
+  border: 2px solid #7EACFF;
 }
 
-.typeahead {
-  background-color: #fff;
-}
+/* .typeahead { */
+/*   background-color: #fff; */
+/* } */
 
-.typeahead:focus {
-  border: 2px solid #0097cf;
-}
+/* /\* .typeahead:focus { *\/ */
+/* /\*   border: 2px solid #0097cf; *\/ */
+/* /\* } *\/ */
 
 .tt-query {
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);

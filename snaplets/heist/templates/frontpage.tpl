@@ -13,41 +13,31 @@
   <script src="./static/searching.js"></script>
 </head>
 <body>
-  <div class="row-fluid">
-    <div class="span12">
-      <div class="hero-unit">
-      <div id="title">
-        <h1>
-          <a href=".">Curr(y)gle</a>
-        </h1>
-        <p>Keep calm and curry on</p>
-       </div>
-      <form onsubmit="return searchQuery();">
-        <div id="query">
-        <input id="query-input" type="text" value=${oldquery}
-          class="search-query typeahead" />
-          <input type="submit" class="btn search-btn" value="Search"/>
-        </div>
-      </form>
-      <div style="clear:both"/>
-      </div>
-    </div>        
-    <div class="row-fluid">
-      <div class="span2 visible-desktop">
-        <div class="sidebar"></div>
-      </div>
-      <div class="span9">
-        <div class="well"><result/></div>
-      </div>
+  <div class="header color1">
+    <div id="title">
+     <h1>
+       <a href=".">Curr(y)gle</a>
+     </h1>
+     <p>Keep calm and curry on</p>
     </div>
-    <div class="row-fluid">
-      <div class="span2 visible-desktop">
-        <div class="sidebar"></div>
-      </div>
-      <div class="span9"><pager/></div>
-    </div>
-    <div class="clearfix"/>
-    <div class="footer"></div>
-    </div>
+    <form onsubmit="return searchQuery();">
+     <div id="query">
+       <input id="query-input" type="text" value=${oldquery}
+         class="search-query typeahead" />
+       <input type="submit" class="btn search-btn" value="Search"/>
+     </div>
+    </form>
+    <div style="clear:both"/>
+  </div>
+  <div class="content">
+      <div class="results centered"><result/></div>
+  </div>
+  <div class="pagination centered"><pager/></div>
+  <div class="footer color1">
+    <p class="footer-text">© <a
+    href="https://github.com/ichistmeinname">Sandra Dylus</a>
+    2012-2015<br/>
+    powered by <a href="www.haskell.org"><img class="haskell-logo" src="./static/haskell.png" /></a></p>
+  </div>
 </body>
 </html>
