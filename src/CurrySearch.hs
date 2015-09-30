@@ -73,7 +73,7 @@ _defaultRankTable =
   , ("signature"  , 0.5 )
   , ("module"     , 0.5 )
   , ("author"     , 0.2 )
-  , ("description", 0.1 )
+  , ("description", 0.1 ) ]
 
 -- The context weights for a word completion, only function, type, and module names are important.
 _wordCompletionRankTable :: RankTable
