@@ -21,20 +21,17 @@ engines.
 Installation
 -------------
 
-This directory contains cabal-file, for the installation you simply
-have to run cabal.
+This directory contains a cabal-file, for the installation you simply
+have to run cabal. Futhermore, Curr(y)gle depends on the Holumbus-Searchengine, 
+which exists as a submodule.
 
+    $ git submodule init
+    $ git submodule update
     $ cabal sandbox init
     $ cabal sandbox add-source holumbus
     $ cabal configure
     $ cabal build 
     $ cabal install
-
-Alternatively you can use the provided *Setup.hs*.
-    $ runhaskell Setup.hs configure
-    $ runhaskell Setup.hs build
-    $ runhaskell Setup.hs install
-
 
 How-to-use
 -----------
