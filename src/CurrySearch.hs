@@ -21,7 +21,7 @@ import qualified Data.Map               as M
 import           Data.Maybe             (fromMaybe)
 
 import           Holumbus.Index.Common
-import           Holumbus.Index.Common.DocIdMap  (elemsDocIdMap, sizeDocIdMap, emptyDocIdMap)
+import           Holumbus.Index.Common.DocIdMap  (sizeDocIdMap, emptyDocIdMap)
 import           Holumbus.Query.Fuzzy            (FuzzyConfig (..), englishReplacements)
 import           Holumbus.Query.Language.Grammar (Query (..))
 import           Holumbus.Query.Processor        (ProcessConfig (..), processQuery)
@@ -30,7 +30,6 @@ import           Holumbus.Query.Result
 
 import CurryInfo
 import IndexTypes  (CurryIndex (..))
--- import Helpers     (splitOnWhitespace)
 import QueryParser (parse)
 
 -- | Shortcut for the result triple.

@@ -17,25 +17,23 @@ and gathered by the function site, which is exported.
 module Site ( app ) where
 
 import           Control.Applicative       ((<$>))
-import           Control.Monad             (liftM)
 import           Control.Monad.IO.Class    (MonadIO(), liftIO)
 import           Control.Monad.State.Lazy  (gets)
 
 import           Data.ByteString           (ByteString)
 import           Data.Function             (on)
 import           Data.List                 (intercalate, isPrefixOf, sortBy)
+import           Data.Map.Syntax           ((##))
 import           Data.Maybe                (fromMaybe)
 import           Data.Monoid               (mconcat)
 import qualified Data.Text          as T   (pack, unpack)
 import qualified Data.Text.Encoding as T   (encodeUtf8, decodeUtf8)
 
-import           Heist.SpliceAPI           ((##))
 import           Heist.Interpreted
 import           Snap
 import           Snap.Extras.JSON          (writeJSON)
 import           Snap.Snaplet.Heist
 import           Snap.Util.FileServe       (serveDirectory)
-import           Text.JSON                 (encodeStrict, showJSONs)
 import qualified Text.XmlHtml       as X
 
 import Application

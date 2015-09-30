@@ -47,6 +47,7 @@ executable curryServer
                 , snap-server               >= 0.9
                 , snap-loader-static        >= 0.9
                 , snap-extras
+                , map-syntax
                 , xmlhtml                   >= 0.1
                 , Holumbus-Searchengine     >= 1.2.6.4
                 , binary                    >= 0.5     && < 1
