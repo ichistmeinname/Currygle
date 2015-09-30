@@ -53,9 +53,9 @@ curryIndexer can either generate a new index or update the existing
 one, to distinguish between these options, you can use the flag *--n*
 for generating a new index and *--u* for updating the index.
 
-    $ curryIndexer ./example/CDOC_HTML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --n
-    $ curryIndexer ./example/CDOC_URL http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u
-    $ curryIndexer ./example/CDOC_XML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u
+    $ curryIndexer ./examples/CDOC_HTML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --n
+    $ curryIndexer ./examples/CDOC_URL http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u
+    $ curryIndexer ./examples/CDOC_XML http://www.informatik.uni-kiel.de/~pakcs/lib/CDOC/ --u
 
 Since it can take a very long time to add each single module, you can
 pass a .txt-file as argument that consists of pairs of .cdoc-file and
