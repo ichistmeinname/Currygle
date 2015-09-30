@@ -9,9 +9,14 @@ cdoc_uri = http://www-ps.informatik.uni-kiel.de/kics2/lib/CDOC/
 # development only
 .PHONY: compile
 compile:
-	cabal-dev install-deps
-	cabal-dev configure
-	cabal-dev build
+	git submodule init
+	git submodule update
+	cabal sandbox init
+	cabal install happy
+	cabal sandbox add-source holumbus
+	cabal install --dependencies-only
+	cabal configure
+	cabal build
 
 .PHONY: index
 index:

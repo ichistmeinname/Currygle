@@ -23,11 +23,13 @@ Installation
 
 This directory contains a cabal-file, for the installation you simply
 have to run cabal. Futhermore, Curr(y)gle depends on the Holumbus-Searchengine, 
-which exists as a submodule.
+which exists as a submodule; last but not least, the Holumbus-Searchening depends
+on the package `haskell-src-exts` which needs happy to be installed.
 
     $ git submodule init
     $ git submodule update
     $ cabal sandbox init
+    $ cabal install happy
     $ cabal sandbox add-source holumbus
     $ cabal configure
     $ cabal build 
