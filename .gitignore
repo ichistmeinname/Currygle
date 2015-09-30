@@ -3,8 +3,6 @@ cabal-dev/
 cdoc/
 dist/
 index/
-log/
-SourceGraph/
+log/*
 cabal.sandbox.config
-nohup.out
-server.pid
+.curry
